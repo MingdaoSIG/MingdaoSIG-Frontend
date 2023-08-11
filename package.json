@@ -1,0 +1,13 @@
+{
+    "name": "MingdaoSIG-Frontend",
+    "version": "0.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "check-and-fix-lint": "(echo '\n---\n\nScanning for lint error...' && eslint .) || (echo '\n\n---\n\nFound lint error, working on it...' && eslint . --fix) || echo \"\n\nWARNING: There are some error that can't be fixed automatically!\"",
+        "lintfix": "npm run --silent check-and-fix-lint"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
