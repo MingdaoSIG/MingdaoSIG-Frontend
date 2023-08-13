@@ -1,5 +1,11 @@
+import SearchBar from "./components/SearchBar";
+
 const Home = () => {
-  return <main>Hello, Mingdao!</main>;
+  return (
+    <>
+      <SearchBar></SearchBar>
+    </>
+  );
 };
 
 export default Home;
