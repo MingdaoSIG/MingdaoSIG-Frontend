@@ -23,6 +23,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^13.4.13"
+    "@next/eslint-plugin-next": "^13.4.13",
+    "sass": "^1.65.1"
   }
 }
