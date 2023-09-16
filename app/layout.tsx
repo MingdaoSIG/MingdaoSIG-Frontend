@@ -16,7 +16,9 @@ export default function RootLayout({
       <head>
         <title>{title}</title>
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className="wrap">{children}</div>
+      </body>
     </html>
   );
 }
