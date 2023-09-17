@@ -1,10 +1,9 @@
-import HeaderBar from "./components/HeaderBar";
+import HeaderBar from "./(Layout)/HeaderBar";
 
 const Home = () => {
   return (
     <>
       <HeaderBar></HeaderBar>
-      <main></main>
     </>
   );
 };
