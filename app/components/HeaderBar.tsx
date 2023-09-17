@@ -4,9 +4,9 @@ import Image from "next/image";
 const HeaderBar = () => {
   return (
     <>
-      <div className="nav w-[80dvw] mt-[54px] mx-auto flex flex-row justify-between items-center">
+      <div className={style.nav}>
         <div className={style.logo}>
-          <span className=" text-md-light-green">MD</span>SIG
+          <span className="text-md-light-green">MD</span>SIG
         </div>
         <div className={style.userPanel}>
           <div className="avatar">
@@ -19,7 +19,7 @@ const HeaderBar = () => {
               alt="Avatar"
             ></Image>
           </div>
-          <div className="user flex flex-col justify-center items-start pl-2 pr-3 py-2">
+          <div className={style.user}>
             <p className="name text-md-dark-green text-[20px] leading-6 font-bold">
               葉柏辰
             </p>

@@ -1,3 +1,12 @@
+.nav {
+  width: 80dvw;
+  margin: 54px auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .userPanel {
   height: 60px;
   border-radius: 30px;
@@ -19,4 +28,15 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  cursor: default;
+  user-select: none;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  padding: 2px 12px 3px 5px;
+  cursor: pointer;
 }
