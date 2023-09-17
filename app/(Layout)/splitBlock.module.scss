@@ -1,0 +1,21 @@
+.app {
+  width: 85dvw;
+  height: 65dvh;
+  border-radius: 50px;
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+
+.mainview {
+  background-color: transparent;
+  border: 1px red solid;
+  margin-right: 20px;
+  border-radius: 50px;
+}
+
+.second {
+  background: rgba(255, 255, 255, 0.47);
+  border-radius: 50px;
+}
