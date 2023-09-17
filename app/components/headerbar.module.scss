@@ -1,0 +1,22 @@
+.userPanel {
+  height: 60px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.42);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 5px 4px;
+
+  img {
+    border-radius: 50%;
+  }
+}
+
+.logo {
+  font-family: Inria Sans;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}

@@ -1,5 +1,12 @@
+import HeaderBar from "./components/HeaderBar";
+
 const Home = () => {
-  return <main>Hello, Mingdao!</main>;
+  return (
+    <>
+      <HeaderBar></HeaderBar>
+      <main></main>
+    </>
+  );
 };
 
 export default Home;
