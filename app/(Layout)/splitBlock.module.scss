@@ -5,7 +5,12 @@
   margin: auto;
 
   display: grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 72% 28%;
+
+  @media screen and (max-width: 1280px) {
+    display: grid;
+    grid-template-columns: 100%;
+  }
 }
 
 .mainview {
@@ -17,4 +22,11 @@
 .second {
   background: rgba(255, 255, 255, 0.47);
   border-radius: 50px;
+
+  max-height: 65dvh;
+  overflow-y: hidden;
+
+  @media screen and (max-width: 1280px) {
+    display: none;
+  }
 }

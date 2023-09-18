@@ -3,6 +3,7 @@ import SplitBlock from "./(Layout)/splitBlock";
 import ToolBar from "./(Layout)/ToolBar";
 
 import ThreadsList from "./(Home)/ThreadsList";
+import Information from "./(Home)/Informations";
 
 const Home = () => {
   return (
@@ -12,7 +13,9 @@ const Home = () => {
         <div>
           <ThreadsList />
         </div>
-        <div>234</div>
+        <div>
+          <Information />
+        </div>
       </SplitBlock>
       <ToolBar></ToolBar>
     </>
