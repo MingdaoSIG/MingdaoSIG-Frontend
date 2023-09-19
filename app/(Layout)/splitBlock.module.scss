@@ -6,6 +6,7 @@
 
   display: grid;
   grid-template-columns: 72% 28%;
+  gap: 20px;
 
   @media screen and (max-width: 1280px) {
     display: grid;
@@ -15,7 +16,6 @@
 
 .mainview {
   background-color: transparent;
-  margin-right: 20px;
   border-radius: 50px;
 }
 

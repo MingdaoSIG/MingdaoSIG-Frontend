@@ -1,0 +1,66 @@
+.Thread {
+  background: rgba(255, 255, 255, 0.47);
+  border-radius: 50px;
+
+  height: 65dvh;
+  overflow-y: hidden;
+
+  padding: 40px 54px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  h1 {
+    color: #003f47;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  p {
+    margin-top: 20px;
+    color: #002024;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 200;
+    line-height: 164.523%;
+    letter-spacing: 4.7px;
+
+    padding: 10px 10px 10px 0;
+
+    box-shadow: inset 0px 10px 30px -5px #ffffff7e,
+      inset 0px -5px 5px -5px #ffffffbf;
+
+    overflow-y: auto;
+  }
+}
+
+.info {
+  padding: 30px;
+}
+
+.author {
+  display: flex;
+  gap: 10px;
+}
+
+.name {
+  color: #002024;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
+
+.time {
+  color: #006180;
+  font-family: Inria Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  letter-spacing: 0.6px;
+  margin-left: 2px;
+}
