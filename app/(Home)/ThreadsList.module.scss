@@ -1,0 +1,28 @@
+.thread {
+  background: rgba(255, 255, 255, 0.47);
+  border-radius: 50px;
+
+  cursor: pointer;
+
+  margin-bottom: 20px;
+
+  max-height: 250px;
+
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+
+.left {
+  padding: 30px;
+}
+
+.right {
+  border-radius: 50px;
+}
+
+.threads {
+  height: 65dvh;
+  overflow-y: auto;
+  border-radius: 50px;
+  padding: 0 10px;
+}

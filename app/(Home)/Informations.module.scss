@@ -1,0 +1,28 @@
+.information {
+  padding: 48px;
+}
+
+.sig {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
+
+  padding: 24px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    width: 88px;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 200;
+    line-height: 164.523%; /* 26.324px */
+    letter-spacing: 3.76px;
+    text-align: center;
+  }
+}
