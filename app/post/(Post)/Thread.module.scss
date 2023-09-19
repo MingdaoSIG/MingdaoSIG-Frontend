@@ -38,7 +38,11 @@
 }
 
 .info {
+  max-height: 65dvh;
   padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .author {
@@ -63,4 +67,16 @@
   line-height: normal;
   letter-spacing: 0.6px;
   margin-left: 2px;
+}
+
+.reply {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
