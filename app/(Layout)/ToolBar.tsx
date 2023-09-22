@@ -10,7 +10,7 @@ const ToolBar = () => {
               src={"/icons/bx-home-circle.svg"}
               height={32}
               width={32}
-              alt="bookmark"
+              alt="home"
               className="cursor-pointer mx-auto"
             ></Image>
           </div>
@@ -19,7 +19,7 @@ const ToolBar = () => {
               src={"/icons/bx-user.svg"}
               height={32}
               width={32}
-              alt="bookmark"
+              alt="user"
               className="cursor-pointer mx-auto"
             ></Image>
           </div>
@@ -28,7 +28,7 @@ const ToolBar = () => {
               src={"/icons/bxs-bell-ring.svg"}
               height={32}
               width={32}
-              alt="bookmark"
+              alt="ring"
               className="cursor-pointer mx-auto"
             ></Image>
           </div>
@@ -37,7 +37,7 @@ const ToolBar = () => {
               src={"/icons/bx-menu-alt-right.svg"}
               height={32}
               width={32}
-              alt="bookmark"
+              alt="menu"
               className="cursor-pointer mx-auto"
             ></Image>
           </div>
