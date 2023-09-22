@@ -85,7 +85,7 @@ const ThreadInfo = () => {
             height={24}
             width={24}
             alt="send"
-            className="cursor-pointer mt-auto h-full"
+            className="cursor-pointer mt-auto h-full opacity-30"
           />
         </div>
       </div>
