@@ -1,7 +1,7 @@
 .app {
   width: 85dvw;
   height: 65dvh;
-  border-radius: 50px;
+  border-radius: 30px;
   margin: auto;
 
   display: grid;
@@ -16,12 +16,12 @@
 
 .mainview {
   background-color: transparent;
-  border-radius: 50px;
+  border-radius: 30px;
 }
 
 .second {
   background: rgba(255, 255, 255, 0.47);
-  border-radius: 50px;
+  border-radius: 30px;
 
   max-height: 65dvh;
   overflow-y: hidden;

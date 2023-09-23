@@ -1,8 +1,9 @@
+"use client";
+
 import Image from "next/image";
-
 import style from "./ThreadsList.module.scss";
-
 import { IThread } from "@/interface/Thread.interface";
+import { useRouter } from "next/navigation";
 
 const testingData: IThread = {
   title:
@@ -16,8 +17,9 @@ const testingData: IThread = {
 };
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
+  const router = useRouter();
   return (
-    <div className={style.thread}>
+    <div className={style.thread} onClick={() => router.push("/post")}>
       <div className={style.left}>
         <h1 className="text-md-dark-green text-xl font-semibold mb-2">
           {threadData.title}
@@ -32,7 +34,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           alt="coverimage"
           width={500}
           height={500}
-          style={{ height: "250px", width: "inherit", borderRadius: "50px" }}
+          style={{ height: "250px", width: "inherit", borderRadius: "30px" }}
         ></Image>
       </div>
     </div>

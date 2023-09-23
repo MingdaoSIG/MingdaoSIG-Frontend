@@ -1,6 +1,6 @@
 .thread {
   background: rgba(255, 255, 255, 0.47);
-  border-radius: 50px;
+  border-radius: 30px;
 
   cursor: pointer;
 
@@ -17,12 +17,12 @@
 }
 
 .right {
-  border-radius: 50px;
+  border-radius: 30px;
 }
 
 .threads {
   height: 65dvh;
   overflow-y: auto;
-  border-radius: 50px;
+  border-radius: 30px;
   padding: 0 10px;
 }
