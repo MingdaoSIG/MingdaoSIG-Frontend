@@ -1,14 +1,15 @@
+"use client";
+
 import Image from "next/image";
 
 import style from "./Thread.module.scss";
+import { useEffect, useState } from "react";
 
 const Reply = () => {
   return (
     <div className={style.reply}>
       <Image
-        src={
-          "https://github.com/banahaker/banahaker.github.io/blob/main/src/assets/logo_bana.png?raw=true"
-        }
+        src={"/images/reply-avatar.svg"}
         width={45}
         height={45}
         alt="Avatar"
@@ -16,10 +17,12 @@ const Reply = () => {
       ></Image>
       <div className={style.content}>
         <div className="info flex gap-2 items-center">
-          <div className="no font-semibold">@11v148</div>
-          <div className="time text-sm text-gray">2023/09/19</div>
+          <div className="no font-medium text-[12px]">@11v148</div>
+          <div className="time text-[10px] text-[#BDBDBD] font-extralight">
+            2023/09/19
+          </div>
         </div>
-        <p className=" font-normal text-md-dark-green">
+        <p className="text-md-dark-green font-extralight text-[12px]">
           社長什麼時候才會交這個，我好想學喔
         </p>
       </div>
@@ -28,9 +31,13 @@ const Reply = () => {
 };
 
 const ThreadInfo = () => {
+  const [typeText, setTypeText] = useState(false);
+
+  useEffect(() => {});
+
   return (
-    <div className={style.info}>
-      <div className="flex justify-between items-center">
+    <div className={style.info + " box-border"}>
+      <div className="flex justify-between items-center flex-initial">
         <div className={style.author}>
           <Image
             src={
@@ -63,7 +70,7 @@ const ThreadInfo = () => {
           ></Image>
         </div>
       </div>
-      <div className="mt-9 flex flex-col gap-6 overflow-auto px-3">
+      <div className="mt-5 flex flex-col gap-[40px] overflow-auto px-3 flex-1">
         <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
@@ -73,6 +80,29 @@ const ThreadInfo = () => {
         <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
+      </div>
+      <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex">
+        <input
+          className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1"
+          placeholder="Reply..."
+          onChange={(e) => {
+            e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
+          }}
+        />
+        <div className="h-full w-[40px] flex-none">
+          <Image
+            src={"/icons/bx-send.svg"}
+            height={24}
+            width={24}
+            alt="send"
+            className={
+              "mt-auto h-full " +
+              (typeText
+                ? "opacity-100 cursor-pointer"
+                : "opacity-30 cursor-not-allowed")
+            }
+          />
+        </div>
       </div>
     </div>
   );
