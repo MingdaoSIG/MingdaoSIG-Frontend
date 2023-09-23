@@ -1,11 +1,20 @@
+"use client";
+
 import style from "./headerbar.module.scss";
 import Image from "next/image";
 
+import { useRouter } from "next/navigation";
+
 const HeaderBar = () => {
+  const router = useRouter();
+
   return (
     <>
       <div className={style.nav}>
-        <div className={style.logo}>
+        <div
+          className={style.logo + " hover:cursor-pointer"}
+          onClick={() => router.push("/")}
+        >
           <span className="text-md-light-green">MD</span>SIG
         </div>
         <div className={style.userPanel}>
