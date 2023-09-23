@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 
 import style from "./Thread.module.scss";
+import { useEffect, useState } from "react";
 
 const Reply = () => {
   return (
@@ -28,6 +31,10 @@ const Reply = () => {
 };
 
 const ThreadInfo = () => {
+  const [typeText, setTypeText] = useState(false);
+
+  useEffect(() => {});
+
   return (
     <div className={style.info + " box-border"}>
       <div className="flex justify-between items-center flex-initial">
@@ -78,6 +85,9 @@ const ThreadInfo = () => {
         <input
           className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1"
           placeholder="Reply..."
+          onChange={(e) => {
+            e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
+          }}
         />
         <div className="h-full w-[40px] flex-none">
           <Image
@@ -85,7 +95,12 @@ const ThreadInfo = () => {
             height={24}
             width={24}
             alt="send"
-            className="cursor-pointer mt-auto h-full opacity-30"
+            className={
+              "mt-auto h-full " +
+              (typeText
+                ? "opacity-100 cursor-pointer"
+                : "opacity-30 cursor-not-allowed")
+            }
           />
         </div>
       </div>
