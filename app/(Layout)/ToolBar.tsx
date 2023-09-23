@@ -1,11 +1,25 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+const menu = { home: "/", user: "/user", ring: "notify", menu: "/menu" };
 
 const ToolBar = () => {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <div className="w-full absolute bottom-[64px]">
       <div className="h-[90px] w-[484px] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border">
         <div className="h-full w-[350px] mx-auto flex">
-          <div className="flex-1 my-auto">
+          <div
+            className={
+              "flex-1 my-auto bg-slate-600 rounded-full py-1.5 " +
+              (pathname.startsWith(menu["home"])
+                ? "bg-opacity-30"
+                : "bg-opacity-0")
+            }
+          >
             <Image
               src={"/icons/bx-home-circle.svg"}
               height={32}
