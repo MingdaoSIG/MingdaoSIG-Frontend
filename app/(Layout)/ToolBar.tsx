@@ -9,12 +9,12 @@ const ToolBar = () => {
   const pathname = usePathname();
   console.log(pathname);
   return (
-    <div className="w-full absolute bottom-[64px]">
+    <div className="w-full absolute bottom-[64px] select-none">
       <div className="h-[90px] w-[484px] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border">
         <div className="h-full w-[350px] mx-auto flex">
           <div
             className={
-              "flex-1 my-auto bg-slate-600 rounded-full py-1.5 " +
+              "flex-1 my-auto bg-slate-400 rounded-full py-2 " +
               (pathname.startsWith(menu["home"])
                 ? "bg-opacity-30"
                 : "bg-opacity-0")
