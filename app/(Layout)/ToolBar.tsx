@@ -3,7 +3,39 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-const menu = { home: "/", user: "/user", ring: "notify", menu: "/menu" };
+const menuo = { home: "/", user: "/user", ring: "notify", menu: "/menu" };
+
+// const menu = {
+//   "/": [
+//     {
+//       name: "home",
+//       icon: "/icons/bx-home-circle.svg",
+//       path: "/",
+//     },
+//     {
+//       name: "user",
+//       icon: "/icons/bx-user.svg",
+//       path: "/user",
+//     },
+//     {
+//       name: "ring",
+//       icon: "/icons/bxs-bell-ring.svg",
+//       path: "/notify",
+//     },
+//     {
+//       name: "menu",
+//       icon: "/icons/bx-menu-alt-right.svg",
+//       path: "/menu",
+//     },
+//   ],
+// };
+
+// const icons = {
+//   home: "/icons/bx-home-circle.svg",
+//   user: "/icons/bx-user.svg",
+//   ring: "/icons/bxs-bell-ring.svg",
+//   menu: "/icons/bx-menu-alt-right.svg",
+// };
 
 const ToolBar = () => {
   const pathname = usePathname();
@@ -15,7 +47,7 @@ const ToolBar = () => {
           <div
             className={
               "flex-1 my-auto bg-slate-400 rounded-full py-2 " +
-              (pathname.startsWith(menu["home"])
+              (pathname.startsWith(menuo["home"])
                 ? "bg-opacity-30"
                 : "bg-opacity-0")
             }
