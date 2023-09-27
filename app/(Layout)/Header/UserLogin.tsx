@@ -19,7 +19,7 @@ const UserLogin = () => {
     async function LoginAPI() {
       try {
         const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/login`,
+          `${process.env.NEXT_PUBLIC_API_URL}/login`,
           {
             email: session?.user?.email,
             avatar: session?.user?.image,
@@ -61,7 +61,8 @@ const UserLogin = () => {
       </div>
     );
   } else {
-    const user = JSON.parse(localStorage.getItem("User") ?? "");
+    console.log(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("User") || "{}");
     return (
       <div
         className={style.userPanel}
