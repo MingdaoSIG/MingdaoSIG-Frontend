@@ -5,11 +5,11 @@ import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
 const UserLogin = () => {
   const [loadTime, setLoadTime] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
   const { data: session } = useSession();
+
   useEffect(() => {
     if (session === null || session === undefined) {
       localStorage.clear();
@@ -25,6 +25,7 @@ const UserLogin = () => {
             avatar: session?.user?.image,
           }
         );
+        console.log("1");
         localStorage.setItem(
           "UserID",
           res.data.authorization.toString().split(" ")[1]
@@ -37,13 +38,15 @@ const UserLogin = () => {
     }
 
     if (loadTime === 0) {
-      ("");
-      LoginAPI();
       setLoadTime(1);
+      setInterval(() => {
+        if (localStorage.User !== null && localStorage.User !== undefined) {
+          setIsLogin(true);
+        } else {
+          LoginAPI();
+        }
+      }, 500);
     }
-
-    // localStorage.setItem("UserToken", response?.headers?.authorization);
-    setIsLogin(true);
   }, [loadTime, session]);
 
   if (!isLogin) {
@@ -61,8 +64,7 @@ const UserLogin = () => {
       </div>
     );
   } else {
-    console.log(localStorage.getItem("user"));
-    const user = JSON.parse(localStorage.getItem("User") || "{}");
+    const user = JSON.parse(localStorage.User || "{}");
     return (
       <div
         className={style.userPanel}
