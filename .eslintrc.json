@@ -18,7 +18,7 @@
       }
     ],
     "quotes": ["error", "double"],
-    "brace-style": ["error", "stroustrup"]
+    "brace-style": ["error", "1tbs"]
   },
   "extends": ["eslint:recommended", "next"]
 }

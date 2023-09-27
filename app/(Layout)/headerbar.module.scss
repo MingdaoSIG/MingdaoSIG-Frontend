@@ -7,21 +7,6 @@
   align-items: center;
 }
 
-.userPanel {
-  height: 60px;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.42);
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 5px 4px;
-
-  img {
-    border-radius: 50%;
-  }
-}
-
 .logo {
   font-family: Inria Sans;
   font-size: 40px;
@@ -30,13 +15,4 @@
   line-height: normal;
   cursor: default;
   user-select: none;
-}
-
-.user {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: start;
-  padding: 2px 12px 3px 5px;
-  cursor: pointer;
 }
