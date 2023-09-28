@@ -8,8 +8,8 @@ const menu = { home: "/", user: "/user", ring: "notify", menu: "/menu" };
 const ToolBar = () => {
   const pathname = usePathname();
   return (
-    <div className="w-full absolute bottom-[64px] select-none">
-      <div className="h-[90px] w-[484px] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border">
+    <div className="w-full absolute bottom-[1em] select-none">
+      <div className="h-[5rem] w-[25rem] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border">
         <div className="h-full w-[350px] mx-auto flex">
           <div
             className={
