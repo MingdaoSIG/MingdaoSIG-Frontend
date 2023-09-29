@@ -6,7 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const API_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const UserLogin = () => {
   const [loadTime, setLoadTime] = useState(0);
