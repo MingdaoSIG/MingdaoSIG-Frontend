@@ -5,6 +5,9 @@ import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+
+const API_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
+
 const UserLogin = () => {
   const [loadTime, setLoadTime] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
@@ -18,19 +21,18 @@ const UserLogin = () => {
 
     async function LoginAPI() {
       try {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/login`,
-          {
-            email: session?.user?.email,
-            avatar: session?.user?.image,
-          }
-        );
-        console.log("1");
+        const res = await axios.post(`${API_URL}/login`, {
+          googleToken: session?.user?.email,
+          // email: session?.user?.email,
+          // avatar: session?.user?.image,
+        });
+
         localStorage.setItem(
           "UserID",
           res.data.authorization.toString().split(" ")[1]
         );
         localStorage.setItem("User", JSON.stringify(res.data.data));
+
         return res.data;
       } catch (error) {
         console.log(error);
@@ -40,12 +42,9 @@ const UserLogin = () => {
     if (loadTime === 0) {
       setLoadTime(1);
       setInterval(() => {
-        if (localStorage.User !== null && localStorage.User !== undefined) {
-          setIsLogin(true);
-        } else {
-          LoginAPI();
-        }
+        LoginAPI();
       }, 500);
+      setIsLogin(true);
     }
   }, [loadTime, session]);
 
