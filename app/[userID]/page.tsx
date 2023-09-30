@@ -12,7 +12,7 @@ const user = {
 };
 
 export default function UserPage({ params }: { params: { userID: string } }) {
-  const UserID = decodeURIComponent(params.userID);
+  const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
   return (
     <SplitBlock>
       <div className="flex flex-col">
@@ -26,7 +26,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
             <div className="text-[#002024] font-normal text-[24px]">
               {user?.name}
             </div>
-            <div className="text-[#006180] font-normal text-[14px] tracking-[2.0px]">
+            <div className="text-[#006180] font-normal text-[14px]">
               {UserID}
             </div>
           </div>
