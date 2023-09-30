@@ -10,9 +10,27 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ account }) {
-      console.log(account);
+    async signIn() {
+      // async signIn({ account }) {
+      // console.log(account);
+      // const _account: any = account;
+      // console.log(_account?.access_token);
       return true;
+    },
+    async jwt({ token, account }) {
+      const _token = token;
+      if (account) {
+        _token.accessToken = account?.access_token;
+      }
+
+      return _token;
+    },
+    async session({ session, token }) {
+      const _session: any = session;
+      const _token: any = token;
+      _session.accessToken = _token.accessToken;
+      //console.log(_session);
+      return _session;
     },
   },
 });

@@ -9,44 +9,36 @@ import { useEffect, useState } from "react";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const UserLogin = () => {
-  const [loadTime, setLoadTime] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (session === null || session === undefined) {
-      localStorage.clear();
-      return;
+    if (status === "loading") return;
+    if (status === "unauthenticated") return;
+    if (status === "authenticated") {
+      if (!localStorage.getItem("User")) {
+        // LoginAPI();
+      }
+      // setIsLogin(true);
     }
-
     async function LoginAPI() {
       try {
+        const _session: any = session;
         const res = await axios.post(`${API_URL}/login`, {
-          googleToken: session?.user?.email,
-          // email: session?.user?.email,
-          // avatar: session?.user?.image,
+          googleToken: _session?.accessToken,
         });
-
-        localStorage.setItem(
-          "UserID",
-          res.data.authorization.toString().split(" ")[1]
-        );
-        localStorage.setItem("User", JSON.stringify(res.data.data));
-
+        // console.log(res.data);
+        // localStorage.setItem(
+        //   "UserID",
+        //   res.data.authorization.toString().split(" ")[1]
+        // );
+        // localStorage.setItem("User", JSON.stringify(res.data.data));
         return res.data;
       } catch (error) {
         console.log(error);
       }
     }
-
-    if (loadTime === 0) {
-      setLoadTime(1);
-      setInterval(() => {
-        LoginAPI();
-      }, 500);
-      setIsLogin(true);
-    }
-  }, [loadTime, session]);
+  }, [session, status]);
 
   if (!isLogin) {
     return (
@@ -59,6 +51,20 @@ const UserLogin = () => {
           onClick={() => signIn("google")}
         >
           <p className="m-auto text-[#004C64] font-medium">Login</p>
+        </div>
+      </div>
+    );
+  } else if (isLogin && status === "loading") {
+    return (
+      <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
+        <div
+          className={
+            "flex m-auto text-center hover:cursor-pointer " +
+            style.loginUserPanel
+          }
+          onClick={() => signIn("google")}
+        >
+          <p className="m-auto text-[#004C64] font-medium">Loading...</p>
         </div>
       </div>
     );
