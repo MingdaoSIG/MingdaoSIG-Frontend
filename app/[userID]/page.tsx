@@ -21,7 +21,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       </div>
       <div className="flex flex-col h-full relative">
         <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
-        <div className="flex-initial h-2/3 bg-white">
+        <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
           <div className="mt-[70px] ml-10">
             <div className="text-[#002024] font-normal text-[24px]">
               {user?.name}
@@ -30,7 +30,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               {UserID}
             </div>
           </div>
-          <div className="my-5 mx-10 h-[60%] overflow-y-scroll">
+          <div className="my-5 mx-10 h-[60%] overflow-y-scroll px-1">
             <p>{user?.description}</p>
           </div>
         </div>
