@@ -45,7 +45,7 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
       </button>
       <button
         className={rightStyle}
-        onClick={(e) => {
+        onClick={() => {
           setButtonStyle("left-[100px]");
           callback(1);
           setLeftStyle(
