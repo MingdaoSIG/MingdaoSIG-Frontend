@@ -17,7 +17,7 @@ const UserLogin = () => {
     if (status === "unauthenticated") return;
     if (status === "authenticated") {
       if (!localStorage.getItem("User")) {
-        // LoginAPI();
+        LoginAPI();
       }
       // setIsLogin(true);
     }
@@ -25,7 +25,10 @@ const UserLogin = () => {
       try {
         const _session: any = session;
         const res = await axios.post(`${API_URL}/login`, {
-          googleToken: _session?.accessToken,
+          params: {
+            googleToken: _session?.accessToken,
+          },
+          withCredentials: false,
         });
         // console.log(res.data);
         // localStorage.setItem(
