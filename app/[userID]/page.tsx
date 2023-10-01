@@ -1,5 +1,5 @@
 import SplitBlock from "../(Layout)/splitBlock";
-import ThreadsList from "./(Post)/ThreadsList";
+import ThreadsList from "./(user)/ThreadsList";
 import Image from "next/image";
 
 const user = {
@@ -30,7 +30,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               {UserID}
             </div>
           </div>
-          <div className="mt-5 mx-10 h-[60%] overflow-y-scroll">
+          <div className="my-5 mx-10 h-[60%] overflow-y-scroll">
             <p>{user?.description}</p>
           </div>
         </div>
