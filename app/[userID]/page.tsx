@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
@@ -11,12 +14,63 @@ const user = {
     "嗨！我是HACO，一位網頁開發者同時也是Lazco團隊的創始人，我在前端和後端開發方面都有豐富的經驗，並且熟練操作包括 JavaScript、Python、PHP、Visual Basic 和 React.js等多種程式語言。憑藉著對網頁開發的熱情和技能，我有信心能夠創造出具有創新性和動感的網站和應用程式，為所有人帶來出色的體驗，我很喜歡交朋友也歡迎大家來我的社群找我喔！對了我也很喜歡出去玩或是參加各種活動，運氣好的話說不定還能遇到我喔！",
 };
 
+const SwitchButton = ({ callback }: { callback: Function }) => {
+  const [buttonStyle, setButtonStyle] = useState("left-0");
+  const [leftStyle, setLeftStyle] = useState(
+    "py-4 w-[100px] text-center duration-500 relative text-white"
+  );
+  const [rightStyle, setRightStyle] = useState(
+    "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+  );
+
+  return (
+    <div className="ml-[10px] flex bg-white bg-opacity-50 rounded-full mb-4 relative">
+      <div
+        className={`transition-all duration-500 w-[100px] h-[56px] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
+      ></div>
+      <button
+        className={leftStyle}
+        onClick={() => {
+          setButtonStyle("left-0");
+          callback(0);
+          setLeftStyle(
+            "py-4 w-[100px] text-center duration-500 relative text-white"
+          );
+          setRightStyle(
+            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+          );
+        }}
+      >
+        Posts
+      </button>
+      <button
+        className={rightStyle}
+        onClick={(e) => {
+          setButtonStyle("left-[100px]");
+          callback(1);
+          setLeftStyle(
+            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+          );
+          setRightStyle(
+            "py-4 w-[100px] text-center duration-500 relative text-white"
+          );
+        }}
+      >
+        Likes
+      </button>
+    </div>
+  );
+};
+
 export default function UserPage({ params }: { params: { userID: string } }) {
   const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
+
+  const [listType, setListType] = useState(0);
+
   return (
     <SplitBlock>
-      <div className="flex flex-col">
-        <div className="h-[7dvh] pl-[10px] mb-[3dvh] w-[15rem] bg-white bg-opacity-50 rounded-full"></div>
+      <div className="flex flex-col items-start">
+        <SwitchButton callback={setListType}></SwitchButton>
         <ThreadsList />
       </div>
       <div className="flex flex-col h-full relative">

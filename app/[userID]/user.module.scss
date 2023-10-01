@@ -1,0 +1,12 @@
+// transition-all duration-500 w-[100px] h-[56px] absolute bg-md-dark-green rounded-full ${buttonStyle}
+
+.toggleBtn {
+  width: 100px;
+  height: 56px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #002024;
+  border-radius: 50%;
+  transition: 0.5s;
+}

@@ -70,7 +70,7 @@ const ThreadInfo = () => {
           ></Image>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-auto px-3 flex-1">
+      <div className="mt-5 flex flex-col gap-[40px] overflow-auto">
         <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
