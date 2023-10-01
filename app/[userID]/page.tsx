@@ -1,5 +1,5 @@
 import SplitBlock from "../(Layout)/splitBlock";
-import ThreadsList from "./(user)/ThreadsList";
+import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
 
 const user = {
