@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.4.13",
+    "mini-css-extract-plugin": "^2.7.6",
     "postcss-import": "^15.1.0",
     "sass": "^1.65.1"
   }
