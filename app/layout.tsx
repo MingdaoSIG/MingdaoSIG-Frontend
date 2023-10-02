@@ -19,7 +19,7 @@ export default function RootLayout({
         <head>
           <title>{title}</title>
         </head>
-        <body>
+        <body className="select-none">
           <div className="wrap">
             <HeaderBar />
             {children}

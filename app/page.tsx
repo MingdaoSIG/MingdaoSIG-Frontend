@@ -4,16 +4,14 @@ import Information from "./(Home)/Informations";
 
 const Home = () => {
   return (
-    <>
-      <SplitBlock>
-        <div>
-          <ThreadsList />
-        </div>
-        <div>
-          <Information />
-        </div>
-      </SplitBlock>
-    </>
+    <SplitBlock>
+      <div>
+        <ThreadsList />
+      </div>
+      <div>
+        <Information />
+      </div>
+    </SplitBlock>
   );
 };
 

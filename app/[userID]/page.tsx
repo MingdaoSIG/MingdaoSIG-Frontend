@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -57,6 +58,7 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
 
 export default function UserPage({ params }: { params: { userID: string } }) {
   const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
+  const route = useRouter();
 
   const [status, setStatus] = useState("loading");
   const [listType, setListType] = useState(0);
@@ -126,7 +128,12 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     return (
       <div className="flex flex-col m-auto">
         <h1 className="text-[50px]">User Not Found.</h1>
-        <button className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]">
+        <button
+          className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
+          onClick={() => {
+            route.push("/");
+          }}
+        >
           Back to home
         </button>
       </div>
