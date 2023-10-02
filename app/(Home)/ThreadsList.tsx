@@ -35,6 +35,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           width={500}
           height={500}
           style={{ height: "250px", width: "inherit", borderRadius: "30px" }}
+          priority
         ></Image>
       </div>
     </div>
