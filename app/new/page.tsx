@@ -5,11 +5,6 @@ import { Suspense } from "react";
 
 const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
 
-const markdown = `
-# Hello world!
-Check the EditorComponent.tsx file for the code .
-`;
-
 const NewPostPage = () => {
   return (
     <SplitBlock>
