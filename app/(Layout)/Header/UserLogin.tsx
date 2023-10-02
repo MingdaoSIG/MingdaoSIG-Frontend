@@ -1,7 +1,6 @@
 "use client";
 
 import style from "@/app/(Layout)/Header/userlogin.module.scss";
-import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -18,24 +17,31 @@ const UserLogin = () => {
     if (status === "authenticated") {
       if (!localStorage.getItem("User")) {
         LoginAPI();
+      } else {
+        setIsLogin(true);
       }
-      // setIsLogin(true);
     }
     async function LoginAPI() {
       try {
         const _session: any = session;
-        const res = await axios.post(`${API_URL}/login`, {
-          params: {
-            googleToken: _session?.accessToken,
-          },
-          withCredentials: false,
-        });
-        // console.log(res.data);
-        // localStorage.setItem(
-        //   "UserID",
-        //   res.data.authorization.toString().split(" ")[1]
-        // );
-        // localStorage.setItem("User", JSON.stringify(res.data.data));
+
+        var urlencoded = new URLSearchParams();
+        urlencoded.append("googleToken", _session?.accessToken);
+        const res = await (
+          await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: urlencoded,
+          })
+        ).json();
+        localStorage.setItem(
+          "UserID",
+          res.authorization.toString().split(" ")[1]
+        );
+        localStorage.setItem("User", JSON.stringify(res.data));
+        setIsLogin(true);
         return res.data;
       } catch (error) {
         console.log(error);
@@ -43,21 +49,7 @@ const UserLogin = () => {
     }
   }, [session, status]);
 
-  if (!isLogin) {
-    return (
-      <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
-        <div
-          className={
-            "flex m-auto text-center hover:cursor-pointer " +
-            style.loginUserPanel
-          }
-          onClick={() => signIn("google")}
-        >
-          <p className="m-auto text-[#004C64] font-medium">Login</p>
-        </div>
-      </div>
-    );
-  } else if (isLogin && status === "loading") {
+  if (status === "loading") {
     return (
       <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
         <div
@@ -68,6 +60,20 @@ const UserLogin = () => {
           onClick={() => signIn("google")}
         >
           <p className="m-auto text-[#004C64] font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  } else if (!isLogin) {
+    return (
+      <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
+        <div
+          className={
+            "flex m-auto text-center hover:cursor-pointer " +
+            style.loginUserPanel
+          }
+          onClick={() => signIn("google")}
+        >
+          <p className="m-auto text-[#004C64] font-medium">Login</p>
         </div>
       </div>
     );
