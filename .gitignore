@@ -36,3 +36,6 @@ next-env.d.ts
 
 #gitpod
 .gitpod.yml
+
+bun.lockb
+package-lock.json
