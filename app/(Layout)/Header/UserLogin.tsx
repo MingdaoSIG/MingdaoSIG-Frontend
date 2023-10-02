@@ -42,7 +42,7 @@ const UserLogin = () => {
         );
         localStorage.setItem("User", JSON.stringify(res.data));
         setIsLogin(true);
-        return res.data;
+        return;
       } catch (error) {
         console.log(error);
       }

@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const user = {
   userId: "1",
@@ -64,40 +66,87 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
 
 export default function UserPage({ params }: { params: { userID: string } }) {
   const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
+  const [status, setStatus] = useState("loading");
+  const [user, setUser] = useState({
+    name: "Loading...",
+    description: "Loading...",
+    avatar: "/images/Loading.gif",
+  });
+
+  useEffect(() => {
+    GetUserAPI();
+
+    async function GetUserAPI() {
+      try {
+        const res = await (
+          await fetch(`${API_URL}/profile/user/${UserID}`, {
+            method: "GET",
+          })
+        ).json();
+        setUser(res.data);
+        setStatus("Success");
+        return;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [UserID]);
 
   const [listType, setListType] = useState(0);
+  const UserCard = [];
 
-  return (
-    <SplitBlock>
-      <div className="flex flex-col items-start">
-        <SwitchButton callback={setListType}></SwitchButton>
-        <ThreadsList />
-      </div>
-      <div className="flex flex-col h-full relative">
-        <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
-        <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
-          <div className="mt-[70px] ml-10">
-            <div className="text-[#002024] font-normal text-[24px]">
-              {user?.name}
-            </div>
-            <div className="text-[#006180] font-normal text-[14px]">
-              {UserID}
+  if (status === "loading") {
+    return (
+      <SplitBlock>
+        <div className="flex flex-col items-start">
+          <SwitchButton callback={setListType}></SwitchButton>
+          <ThreadsList />
+        </div>
+        <div className="flex flex-col h-full relative">
+          <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
+          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
+            <div className=" mt-5 ml-10">
+              <div className="text-[#002024] font-normal text-[24px]">
+                Loading...
+              </div>
             </div>
           </div>
-          <div className="my-5 mx-10 h-[60%] overflow-y-scroll px-1">
-            <p>{user?.description}</p>
+        </div>
+      </SplitBlock>
+    );
+  } else {
+    return (
+      <SplitBlock>
+        <div className="flex flex-col items-start">
+          <SwitchButton callback={setListType}></SwitchButton>
+          <ThreadsList />
+        </div>
+        <div className="flex flex-col h-full relative">
+          <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
+          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
+            <div className="mt-[70px] ml-10">
+              <div className="text-[#002024] font-normal text-[24px]">
+                {user?.name}
+              </div>
+              <div className="text-[#006180] font-normal text-[14px]">
+                {UserID}
+              </div>
+            </div>
+            <div className="my-5 mx-10 h-[60%] overflow-y-scroll px-1">
+              <p>{user?.description}</p>
+            </div>
+          </div>
+          <div className="h-[120px] w-[120px] bg-white flex-none absolute top-1/4 left-10 rounded-full">
+            <Image
+              src={user?.avatar}
+              width={100}
+              height={100}
+              alt="Avatar"
+              className="rounded-full m-auto block mt-[10px]"
+            />
           </div>
         </div>
-        <div className="h-[120px] w-[120px] bg-white flex-none absolute top-1/4 left-10 rounded-full">
-          <Image
-            src="/images/haco-avatar.webp"
-            width={100}
-            height={100}
-            alt="Avatar"
-            className="rounded-full m-auto block mt-[10px]"
-          />
-        </div>
-      </div>
-    </SplitBlock>
-  );
+      </SplitBlock>
+    );
+  }
 }
