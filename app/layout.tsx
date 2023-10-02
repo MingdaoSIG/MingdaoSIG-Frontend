@@ -17,7 +17,7 @@ export default function RootLayout({
     <SessionProvider>
       <html lang="en">
         <head>
-          <title>{title}</title>
+          <title>MDSIG</title>
         </head>
         <body className="select-none">
           <div className="wrap">

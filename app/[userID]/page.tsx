@@ -108,7 +108,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
                 {UserID}
               </div>
             </div>
-            <div className="my-5 mx-10 h-[60%] overflow-y-scroll px-1">
+            <div className="my-5 mx-10 h-[60%] overflow-y-auto px-1">
               <p>{user?.description}</p>
             </div>
           </div>

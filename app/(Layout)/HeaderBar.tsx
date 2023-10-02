@@ -2,6 +2,7 @@
 
 import style from "@/app/(Layout)/headerbar.module.scss";
 import UserLogin from "@/app/(Layout)/Header/UserLogin";
+import Image from "next/image";
 
 import { useRouter } from "next/navigation";
 
@@ -15,7 +16,7 @@ const HeaderBar = () => {
           className={style.logo + " hover:cursor-pointer"}
           onClick={() => router.push("/")}
         >
-          <span className="text-md-light-green">MD</span>SIG
+          <Image src="/images/logo.svg" alt="Logo" width={214} height={46} />
         </div>
         <UserLogin />
       </div>
