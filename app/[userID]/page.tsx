@@ -7,15 +7,6 @@ import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const user = {
-  userId: "1",
-  name: "林杰陞",
-  code: "11V440",
-  email: "11V440@ms.mingdao.edu.tw",
-  description:
-    "嗨！我是HACO，一位網頁開發者同時也是Lazco團隊的創始人，我在前端和後端開發方面都有豐富的經驗，並且熟練操作包括 JavaScript、Python、PHP、Visual Basic 和 React.js等多種程式語言。憑藉著對網頁開發的熱情和技能，我有信心能夠創造出具有創新性和動感的網站和應用程式，為所有人帶來出色的體驗，我很喜歡交朋友也歡迎大家來我的社群找我喔！對了我也很喜歡出去玩或是參加各種活動，運氣好的話說不定還能遇到我喔！",
-};
-
 const SwitchButton = ({ callback }: { callback: Function }) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
@@ -66,12 +57,10 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
 
 export default function UserPage({ params }: { params: { userID: string } }) {
   const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
+
   const [status, setStatus] = useState("loading");
-  const [user, setUser] = useState({
-    name: "Loading...",
-    description: "Loading...",
-    avatar: "/images/Loading.gif",
-  });
+  const [listType, setListType] = useState(0);
+  const [user, setUser] = useState({ name: "", description: "", avatar: "" });
 
   useEffect(() => {
     GetUserAPI();
@@ -83,8 +72,13 @@ export default function UserPage({ params }: { params: { userID: string } }) {
             method: "GET",
           })
         ).json();
-        setUser(res.data);
-        setStatus("Success");
+        if (res.status === 4100) {
+          setStatus("notfound");
+        } else {
+          setUser(res.data);
+          setStatus("success");
+        }
+
         return;
       } catch (error) {
         console.log(error);
@@ -92,29 +86,9 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     }
   }, [UserID]);
 
-  const [listType, setListType] = useState(0);
-  const UserCard = [];
-
   if (status === "loading") {
-    return (
-      <SplitBlock>
-        <div className="flex flex-col items-start">
-          <SwitchButton callback={setListType}></SwitchButton>
-          <ThreadsList />
-        </div>
-        <div className="flex flex-col h-full relative">
-          <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
-          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
-            <div className=" mt-5 ml-10">
-              <div className="text-[#002024] font-normal text-[24px]">
-                Loading...
-              </div>
-            </div>
-          </div>
-        </div>
-      </SplitBlock>
-    );
-  } else {
+    return <div className="flex m-auto text-[50px]">Loading...</div>;
+  } else if (status === "success") {
     return (
       <SplitBlock>
         <div className="flex flex-col items-start">
@@ -147,6 +121,15 @@ export default function UserPage({ params }: { params: { userID: string } }) {
           </div>
         </div>
       </SplitBlock>
+    );
+  } else if (status === "notfound") {
+    return (
+      <div className="flex flex-col m-auto">
+        <h1 className="text-[50px]">User Not Found.</h1>
+        <button className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]">
+          Back to home
+        </button>
+      </div>
     );
   }
 }
