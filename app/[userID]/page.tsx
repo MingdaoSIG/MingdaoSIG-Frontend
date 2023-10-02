@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, notFound } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -65,6 +65,10 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   const [user, setUser] = useState({ name: "", description: "", avatar: "" });
 
   useEffect(() => {
+    if (!UserID.startsWith("@")) {
+      notFound();
+    }
+
     GetUserAPI();
 
     async function GetUserAPI() {
