@@ -1,23 +1,34 @@
 "use client";
 
 import { MDXEditor, MDXEditorMethods, headingsPlugin } from "@mdxeditor/editor";
+import { listsPlugin } from "@mdxeditor/editor/plugins/lists";
+import { quotePlugin } from "@mdxeditor/editor/plugins/quote";
+import { thematicBreakPlugin } from "@mdxeditor/editor/plugins/thematic-break";
+import { UndoRedo } from "@mdxeditor/editor/plugins/toolbar/components/UndoRedo";
+import { BoldItalicUnderlineToggles } from "@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles";
+import { toolbarPlugin } from "@mdxeditor/editor/plugins/toolbar";
 import { FC } from "react";
 
 interface EditorProps {
   markdown: string;
   editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
 }
-
-/**
- * Extend this Component further with the necessary plugins or props you need.
- * proxying the ref is necessary. Next.js dynamically imported components don't support refs.
- */
 const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
   return (
     <MDXEditor
       ref={editorRef}
       markdown={markdown}
-      plugins={[headingsPlugin()]}
+      plugins={[
+        toolbarPlugin({
+          toolbarContents: () => (
+            <>
+              {" "}
+              <UndoRedo />
+              <BoldItalicUnderlineToggles />
+            </>
+          ),
+        }),
+      ]}
     />
   );
 };
