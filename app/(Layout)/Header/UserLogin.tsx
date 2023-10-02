@@ -51,7 +51,7 @@ const UserLogin = () => {
 
   if (status === "loading") {
     return (
-      <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
+      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
         <div
           className={
             "flex m-auto text-center hover:cursor-pointer " +
@@ -65,7 +65,7 @@ const UserLogin = () => {
     );
   } else if (!isLogin) {
     return (
-      <div className="w-[230px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
+      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex">
         <div
           className={
             "flex m-auto text-center hover:cursor-pointer " +
@@ -88,7 +88,13 @@ const UserLogin = () => {
         }}
       >
         <div className="avatar">
-          <Image src={user.avatar} width={50} height={50} alt="Avatar"></Image>
+          <Image
+            src={user.avatar}
+            width={50}
+            height={50}
+            alt="Avatar"
+            className="ml-1"
+          ></Image>
         </div>
         <div className={style.user}>
           <p className="name text-md-dark-green text-[20px] leading-6 font-bold">
