@@ -36,7 +36,3 @@ next-env.d.ts
 
 #gitpod
 .gitpod.yml
-
-# Other Package Manager (Remove if needed, just one PM one time)
-bun.lockb
-pnpm-lock.ymal
