@@ -67,27 +67,34 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   useEffect(() => {
     if (!UserID.startsWith("@")) {
       notFound();
+    } else if (UserID.length < 2) {
+      setStatus("notfound");
     }
 
     GetUserAPI();
 
     async function GetUserAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/profile/user/${UserID}`, {
-            method: "GET",
-          })
-        ).json();
-        if (res.status === 4100) {
-          setStatus("notfound");
-        } else {
-          setUser(res.data);
-          setStatus("success");
-        }
-
+      if (UserID.length < 2) {
+        setStatus("notfound");
         return;
-      } catch (error) {
-        console.log(error);
+      } else {
+        try {
+          const res = await (
+            await fetch(`${API_URL}/profile/user/${UserID}`, {
+              method: "GET",
+            })
+          ).json();
+          if (res.status === 4100) {
+            setStatus("notfound");
+          } else {
+            setUser(res.data);
+            setStatus("success");
+          }
+
+          return;
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }, [UserID]);
