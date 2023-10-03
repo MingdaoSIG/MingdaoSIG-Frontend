@@ -1,3 +1,12 @@
+.editor {
+  height: 100%;
+}
+
 .editor > div {
   border: none !important;
+  height: 100%;
+}
+
+.editor > div > div:nth-child(6) {
+  padding: 0 15px;
 }

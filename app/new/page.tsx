@@ -7,12 +7,9 @@ const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
 const NewPostPage = () => {
   return (
     <SplitBlock>
-      <div>
-        <Suspense fallback={null}>
-          <Editor markdown={"123"} />
-        </Suspense>
-      </div>
-      <div></div>
+      <Suspense fallback={null}>
+        <Editor markdown={"123"} />
+      </Suspense>
     </SplitBlock>
   );
 };
