@@ -9,15 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mdxeditor/editor": "^1.1.2",
     "@types/node": "20.4.9",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "@vavt/md-editor-extension": "^3.0.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.5.0",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
     "jwt-decode": "^3.1.2",
+    "md-editor-rt": "^4.7.0",
     "next": "^13.5.4",
     "next-auth": "^4.23.1",
     "postcss": "8.4.27",

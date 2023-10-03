@@ -1,37 +1,15 @@
 "use client";
 
-import { MDXEditor, MDXEditorMethods, headingsPlugin } from "@mdxeditor/editor";
-import { listsPlugin } from "@mdxeditor/editor/plugins/lists";
-import { quotePlugin } from "@mdxeditor/editor/plugins/quote";
-import { thematicBreakPlugin } from "@mdxeditor/editor/plugins/thematic-break";
-import { UndoRedo } from "@mdxeditor/editor/plugins/toolbar/components/UndoRedo";
-import { BoldItalicUnderlineToggles } from "@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles";
-import { toolbarPlugin } from "@mdxeditor/editor/plugins/toolbar";
-import { FC } from "react";
-import React from "react";
+import { useState } from "react";
+import { MdEditor } from "md-editor-rt";
+import "md-editor-rt/lib/style.css";
+import styles from "./editor.module.scss";
 
-interface EditorProps {
-  markdown: string;
-  editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
-}
-const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
+export default () => {
+  const [text, setText] = useState("# Hello Editor");
   return (
-    <MDXEditor
-      ref={editorRef}
-      markdown={markdown}
-      plugins={[
-        toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              {" "}
-              <UndoRedo />
-              <BoldItalicUnderlineToggles />
-            </>
-          ),
-        }),
-      ]}
-    />
+    <div className={"rounded-xl overflow-hidden " + styles.editor}>
+      <MdEditor modelValue={text} onChange={setText} />
+    </div>
   );
 };
-
-export default Editor;
