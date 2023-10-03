@@ -64,7 +64,7 @@ const ToolBar = () => {
                   height={32}
                   width={32}
                   alt={item.name}
-                  className="cursor-pointer mx-auto"
+                  className="mx-auto"
                 ></Image>
               </div>
             );
@@ -87,7 +87,7 @@ const ToolBar = () => {
                   height={32}
                   width={32}
                   alt={item.name}
-                  className="cursor-pointer mx-auto"
+                  className="mx-auto"
                 ></Image>
               </div>
             );
