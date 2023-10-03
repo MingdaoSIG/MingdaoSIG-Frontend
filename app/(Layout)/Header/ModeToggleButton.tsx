@@ -1,5 +1,5 @@
-import styles from "./ModeToggleButton.module.css";
-import "./ModeToggleButton.css";
+import styles from "./ModeToggleButton.module.scss";
+import "./ModeToggleButton.scss";
 
 export default function Button() {
   return (
