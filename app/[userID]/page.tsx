@@ -81,24 +81,6 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     async function GetUserAPI() {
       if (UserID.length < 2) {
         setStatus("notfound");
-<<<<<<< HEAD
-        return;
-      } else {
-        try {
-          const res = await (
-            await fetch(`${API_URL}/profile/user/${UserID}`, {
-              method: "GET",
-            })
-          ).json();
-          if (res.status === 4100) {
-            setStatus("notfound");
-          } else {
-            setUser(res.data);
-            setStatus("success");
-          }
-
-=======
->>>>>>> parent of c06077d (feat: toolbar list)
         return;
       } else {
         try {

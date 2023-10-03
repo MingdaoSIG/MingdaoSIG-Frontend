@@ -8,6 +8,7 @@ import { UndoRedo } from "@mdxeditor/editor/plugins/toolbar/components/UndoRedo"
 import { BoldItalicUnderlineToggles } from "@mdxeditor/editor/plugins/toolbar/components/BoldItalicUnderlineToggles";
 import { toolbarPlugin } from "@mdxeditor/editor/plugins/toolbar";
 import { FC } from "react";
+import React from "react";
 
 interface EditorProps {
   markdown: string;
