@@ -6,7 +6,11 @@ import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
 
 const Editor = () => {
-  const [text, setText] = useState("# Hello Editor");
+  const [text, setText] = useState(
+    `# Welcome to MDSIG Post Editor   
+If you don't know how to write Markdown, please check this [webpage tutorial](https://markdown.tw/).
+    `
+  );
 
   useEffect(() => {
     console.log(text);
@@ -36,11 +40,11 @@ const Editor = () => {
   };
 
   const toolbars: ToolbarNames[] = [
-    // "bold",
-    // "underline",
-    // "italic",
+    "bold",
+    "underline",
+    "italic",
     // "-",
-    // "strikeThrough",
+    "strikeThrough",
     // "title",
     "sub",
     "sup",
@@ -75,11 +79,7 @@ const Editor = () => {
         "pt-1 bg-white rounded-[30px] overflow-hidden " + styles.editor
       }
     >
-      <MdEditor
-        modelValue={text}
-        onChange={setText}
-        toolbars={toolbars}
-      />
+      <MdEditor modelValue={text} onChange={setText} toolbars={toolbars} />
     </div>
   );
 };
