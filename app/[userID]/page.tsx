@@ -82,7 +82,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               method: "GET",
             })
           ).json();
-          if (res.status === 4000) {
+          if (res.status === 4100) {
             setStatus("notfound");
           } else {
             setUser(res.data);
