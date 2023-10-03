@@ -57,12 +57,17 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
 };
 
 export default function UserPage({ params }: { params: { userID: string } }) {
-  const UserID = decodeURIComponent(params.userID).toLocaleUpperCase();
+  const UserID = decodeURIComponent(params.userID);
   const route = useRouter();
 
   const [status, setStatus] = useState("loading");
   const [listType, setListType] = useState(0);
-  const [user, setUser] = useState({ name: "", description: "", avatar: "" });
+  const [user, setUser] = useState({
+    name: "",
+    description: "",
+    avatar: "",
+    customId: "",
+  });
 
   useEffect(() => {
     if (!UserID.startsWith("@")) {
@@ -84,7 +89,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               method: "GET",
             })
           ).json();
-          if (res.status === 4100) {
+          if (res.status === 4000) {
             setStatus("notfound");
           } else {
             setUser(res.data);
@@ -116,7 +121,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
                 {user?.name}
               </div>
               <div className="text-[#006180] font-normal text-[14px]">
-                {UserID}
+                @{user?.customId}
               </div>
             </div>
             <div className="my-5 mx-10 h-[60%] overflow-y-auto px-1">
