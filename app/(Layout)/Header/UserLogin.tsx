@@ -88,7 +88,7 @@ const UserLogin = () => {
         }}
       >
         <div className="avatar">
-          <Image
+          <Image 
             src={user.avatar}
             width={50}
             height={50}
