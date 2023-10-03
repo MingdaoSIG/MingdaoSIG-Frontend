@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { MdEditor } from "md-editor-rt";
+import { useEffect, useState } from "react";
+import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
 
-export default () => {
+const Editor = () => {
   const [text, setText] = useState("# Hello Editor");
+
+  useEffect(() => {
+    console.log(text);
+  }, [text]);
 
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     const res = await Promise.all(
@@ -21,7 +25,9 @@ export default () => {
               },
               body: file,
             });
-          } catch (error) {}
+          } catch (error) {
+            console.log("errrrrrrrrrr: ", error);
+          }
         });
       })
     );
@@ -29,13 +35,53 @@ export default () => {
     callback(res.map((item: any) => item?.data.url));
   };
 
+  const toolbars: ToolbarNames[] = [
+    // "bold",
+    // "underline",
+    // "italic",
+    // "-",
+    // "strikeThrough",
+    // "title",
+    "sub",
+    "sup",
+    "quote",
+    // "unorderedList",
+    // "orderedList",
+    "task",
+    "-",
+    "codeRow",
+    "code",
+    "link",
+    "image",
+    "table",
+    "mermaid",
+    "katex",
+    // "save",
+    "=",
+    "revoke",
+    "next",
+    "-",
+    "pageFullscreen",
+    // "fullscreen",
+    "preview",
+    "htmlPreview",
+    "catalog",
+    // "github"
+  ];
+
   return (
     <div
       className={
         "pt-1 bg-white rounded-[30px] overflow-hidden " + styles.editor
       }
     >
-      <MdEditor modelValue={text} onChange={setText} />
+      <MdEditor
+        modelValue={text}
+        onChange={setText}
+        toolbars={toolbars}
+      />
     </div>
   );
 };
+
+export default Editor;

@@ -2,7 +2,7 @@
 
 import style from "@/app/(Layout)/headerbar.module.scss";
 import UserLogin from "@/app/(Layout)/Header/UserLogin";
-// import ThemeToggleButton from "@/app/(Layout)/Header/ThemeToggleButton";
+import ModeToggleButton from "@/app/(Layout)/Header/ModeToggleButton";
 import Image from "next/image";
 
 import { useRouter } from "next/navigation";
@@ -25,8 +25,8 @@ const HeaderBar = () => {
             priority
           />
         </div>
-        <div className="w-auto">
-          {/* <ThemeToggleButton /> */}
+        <div className="relative">
+          <ModeToggleButton />
           <UserLogin />
         </div>
       </div>
