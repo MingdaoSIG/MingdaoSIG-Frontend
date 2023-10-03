@@ -1,9 +1,7 @@
 export interface IThread {
-  createdAt: string;
-  _id: string;
   title: string;
+  timestamp: string;
   content: string;
   author: string;
-  cover: string;
-  user: string;
+  coverImage: string;
 }

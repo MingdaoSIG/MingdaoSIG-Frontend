@@ -4,9 +4,6 @@ import Image from "next/image";
 
 import style from "./Thread.module.scss";
 import { useEffect, useState } from "react";
-import { IThread } from "@/interface/Thread.interface";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Reply = () => {
   return (
@@ -33,45 +30,27 @@ const Reply = () => {
   );
 };
 
-export default function ThreadInfo({ post }: { post: IThread }) {
+const ThreadInfo = () => {
   const [typeText, setTypeText] = useState(false);
-  const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    GetUserAPI();
-
-    async function GetUserAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/profile/user/${post.user}`, {
-            method: "GET",
-          })
-        ).json();
-        setUser(res.data);
-
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [post.user]);
+  useEffect(() => {});
 
   return (
     <div className={style.info + " box-border"}>
       <div className="flex justify-between items-center flex-initial">
         <div className={style.author}>
           <Image
-            src={user?.avatar}
+            src={
+              "https://github.com/banahaker/banahaker.github.io/blob/main/src/assets/logo_bana.png?raw=true"
+            }
             width={50}
             height={50}
             alt="Avatar"
             className="rounded-full"
           ></Image>
           <div className="flex flex-col items-start justify-center">
-            <div className={style.name}>{user?.name}</div>
-            <div className={style.time}>
-              {new Date(post?.createdAt).toLocaleString()}
-            </div>
+            <div className={style.name}>葉柏辰</div>
+            <div className={style.time}>2023/09/19 23:22 </div>
           </div>
         </div>
         <div className="flex">
@@ -91,8 +70,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           ></Image>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-auto min-h-[420px]">
-        {/* <Reply></Reply>
+      <div className="mt-5 flex flex-col gap-[40px] overflow-auto">
         <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
@@ -100,7 +78,8 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
-        <Reply></Reply> */}
+        <Reply></Reply>
+        <Reply></Reply>
       </div>
       <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex">
         <input
@@ -127,4 +106,6 @@ export default function ThreadInfo({ post }: { post: IThread }) {
       </div>
     </div>
   );
-}
+};
+
+export default ThreadInfo;
