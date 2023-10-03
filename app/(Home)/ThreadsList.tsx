@@ -28,11 +28,9 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           src={threadData.cover}
           alt="coverimage"
           style={{ borderRadius: "30px" }}
-          objectFit="crop"
           priority
-          height={250}
-          width={250}
-          className="absolute top-0 left-0 w-full h-full"
+          fill
+          sizes="200px"
         ></Image>
       </div>
     </div>
