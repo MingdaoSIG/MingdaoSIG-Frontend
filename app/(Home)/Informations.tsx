@@ -5,11 +5,11 @@ const Hashtag = (child: any) => {
     // <div className="bg-[#00C2FF] rounded-[5px] py-1.5 px-1 grid-span-auto">
     //   {child.name}
     // </div>
-    <div className="my-3">
+    <div className="my-2 flex">
       <h2 className="text-md-dark-green text-lg font-medium tracking-widest cursor-pointer hover:underline  hover:decoration-1 transition  duration-300 ease-out  ">
         #{child.name}
       </h2>
-      <p className="text-[#A6A6A6] text-xs font-extralight tracking-widest">
+      <p className="text-[#A6A6A6] text-xs font-extralight tracking-widest ml-auto">
         23 post
       </p>
     </div>

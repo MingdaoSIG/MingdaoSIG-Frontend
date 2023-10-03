@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <div className="flex flex-col m-auto">
       <Image
-        src={"/images/404.png"}
+        src={"/images/404.svg"}
         width={189}
         height={200}
         alt={"404"}
