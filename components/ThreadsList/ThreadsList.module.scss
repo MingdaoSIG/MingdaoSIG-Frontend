@@ -1,0 +1,68 @@
+.threads {
+  --border-radius: 30px;
+  --cover-border-radius: var(--border-radius);
+  --height: 12rem;
+
+  position: relative;
+  height: 65dvh;
+  overflow-y: auto;
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.thread {
+  background: rgba(255, 255, 255, 0.47);
+  border-radius: var(--border-radius);
+  max-height: var(--height);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.preview {
+  position: relative;
+  padding: 30px;
+  box-sizing: border-box;
+  height: var(--height);
+  overflow: hidden;
+}
+
+.previewTitle {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.previewContent {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cover {
+  position: relative;
+  min-width: 30%;
+  height: 100%;
+  border-radius: var(--cover-border-radius);
+  overflow: hidden;
+}
+
+.more {
+  color: cadetblue;
+  font-weight: bolder;
+}
+
+.loading {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: xx-large;
+  font-weight: bolder;
+}

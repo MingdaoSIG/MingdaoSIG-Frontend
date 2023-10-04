@@ -1,71 +1,35 @@
 "use client";
 
-import Image from "next/image";
-import style from "./ThreadsList.module.scss";
 import { IThread } from "@/interface/Thread.interface";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Thread = ({ threadData }: { threadData: IThread }) => {
-  const router = useRouter();
-  return (
-    <div
-      className={style.thread + " cursor-pointer"}
-      onClick={() => router.push("/post/" + threadData._id)}
-    >
-      <div className={style.left}>
-        <h1 className="text-md-dark-green text-xl font-semibold mb-2">
-          {threadData.title}
-        </h1>
-        <p className="text-ellipsis overflow-hidden h-[100px]">
-          {threadData.content + "...."}
-        </p>
-      </div>
-      <div className={style.right + " relative"}>
-        <Image
-          src={threadData.cover}
-          alt="coverimage"
-          style={{ borderRadius: "30px" }}
-          priority
-          fill
-          objectFit="cover"
-          sizes="200px"
-        ></Image>
-      </div>
-    </div>
-  );
-};
-
-const ThreadsList = () => {
+const ThreadList = () => {
   const [posts, setPosts] = useState<IThread[]>([]);
 
   useEffect(() => {
-    GetPostListAPI();
-
-    async function GetPostListAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/post/list`, {
-            method: "GET",
-          })
-        ).json();
-
-        setPosts(res.postData);
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    GetPostListAPI(setPosts);
   }, []);
   return (
-    <div className={style.threads}>
-      {posts.map((item, index) => {
-        return <Thread threadData={item} key={index} />;
-      })}
-    </div>
+    <_ThreadsList posts={posts} />
   );
 };
 
-export default ThreadsList;
+export default ThreadList;
+
+async function GetPostListAPI(setPosts: Dispatch<SetStateAction<IThread[]>>) {
+  try {
+    const res = await (
+      await fetch(`${API_URL}/post/list`, {
+        method: "GET",
+      })
+    ).json();
+
+    setPosts(res.postData);
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -1,4 +1,4 @@
-import style from "./Informations.module.scss";
+import style from "./Information.module.scss";
 
 const Hashtag = (child: any) => {
   return (
