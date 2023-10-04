@@ -1,6 +1,7 @@
 .app {
   width: 90dvw;
   height: 65dvh;
+  max-height: 65dvh;
   border-radius: 30px;
   margin: auto;
 
@@ -8,9 +9,6 @@
   grid-gap: 20px;
   grid-template-columns: repeat(10, 1fr);
   grid-auto-rows: 1fr;
-  // grid-template-columns: 72% 28%;
-  // align-items: stretch;
-  // gap: 20px;
 
   @media screen and (max-width: 1280px) {
     display: grid;
@@ -21,6 +19,7 @@
 .mainview {
   background-color: transparent;
   grid-column: span 7;
+  max-height: 65dvh;
 }
 
 .second {

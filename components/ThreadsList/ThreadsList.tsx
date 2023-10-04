@@ -36,6 +36,7 @@ export const ThreadsList = ({ posts, height }: { posts: IThread[], height?: stri
     <div className={style.threads} style={{ height: height }}>
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
+          console.log(item.cover);
           return <Thread threadData={item} key={index} />;
         })
       ) : (

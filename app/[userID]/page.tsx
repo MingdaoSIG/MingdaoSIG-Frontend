@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import Image from "next/image";
 import { IThread } from "@/interface/Thread.interface";
@@ -32,61 +32,35 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       setStatus("notfound");
     }
 
-    GetUserAPI();
-    GetUserPostListAPI();
-
-    async function GetUserAPI() {
-      if (UserID.length < 2) {
-        setStatus("notfound");
-        return;
-      } else {
-        try {
-          const res = await (
-            await fetch(
-              `${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`,
-              {
-                method: "GET",
-              }
-            )
-          ).json();
-          if (res.status === 4000) {
-            setStatus("notfound");
-          } else {
-            setUser(res.data);
-            setStatus("success");
-          }
-
-          return;
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-
-    async function GetUserPostListAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/post/list/user/${user._id}`, {
-            method: "GET",
-          })
-        ).json();
-
-        setPosts(res.postData);
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    GetUserAPI(UserID, setStatus, setUser);
   }, [UserID, user._id]);
 
-  if (status === "loading") {
-    return <div className="flex m-auto text-[50px]">Loading...</div>;
-  } else if (status === "success") {
+  useEffect(() => {
+    if (status === "success") {
+      GetUserPostListAPI(user, setPosts);
+    }
+  }, [status, user]);
+
+  if (status === "notfound") {
+    return (
+      <div className="flex flex-col m-auto">
+        <h1 className="text-[50px]">User Not Found.</h1>
+        <button
+          className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
+          onClick={() => {
+            route.push("/");
+          }}
+        >
+          Back to home
+        </button>
+      </div>
+    );
+  } else {
     return (
       <SplitBlock>
-        <div className="flex flex-col items-start gap-[20px]">
+        <div className="flex flex-col items-start gap-[20px] max-h-[65dvh]">
           <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
-          <_ThreadsList posts={posts!} height="auto" />
+          <_ThreadsList posts={posts} height="auto" />
         </div>
         <div className="flex flex-col h-full relative">
           <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
@@ -115,19 +89,54 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         </div>
       </SplitBlock>
     );
-  } else if (status === "notfound") {
-    return (
-      <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]">User Not Found.</h1>
-        <button
-          className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
-          onClick={() => {
-            route.push("/");
-          }}
-        >
-          Back to home
-        </button>
-      </div>
-    );
+  }
+}
+
+async function GetUserAPI(UserID: string, setStatus: Dispatch<SetStateAction<string>>, setUser: Dispatch<SetStateAction<{
+  _id: string;
+  name: string;
+  description: string;
+  avatar: string;
+  customId: string;
+}>>) {
+  if (UserID.length < 2) {
+    setStatus("notfound");
+    return;
+  } else {
+    try {
+      const res = await (
+        await fetch(
+          `${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`,
+          {
+            method: "GET",
+          }
+        )
+      ).json();
+      if (res.status === 4000) {
+        setStatus("notfound");
+      } else {
+        setUser(res.data);
+        setStatus("success");
+      }
+
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+async function GetUserPostListAPI(user: { _id: string, name: string, description: string, avatar: string, customId: string, }, setPosts: Dispatch<SetStateAction<IThread[]>>) {
+  try {
+    const res = await (
+      await fetch(`${API_URL}/post/list/user/${user._id}`, {
+        method: "GET",
+      })
+    ).json();
+
+    setPosts(res.postData);
+    return;
+  } catch (error) {
+    console.log(error);
   }
 }
