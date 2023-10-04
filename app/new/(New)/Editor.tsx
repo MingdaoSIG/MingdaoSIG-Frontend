@@ -88,7 +88,7 @@ const MdEditorSync = ({ initialValue = MarkdownGuide }) => {
   return (
     <div
       className={
-        "pt-1 bg-white rounded-[30px] overflow-hidden " + styles.editor
+        "pt-1 pb-1 bg-white rounded-[30px] overflow-hidden " + styles.editor
       }
     >
       <MdEditor

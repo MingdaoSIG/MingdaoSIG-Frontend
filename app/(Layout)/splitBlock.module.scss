@@ -5,9 +5,12 @@
   margin: auto;
 
   display: grid;
-  grid-template-columns: 72% 28%;
-  align-items: stretch;
-  gap: 20px;
+  grid-gap: 20px;
+  grid-template-columns: repeat(10, 1fr);
+  grid-auto-rows: 1fr;
+  // grid-template-columns: 72% 28%;
+  // align-items: stretch;
+  // gap: 20px;
 
   @media screen and (max-width: 1280px) {
     display: grid;
@@ -17,6 +20,7 @@
 
 .mainview {
   background-color: transparent;
+  grid-column: span 7;
 }
 
 .second {
@@ -24,6 +28,7 @@
   border-radius: 30px;
 
   max-height: 65dvh;
+  grid-column: span 3;
   overflow-y: hidden;
 
   @media screen and (max-width: 1280px) {
