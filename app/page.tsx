@@ -1,12 +1,12 @@
 import SplitBlock from "./(Layout)/splitBlock";
-import ThreadList from "./(Home)/ThreadsList";
+import ThreadsList from "./(Home)/ThreadsList";
 import Information from "./(Home)/Information";
 
 const Home = () => {
   return (
     <SplitBlock>
       <div>
-        <ThreadList />
+        <ThreadsList />
       </div>
       <div>
         <Information />

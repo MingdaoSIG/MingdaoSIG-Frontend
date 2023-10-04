@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
-import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
 import { IThread } from "@/interface/Thread.interface";
+import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
 import { useRouter, notFound } from "next/navigation";
 import SwitchButton from "./(User)/SwitchButton";
 
@@ -84,9 +84,9 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   } else if (status === "success") {
     return (
       <SplitBlock>
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start gap-[20px]">
           <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
-          <ThreadsList posts={posts!} />
+          <_ThreadsList posts={posts!} height="auto" />
         </div>
         <div className="flex flex-col h-full relative">
           <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
