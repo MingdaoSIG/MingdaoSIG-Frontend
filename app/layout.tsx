@@ -1,8 +1,10 @@
-import "./globals.scss";
-import React from "react";
-import { Inter } from "next/font/google";
+"use client";
 
-const inter = Inter({ subsets: ["latin"] });
+import "@/app//globals.scss";
+import React from "react";
+import ToolBar from "@/app/(Layout)/ToolBar";
+import HeaderBar from "@/app/(Layout)/HeaderBar";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   title,
@@ -12,11 +14,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <title>{title}</title>
-      </head>
-      <body className={inter.className}>{children}</body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <head>
+          <title>MDSIG</title>
+        </head>
+        <body className="select-none">
+          <div className="wrap">
+            <HeaderBar />
+            {children}
+            <ToolBar />
+          </div>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

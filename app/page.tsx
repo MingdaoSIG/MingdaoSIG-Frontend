@@ -1,10 +1,17 @@
-import SearchBar from "./components/SearchBar";
+import SplitBlock from "./(Layout)/splitBlock";
+import ThreadsList from "./(Home)/ThreadsList";
+import Information from "./(Home)/Informations";
 
 const Home = () => {
   return (
-    <>
-      <SearchBar></SearchBar>
-    </>
+    <SplitBlock>
+      <div>
+        <ThreadsList />
+      </div>
+      <div>
+        <Information />
+      </div>
+    </SplitBlock>
   );
 };
 

@@ -1,14 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
+$bg-color-from: #ffe69b;
+$bg-color-to: #82d7ff;
 
 body {
-  background-color: azure;
-  padding: 20px;
+  overflow-x: hidden;
+}
+
+.wrap {
+  position: absolute;
+  top: 0;
+
+  width: 100dvw;
+  height: 100dvh;
+  background: radial-gradient(90% 90% at 0% 0%, $bg-color-from 0%, $bg-color-to 100%);
+
+  display: grid;
+  grid-template-rows: 15% 70% 15%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  margin-left: 5px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: rgba(0, 76, 100, 0.29);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #004c64;
 }

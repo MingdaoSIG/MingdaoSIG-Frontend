@@ -1,0 +1,25 @@
+.thread {
+  background: rgba(255, 255, 255, 0.47);
+  border-radius: 30px;
+  max-height: 250px;
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+
+.left {
+  padding: 30px;
+}
+
+.right {
+  border-radius: 30px;
+}
+
+.threads {
+  height: 65dvh;
+  overflow-y: auto;
+  border-radius: 30px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

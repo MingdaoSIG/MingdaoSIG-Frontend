@@ -1,0 +1,18 @@
+.editor {
+  height: 65dvh;
+}
+
+.editor > div {
+  border: none !important;
+  height: 100%;
+}
+
+.editor > div > div:nth-child(1) {
+  padding: 0 15px;
+}
+
+.editor > div > div:nth-child(6) {
+  padding: 0 15px;
+}
+
+// 鋒好大

@@ -18,7 +18,8 @@
       }
     ],
     "quotes": ["error", "double"],
-    "brace-style": ["error", "stroustrup"]
+    "brace-style": ["error", "1tbs"],
+    "no-unused-vars": "off"
   },
   "extends": ["eslint:recommended", "next"]
 }
