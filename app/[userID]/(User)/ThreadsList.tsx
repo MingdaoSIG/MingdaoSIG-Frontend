@@ -4,6 +4,9 @@ import Image from "next/image";
 import style from "./ThreadsList.module.scss";
 import { IThread } from "@/interface/Thread.interface";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const testingData: IThread = {
   _id: "123123",
@@ -20,7 +23,10 @@ const testingData: IThread = {
 const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
   return (
-    <div className={style.thread} onClick={() => router.push("/post")}>
+    <div
+      className={style.thread + " w-full cursor-pointer"}
+      onClick={() => router.push("/post/" + threadData._id)}
+    >
       <div className={style.left}>
         <h1 className="text-md-dark-green text-xl font-semibold mb-2">
           {threadData.title}
@@ -29,28 +35,46 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           {threadData.content + "...."}
         </p>
       </div>
-      <div className={style.right}>
+      <div className={style.right + " relative"}>
         <Image
           src={threadData.cover}
           alt="coverimage"
-          width={500}
-          height={500}
-          style={{ height: "250px", width: "inherit", borderRadius: "30px" }}
+          style={{ borderRadius: "30px" }}
+          priority
+          fill
+          sizes="200px"
         ></Image>
       </div>
     </div>
   );
 };
 
-const ThreadsList = () => {
+const ThreadsList = ({ user }: { user: any }) => {
+  const [posts, setPosts] = useState<IThread[]>([]);
+
+  useEffect(() => {
+    GetPostListAPI();
+
+    async function GetPostListAPI() {
+      try {
+        const res = await (
+          await fetch(`${API_URL}/post/list/user/${user._id}`, {
+            method: "GET",
+          })
+        ).json();
+
+        setPosts(res.postData);
+        return;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [user._id]);
   return (
-    <div className={style.threads}>
-      <Thread threadData={testingData}></Thread>
-      <Thread threadData={testingData}></Thread>
-      <Thread threadData={testingData}></Thread>
-      <Thread threadData={testingData}></Thread>
-      <Thread threadData={testingData}></Thread>
-      <Thread threadData={testingData}></Thread>
+    <div className={style.threads + " w-full"}>
+      {posts.map((item, index) => {
+        return <Thread threadData={item} key={index} />;
+      })}
     </div>
   );
 };
