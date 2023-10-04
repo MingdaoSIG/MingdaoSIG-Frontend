@@ -8,7 +8,7 @@ const NewPostPage = () => {
   return (
     <SplitBlock>
       <Suspense fallback={null}>
-        <Editor markdown={"123"} />
+        <Editor />
       </Suspense>
     </SplitBlock>
   );
