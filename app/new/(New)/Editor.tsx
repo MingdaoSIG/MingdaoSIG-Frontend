@@ -5,8 +5,7 @@ import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
 
-const MarkdownGuide=
-`
+const MarkdownGuide = `
 # Welcome to MDSIG Post Editor
 If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.markdownguide.org/).
 
