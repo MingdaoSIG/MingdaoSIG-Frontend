@@ -10,6 +10,9 @@ const NewPostPage = () => {
       <Suspense fallback={null}>
         <Editor />
       </Suspense>
+      <div className="">
+        
+      </div>
     </SplitBlock>
   );
 };

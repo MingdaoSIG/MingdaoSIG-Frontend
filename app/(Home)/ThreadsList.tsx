@@ -12,7 +12,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
   return (
     <div
-      className={style.thread}
+      className={style.thread + " cursor-pointer"}
       onClick={() => router.push("/post/" + threadData._id)}
     >
       <div className={style.left}>

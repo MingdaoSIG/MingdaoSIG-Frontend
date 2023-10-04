@@ -25,6 +25,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "lazco.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "sig-api-dev.zeabur.app",
       }
     ],
   },
