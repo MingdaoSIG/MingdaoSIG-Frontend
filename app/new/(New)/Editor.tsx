@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
@@ -13,12 +13,15 @@ If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.
 如果您對於 Markdown 不熟悉，請參考這個 [教學](https://www.markdownguide.org/).
 `;
 
-const Editor = () => {
-  const [text, setText] = useState(MarkdownGuide);
+const MdEditorSync = ({ initialValue = MarkdownGuide }) => {
+  const [editorContent, setEditorContent] = useState<string>(initialValue);
 
   useEffect(() => {
-    console.log(text);
-  }, [text]);
+    const storedContent = localStorage.getItem("editorContent");
+    if (storedContent) {
+      setEditorContent(storedContent);
+    }
+  }, []);
 
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     const res = await Promise.all(
@@ -77,15 +80,25 @@ const Editor = () => {
     // "github"
   ];
 
+  const handleEditorChange = (newContent: string) => {
+    setEditorContent(newContent);
+    localStorage.setItem("editorContent", newContent);
+  };
+
   return (
     <div
       className={
         "pt-1 bg-white rounded-[30px] overflow-hidden " + styles.editor
       }
     >
-      <MdEditor modelValue={text} onChange={setText} toolbars={toolbars} />
+      <MdEditor
+        modelValue={editorContent}
+        onChange={handleEditorChange}
+        toolbars={toolbars}
+        onUploadImg={onUploadImg}
+      />
     </div>
   );
 };
 
-export default Editor;
+export default MdEditorSync;
