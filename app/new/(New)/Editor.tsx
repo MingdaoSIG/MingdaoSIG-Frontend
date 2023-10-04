@@ -8,7 +8,8 @@ import styles from "./editor.module.scss";
 const Editor = () => {
   const [text, setText] = useState(
     `# Welcome to MDSIG Post Editor   
-If you don't know how to write Markdown, please check this [webpage tutorial](https://markdown.tw/).
+If you don't know how to write Markdown, 
+please check this [webpage tutorial](https://markdown.tw/).
     `
   );
 
