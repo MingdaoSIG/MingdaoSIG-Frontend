@@ -5,13 +5,17 @@ import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
 
+const MarkdownGuide=
+`
+# Welcome to MDSIG Post Editor
+If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.markdownguide.org/).
+
+# 歡迎使用 MDSIG 文章編輯器
+如果您對於 Markdown 不熟悉，請參考這個 [教學](https://www.markdownguide.org/).
+`;
+
 const Editor = () => {
-  const [text, setText] = useState(
-    `# Welcome to MDSIG Post Editor   
-If you don't know how to write Markdown, 
-please check this [webpage tutorial](https://markdown.tw/).
-    `
-  );
+  const [text, setText] = useState(MarkdownGuide);
 
   useEffect(() => {
     console.log(text);
