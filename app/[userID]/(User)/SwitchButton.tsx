@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-const SwitchButton = ({ callback }: { callback: Function }) => {
+const SwitchButton = ({
+  callback,
+  posts,
+}: {
+  callback: Function;
+  posts: any;
+}) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
     "py-4 w-[100px] text-center duration-500 relative text-white"
@@ -10,7 +16,12 @@ const SwitchButton = ({ callback }: { callback: Function }) => {
   );
 
   return (
-    <div className="ml-[10px] flex bg-white bg-opacity-50 rounded-full mb-4 relative">
+    <div
+      className={
+        "ml-[10px] flex bg-white bg-opacity-50 rounded-full mb-4 relative " +
+        (!posts?.length && "hidden")
+      }
+    >
       <div
         className={`transition-all duration-500 w-[100px] h-[56px] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
       ></div>

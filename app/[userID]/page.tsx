@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SplitBlock from "../(Layout)/splitBlock";
 import ThreadsList from "./(User)/ThreadsList";
 import Image from "next/image";
+import { IThread } from "@/interface/Thread.interface";
 import { useRouter, notFound } from "next/navigation";
 import SwitchButton from "./(User)/SwitchButton";
 
@@ -13,6 +14,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   const UserID = decodeURIComponent(params.userID);
   const route = useRouter();
 
+  const [posts, setPosts] = useState<IThread[]>([]);
   const [status, setStatus] = useState("loading");
   const [listType, setListType] = useState(0);
   const [user, setUser] = useState({
@@ -31,6 +33,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     }
 
     GetUserAPI();
+    GetUserPostListAPI();
 
     async function GetUserAPI() {
       if (UserID.length < 2) {
@@ -39,9 +42,12 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       } else {
         try {
           const res = await (
-            await fetch(`${API_URL}/profile/user/${UserID}`, {
-              method: "GET",
-            })
+            await fetch(
+              `${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`,
+              {
+                method: "GET",
+              }
+            )
           ).json();
           if (res.status === 4000) {
             setStatus("notfound");
@@ -56,7 +62,22 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         }
       }
     }
-  }, [UserID]);
+
+    async function GetUserPostListAPI() {
+      try {
+        const res = await (
+          await fetch(`${API_URL}/post/list/user/${user._id}`, {
+            method: "GET",
+          })
+        ).json();
+
+        setPosts(res.postData);
+        return;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [UserID, user._id]);
 
   if (status === "loading") {
     return <div className="flex m-auto text-[50px]">Loading...</div>;
@@ -64,8 +85,8 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     return (
       <SplitBlock>
         <div className="flex flex-col items-start">
-          <SwitchButton callback={setListType}></SwitchButton>
-          <ThreadsList user={user!} />
+          <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
+          <ThreadsList posts={posts!} />
         </div>
         <div className="flex flex-col h-full relative">
           <div className="flex-initial h-1/3 bg-[linear-gradient(253deg,_#0057BD_0%,_#97E6FF_100%)]"></div>
