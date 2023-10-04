@@ -13,19 +13,20 @@ const HeaderBar = () => {
   return (
     <>
       <div className={style.nav + " relative"}>
-        <div
-          className={style.logo + " hover:cursor-pointer"}
-          onClick={() => router.push("/")}
-        >
-          <Image
-            src="/images/logo.svg"
-            alt="Logo"
-            width={214}
-            height={46}
-            priority
-          />
+        <div className={style.logo + " my-auto w-[35dvw] h-[65px] flex"}>
+          <div className="my-auto w-auto ml-[100px]">
+            <Image
+              src="/images/logo.svg"
+              alt="Logo"
+              width={214}
+              height={46}
+              priority
+              className="my-auto hover:cursor-pointer"
+              onClick={() => router.push("/")}
+            />
+          </div>
         </div>
-        <div className="relative">
+        <div className="flex relative max-h-[60px]">
           <ModeToggleButton />
           <UserLogin />
         </div>

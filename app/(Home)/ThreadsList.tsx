@@ -30,6 +30,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           style={{ borderRadius: "30px" }}
           priority
           fill
+          objectFit="cover"
           sizes="200px"
         ></Image>
       </div>
