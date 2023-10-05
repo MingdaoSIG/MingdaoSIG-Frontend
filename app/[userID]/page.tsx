@@ -1,12 +1,14 @@
 "use client";
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import SplitBlock from "../(Layout)/splitBlock";
 import Image from "next/image";
-import { IThread } from "@/interface/Thread.interface";
-import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
 import { useRouter, notFound } from "next/navigation";
+
 import SwitchButton from "./(User)/SwitchButton";
+import SplitBlock from "../(Layout)/splitBlock";
+import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
+import { IThread } from "@/interface/Thread.interface";
+import { GetUserPostListAPI } from "./(User)/API";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -92,25 +94,28 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   }
 }
 
-async function GetUserAPI(UserID: string, setStatus: Dispatch<SetStateAction<string>>, setUser: Dispatch<SetStateAction<{
-  _id: string;
-  name: string;
-  description: string;
-  avatar: string;
-  customId: string;
-}>>) {
+async function GetUserAPI(
+  UserID: string,
+  setStatus: Dispatch<SetStateAction<string>>,
+  setUser: Dispatch<
+    SetStateAction<{
+      _id: string;
+      name: string;
+      description: string;
+      avatar: string;
+      customId: string;
+    }>
+  >
+) {
   if (UserID.length < 2) {
     setStatus("notfound");
     return;
   } else {
     try {
       const res = await (
-        await fetch(
-          `${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`,
-          {
-            method: "GET",
-          }
-        )
+        await fetch(`${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`, {
+          method: "GET",
+        })
       ).json();
       if (res.status === 4000) {
         setStatus("notfound");
@@ -123,20 +128,5 @@ async function GetUserAPI(UserID: string, setStatus: Dispatch<SetStateAction<str
     } catch (error) {
       console.log(error);
     }
-  }
-}
-
-async function GetUserPostListAPI(user: { _id: string, name: string, description: string, avatar: string, customId: string, }, setPosts: Dispatch<SetStateAction<IThread[]>>) {
-  try {
-    const res = await (
-      await fetch(`${API_URL}/post/list/user/${user._id}`, {
-        method: "GET",
-      })
-    ).json();
-
-    setPosts(res.postData);
-    return;
-  } catch (error) {
-    console.log(error);
   }
 }
