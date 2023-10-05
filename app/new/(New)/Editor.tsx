@@ -96,6 +96,8 @@ const MdEditorSync = ({ initialValue = MarkdownGuide }) => {
         onChange={handleEditorChange}
         toolbars={toolbars}
         onUploadImg={onUploadImg}
+        language="en-US"
+        previewTheme="github"
       />
     </div>
   );
