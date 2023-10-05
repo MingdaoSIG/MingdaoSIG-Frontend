@@ -4,6 +4,8 @@
 
 $bg-color-from: #ffe69b;
 $bg-color-to: #82d7ff;
+$scrollbar-thumb-color: #004c64;
+$scrollbar-track-color: rgba(0, 76, 100, 0.29);
 
 body {
   overflow-x: hidden;
@@ -27,9 +29,9 @@ body {
 }
 ::-webkit-scrollbar-track {
   border-radius: 5px;
-  background: rgba(0, 76, 100, 0.29);
+  background: $scrollbar-track-color
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background: #004c64;
+  background: $scrollbar-thumb-color;
 }

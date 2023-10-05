@@ -23,10 +23,11 @@
 }
 
 .second {
-  background: rgba(255, 255, 255, 0.47);
+  // background: rgba(255, 255, 255, 0.47);
   border-radius: 30px;
 
-  max-height: 65dvh;
+  // max-height: 65dvh;
+  height: 100%;
   grid-column: span 3;
   overflow-y: hidden;
 

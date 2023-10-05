@@ -8,7 +8,7 @@ const Home = () => {
       <div>
         <ThreadsList />
       </div>
-      <div>
+      <div className="h-full">
         <Information />
       </div>
     </SplitBlock>
