@@ -16,34 +16,38 @@ const ToolBar = () => {
     setUserID(_localStorage.customId);
   }, []);
 
+  // if (localStorage.getItem("User") !== null) {
+
+  // }
+
   const menu = [
     {
       name: "home",
       path: "/",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      unclickable: false,
+      clickable: true,
     },
     {
       name: "user",
       path: "/@",
       route: `/@${userID}`,
       icon: "/icons/bx-user.svg",
-      unclickable: true,
+      clickable: false,
     },
     {
       name: "new",
       path: "/new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      unclickable: false,
+      clickable: true,
     },
     {
       name: "hash",
       path: "/#",
       route: "/hashtag",
       icon: "/icons/hash.svg",
-      unclickable: false,
+      clickable: true,
     },
   ];
 
@@ -78,17 +82,17 @@ const ToolBar = () => {
                 key={index}
                 className={
                   "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 disabled:opacity-40 " +
-                  (pathname.startsWith(item.path)
+                  (pathname.startsWith(item.path) && userID
                     ? "bg-opacity-30 "
                     : "bg-opacity-0 ") +
-                  (!userID && item.unclickable
+                  (!userID && !item.clickable
                     ? "cursor-not-allowed"
                     : "cursor-pointer")
                 }
                 onClick={() => {
                   route.push(item.route);
                 }}
-                disabled={!userID && item.unclickable}
+                disabled={!userID && !item.clickable}
               >
                 <Image
                   src={item.icon}
