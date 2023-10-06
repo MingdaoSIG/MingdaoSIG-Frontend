@@ -18,7 +18,7 @@ const SwitchButton = ({
   return (
     <div
       className={
-        "flex bg-white bg-opacity-50 rounded-full relative " +
+        "flex bg-white bg-opacity-50 rounded-full relative select-none " +
         (!posts?.length && "hidden")
       }
     >

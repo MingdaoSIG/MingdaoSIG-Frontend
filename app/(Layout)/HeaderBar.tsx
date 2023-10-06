@@ -12,7 +12,7 @@ const HeaderBar = () => {
 
   return (
     <>
-      <div className={style.nav + " relative"}>
+      <div className={style.nav + " relative select-none"}>
         <div className={style.logo + " my-auto w-[35dvw] h-[65px] flex"}>
           <div className="my-auto w-auto ml-[100px]">
             <Image

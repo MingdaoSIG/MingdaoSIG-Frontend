@@ -7,7 +7,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
   return (
     <div
-      className={style.thread + " cursor-pointer"}
+      className={style.thread + " cursor-pointer select-none "}
       onClick={() => router.push("/post/" + threadData._id)}
     >
       <div className={style.preview}>
@@ -38,7 +38,6 @@ export const ThreadsList = ({
     <div className={style.threads} style={{ height: height }}>
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
-          // console.log(item.cover);
           return <Thread threadData={item} key={index} />;
         })
       ) : (

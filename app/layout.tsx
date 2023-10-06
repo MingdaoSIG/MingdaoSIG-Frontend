@@ -19,7 +19,7 @@ export default function RootLayout({
         <head>
           <title>MDSIG</title>
         </head>
-        <body className="select-none max-sm:hidden">
+        <body className="max-sm:hidden">
           <div className="wrap">
             <HeaderBar />
             {children}
