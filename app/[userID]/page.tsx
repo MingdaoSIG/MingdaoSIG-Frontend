@@ -13,6 +13,10 @@ import { GetUserPostListAPI } from "./(User)/API";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function UserPage({ params }: { params: { userID: string } }) {
+  if (!decodeURIComponent(params.userID).startsWith("@")) {
+    notFound();
+  }
+
   const UserID = decodeURIComponent(params.userID);
   const route = useRouter();
 
@@ -72,7 +76,8 @@ export default function UserPage({ params }: { params: { userID: string } }) {
                 {user?.name}
               </div>
               <div className="text-[#006180] font-normal text-[14px]">
-                @{user?.customId}
+                {user?.customId.length !== 0 && "@"}
+                {user?.customId}
               </div>
             </div>
             <div className="my-5 mx-10 h-[60%] overflow-y-auto px-1">
