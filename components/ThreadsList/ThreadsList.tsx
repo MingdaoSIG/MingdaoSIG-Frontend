@@ -11,12 +11,8 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       onClick={() => router.push("/post/" + threadData._id)}
     >
       <div className={style.preview}>
-        <h1 className={style.previewTitle}>
-          {threadData.title}
-        </h1>
-        <p className={style.previewContent}>
-          {threadData.content}
-        </p>
+        <h1 className={style.previewTitle}>{threadData.title}</h1>
+        <p className={style.previewContent}>{threadData.content}</p>
       </div>
       <div className={style.cover}>
         <Image
@@ -31,12 +27,18 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   );
 };
 
-export const ThreadsList = ({ posts, height }: { posts: IThread[], height?: string }) => {
+export const ThreadsList = ({
+  posts,
+  height,
+}: {
+  posts: IThread[];
+  height?: string;
+}) => {
   return (
     <div className={style.threads} style={{ height: height }}>
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
-          console.log(item.cover);
+          // console.log(item.cover);
           return <Thread threadData={item} key={index} />;
         })
       ) : (
