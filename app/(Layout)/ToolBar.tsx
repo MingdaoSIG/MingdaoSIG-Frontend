@@ -22,24 +22,28 @@ const ToolBar = () => {
       path: "/",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
+      unclickable: false,
     },
     {
       name: "user",
       path: "/@",
       route: `/@${userID}`,
       icon: "/icons/bx-user.svg",
+      unclickable: true,
     },
     {
       name: "new",
       path: "/new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
+      unclickable: false,
     },
     {
       name: "hash",
       path: "/#",
-      route: "/#hashtag",
+      route: "/hashtag",
       icon: "/icons/hash.svg",
+      unclickable: false,
     },
   ];
 
@@ -49,7 +53,7 @@ const ToolBar = () => {
         {menu.map((item, index) => {
           if (item.path === "/") {
             return (
-              <div
+              <button
                 key={index}
                 className={
                   "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 cursor-pointer" +
@@ -66,21 +70,25 @@ const ToolBar = () => {
                   alt={item.name}
                   className="mx-auto"
                 ></Image>
-              </div>
+              </button>
             );
           } else {
             return (
-              <div
+              <button
                 key={index}
                 className={
-                  "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 cursor-pointer" +
+                  "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 disabled:opacity-40 " +
                   (pathname.startsWith(item.path)
-                    ? " bg-opacity-30"
-                    : " bg-opacity-0")
+                    ? "bg-opacity-30 "
+                    : "bg-opacity-0 ") +
+                  (!userID && item.unclickable
+                    ? "cursor-not-allowed"
+                    : "cursor-pointer")
                 }
                 onClick={() => {
                   route.push(item.route);
                 }}
+                disabled={!userID && item.unclickable}
               >
                 <Image
                   src={item.icon}
@@ -89,7 +97,7 @@ const ToolBar = () => {
                   alt={item.name}
                   className="mx-auto"
                 ></Image>
-              </div>
+              </button>
             );
           }
         })}
