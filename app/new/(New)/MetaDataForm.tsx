@@ -1,8 +1,37 @@
-const MetaDaatForm = () => {
+import styles from "./MetaDataForm.module.scss";
+import Image from "next/image";
+
+export default function MetaDataForm() {
   return (
-    <>
-      <div></div>
-      <div></div>
-    </>
+    <div className={"h-full"}>
+      <div className={styles.meta}></div>
+      <div className="h-[50px] mt-[10px] flex rounded-full gap-5">
+        <button
+          className={
+            "flex-1 text-center rounded-full font-bold " + styles.btn_discard
+          }
+        >
+          <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
+            <Image src="/icons/trash.svg" width={20} height={20} alt="trash" />
+            DISCARD
+          </div>
+        </button>
+        <button
+          className={
+            "flex-1 text-center rounded-full font-bold " + styles.btn_post
+          }
+        >
+          <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
+            <Image
+              src="/icons/upload.svg"
+              width={20}
+              height={20}
+              alt="upload"
+            />
+            POST
+          </div>
+        </button>
+      </div>
+    </div>
   );
-};
+}

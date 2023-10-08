@@ -1,4 +1,5 @@
 import SplitBlock from "../(Layout)/splitBlock";
+import MetaDataForm from "./(New)/MetaDataForm";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
@@ -10,9 +11,7 @@ const NewPostPage = () => {
       <Suspense fallback={null}>
         <Editor />
       </Suspense>
-      <div className="">
-        
-      </div>
+      <MetaDataForm />
     </SplitBlock>
   );
 };
