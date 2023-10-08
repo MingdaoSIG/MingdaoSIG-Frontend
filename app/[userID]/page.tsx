@@ -61,7 +61,13 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         </button>
       </div>
     );
-  } else {
+  } else if (status === "loading") {
+    return (
+      <div className="flex flex-col m-auto">
+        <h1 className="text-[50px]"> Loading...</h1>
+      </div>
+    );
+  } else if (status === "success") {
     return (
       <SplitBlock>
         <div className="flex flex-col items-start gap-[20px] max-h-[65dvh]">
