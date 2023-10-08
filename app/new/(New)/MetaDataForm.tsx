@@ -8,24 +8,26 @@ export default function MetaDataForm() {
       <div className="h-[50px] mt-[10px] flex rounded-full gap-5">
         <button
           className={
-            "flex-1 text-center rounded-full font-bold " + styles.btn_discard
+            "flex-1 text-center rounded-full font-bold text-[22px] " +
+            styles.btn_discard
           }
         >
           <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
-            <Image src="/icons/trash.svg" width={20} height={20} alt="trash" />
+            <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
             DISCARD
           </div>
         </button>
         <button
           className={
-            "flex-1 text-center rounded-full font-bold " + styles.btn_post
+            "flex-1 text-center rounded-full font-bold text-[22px] " +
+            styles.btn_post
           }
         >
           <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
             <Image
               src="/icons/upload.svg"
-              width={20}
-              height={20}
+              width={22}
+              height={22}
               alt="upload"
             />
             POST
