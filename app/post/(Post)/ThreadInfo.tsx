@@ -57,7 +57,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   }, [post.user]);
 
   return (
-    <div className={style.info + " box-border"}>
+    <div className={style.info + " box-border rounded-[30px]"}>
       <div className="flex justify-between items-center flex-initial">
         <div className={style.author}>
           <Image

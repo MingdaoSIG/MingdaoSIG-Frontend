@@ -23,7 +23,7 @@ const SIG = () => {
 
 const Information = () => {
   return (
-    <div className={style.information}>
+    <div className={style.information + " rounded-[30px]"}>
       <div className={style.hashtags}>
         <h2 className=" text-black text-base font-extralight tracking-widest">
           Hashtags

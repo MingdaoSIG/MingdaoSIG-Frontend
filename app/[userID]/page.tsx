@@ -75,8 +75,8 @@ export default function UserPage({ params }: { params: { userID: string } }) {
           <_ThreadsList posts={posts} height="auto" />
         </div>
         <div className="flex flex-col h-full relative">
-          <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover"></div>
-          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch">
+          <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover rounded-t-[30px]"></div>
+          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch rounded-b-[30px]">
             <div className="mt-[70px] ml-10">
               <div className="text-[#002024] font-normal text-[24px]">
                 {user?.name}
