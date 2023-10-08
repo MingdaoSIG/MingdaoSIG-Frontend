@@ -18,8 +18,9 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
         <Image
           src={threadData.cover}
           alt="cover image"
-          objectFit="cover"
+          style={{ objectFit: "cover" }}
           priority
+          sizes="100%"
           fill
         ></Image>
       </div>

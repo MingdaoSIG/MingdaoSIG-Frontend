@@ -16,10 +16,6 @@ const ToolBar = () => {
     setUserID(_localStorage.customId);
   }, []);
 
-  // if (localStorage.getItem("User") !== null) {
-
-  // }
-
   const menu = [
     {
       name: "home",
