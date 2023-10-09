@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./MetaDataForm.module.scss";
 import Image from "next/image";
 
@@ -11,6 +13,7 @@ export default function MetaDataForm() {
             "flex-1 text-center rounded-full font-bold text-[22px] " +
             styles.btn_discard
           }
+          onClick={ClearLocalstorge}
         >
           <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
             <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
@@ -25,10 +28,10 @@ export default function MetaDataForm() {
         >
           <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
             <Image
-              src="/icons/upload.svg"
-              width={22}
-              height={22}
-              alt="upload"
+              src="/icons/cloud-upload.svg"
+              width={28}
+              height={28}
+              alt="cloud-upload"
             />
             POST
           </div>
@@ -36,4 +39,8 @@ export default function MetaDataForm() {
       </div>
     </div>
   );
+}
+
+function ClearLocalstorge() {
+  localStorage.removeItem("editorContent");
 }
