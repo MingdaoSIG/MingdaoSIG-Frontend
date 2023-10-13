@@ -2,7 +2,7 @@
 
 import style from "@/app/(Layout)/headerbar.module.scss";
 import UserLogin from "@/app/(Layout)/Header/UserLogin";
-import ModeToggleButton from "@/app/(Layout)/Header/ModeToggleButton";
+// import ModeToggleButton from "@/app/(Layout)/Header/ModeToggleButton";
 import Image from "next/image";
 
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ const HeaderBar = () => {
           </div>
         </div>
         <div className="flex relative max-h-[60px]">
-          <ModeToggleButton />
+          {/* <ModeToggleButton /> */}
           <UserLogin />
         </div>
       </div>
