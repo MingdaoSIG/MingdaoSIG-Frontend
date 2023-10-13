@@ -25,9 +25,10 @@ export default function NewPostPage() {
     }
   }, []);
 
-  function discard() {
+  function discard(e: any) {
+    e.preventDefault();
     setEditorContent(MarkdownGuide);
-    ClearLocalStorage();
+    localStorage.removeItem("editorContent");
   }
 
   return (
@@ -38,8 +39,4 @@ export default function NewPostPage() {
       <MetaDataForm discard={discard} />
     </SplitBlock>
   );
-}
-
-function ClearLocalStorage() {
-  localStorage.removeItem("editorContent");
 }
