@@ -3,9 +3,19 @@
 import styles from "./MetaDataForm.module.scss";
 import Image from "next/image";
 
-export default function Buttons({ discard }: { discard: any }) {
+export default function Buttons({
+  discard,
+  post,
+}: {
+  discard: any;
+  post: any;
+}) {
   const handleDiscard = (e: any) => {
     discard(e);
+  };
+
+  const handlePost = (e: any) => {
+    post(e);
   };
 
   return (
@@ -27,6 +37,7 @@ export default function Buttons({ discard }: { discard: any }) {
           "flex-1 text-center rounded-full font-bold text-[18px] pr-[8px] " +
           styles.btn_post
         }
+        onClick={handlePost}
       >
         <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
           <Image

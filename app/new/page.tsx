@@ -31,12 +31,21 @@ export default function NewPostPage() {
     localStorage.removeItem("editorContent");
   }
 
+  function post(e: any) {
+    e.preventDefault();
+    try {
+      console.log(e);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <SplitBlock>
       <Suspense fallback={null}>
         <Editor setFunction={setEditorContent} editorContent={editorContent} />
       </Suspense>
-      <MetaDataForm discard={discard} />
+      <MetaDataForm discard={discard} post={post} />
     </SplitBlock>
   );
 }

@@ -4,7 +4,13 @@ import styles from "./MetaDataForm.module.scss";
 import Buttons from "./Buttons";
 import { useEffect, useState } from "react";
 
-export default function MetaDataForm({ discard }: { discard: any }) {
+export default function MetaDataForm({
+  discard,
+  post,
+}: {
+  discard: any;
+  post: any;
+}) {
   const [sigs, setSigs] = useState<any[]>([]);
   useEffect(() => {
     GetSigListAPI();
@@ -52,6 +58,9 @@ export default function MetaDataForm({ discard }: { discard: any }) {
       <Buttons
         discard={(e: any) => {
           discard(e);
+        }}
+        post={(e: any) => {
+          post(e);
         }}
       />
     </form>
