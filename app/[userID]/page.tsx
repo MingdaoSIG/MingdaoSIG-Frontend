@@ -124,7 +124,7 @@ async function GetUserAPI(
   } else {
     try {
       const res = await (
-        await fetch(`${API_URL}/profile/user/${UserID.toLocaleLowerCase()}`, {
+        await fetch(`${API_URL}/user/${UserID.toLocaleLowerCase()}`, {
           method: "GET",
         })
       ).json();

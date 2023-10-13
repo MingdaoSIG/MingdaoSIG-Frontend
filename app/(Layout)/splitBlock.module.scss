@@ -11,6 +11,8 @@
   grid-auto-rows: 1fr;
 
   @media screen and (max-width: 1280px) {
+    width: 90dvw;
+
     display: grid;
     grid-template-columns: 100%;
   }
@@ -19,6 +21,7 @@
 .mainview {
   background-color: transparent;
   grid-column: span 7;
+  max-width: 90dvw;
   max-height: 65dvh;
 }
 
