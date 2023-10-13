@@ -11,7 +11,7 @@ export default function Buttons() {
           "flex-1 text-center rounded-full font-bold text-[18px] " +
           styles.btn_discard
         }
-        onClick={ClearLocalstorge}
+        onClick={ClearLocalStorage}
       >
         <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
           <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
@@ -38,6 +38,6 @@ export default function Buttons() {
   );
 }
 
-function ClearLocalstorge() {
+function ClearLocalStorage() {
   localStorage.removeItem("editorContent");
 }
