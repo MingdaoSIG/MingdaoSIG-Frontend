@@ -16,7 +16,7 @@ If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.
 如果您對於 Markdown 不熟悉，請參考這個 [教學](https://www.markdownguide.org/).
 `;
 
-const NewPostPage = () => {
+export default function NewPostPage() {
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
   useEffect(() => {
     const storedContent = localStorage.getItem("editorContent");
@@ -25,14 +25,21 @@ const NewPostPage = () => {
     }
   }, []);
 
+  function discard() {
+    setEditorContent(MarkdownGuide);
+    ClearLocalStorage();
+  }
+
   return (
     <SplitBlock>
       <Suspense fallback={null}>
         <Editor setFunction={setEditorContent} editorContent={editorContent} />
       </Suspense>
-      <MetaDataForm />
+      <MetaDataForm discard={discard} />
     </SplitBlock>
   );
-};
+}
 
-export default NewPostPage;
+function ClearLocalStorage() {
+  localStorage.removeItem("editorContent");
+}

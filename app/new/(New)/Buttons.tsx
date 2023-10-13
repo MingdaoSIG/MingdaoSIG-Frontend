@@ -3,7 +3,7 @@
 import styles from "./MetaDataForm.module.scss";
 import Image from "next/image";
 
-export default function Buttons() {
+export default function Buttons({ discard }: { discard: Function }) {
   return (
     <div className="h-[50px] mt-[10px] flex rounded-full gap-5">
       <button
@@ -11,7 +11,7 @@ export default function Buttons() {
           "flex-1 text-center rounded-full font-bold text-[18px] " +
           styles.btn_discard
         }
-        onClick={ClearLocalStorage}
+        onClick={() => discard()}
       >
         <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
           <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
@@ -36,8 +36,4 @@ export default function Buttons() {
       </button>
     </div>
   );
-}
-
-function ClearLocalStorage() {
-  localStorage.removeItem("editorContent");
 }
