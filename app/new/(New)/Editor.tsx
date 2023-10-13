@@ -2,6 +2,7 @@ import { Dispatch } from "react";
 import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
+import React from "react";
 
 const MdEditorSync = ({
   setFunction,
