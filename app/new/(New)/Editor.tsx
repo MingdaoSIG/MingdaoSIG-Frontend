@@ -1,28 +1,15 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import { Dispatch } from "react";
 import { MdEditor, ToolbarNames } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import styles from "./editor.module.scss";
 
-const MarkdownGuide = `
-# Welcome to MDSIG Post Editor
-If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.markdownguide.org/).
-
-# 歡迎使用 MDSIG 文章編輯器
-如果您對於 Markdown 不熟悉，請參考這個 [教學](https://www.markdownguide.org/).
-`;
-
-const MdEditorSync = ({ initialValue = MarkdownGuide }) => {
-  const [editorContent, setEditorContent] = useState<string>(initialValue);
-
-  useEffect(() => {
-    const storedContent = localStorage.getItem("editorContent");
-    if (storedContent) {
-      setEditorContent(storedContent);
-    }
-  }, []);
-
+const MdEditorSync = ({
+  setFunction,
+  editorContent,
+}: {
+  setFunction: Dispatch<React.SetStateAction<string>>;
+  editorContent: string;
+}) => {
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     const res = await Promise.all(
       files.map((file: any) => {
@@ -81,7 +68,7 @@ const MdEditorSync = ({ initialValue = MarkdownGuide }) => {
   ];
 
   const handleEditorChange = (newContent: string) => {
-    setEditorContent(newContent);
+    setFunction(newContent);
     localStorage.setItem("editorContent", newContent);
   };
 
