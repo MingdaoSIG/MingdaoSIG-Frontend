@@ -43,7 +43,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
     async function GetUserAPI() {
       try {
         const res = await (
-          await fetch(`${API_URL}/profile/user/${post.user}`, {
+          await fetch(`${API_URL}/user/${post.user}`, {
             method: "GET",
           })
         ).json();
