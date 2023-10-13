@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import MetaDataForm from "./(New)/MetaDataForm";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import Swal from "sweetalert2";
 
 const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
 
@@ -25,6 +26,53 @@ export default function NewPostPage() {
     }
   }, []);
 
+  async function NewPostAPI(e: any) {
+    try {
+      if (e.target[0].value === "")
+        return Swal.fire({
+          title: "Error!",
+          text: "No title!",
+          icon: "error",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#ff0000",
+        });
+
+      const title = e.target[0].value || "無標題文章";
+      const sig = e.target[1].value;
+      const hashtag = e.target[2].value || "";
+      const content = editorContent;
+      const cover = "https://lazco.dev/sig-photo-coming-soon-picture";
+      const token = localStorage.getItem("UserID");
+
+      const res = await (
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify({
+            title: title,
+            sig: sig,
+            hashtag: hashtag,
+            content: content,
+            cover: cover,
+          }),
+        })
+      ).json();
+      console.log(res);
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff0000",
+      });
+    }
+  }
+
   function discard(e: any) {
     e.preventDefault();
     setEditorContent(MarkdownGuide);
@@ -33,11 +81,7 @@ export default function NewPostPage() {
 
   function post(e: any) {
     e.preventDefault();
-    try {
-      console.log(e);
-    } catch (error) {
-      console.log(error);
-    }
+    NewPostAPI(e);
   }
 
   return (

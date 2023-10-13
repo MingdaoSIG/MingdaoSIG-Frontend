@@ -30,14 +30,14 @@ export default function MetaDataForm({
   }, []);
 
   return (
-    <form className={"h-full"}>
+    <form className={"h-full"} onSubmit={(e) => post(e)}>
       <div className={styles.meta}>
         <div className={"px-5 py-5 flex flex-col"}>
           <span className="text-lg">Title:</span>
           <input type="text" className={"rounded-full h-8 px-2"} />
           <span className="text-lg mt-3">SIGs:</span>
           <select className={"rounded-full h-8 px-2"}>
-            {sigs.map((sig) => {
+            {sigs?.map((sig) => {
               return (
                 <option value={sig._id} key={sig._id}>
                   {sig.name}
@@ -58,9 +58,6 @@ export default function MetaDataForm({
       <Buttons
         discard={(e: any) => {
           discard(e);
-        }}
-        post={(e: any) => {
-          post(e);
         }}
       />
     </form>
