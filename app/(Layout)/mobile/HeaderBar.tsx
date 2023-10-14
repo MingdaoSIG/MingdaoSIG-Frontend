@@ -1,6 +1,6 @@
 "use client";
 
-import style from "@/app/(Layout)/desktop/headerbar.module.scss";
+import style from "./headerbar.module.scss";
 import UserLogin from "./UserLogin";
 import Image from "next/image";
 

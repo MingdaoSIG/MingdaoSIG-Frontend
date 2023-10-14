@@ -1,11 +1,18 @@
 "use client";
 
-import "@/app//globals.scss";
+// Third-Party Package
 import React from "react";
-import ToolBar from "@/app/(Layout)/ToolBar";
-import HeaderBar from "@/app/(Layout)/desktop/HeaderBar";
 import { SessionProvider } from "next-auth/react";
-import useIsMobile from "./utils/useIsMobile";
+
+// Styles
+import "@/app//globals.scss";
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
+// Desktop-Side Component
+import ToolBar from "@/app/(Layout)/ToolBar";
+import HeaderBarDesktop from "@/app/(Layout)/desktop/HeaderBar";
+// Mobile-Side Component
+import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 
 export default function RootLayout({
   title,
@@ -24,12 +31,14 @@ export default function RootLayout({
         </head>
         {isMobile ? (
           <body className="">
-            <div className="wrap">123 讚啦</div>
+            <div className="wrap">
+              <HeaderBarMobile></HeaderBarMobile>
+            </div>
           </body>
         ) : (
           <body>
             <div className="wrap">
-              <HeaderBar />
+              <HeaderBarDesktop />
               {children}
               <ToolBar />
             </div>

@@ -1,13 +1,15 @@
 .nav {
   height: 60px;
   width: 100%;
-  margin: 40px auto;
+  margin: 0;
   display: grid;
   grid-template-columns: 60% 40%;
   cursor: default;
 
   position: relative;
   user-select: none;
+
+  background-color: #fff;
 }
 
 .logo {
