@@ -11,10 +11,7 @@
   grid-auto-rows: 1fr;
 
   @media screen and (max-width: 1280px) {
-    width: 90dvw;
-
-    display: grid;
-    grid-template-columns: 100%;
+    grid-template-columns: repeat(10, 1fr);
   }
 }
 
@@ -23,6 +20,10 @@
   grid-column: span 7;
   max-width: 90dvw;
   max-height: 65dvh;
+
+  @media screen and (max-width: 1280px) {
+    grid-column: span 6;
+  }
 }
 
 .second {
@@ -33,8 +34,7 @@
   height: 100%;
   grid-column: span 3;
   overflow-y: hidden;
-
   @media screen and (max-width: 1280px) {
-    display: none;
+    grid-column: span 4;
   }
 }

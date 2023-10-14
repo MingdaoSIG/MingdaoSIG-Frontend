@@ -49,8 +49,7 @@ export default function NewPostPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            "Access-Control-Allow-Origin": "*",
+            authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             title: title,
