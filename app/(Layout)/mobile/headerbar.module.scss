@@ -1,0 +1,20 @@
+.nav {
+  height: 60px;
+  width: 100%;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  cursor: default;
+
+  position: relative;
+  user-select: none;
+}
+
+.logo {
+  margin: auto 0;
+
+  width: 35dvw;
+  height: 65px;
+
+  display: flex;
+}

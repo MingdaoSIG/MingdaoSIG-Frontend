@@ -3,7 +3,7 @@
 import "@/app//globals.scss";
 import React from "react";
 import ToolBar from "@/app/(Layout)/ToolBar";
-import HeaderBar from "@/app/(Layout)/HeaderBar";
+import HeaderBar from "@/app/(Layout)/desktop/HeaderBar";
 import { SessionProvider } from "next-auth/react";
 import useIsMobile from "./utils/useIsMobile";
 
