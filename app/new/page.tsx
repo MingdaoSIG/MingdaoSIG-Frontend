@@ -6,6 +6,7 @@ import MetaDataForm from "./(New)/MetaDataForm";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Swal from "sweetalert2";
+import { useSession } from "next-auth/react";
 
 const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
 
@@ -18,6 +19,7 @@ If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.
 `;
 
 export default function NewPostPage() {
+  const { status } = useSession();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
   useEffect(() => {
     const storedContent = localStorage.getItem("editorContent");
@@ -82,13 +84,23 @@ export default function NewPostPage() {
     e.preventDefault();
     NewPostAPI(e);
   }
-
-  return (
-    <SplitBlock>
-      <Suspense fallback={null}>
-        <Editor setFunction={setEditorContent} editorContent={editorContent} />
-      </Suspense>
-      <MetaDataForm discard={discard} post={post} />
-    </SplitBlock>
-  );
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col m-auto">
+        <h1 className="text-[50px]"> Loading...</h1>
+      </div>
+    );
+  } else {
+    return (
+      <SplitBlock>
+        <Suspense fallback={null}>
+          <Editor
+            setFunction={setEditorContent}
+            editorContent={editorContent}
+          />
+        </Suspense>
+        <MetaDataForm discard={discard} post={post} />
+      </SplitBlock>
+    );
+  }
 }
