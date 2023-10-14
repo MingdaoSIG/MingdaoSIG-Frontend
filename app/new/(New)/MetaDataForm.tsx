@@ -48,13 +48,13 @@ export default function MetaDataForm({
             <input type="text" className={"rounded-full h-8 px-2"} />
             <span className="text-lg mt-3">SIGs:</span>
             <select className={"rounded-full h-8 px-2"}>
-              {sigs?.map((sig) => {
+              {/* {sigs?.map((sig) => {
                 return (
                   <option value={sig._id} key={sig._id}>
                     {sig.name}
                   </option>
                 );
-              })}
+              })} */}
             </select>
             <span className="text-lg mt-3">Hashtag:</span>
             <input
