@@ -49,7 +49,7 @@ const UserLogin = () => {
 
   if (status === "loading") {
     return (
-      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
+      <div className="w-[250px] h-[60px] rounded-full items-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
         <div
           className={
             "flex m-auto text-center hover:cursor-pointer " +
@@ -63,7 +63,7 @@ const UserLogin = () => {
     );
   } else if (!isLogin) {
     return (
-      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
+      <div className="w-[250px] h-[60px] rounded-full items-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
         <div
           className={
             "flex m-auto text-center hover:cursor-pointer " +

@@ -1,22 +1,12 @@
 .nav {
-  height: 60px;
+  height: 80px;
   width: 100%;
   margin: 0;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  cursor: default;
-
-  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   user-select: none;
 
   background-color: #fff;
-}
-
-.logo {
-  margin: auto 0;
-
-  width: 35dvw;
-  height: 65px;
-
-  display: flex;
 }
