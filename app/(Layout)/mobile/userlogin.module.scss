@@ -24,9 +24,25 @@
   cursor: pointer;
 }
 
+.loginUserPanelWrap {
+  width: 100px;
+  height: 3rem;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #6fa8ff, #003f47);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .loginUserPanel {
-  height: 56px;
-  border-radius: 30px;
-  background: white;
-  width: 246px; 
+  background-color: #ffffff;
+  height: calc(100% - 3px);
+  width: calc(100% - 3px);
+  border-radius: 9999px;
+
+  position: relative;
+  left: 0.5px;
+
+  display: grid;
+  place-content: center;
 }

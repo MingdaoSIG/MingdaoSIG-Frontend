@@ -77,13 +77,8 @@ const UserLogin = () => {
   }
 
   return (
-    <div className="w-[250px] h-[60px] rounded-full bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex items-center select-none ">
-      <div
-        className={
-          "flex m-auto text-center hover:cursor-pointer " + style.loginUserPanel
-        }
-        onClick={() => signIn("google")}
-      >
+    <div className={style.loginUserPanelWrap}>
+      <div className={style.loginUserPanel} onClick={() => signIn("google")}>
         {!isLogin ? (
           <p className="m-auto text-[#004C64] font-medium">Login</p>
         ) : (
