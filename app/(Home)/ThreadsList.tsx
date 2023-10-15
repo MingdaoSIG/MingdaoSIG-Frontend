@@ -1,7 +1,7 @@
 "use client";
 
 import { IThread } from "@/interface/Thread.interface";
-import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
+import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -13,6 +13,7 @@ const ThreadsList = () => {
   useEffect(() => {
     GetPostListAPI(setPosts, setStatus);
   }, []);
+
   if (status === "loading") {
     return (
       <div className="flex text-[50px] text-center h-full w-full select-none">

@@ -5,7 +5,7 @@ import React from "react";
 import { SessionProvider } from "next-auth/react";
 
 // Styles
-import "@/app//globals.scss";
+import "@/app/styles/globals.scss";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 // Desktop-Side Component

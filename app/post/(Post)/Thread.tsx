@@ -8,10 +8,10 @@ import "md-editor-rt/lib/preview.css";
 const Thread = ({ post }: { post: IThread }) => {
   return (
     <>
-      <div className={style.Thread_1}>
+      <div className={style.threadTitle}>
         <h1 className="my-auto">{post?.title}</h1>
       </div>
-      <MdPreview modelValue={post?.content} className={style.Thread} />
+      <MdPreview modelValue={post?.content} className={style.threadContent} />
     </>
   );
 };
