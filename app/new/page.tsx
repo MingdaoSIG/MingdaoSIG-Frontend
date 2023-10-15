@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
 
@@ -20,6 +21,7 @@ If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.
 
 export default function NewPostPage() {
   const { status } = useSession();
+  const route = useRouter();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
   useEffect(() => {
     const storedContent = localStorage.getItem("editorContent");
@@ -63,6 +65,18 @@ export default function NewPostPage() {
         })
       ).json();
       console.log(res);
+      if (res.status === 2000) {
+        return Swal.fire({
+          title: "Success!",
+          text: "Post created!",
+          icon: "success",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#0090BD",
+        }).then(() => {
+          localStorage.removeItem("editorContent");
+          route.push(`/post/${res.data._id}`);
+        });
+      }
     } catch (error) {
       Swal.fire({
         title: "Error!",

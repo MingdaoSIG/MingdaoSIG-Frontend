@@ -1,6 +1,4 @@
-"use client";
-
-import style from "@/app/(Layout)/Header/userlogin.module.scss";
+import style from "./userlogin.module.scss";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -49,35 +47,7 @@ const UserLogin = () => {
     }
   }, [session, status]);
 
-  if (status === "loading") {
-    return (
-      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
-        <div
-          className={
-            "flex m-auto text-center hover:cursor-pointer " +
-            style.loginUserPanel
-          }
-          onClick={() => signIn("google")}
-        >
-          <p className="m-auto text-[#004C64] font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  } else if (!isLogin) {
-    return (
-      <div className="w-[250px] h-[60px] rounded-full itmes-center bg-[linear-gradient(to_right,_#6FA8FF,_#003F47)] flex absolute right-[5dvw] select-none ">
-        <div
-          className={
-            "flex m-auto text-center hover:cursor-pointer " +
-            style.loginUserPanel
-          }
-          onClick={() => signIn("google")}
-        >
-          <p className="m-auto text-[#004C64] font-medium">Login</p>
-        </div>
-      </div>
-    );
-  } else {
+  if (status !== "loading" && isLogin) {
     const user = JSON.parse(localStorage.User || "{}");
     return (
       <div
@@ -105,6 +75,18 @@ const UserLogin = () => {
       </div>
     );
   }
+
+  return (
+    <div className={style.loginUserPanelWrap}>
+      <div className={style.loginUserPanel} onClick={() => signIn("google")}>
+        {!isLogin ? (
+          <p className="m-auto text-[#004C64] font-medium">Login</p>
+        ) : (
+          <p className="m-auto text-[#004C64] font-medium">Loading...</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default UserLogin;
