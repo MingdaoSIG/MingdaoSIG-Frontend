@@ -1,0 +1,17 @@
+.toolbar {
+  height: 5rem;
+  width: 25rem;
+  max-width: 95dvw;
+  margin: 0 auto;
+
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 2.5rem;
+}
+
+.toolbarInner {
+  height: 100%;
+  width: calc(100% - 2rem);
+  margin: 0 auto;
+  display: flex;
+}
