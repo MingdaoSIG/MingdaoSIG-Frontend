@@ -78,8 +78,8 @@ const UserLogin = () => {
           !isLogin
             ? () => signIn("google")
             : () => {
-                return;
-              }
+              return;
+            }
         }
       >
         {!isLogin ? (
