@@ -11,12 +11,7 @@ const Thread = ({ post }: { post: IThread }) => {
       <div className={style.Thread_1}>
         <h1 className="my-auto">{post?.title}</h1>
       </div>
-
-      <MdPreview
-        editorId={"preview-only"}
-        modelValue={post?.content}
-        className={style.Thread}
-      />
+      <MdPreview modelValue={post?.content} className={style.Thread} />
     </>
   );
 };
