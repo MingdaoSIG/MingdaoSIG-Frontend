@@ -5,7 +5,7 @@ import Information from "./(Home)/Information";
 const Home = () => {
   return (
     <SplitBlock>
-      <div>
+      <div className="h-full w-full ">
         <ThreadsList />
       </div>
       <div className="h-full">

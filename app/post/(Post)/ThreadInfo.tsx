@@ -59,7 +59,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   return (
     <div className={style.info + " box-border rounded-[30px]"}>
       <div className="flex justify-between items-center flex-initial">
-        <div className={style.author}>
+        <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
             width={50}
@@ -104,11 +104,12 @@ export default function ThreadInfo({ post }: { post: IThread }) {
       </div>
       <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex">
         <input
-          className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1"
+          className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1 disabled:cursor-not-allowed"
           placeholder="Reply..."
           onChange={(e) => {
             e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
           }}
+          disabled
         />
         <div className="h-full w-[40px] flex-none">
           <Image

@@ -12,9 +12,15 @@ const ThreadsList = () => {
   useEffect(() => {
     GetPostListAPI(setPosts);
   }, []);
-  return (
-    <_ThreadsList posts={posts} height="65dvh" />
-  );
+  if (posts.length === 0) {
+    return (
+      <div className="flex text-[50px] text-center h-full w-full select-none">
+        <p className="flex-1 h-full">No post yet.</p>
+      </div>
+    );
+  }
+
+  return <_ThreadsList posts={posts} height="65dvh" />;
 };
 
 export default ThreadsList;
