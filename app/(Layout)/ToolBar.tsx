@@ -48,7 +48,7 @@ const ToolBar = () => {
   ];
 
   return (
-    <div className="h-[5rem] w-[25rem] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border">
+    <div className="h-[5rem] w-[25rem] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border select-none">
       <div className="h-full w-[22em] mx-auto flex">
         {menu.map((item, index) => {
           if (item.path === "/") {
