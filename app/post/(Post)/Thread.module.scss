@@ -1,5 +1,7 @@
-.Thread {
-  background: rgba(255, 255, 255, 0.47);
+@import "@/app/styles/variables.scss";
+
+.threadContent {
+  background: $panel-background-color;
   border-radius: 30px;
 
   margin-top: 20px;
@@ -14,8 +16,8 @@
   align-items: stretch;
 }
 
-.Thread_title {
-  background: rgba(255, 255, 255, 0.47);
+.threadTitle {
+  background: $panel-background-color;
   border-radius: 30px;
   height: 60px;
 
@@ -40,7 +42,7 @@
 }
 
 .info {
-  background: rgba(255, 255, 255, 0.47);
+  background: $panel-background-color;
   height: 100%;
   padding: 30px;
   display: flex;

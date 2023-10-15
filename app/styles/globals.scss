@@ -2,10 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import "./variables.scss";
+
 $bg-color-from: #ffe69b;
 $bg-color-to: #82d7ff;
-$scrollbar-thumb-color: #004c64;
-$scrollbar-track-color: rgba(0, 76, 100, 0.29);
 
 body {
   max-width: 100dvw;

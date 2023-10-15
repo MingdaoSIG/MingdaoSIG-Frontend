@@ -1,3 +1,5 @@
+@import "@/app/styles/variables.scss";
+
 .threads {
   --border-radius: 30px;
   --cover-border-radius: var(--border-radius);
@@ -14,7 +16,7 @@
 }
 
 .thread {
-  background: rgba(255, 255, 255, 0.47);
+  background: $panel-background-color;
   border-radius: var(--border-radius);
   max-height: var(--thread-height);
   display: flex;
