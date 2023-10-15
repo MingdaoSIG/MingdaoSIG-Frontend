@@ -32,11 +32,8 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    overflow-x: auto;
+    overflow-x: hidden;
     white-space: nowrap;
-  }
-  h1::-webkit-scrollbar {
-    width: 0px;
   }
 }
 
