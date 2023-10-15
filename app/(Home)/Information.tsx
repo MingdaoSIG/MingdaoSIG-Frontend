@@ -24,7 +24,11 @@ const SIG = () => {
 const Information = () => {
   return (
     <div className={style.information + " rounded-[30px]"}>
-      <div className="w-full h-full m-auto flex flex-col">No data yet.</div>
+      <div className="w-full h-full m-auto flex flex-col">
+        <p className="m-auto h-full w-full flex-1 text-[30px] text-center">
+          No data yet.
+        </p>
+      </div>
 
       {/* <div className={style.hashtags}>
         <h2 className=" text-black text-base font-extralight tracking-widest">
