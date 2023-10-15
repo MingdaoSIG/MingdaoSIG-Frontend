@@ -36,9 +36,11 @@ const Reply = () => {
 export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeText, setTypeText] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [sig, setSig] = useState<any>(null);
 
   useEffect(() => {
     GetUserAPI();
+    GetSigAPI();
 
     async function GetUserAPI() {
       try {
@@ -54,7 +56,22 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post.user]);
+
+    async function GetSigAPI() {
+      try {
+        const res = await (
+          await fetch(`${API_URL}/sig/${post.sig}`, {
+            method: "GET",
+          })
+        ).json();
+        setSig(res.data);
+
+        return;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [post.user, post.sig]);
 
   return (
     <div className={style.info + " box-border rounded-[30px]"}>
@@ -68,7 +85,9 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             className="rounded-full"
           ></Image>
           <div className="flex flex-col items-start justify-center">
-            <div className={style.name}>{user?.name}</div>
+            <div className={style.name}>
+              {user?.name} • {sig?.name}
+            </div>
             <div className={style.time}>
               {new Date(post?.createdAt).toLocaleString()}
             </div>
