@@ -13,12 +13,12 @@ const HeaderBar = () => {
     <>
       <div className={style.nav}>
         <Image
-          src="/images/logo.svg"
+          src="/images/logo_mobile.png"
           alt="Logo"
-          width={214}
-          height={46}
+          width={60}
+          height={60}
           priority
-          className="my-auto hover:cursor-pointer"
+          className="h-16 hover:cursor-pointer"
           onClick={() => router.push("/")}
         />
         <UserLogin />

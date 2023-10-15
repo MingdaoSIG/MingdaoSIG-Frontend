@@ -1,12 +1,14 @@
 .nav {
-  height: 80px;
+  height: 5rem;
   width: 100%;
   margin: 0;
+  padding: 10px;
+
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  user-select: none;
 
+  user-select: none;
   background-color: #fff;
 }
