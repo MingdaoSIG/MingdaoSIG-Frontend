@@ -34,7 +34,7 @@ export default function MetaDataForm({
   if (status === "unauthenticated") {
     return (
       <div className="h-full bg-[rgba(255,_255,_255,_0.47)] rounded-[30px] w-full flex flex-col p-2">
-        <h1 className="text-[30px] text-center m-auto">You have to login.</h1>
+        <h1 className="text-[30px] text-center m-auto">Please login to post.</h1>
       </div>
     );
   } else if (status === "loading") {
@@ -60,7 +60,7 @@ export default function MetaDataForm({
             <input
               type="text"
               className={
-                "rounded-full h-8 px-2 disabled:opacity-40 disabled:bg-white"
+                "rounded-full h-8 px-2 disabled:opacity-40 disabled:bg-white hover:cursor-not-allowed"
               }
               disabled
             />

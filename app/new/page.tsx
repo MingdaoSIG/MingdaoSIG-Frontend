@@ -35,7 +35,7 @@ export default function NewPostPage() {
       if (e.target[0].value === "")
         return Swal.fire({
           title: "Error!",
-          text: "No title!",
+          text: "Please enter title!",
           icon: "error",
           confirmButtonText: "OK",
           confirmButtonColor: "#ff0000",
@@ -70,12 +70,22 @@ export default function NewPostPage() {
           title: "Success!",
           text: "Post created!",
           icon: "success",
-          confirmButtonText: "OK",
+          confirmButtonText: "View the post",
           confirmButtonColor: "#0090BD",
         }).then(() => {
           localStorage.removeItem("editorContent");
           route.push(`/post/${res.data._id}`);
         });
+      } else if (res.status === 4001) {
+        Swal.fire({
+          title: "Error!",
+          text: "You have no permission to post in this sig.",
+          icon: "error",
+          confirmButtonText: "Choose another sig",
+          confirmButtonColor: "#ff0000",
+        });
+      } else {
+        throw new Error("Unexpected error");
       }
     } catch (error) {
       Swal.fire({
