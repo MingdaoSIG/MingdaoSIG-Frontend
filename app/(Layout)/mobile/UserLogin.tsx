@@ -78,7 +78,16 @@ const UserLogin = () => {
 
   return (
     <div className={style.loginUserPanelWrap}>
-      <div className={style.loginUserPanel} onClick={() => signIn("google")}>
+      <div
+        className={style.loginUserPanel}
+        onClick={
+          !isLogin
+            ? () => signIn("google")
+            : () => {
+                return;
+              }
+        }
+      >
         {!isLogin ? (
           <p className="m-auto text-[#004C64] font-medium">Login</p>
         ) : (
