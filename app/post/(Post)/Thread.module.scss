@@ -14,7 +14,7 @@
   align-items: stretch;
 }
 
-.Thread_1 {
+.Thread_title {
   background: rgba(255, 255, 255, 0.47);
   border-radius: 30px;
   height: 60px;
@@ -27,13 +27,15 @@
   align-items: stretch;
 
   h1 {
+    width: 100%;
     color: #003f47;
     font-size: 35px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    overflow-x: hidden;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
