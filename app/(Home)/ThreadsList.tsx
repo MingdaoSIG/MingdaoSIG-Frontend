@@ -1,7 +1,7 @@
 "use client";
 
 import { IThread } from "@/interface/Thread.interface";
-import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
+import { ThreadsList as _ThreadsList } from "@/components/ThreadsL/ThreadsList";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

@@ -6,7 +6,7 @@ import { useRouter, notFound } from "next/navigation";
 
 import SwitchButton from "./(User)/SwitchButton";
 import SplitBlock from "../(Layout)/splitBlock";
-import { ThreadsList as _ThreadsList } from "@/components/ThreadsList/ThreadsList";
+import { ThreadsList as _ThreadsList } from "@/components/ThreadsL/ThreadsList";
 import { IThread } from "@/interface/Thread.interface";
 import { GetUserPostListAPI } from "./(User)/API";
 
