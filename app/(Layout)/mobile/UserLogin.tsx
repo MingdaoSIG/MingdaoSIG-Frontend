@@ -51,7 +51,7 @@ const UserLogin = () => {
     const user = JSON.parse(localStorage.User || "{}");
     return (
       <div
-        className={style.userPanel + " select-none"}
+        className={style.userPanel}
         onClick={() => {
           signOut();
           localStorage.clear();
@@ -66,19 +66,22 @@ const UserLogin = () => {
             className="ml-1"
           ></Image>
         </div>
-        <div className={style.user}>
-          <p className="name text-md-dark-green text-[20px] leading-6 font-bold">
-            {user.name}
-          </p>
-          <p className="text-[#006180] text-[12px] leading-3	">{user.email}</p>
-        </div>
       </div>
     );
   }
 
   return (
     <div className={style.loginUserPanelWrap}>
-      <div className={style.loginUserPanel} onClick={() => signIn("google")}>
+      <div
+        className={style.loginUserPanel}
+        onClick={
+          !isLogin
+            ? () => signIn("google")
+            : () => {
+              return;
+            }
+        }
+      >
         {!isLogin ? (
           <p className="m-auto text-[#004C64] font-medium">Login</p>
         ) : (

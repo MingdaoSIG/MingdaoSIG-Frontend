@@ -24,7 +24,13 @@ const SIG = () => {
 const Information = () => {
   return (
     <div className={style.information + " rounded-[30px]"}>
-      <div className={style.hashtags}>
+      <div className="w-full h-full m-auto flex flex-col">
+        <p className="m-auto h-full w-full flex-1 text-[30px] text-center">
+          No data yet.
+        </p>
+      </div>
+
+      {/* <div className={style.hashtags}>
         <h2 className=" text-black text-base font-extralight tracking-widest">
           Hashtags
         </h2>
@@ -43,7 +49,7 @@ const Information = () => {
           <SIG></SIG>
           <SIG></SIG>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

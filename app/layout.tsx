@@ -9,9 +9,10 @@ import "@/app//globals.scss";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 // Desktop-Side Component
-import ToolBar from "@/app/(Layout)/ToolBar";
+import ToolBarDesktop from "@/app/(Layout)/desktop/ToolBar";
 import HeaderBarDesktop from "@/app/(Layout)/desktop/HeaderBar";
 // Mobile-Side Component
+import ToolBarMobile from "@/app/(Layout)/mobile/ToolBar";
 import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 
 export default function RootLayout({
@@ -31,8 +32,12 @@ export default function RootLayout({
         </head>
         {isMobile ? (
           <body className="">
-            <div className="wrap">
+            <div className="wrapMobile">
               <HeaderBarMobile></HeaderBarMobile>
+              <div></div>
+              <div className="w-full h-full flex items-center justify-center">
+                <ToolBarMobile></ToolBarMobile>
+              </div>
             </div>
           </body>
         ) : (
@@ -40,7 +45,7 @@ export default function RootLayout({
             <div className="wrap">
               <HeaderBarDesktop />
               {children}
-              <ToolBar />
+              <ToolBarDesktop />
             </div>
           </body>
         )}

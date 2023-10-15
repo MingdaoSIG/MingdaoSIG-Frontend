@@ -14,10 +14,10 @@ export default function HashtagAll() {
         alt={"404"}
         className="m-auto"
       />
-      <h1 className="text-[100px] mx-auto leading-[120px]">1969</h1>
-      <p className="text-[50px] mx-auto">Page Under Construction.</p>
+      <h1 className="text-2xl mx-auto leading-2xl">1969</h1>
+      <p className="text-lg mx-auto">Page Under Construction.</p>
       <button
-        className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-10 text-[20px]"
+        className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-48 h-14 block m-auto text-white mt-10 text-[20px]"
         onClick={() => {
           route.push("/");
         }}
