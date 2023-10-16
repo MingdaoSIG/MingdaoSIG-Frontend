@@ -7,22 +7,27 @@ import React from "react";
 const MdEditorSync = ({
   setFunction,
   editorContent,
+  token,
 }: {
   setFunction: Dispatch<React.SetStateAction<string>>;
   editorContent: string;
+  token: any;
 }) => {
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
+    console.log(files);
     const res = await Promise.all(
       files.map((file: any) => {
         return new Promise((rev, rej) => {
+          console.log(file);
           try {
-            fetch("https://sig.zeabur.app/image", {
+            fetch("https://sig-api-dev.lazco.dev/image", {
               method: "POST",
               headers: {
                 "Content-Type": "image/webp",
-                Authorization: "",
+                Authorization: token,
               },
               body: file,
+              redirect: "follow",
             });
           } catch (error) {
             console.log("errrrrrrrrrr: ", error);

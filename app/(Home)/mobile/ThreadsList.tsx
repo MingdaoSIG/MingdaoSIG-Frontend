@@ -1,8 +1,9 @@
 "use client";
 
 import { IThread } from "@/interface/Thread.interface";
-import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
+import { ThreadsList as _ThreadsList } from "@/components/Threads/mobile/ThreadsList";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import styles from "./Threads.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -27,7 +28,11 @@ const ThreadsList = () => {
       </div>
     );
   } else {
-    return <_ThreadsList posts={posts} height="65dvh" />;
+    return (
+      <div className={styles.threadWrap}>
+        <_ThreadsList posts={posts} height="100%" />
+      </div>
+    );
   }
 };
 

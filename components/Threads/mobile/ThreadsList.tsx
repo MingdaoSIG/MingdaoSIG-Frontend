@@ -7,28 +7,14 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
   return (
     <div
-      className={style.thread + "  cursor-pointer select-none "}
+      className={style.thread}
       onClick={() => router.push("/post/" + threadData._id)}
-      style={{
-        backgroundColor:
-          (threadData._id === "652cabdb45c0be8f82c54d9a" && "white") || "",
-      }}
     >
       <div className={style.preview}>
-        <h1 className={style.previewTitle}>
-          {threadData._id === "652cabdb45c0be8f82c54d9a" && "🔔 公告 - "}
-          {threadData.title}
-          {threadData._id === "652cabdb45c0be8f82c54d9a" && " • 已置頂"}
-        </h1>
+        <h1 className={style.previewTitle}>{threadData.title}</h1>
         <p className={style.previewContent}>{threadData.content}</p>
       </div>
-      <div
-        className={style.cover}
-        style={{
-          display:
-            (threadData._id === "652cabdb45c0be8f82c54d9a" && "none") || "",
-        }}
-      >
+      <div className={style.cover}>
         <Image
           src={threadData.cover}
           alt="cover image"

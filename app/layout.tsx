@@ -34,7 +34,7 @@ export default function RootLayout({
           <body className="">
             <div className="wrapMobile">
               <HeaderBarMobile></HeaderBarMobile>
-              <div></div>
+              {children}
               <div className="w-full h-full flex items-center justify-center">
                 <ToolBarMobile></ToolBarMobile>
               </div>

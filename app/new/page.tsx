@@ -2,14 +2,14 @@
 
 import SplitBlock from "../(Layout)/splitBlock";
 import React, { useState, useEffect } from "react";
-import MetaDataForm from "./(New)/MetaDataForm";
+import MetaDataForm from "./(New)/desktop/MetaDataForm";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
+const Editor = dynamic(() => import("./(New)/desktop/Editor"), { ssr: false });
 
 const MarkdownGuide = `
 # Welcome to MDSIG Post Editor
@@ -23,13 +23,14 @@ export default function NewPostPage() {
   const { status } = useSession();
   const route = useRouter();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
+  const [token, setToken] = useState<string>("");
   useEffect(() => {
-    const storedContent = localStorage.getItem("editorContent");
+    setToken(localStorage.getItem("token") || "");
+    const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setEditorContent(storedContent);
     }
   }, []);
-
   async function NewPostAPI(e: any) {
     try {
       if (e.target[0].value === "")
@@ -46,7 +47,6 @@ export default function NewPostPage() {
       const hashtag = e.target[2].value || "";
       const content = editorContent;
       const cover = "https://lazco.dev/sig-photo-coming-soon-picture";
-      const token = localStorage.getItem("UserID");
 
       const res = await (
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
@@ -121,6 +121,7 @@ export default function NewPostPage() {
           <Editor
             setFunction={setEditorContent}
             editorContent={editorContent}
+            token={token}
           />
         </Suspense>
         <MetaDataForm discard={discard} post={post} />
