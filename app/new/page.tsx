@@ -2,14 +2,14 @@
 
 import SplitBlock from "../(Layout)/splitBlock";
 import React, { useState, useEffect } from "react";
-import MetaDataForm from "./(New)/MetaDataForm";
+import MetaDataForm from "./(New)/desktop/MetaDataForm";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const Editor = dynamic(() => import("./(New)/Editor"), { ssr: false });
+const Editor = dynamic(() => import("./(New)/desktop/Editor"), { ssr: false });
 
 const MarkdownGuide = `
 # Welcome to MDSIG Post Editor
