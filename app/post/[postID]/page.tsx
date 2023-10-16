@@ -33,7 +33,6 @@ const Post = ({ params }: { params: { postID: string } }) => {
           setStatus("success");
         }
 
-        
         return;
       } catch (error) {
         console.log(error);
