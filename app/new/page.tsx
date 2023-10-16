@@ -23,13 +23,14 @@ export default function NewPostPage() {
   const { status } = useSession();
   const route = useRouter();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
+  const [token, setToken] = useState<string>("");
   useEffect(() => {
-    const storedContent = localStorage.getItem("editorContent");
+    setToken(localStorage.getItem("token") || "");
+    const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setEditorContent(storedContent);
     }
   }, []);
-  const token = localStorage.getItem("UserID");
   async function NewPostAPI(e: any) {
     try {
       if (e.target[0].value === "")
