@@ -34,7 +34,9 @@ export default function MetaDataForm({
   if (status === "unauthenticated") {
     return (
       <div className="h-full bg-[rgba(255,_255,_255,_0.47)] rounded-[30px] w-full flex flex-col p-2">
-        <h1 className="text-[30px] text-center m-auto">Please login to post.</h1>
+        <h1 className="text-[30px] text-center m-auto">
+          Please login to post.
+        </h1>
       </div>
     );
   } else if (status === "loading") {
