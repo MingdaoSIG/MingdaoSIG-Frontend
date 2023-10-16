@@ -15,15 +15,13 @@ export default function Buttons({ discard }: { discard: any }) {
         DISCARD
       </button>
       <button className={styles.buttonPost} type="submit">
-        <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
-          <Image
-            src="/icons/cloud-upload.svg"
-            width={28}
-            height={28}
-            alt="cloud-upload"
-          />
-          POST
-        </div>
+        <Image
+          src="/icons/cloud-upload.svg"
+          width={28}
+          height={28}
+          alt="cloud-upload"
+        />
+        POST
       </button>
     </div>
   );
