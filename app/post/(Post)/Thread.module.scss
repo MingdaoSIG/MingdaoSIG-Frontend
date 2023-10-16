@@ -86,3 +86,16 @@
   flex-direction: column;
   align-items: flex-start;
 }
+
+.customThread {
+  height: calc(65dvh - 80px) !important;
+  width: 95dvw !important;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.customTitle {
+  height: 60px;
+  width: 95dvw;
+  margin: auto;
+}

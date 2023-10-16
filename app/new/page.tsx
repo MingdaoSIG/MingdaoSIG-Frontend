@@ -28,13 +28,14 @@ export default function NewPostPage() {
   const route = useRouter();
   const isMobile = useIsMobile();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
+  const [token, setToken] = useState<string>("");
   useEffect(() => {
-    const storedContent = localStorage.getItem("editorContent");
+    setToken(localStorage.getItem("token") || "");
+    const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setEditorContent(storedContent);
     }
   }, []);
-
   async function NewPostAPI(e: any) {
     try {
       if (e.target[0].value === "")
@@ -51,7 +52,6 @@ export default function NewPostPage() {
       const hashtag = e.target[2].value || "";
       const content = editorContent;
       const cover = "https://lazco.dev/sig-photo-coming-soon-picture";
-      const token = localStorage.getItem("UserID");
 
       const res = await (
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
@@ -133,6 +133,7 @@ export default function NewPostPage() {
           <Editor
             setFunction={setEditorContent}
             editorContent={editorContent}
+            token={token}
           />
         </Suspense>
         <MetaDataForm discard={discard} post={post} />
