@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./MetaDataForm.module.scss";
+import styles from "./button.module.scss";
 import Image from "next/image";
 
 export default function Buttons({ discard }: { discard: any }) {
@@ -9,26 +9,12 @@ export default function Buttons({ discard }: { discard: any }) {
   };
 
   return (
-    <div className="h-[50px] mt-[10px] flex rounded-full gap-5">
-      <button
-        className={
-          "flex-1 text-center rounded-full font-bold text-[18px] " +
-          styles.btn_discard
-        }
-        onClick={handleDiscard}
-      >
-        <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
-          <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
-          DISCARD
-        </div>
+    <div className={styles.buttons}>
+      <button className={styles.buttonDiscard} onClick={handleDiscard}>
+        <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
+        DISCARD
       </button>
-      <button
-        className={
-          "flex-1 text-center rounded-full font-bold text-[18px] pr-[8px] " +
-          styles.btn_post
-        }
-        type="submit"
-      >
+      <button className={styles.buttonPost} type="submit">
         <div className="flex flex-direction-column justify-content-space-between justify-center gap-1">
           <Image
             src="/icons/cloud-upload.svg"
