@@ -33,6 +33,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
           setStatus("success");
         }
 
+        
         return;
       } catch (error) {
         console.log(error);
@@ -56,6 +57,8 @@ const Post = ({ params }: { params: { postID: string } }) => {
         </button>
       </div>
     );
+  } else if (post?._id === "652cabdb45c0be8f82c54d9a") {
+    return <Thread post={post!} />;
   } else {
     return (
       <>

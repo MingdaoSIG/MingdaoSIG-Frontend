@@ -79,7 +79,7 @@ const UserLogin = () => {
     const user = JSON.parse(localStorage.User || "{}");
     return (
       <div
-        className={style.userPanel + " select-none"}
+        className={style.userPanel + " select-none cursor-pointer"}
         onClick={() => {
           signOut();
           localStorage.clear();
