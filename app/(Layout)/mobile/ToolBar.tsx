@@ -58,7 +58,7 @@ const ToolBar = () => {
               <button
                 key={index}
                 className={
-                  "flex-1 my-auto rounde rounded-full bg-slate-400 py-2 transition-opacity duration-500 cursor-pointer" +
+                  "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 cursor-pointer" +
                   (pathname === "/" ? " bg-opacity-30" : " bg-opacity-0")
                 }
                 onClick={() => {
