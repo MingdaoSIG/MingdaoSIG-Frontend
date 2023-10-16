@@ -1,13 +1,17 @@
 "use client";
 
 import SplitBlock from "../(Layout)/splitBlock";
-import React, { useState, useEffect } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import MetaDataForm from "./(New)/desktop/MetaDataForm";
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+// Mobile Component
+import NewPostMobile from "./(New)/mobile/NewPost";
+
+import useIsMobile from "@/utils/useIsMobile";
 
 const Editor = dynamic(() => import("./(New)/desktop/Editor"), { ssr: false });
 
@@ -22,6 +26,7 @@ If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.
 export default function NewPostPage() {
   const { status } = useSession();
   const route = useRouter();
+  const isMobile = useIsMobile();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
   useEffect(() => {
     const storedContent = localStorage.getItem("editorContent");
@@ -115,7 +120,14 @@ export default function NewPostPage() {
       </div>
     );
   } else {
-    return (
+    return isMobile ? (
+      <NewPostMobile
+        setEditorContent={setEditorContent}
+        editorContent={editorContent}
+        discard={discard}
+        post={post}
+      ></NewPostMobile>
+    ) : (
       <SplitBlock>
         <Suspense fallback={null}>
           <Editor

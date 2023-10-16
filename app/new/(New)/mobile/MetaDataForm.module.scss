@@ -1,0 +1,17 @@
+@import "@/app/styles/variables.scss";
+
+.meta {
+  background-color: $panel-background-color;
+  height: calc(100% - 60px);
+  border-radius: 30px;
+}
+
+.btn_discard {
+  background-color: rgb(220, 50, 0);
+  color: #fff;
+}
+
+.btn_post {
+  background-color: #fff;
+  color: rgb(95, 205, 245);
+}
