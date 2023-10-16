@@ -1,6 +1,6 @@
 "use client";
 
-import style from "./headerbar.module.scss";
+import styles from "./headerbar.module.scss";
 import UserLogin from "./UserLogin";
 import Image from "next/image";
 
@@ -11,7 +11,7 @@ const HeaderBar = () => {
 
   return (
     <>
-      <div className={style.nav}>
+      <div className={styles.nav}>
         <Image
           src="/images/logo_mobile.png"
           alt="Logo"
