@@ -7,6 +7,7 @@ import { MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const Thread = ({ post }: { post: IThread }) => {
   const [like, setLike] = useState<any>(false);
@@ -20,6 +21,14 @@ const Thread = ({ post }: { post: IThread }) => {
       } else {
         PostLike();
       }
+    } else {
+      Swal.fire({
+        title: "請先登入",
+        text: "你必須登入才可以使用按讚功能",
+        icon: "warning",
+        confirmButtonText: "確定",
+        confirmButtonColor: "#82D7FF",
+      });
     }
   }
   async function PostLike() {
