@@ -96,7 +96,7 @@ const Information = ({ post }: { post: any }) => {
 
           <div className={style.sig_top + " mt-10"}>
             <h2 className=" text-[rgb(60,_105,_180)] text-base text-[1.5rem] text-left mt-2">
-              SIGs - {sigs?.length()}
+              SIGs - {sigs?.length}
             </h2>
             <div className="mt-5 flex flex-row flex-wrap gap-4 overflow-auto mx-auto h-[calc(100%-50px)]">
               {sigs.map((item: any) => {
