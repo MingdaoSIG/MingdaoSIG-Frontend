@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 import MarkdownToPlainText from "@/modules/MarkdownToPlainText";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
-const pinned = [
-  "652cabdb45c0be8f82c54d9a",
-  "652e4591d04b679afdff697e"
-];
+const pinned = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
@@ -17,7 +14,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       className={style.thread + "  cursor-pointer select-none "}
       onClick={() => router.push("/post/" + threadData._id)}
       style={{
-        backgroundColor: pinned.includes(threadData._id) ? "white" : ""
+        backgroundColor: pinned.includes(threadData._id) ? "white" : "",
       }}
     >
       <div className={style.preview}>
@@ -33,7 +30,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       <div
         className={style.cover}
         style={{
-          display: pinned.includes(threadData._id) ? "none" : ""
+          display: pinned.includes(threadData._id) ? "none" : "",
         }}
       >
         <Image
