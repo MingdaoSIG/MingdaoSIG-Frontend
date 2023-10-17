@@ -60,13 +60,22 @@ export const ThreadsList = ({
   height?: string;
 }) => {
   return (
-    <div className={style.threads} style={{ height: height }}>
+    <div
+      className={style.threads + " h-full w-full"}
+      style={{ height: height }}
+    >
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
           return <Thread threadData={item} key={index} />;
         })
       ) : (
-        <div className={style.loading}>Loading...</div>
+        <div
+          className={
+            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
+          }
+        >
+          No Post Yet.
+        </div>
       )}
     </div>
   );
