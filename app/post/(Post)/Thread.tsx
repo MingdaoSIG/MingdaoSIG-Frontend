@@ -65,7 +65,7 @@ const Thread = ({ post }: { post: IThread }) => {
     }
   }, [post.like]);
 
-  if (post._id === "652cabdb45c0be8f82c54d9a") {
+  if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
         <div>
