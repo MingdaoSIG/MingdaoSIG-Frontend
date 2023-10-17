@@ -29,6 +29,7 @@ export default function NewPostPage() {
   const isMobile = useIsMobile();
   const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
   const [token, setToken] = useState<string>("");
+
   useEffect(() => {
     setToken(localStorage.getItem("token") || "");
     const storedContent = localStorage?.getItem("editorContent");
@@ -36,6 +37,7 @@ export default function NewPostPage() {
       setEditorContent(storedContent);
     }
   }, []);
+
   async function NewPostAPI(e: any) {
     try {
       if (e.target[0].value === "")
@@ -113,6 +115,7 @@ export default function NewPostPage() {
     e.preventDefault();
     NewPostAPI(e);
   }
+
   if (status === "loading") {
     return (
       <div className="flex flex-col m-auto">
