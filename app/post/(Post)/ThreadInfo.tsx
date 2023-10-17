@@ -75,7 +75,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border rounded-[30px]"}>
-      <div className="flex justify-between items-center flex-initial relative">
+      <div className="flex justify-between items-center flex-initial relative h-[64px]">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
@@ -88,12 +88,12 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             <div className={style.name + " flex"}>{user?.name}</div>
             <div className="opacity-50">{sig?.name}</div>
             <div className={style.time}>
-              {new Date(post?.createdAt).toLocaleString().split(" ")[0]}
+              {new Date(post?.createdAt).toLocaleString("zh-TW").split(" ")[0]}
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-auto">
+      <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
         {/* <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>

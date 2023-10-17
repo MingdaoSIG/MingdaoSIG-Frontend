@@ -19,6 +19,7 @@
   background: $panel-background-color;
   border-radius: var(--border-radius);
   max-height: var(--thread-height);
+  height: var(--thread-height);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -62,14 +63,5 @@
 
 .more {
   color: cadetblue;
-  font-weight: bolder;
-}
-
-.loading {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: xx-large;
   font-weight: bolder;
 }

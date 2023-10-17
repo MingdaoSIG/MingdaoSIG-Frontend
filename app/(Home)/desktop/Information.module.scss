@@ -1,14 +1,40 @@
 @import "@/app/styles/variables.scss";
 
 .information {
-  padding: 48px;
+  padding: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
   background-color: $panel-background-color;
-  height: 100%;
+  height: calc(100% - 65px);
+}
+
+.link {
+  // padding-left: 30px;
+  // padding-right: 30px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-top: 15px;
+  height: 50px;
+  width: 100%;
+  border-radius: 30px;
+  align-items: center; /* 垂直置中 */
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.link_block {
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: $panel-background-color;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .sig {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
   border-radius: 10px;
   background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
@@ -28,4 +54,20 @@
     letter-spacing: 3.76px;
     text-align: center;
   }
+}
+
+.sig_top {
+  height: calc(100% - 180px);
+}
+
+.like_top {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
+  padding: 24px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
