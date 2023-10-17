@@ -118,12 +118,13 @@ const Information = ({ post }: { post: any }) => {
             Rule
           </Link>
           <Link
-            href="#"
+            href=""
             // target="_blank"
             className={
               "text-blue-600 w-auto hover:text-blue-400 cursor-not-allowed " +
               style.link_block
             }
+            aria-disabled="true"
           >
             About
           </Link>
