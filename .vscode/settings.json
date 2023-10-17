@@ -1,4 +1,10 @@
 {
   "editor.tabSize": 2,
-  "cSpell.words": ["MDSIG", "Swal", "sweetalert"]
+  "cSpell.words": [
+    "MDSIG",
+    "Swal",
+    "sweetalert"
+  ],
+  "commit-ai.prompt.openAiTemperature": 0.5,
+  "commit-ai.prompt.openAiMaxToken": 100
 }
