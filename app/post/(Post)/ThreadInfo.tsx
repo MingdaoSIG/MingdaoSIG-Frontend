@@ -88,7 +88,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             <div className={style.name + " flex"}>{user?.name}</div>
             <div className="opacity-50">{sig?.name}</div>
             <div className={style.time}>
-              {new Date(post?.createdAt).toLocaleString().split(" ")[0]}
+              {new Date(post?.createdAt).toLocaleString("zh-TW").split(" ")[0]}
             </div>
           </div>
         </div>
