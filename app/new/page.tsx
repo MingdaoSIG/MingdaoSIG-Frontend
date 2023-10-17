@@ -46,7 +46,7 @@ export default function NewPostPage() {
           text: "Please enter title!",
           icon: "error",
           confirmButtonText: "OK",
-          confirmButtonColor: "#ff0000",
+          confirmButtonColor: "#82D7FF",
         });
 
       const title = e.target[0].value || "無標題文章";
@@ -78,7 +78,7 @@ export default function NewPostPage() {
           text: "Post created!",
           icon: "success",
           confirmButtonText: "View the post",
-          confirmButtonColor: "#0090BD",
+          confirmButtonColor: "#82D7FF",
         }).then(() => {
           localStorage.removeItem("editorContent");
           route.push(`/post/${res.data._id}`);
@@ -89,7 +89,7 @@ export default function NewPostPage() {
           text: "You have no permission to post in this sig.",
           icon: "error",
           confirmButtonText: "Choose another sig",
-          confirmButtonColor: "#ff0000",
+          confirmButtonColor: "#82D7FF",
         });
       } else {
         throw new Error("Unexpected error");
@@ -100,7 +100,7 @@ export default function NewPostPage() {
         text: "Something went wrong. Please try again later.",
         icon: "error",
         confirmButtonText: "OK",
-        confirmButtonColor: "#ff0000",
+        confirmButtonColor: "#82D7FF",
       });
     }
   }
