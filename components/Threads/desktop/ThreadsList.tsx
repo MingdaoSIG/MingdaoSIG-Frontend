@@ -114,6 +114,9 @@ function markdownToPlainText(markdown: string) {
   markdown = markdown.replace(/\$\$\n[\s\S]*?\n\$\$/g, "");
   markdown = markdown.replace(/\$[\S ]*?\$/g, "");
 
+  // Remove horizontal rules
+  markdown = markdown.replace(/^\s*[-*_]{3,}\s*$/gm, "");
+
   // Remove line breaks
   markdown = markdown.replace(/\n/g, " ");
 
