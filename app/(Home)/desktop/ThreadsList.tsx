@@ -47,27 +47,35 @@ async function GetPostListAPI(
 
     setParentsPost(res.postData);
 
-    const _res: any = res.postData;
-    let index2 = _res.findIndex(
-      (obj: any) => obj._id === "652e4591d04b679afdff697e"
-    );
-    if (index2 !== -1) {
-      let pinObject = _res.splice(index2, 1)[0];
-      _res.unshift(pinObject);
-    }
-    let index = _res.findIndex(
-      (obj: any) => obj._id === "652cabdb45c0be8f82c54d9a"
-    );
+    const posts: any = res.postData;
+    const sortedPosts = sortPosts(posts);
 
-    if (index !== -1) {
-      let pinObject = _res.splice(index, 1)[0];
-      _res.unshift(pinObject);
-    }
-
-    setPosts(_res);
+    setPosts(sortedPosts);
     setStatus("success");
     return;
   } catch (error) {
     console.log(error);
   }
+}
+
+function sortPosts(posts: any[]) {
+  const pinnedIds = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
+
+  posts.sort((
+    a: { _id: any; like: string | any[]; },
+    b: { _id: any; like: string | any[]; }
+  ) => {
+    const aIsTarget = pinnedIds.includes(a._id);
+    const bIsTarget = pinnedIds.includes(b._id);
+
+    if (aIsTarget === bIsTarget) {
+      const aLikes = a.like.length || Math.random();
+      const bLikes = b.like.length || Math.random();
+      return bLikes - aLikes;
+    }
+
+    return aIsTarget ? -1 : 1;
+  });
+
+  return posts;
 }
