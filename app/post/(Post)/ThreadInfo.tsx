@@ -75,7 +75,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border rounded-[30px]"}>
-      <div className="flex justify-between items-center flex-initial relative">
+      <div className="flex justify-between items-center flex-initial relative h-[64px]">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
@@ -93,7 +93,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-auto">
+      <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
         {/* <Reply></Reply>
         <Reply></Reply>
         <Reply></Reply>
