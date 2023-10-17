@@ -37,11 +37,6 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeText, setTypeText] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
-  const [like, setLike] = useState<any>(false);
-
-  function Like() {
-    setLike(!like);
-  }
 
   useEffect(() => {
     GetUserAPI();
@@ -91,45 +86,11 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           ></Image>
           <div className="flex flex-col items-start my-auto flex-initial w-auto">
             <div className={style.name + " flex"}>{user?.name}</div>
-            <div className="text-black opacity-50 max-[900px]:hidden">
-              {sig?.name}
-            </div>
+            <div className="opacity-50">{sig?.name}</div>
             <div className={style.time}>
               {new Date(post?.createdAt).toLocaleString().split(" ")[0]}
             </div>
           </div>
-          <div
-            className="max-h-[64px] my-auto max-[750px]:hidden absolute right-0 top-0 bottom-0 flex items-center justify-center cursor-pointer"
-            onClick={Like}
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M26.9399 6.38798C26.2047 5.64761 25.3304 5.05985 24.3673 4.65849C23.4042 4.25714 22.3713 4.05012 21.3279 4.04932C19.3543 4.04964 17.4528 4.79101 15.9999 6.12665C14.5471 4.79079 12.6455 4.04938 10.6719 4.04932C9.62728 4.0504 8.59319 4.25806 7.62914 4.66034C6.66509 5.06262 5.79011 5.65158 5.05456 6.39332C1.91723 9.54398 1.91856 14.472 5.05723 17.6093L15.9999 28.552L26.9426 17.6093C30.0812 14.472 30.0826 9.54398 26.9399 6.38798Z"
-                fill={like ? "#EE5757" : "#BDBDBD"}
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div
-        className={
-          "w-full mt-4 rounded-full border-[#EE5757] h-[50px] items-center justify-center border cursor-pointer hidden max-[750px]:flex select-none " +
-          (like ? "bg-[#EE5757]" : "bg-transparent")
-        }
-        onClick={Like}
-      >
-        <div
-          className={
-            "text-center text-[20px] " + (like ? "text-white" : "text-black")
-          }
-        >
-          Like
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-auto">
