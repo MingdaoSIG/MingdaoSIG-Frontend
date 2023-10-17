@@ -11,22 +11,32 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       onClick={() => router.push("/post/" + threadData._id)}
       style={{
         backgroundColor:
-          (threadData._id === "652cabdb45c0be8f82c54d9a" && "white") || "",
+          ((threadData._id === "652cabdb45c0be8f82c54d9a" ||
+            threadData._id === "652e4591d04b679afdff697e") &&
+            "white") ||
+          "",
       }}
     >
       <div className={style.preview}>
         <h1 className={style.previewTitle}>
           {threadData.sig === "652d60b842cdf6a660c2b778" && "🔔 公告 - "}
           {threadData.title}
-          {threadData._id === "652cabdb45c0be8f82c54d9a" && " • 已置頂"}
+          {(threadData._id === "652cabdb45c0be8f82c54d9a" ||
+            threadData._id === "652e4591d04b679afdff697e") &&
+            " • 已置頂"}
         </h1>
-        <p className={style.previewContent}>{markdownToPlainText(threadData.content)}</p>
+        <p className={style.previewContent}>
+          {markdownToPlainText(threadData.content)}
+        </p>
       </div>
       <div
         className={style.cover}
         style={{
           display:
-            (threadData._id === "652cabdb45c0be8f82c54d9a" && "none") || "",
+            ((threadData._id === "652cabdb45c0be8f82c54d9a" ||
+              threadData._id === "652e4591d04b679afdff697e") &&
+              "none") ||
+            "",
         }}
       >
         <Image
@@ -95,10 +105,7 @@ function markdownToPlainText(markdown: string) {
   markdown = markdown.replace(/```[\s\S]*?```/g, "");
 
   // Remove tables
-  markdown = markdown.replace(
-    /(\|.*\|.*\|\n\|.*\|.*\|\n)(\|.*\|.*\|\n)+/g,
-    ""
-  );
+  markdown = markdown.replace(/(\|.*\|.*\|\n\|.*\|.*\|\n)(\|.*\|.*\|\n)+/g, "");
 
   // Remove inline LaTeX expressions
   markdown = markdown.replace(/\\\((.*?)\\\)/g, "");
