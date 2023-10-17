@@ -31,7 +31,7 @@ export default function NewPostPage() {
   const [token, setToken] = useState<string>("");
 
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
+    setToken(localStorage.getItem("UserID") || "");
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setEditorContent(storedContent);

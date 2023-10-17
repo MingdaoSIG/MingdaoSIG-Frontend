@@ -6,4 +6,5 @@ export interface IThread {
   content: string;
   cover: string;
   user: string;
+  like: Array<string>;
 }
