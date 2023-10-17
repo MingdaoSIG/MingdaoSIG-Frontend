@@ -9,9 +9,13 @@ import ThreadsListMobile from "./(Home)/mobile/ThreadsList";
 import useIsMobile from "@/utils/useIsMobile";
 // Mobile Style
 import stylesMobile from "@/app/(Home)/mobile/Threads.module.scss";
+import { useState } from "react";
 
 const Home = () => {
   const isMobile = useIsMobile();
+  const [post, setPosts] = useState<any>([]);
+
+  
 
   if (isMobile) {
     return <ThreadsListMobile></ThreadsListMobile>;
@@ -19,10 +23,10 @@ const Home = () => {
     return (
       <SplitBlock>
         <div className="h-full w-full">
-          <ThreadsListDesktop />
+          <ThreadsListDesktop setParentPosts={setPosts} />
         </div>
         <div className="h-full">
-          <Information />
+          <Information post={post} />
         </div>
       </SplitBlock>
     );

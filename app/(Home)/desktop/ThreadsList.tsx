@@ -6,13 +6,13 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const ThreadsList = () => {
+const ThreadsList = ({ setParentPosts }: { setParentPosts: any }) => {
   const [status, setStatus] = useState("loading");
   const [posts, setPosts] = useState<IThread[]>([]);
 
   useEffect(() => {
-    GetPostListAPI(setPosts, setStatus);
-  }, []);
+    GetPostListAPI(setParentPosts, setPosts, setStatus);
+  }, [setParentPosts]);
 
   if (status === "loading") {
     return (
@@ -34,6 +34,7 @@ const ThreadsList = () => {
 export default ThreadsList;
 
 async function GetPostListAPI(
+  setParentsPost: Dispatch<SetStateAction<IThread[]>>,
   setPosts: Dispatch<SetStateAction<IThread[]>>,
   setStatus: Dispatch<SetStateAction<string>>
 ) {
@@ -44,15 +45,26 @@ async function GetPostListAPI(
       })
     ).json();
 
+    setParentsPost(res.postData);
+
     const _res: any = res.postData;
+    let index2 = _res.findIndex(
+      (obj: any) => obj._id === "652e4591d04b679afdff697e"
+    );
+    if (index2 !== -1) {
+      let pinObject = _res.splice(index2, 1)[0];
+      _res.unshift(pinObject);
+    }
     let index = _res.findIndex(
       (obj: any) => obj._id === "652cabdb45c0be8f82c54d9a"
     );
+
     if (index !== -1) {
       let pinObject = _res.splice(index, 1)[0];
       _res.unshift(pinObject);
     }
-    setPosts(res.postData);
+
+    setPosts(_res);
     setStatus("success");
     return;
   } catch (error) {
