@@ -1,0 +1,24 @@
+.editor {
+  height: 100%;
+  padding: 0.25rem 0;
+  background-color: white;
+  border-radius: 30px;
+  overflow: hidden;
+  width: 95dvw;
+  margin: 1rem auto;
+}
+
+.editor > div {
+  border: none !important;
+  height: 100%;
+}
+
+.editor > div > div:nth-child(1) {
+  padding: 0 15px;
+}
+
+.editor > div > div:nth-child(6) {
+  padding: 0 15px;
+}
+
+// 鋒好大

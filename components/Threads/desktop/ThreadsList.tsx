@@ -16,7 +16,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
     >
       <div className={style.preview}>
         <h1 className={style.previewTitle}>
-          {threadData._id === "652cabdb45c0be8f82c54d9a" && "🔔 公告 - "}
+          {threadData.sig === "652d60b842cdf6a660c2b778" && "🔔 公告 - "}
           {threadData.title}
           {threadData._id === "652cabdb45c0be8f82c54d9a" && " • 已置頂"}
         </h1>
