@@ -51,7 +51,7 @@ export default function NewPostPage() {
 
       const title = e.target[0].value || "無標題文章";
       const sig = e.target[1].value;
-      // const hashtag = e.target[2].value || "";
+      const hashtag = e.target[2].value || "";
       const content = editorContent;
       const cover = "https://lazco.dev/sig-photo-coming-soon-picture";
 
@@ -65,7 +65,7 @@ export default function NewPostPage() {
           body: JSON.stringify({
             title: title,
             sig: sig,
-            // hashtag: hashtag,
+            hashtag: hashtag,
             content: content,
             cover: cover,
           }),
