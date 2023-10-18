@@ -16,15 +16,13 @@
   margin-top: 5px;
   height: auto;
   width: 100%;
-  align-items: end;
-  text-align: left;
   display: flex;
-  gap: 1rem;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 .link::-webkit-scrollbar {
   height: 2px;
-  // display: none;
 }
 
 .link::-webkit-scrollbar-thumb {
