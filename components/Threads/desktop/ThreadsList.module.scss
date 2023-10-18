@@ -1,6 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
+  --thread-height: 12rem;
   position: relative;
   padding-right: 10px;
   border-top-left-radius: $border-radius;
