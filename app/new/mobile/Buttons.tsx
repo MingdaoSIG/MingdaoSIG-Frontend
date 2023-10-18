@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./button.module.scss";
+import styles from "./Button.module.scss";
 import Image from "next/image";
 
 export default function Buttons({ discard }: { discard: any }) {

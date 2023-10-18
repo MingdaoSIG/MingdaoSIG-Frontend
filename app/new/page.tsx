@@ -1,146 +1,132 @@
 "use client";
 
-import SplitBlock from "../(Layout)/splitBlock";
-import React, { useState, Suspense, useEffect } from "react";
-import MetaDataForm from "./(New)/desktop/MetaDataForm";
-import dynamic from "next/dynamic";
-import Swal from "sweetalert2";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
-// Mobile Component
-import NewPostMobile from "./(New)/mobile/NewPost";
+// Desktop Components
+import NewPostDesktop from "./desktop/NewPost";
 
+// Mobile Components
+import NewPostMobile from "./mobile/NewPost";
+
+// Styles
+import styles from "./page.module.scss";
+
+// Types
+import { TPostAPI } from "./types/postAPI";
+
+// Configs
+import { popUpMessageConfigs } from "./config/popUpMessage";
+import { markdownGuide } from "./config/markdownGuide";
+
+// APIs Request Function
+import { postAPI } from "./apis/postAPI";
+
+// Utils
 import useIsMobile from "@/utils/useIsMobile";
-
-const Editor = dynamic(() => import("./(New)/desktop/Editor"), { ssr: false });
-
-const MarkdownGuide = `
-# Welcome to MDSIG Post Editor
-If you're unfamiliar with Markdown, please refer to this [tutorial](https://www.markdownguide.org/).
-
-# 歡迎使用 MDSIG 文章編輯器
-如果您對於 Markdown 不熟悉，請參考這個 [教學](https://www.markdownguide.org/).
-`;
+import assert from "assert";
 
 export default function NewPostPage() {
   const { status } = useSession();
   const route = useRouter();
   const isMobile = useIsMobile();
-  const [editorContent, setEditorContent] = useState<string>(MarkdownGuide);
-  const [token, setToken] = useState<string>("");
+  // Form data states
+  const [token, setToken] = useState<string>(
+    localStorage.getItem("UserID") || ""
+  );
+  const [postData, setPostData] = useState<TPostAPI>({
+    title: "",
+    sig: "",
+    content: markdownGuide,
+    cover: "",
+  });
+
+  // Adjust form data function
+  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+    setPostData(
+      (prev: TPostAPI | undefined) =>
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as TPostAPI)
+    );
+  }
 
   useEffect(() => {
-    setToken(localStorage.getItem("UserID") || "");
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
-      setEditorContent(storedContent);
+      setPostData(
+        (prev: TPostAPI | undefined) =>
+          ({
+            ...prev,
+            content: storedContent,
+          } as TPostAPI)
+      );
     }
   }, []);
 
-  async function NewPostAPI(e: any) {
+  async function NewPostAPI() {
+    if (postData?.title === "")
+      return Swal.fire(popUpMessageConfigs.titleError);
     try {
-      if (e.target[0].value === "")
-        return Swal.fire({
-          title: "Error!",
-          text: "Please enter title!",
-          icon: "error",
-          confirmButtonText: "OK",
-          confirmButtonColor: "#ff0000",
-        });
+      assert(postData); // Check whether postData is not undefined
+      console.debug(postData);
+      const res = await postAPI(postData, token);
+      console.debug(res);
 
-      const title = e.target[0].value || "無標題文章";
-      const sig = e.target[1].value;
-      const hashtag = e.target[2].value || "";
-      const content = editorContent;
-      const cover = "https://lazco.dev/sig-photo-coming-soon-picture";
-
-      const res = await (
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            title: title,
-            sig: sig,
-            hashtag: hashtag,
-            content: content,
-            cover: cover,
-          }),
-        })
-      ).json();
-      console.log(res);
       if (res.status === 2000) {
-        return Swal.fire({
-          title: "Success!",
-          text: "Post created!",
-          icon: "success",
-          confirmButtonText: "View the post",
-          confirmButtonColor: "#0090BD",
-        }).then(() => {
+        return Swal.fire(popUpMessageConfigs.Success).then(() => {
           localStorage.removeItem("editorContent");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
-        Swal.fire({
-          title: "Error!",
-          text: "You have no permission to post in this sig.",
-          icon: "error",
-          confirmButtonText: "Choose another sig",
-          confirmButtonColor: "#ff0000",
-        });
+        Swal.fire(popUpMessageConfigs.PermissionError);
       } else {
         throw new Error("Unexpected error");
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "Something went wrong. Please try again later.",
-        icon: "error",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#ff0000",
-      });
+      Swal.fire(popUpMessageConfigs.OthersError);
     }
   }
 
-  function discard(e: any) {
+  function discard(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    setEditorContent(MarkdownGuide);
+    setPostData({
+      title: "",
+      sig: "",
+      content: markdownGuide,
+      cover: "",
+    });
     localStorage.removeItem("editorContent");
-  }
-
-  function post(e: any) {
-    e.preventDefault();
-    NewPostAPI(e);
   }
 
   if (status === "loading") {
     return (
-      <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]"> Loading...</h1>
+      <div className={styles.loading}>
+        <h1> Loading...</h1>
       </div>
     );
-  } else {
-    return isMobile ? (
-      <NewPostMobile
-        setEditorContent={setEditorContent}
-        editorContent={editorContent}
-        discard={discard}
-        post={post}
-      ></NewPostMobile>
-    ) : (
-      <SplitBlock>
-        <Suspense fallback={null}>
-          <Editor
-            setFunction={setEditorContent}
-            editorContent={editorContent}
-            token={token}
-          />
-        </Suspense>
-        <MetaDataForm discard={discard} post={post} />
-      </SplitBlock>
-    );
   }
+
+  return isMobile ? (
+    <NewPostMobile
+      postData={postData}
+      setPostData={setPostData}
+      token={token}
+      handleFormEventFunction={handleFormChange}
+      discardFunction={discard}
+      postFunction={NewPostAPI}
+    ></NewPostMobile>
+  ) : (
+    <NewPostDesktop
+      postData={postData}
+      setPostData={setPostData}
+      discardFunction={discard}
+      postFunction={NewPostAPI}
+      token={token}
+      handleFormEventFunction={handleFormChange}
+    ></NewPostDesktop>
+  );
 }

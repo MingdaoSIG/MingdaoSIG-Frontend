@@ -1,5 +1,11 @@
+$editor-background: white;
+
 .editor {
   height: 65dvh;
+  padding: 0.25rem 0;
+  background-color: $editor-background;
+  border-radius: 30px;
+  overflow: hidden;
 }
 
 .editor > div {
