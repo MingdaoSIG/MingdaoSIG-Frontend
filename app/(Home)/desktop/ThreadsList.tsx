@@ -6,13 +6,13 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const ThreadsList = () => {
+const ThreadsList = ({ setParentPosts }: { setParentPosts: any }) => {
   const [status, setStatus] = useState("loading");
   const [posts, setPosts] = useState<IThread[]>([]);
 
   useEffect(() => {
-    GetPostListAPI(setPosts, setStatus);
-  }, []);
+    GetPostListAPI(setParentPosts, setPosts, setStatus);
+  }, [setParentPosts]);
 
   if (status === "loading") {
     return (
@@ -34,6 +34,7 @@ const ThreadsList = () => {
 export default ThreadsList;
 
 async function GetPostListAPI(
+  setParentsPost: Dispatch<SetStateAction<IThread[]>>,
   setPosts: Dispatch<SetStateAction<IThread[]>>,
   setStatus: Dispatch<SetStateAction<string>>
 ) {
@@ -44,18 +45,37 @@ async function GetPostListAPI(
       })
     ).json();
 
-    const _res: any = res.postData;
-    let index = _res.findIndex(
-      (obj: any) => obj._id === "652cabdb45c0be8f82c54d9a"
-    );
-    if (index !== -1) {
-      let pinObject = _res.splice(index, 1)[0];
-      _res.unshift(pinObject);
-    }
-    setPosts(res.postData);
+    setParentsPost(res.postData);
+
+    const posts: any = res.postData;
+    const sortedPosts = sortPosts(posts);
+
+    setPosts(sortedPosts);
     setStatus("success");
     return;
   } catch (error) {
     console.log(error);
   }
+}
+
+function sortPosts(posts: any[]) {
+  const pinnedIds = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
+
+  posts.sort((
+    a: { _id: any; like: string | any[]; },
+    b: { _id: any; like: string | any[]; }
+  ) => {
+    const aIsTarget = pinnedIds.includes(a._id);
+    const bIsTarget = pinnedIds.includes(b._id);
+
+    if (aIsTarget === bIsTarget) {
+      const aLikes = a.like.length || Math.random();
+      const bLikes = b.like.length || Math.random();
+      return bLikes - aLikes;
+    }
+
+    return aIsTarget ? -1 : 1;
+  });
+
+  return posts;
 }

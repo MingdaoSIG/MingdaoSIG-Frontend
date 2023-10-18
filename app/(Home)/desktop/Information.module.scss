@@ -1,14 +1,51 @@
 @import "@/app/styles/variables.scss";
 
 .information {
-  padding: 48px;
+  padding: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
   background-color: $panel-background-color;
-  height: 100%;
+  height: calc(100% - 30px);
+}
+
+.link {
+  overflow-x: auto;
+  opacity: 40%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-top: 5px;
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.link::-webkit-scrollbar {
+  height: 2px;
+}
+
+.link::-webkit-scrollbar-thumb {
+  background-color: $scrollbar-thumb-color;
+  border-radius: 5px;
+}
+
+.link::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: $scrollbar-track-color;
+}
+
+.link_block {
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: $panel-background-color;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .sig {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
   border-radius: 10px;
   background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
@@ -28,4 +65,20 @@
     letter-spacing: 3.76px;
     text-align: center;
   }
+}
+
+.sig_top {
+  height: calc(100% - 180px);
+}
+
+.like_top {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
+  padding: 24px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

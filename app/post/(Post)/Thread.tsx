@@ -5,20 +5,30 @@ import { IThread } from "@/interface/Thread.interface";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";
+import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const Thread = ({ post }: { post: IThread }) => {
   const [like, setLike] = useState<any>(false);
   const [token, setToken] = useState<string>("");
 
   function Like() {
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       setLike(!like);
       if (like) {
         DeleteLike();
       } else {
         PostLike();
       }
+    } else {
+      Swal.fire({
+        title: "請先登入",
+        text: "你必須登入才可以使用按讚功能",
+        icon: "warning",
+        confirmButtonText: "確定",
+        confirmButtonColor: "#82D7FF",
+      });
     }
   }
   async function PostLike() {
@@ -55,26 +65,27 @@ const Thread = ({ post }: { post: IThread }) => {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("UserID") || "");
+    setToken(localStorage.getItem("token") || "");
 
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
       if (post.like.includes(User._id)) {
         setLike(true);
       }
     }
-  }, [post.like]);
+  }, [post?.like]);
 
   if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
-        <div>
+        <div className="py-[1rem]">
           <div className={style.threadTitle + " " + style.customTitle}>
             <h1 className="my-auto">{post?.title}</h1>
           </div>
           <MdPreview
             modelValue={post?.content}
             className={style.threadContent + " " + style.customThread}
+            previewTheme="github"
           />
         </div>
       </>
@@ -83,7 +94,7 @@ const Thread = ({ post }: { post: IThread }) => {
     return (
       <>
         <div className={style.threadTitle + " flex relative"}>
-          <h1 className="my-auto pr-4">{post?.title}</h1>
+          <h1 className="my-auto pr-5">{post?.title}</h1>
           <div
             className="max-h-[64px] my-auto absolute right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
             onClick={Like}
@@ -104,8 +115,8 @@ const Thread = ({ post }: { post: IThread }) => {
         </div>
         <MdPreview
           modelValue={post?.content}
-          codeTheme="github"
           className={style.threadContent}
+          previewTheme="github"
         />
       </>
     );

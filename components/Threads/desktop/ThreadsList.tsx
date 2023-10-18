@@ -2,6 +2,10 @@ import Image from "next/image";
 import style from "./ThreadsList.module.scss";
 import { IThread } from "@/interface/Thread.interface";
 import { useRouter } from "next/navigation";
+import MarkdownToPlainText from "@/modules/MarkdownToPlainText";
+
+const announcementSigId = "652d60b842cdf6a660c2b778";
+const pinned = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
@@ -10,23 +14,23 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       className={style.thread + "  cursor-pointer select-none "}
       onClick={() => router.push("/post/" + threadData._id)}
       style={{
-        backgroundColor:
-          (threadData._id === "652cabdb45c0be8f82c54d9a" && "white") || "",
+        backgroundColor: pinned.includes(threadData._id) ? "white" : "",
       }}
     >
       <div className={style.preview}>
         <h1 className={style.previewTitle}>
-          {threadData.sig === "652d60b842cdf6a660c2b778" && "🔔 公告 - "}
+          {threadData.sig === announcementSigId && "🔔 公告 - "}
           {threadData.title}
-          {threadData._id === "652cabdb45c0be8f82c54d9a" && " • 已置頂"}
+          {pinned.includes(threadData._id) && " • 已置頂"}
         </h1>
-        <p className={style.previewContent}>{threadData.content}</p>
+        <p className={style.previewContent}>
+          {MarkdownToPlainText(threadData.content)}
+        </p>
       </div>
       <div
         className={style.cover}
         style={{
-          display:
-            (threadData._id === "652cabdb45c0be8f82c54d9a" && "none") || "",
+          display: pinned.includes(threadData._id) ? "none" : "",
         }}
       >
         <Image
@@ -50,13 +54,22 @@ export const ThreadsList = ({
   height?: string;
 }) => {
   return (
-    <div className={style.threads} style={{ height: height }}>
+    <div
+      className={style.threads + " h-full w-full"}
+      style={{ height: height }}
+    >
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
           return <Thread threadData={item} key={index} />;
         })
       ) : (
-        <div className={style.loading}>Loading...</div>
+        <div
+          className={
+            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
+          }
+        >
+          No Post Yet.
+        </div>
       )}
     </div>
   );
