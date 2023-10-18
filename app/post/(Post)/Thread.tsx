@@ -14,7 +14,7 @@ const Thread = ({ post }: { post: IThread }) => {
   const [token, setToken] = useState<string>("");
 
   function Like() {
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       setLike(!like);
       if (like) {
         DeleteLike();
@@ -65,9 +65,9 @@ const Thread = ({ post }: { post: IThread }) => {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("UserID") || "");
+    setToken(localStorage.getItem("token") || "");
 
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
       if (post.like.includes(User._id)) {
         setLike(true);
