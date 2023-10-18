@@ -46,7 +46,7 @@ const MdEditorSync = ({ postData, setPostData, token }: Props) => {
 
   const handleEditorChange = (newContent: string) => {
     setPostData(
-      (prev: TPostAPI | undefined) =>
+      (prev: TPostAPI) =>
         ({
           ...prev,
           content: newContent,

@@ -12,23 +12,15 @@ const HeaderBar = () => {
   return (
     <>
       <div className={style.nav}>
-        <div className={style.logo}>
-          <div className="my-auto w-auto ml-[100px]">
-            <Image
-              src="/images/logo.svg"
-              alt="Logo"
-              width={214}
-              height={46}
-              priority
-              className="my-auto hover:cursor-pointer"
-              onClick={() => router.push("/")}
-            />
-          </div>
-        </div>
-        <div className="flex relative max-h-[60px]">
-          {/* <ModeToggleButton /> */}
-          <UserLogin />
-        </div>
+        <Image
+          src="/images/logo.svg"
+          alt="Logo"
+          width={214}
+          height={46}
+          priority
+          onClick={() => router.push("/")}
+        />
+        <UserLogin />
       </div>
     </>
   );

@@ -1,6 +1,3 @@
-"use client";
-
-import { SweetAlertResult } from "sweetalert2";
 import styles from "./Button.module.scss";
 import Image from "next/image";
 
