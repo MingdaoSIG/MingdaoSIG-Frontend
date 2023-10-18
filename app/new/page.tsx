@@ -33,9 +33,7 @@ export default function NewPostPage() {
   const route = useRouter();
   const isMobile = useIsMobile();
   // Form data states
-  const [token, setToken] = useState<string>(
-    localStorage.getItem("UserID") || ""
-  );
+  const [token, setToken] = useState<string>("");
   const [postData, setPostData] = useState<TPostAPI>({
     title: "",
     sig: "",
@@ -55,6 +53,7 @@ export default function NewPostPage() {
   }
 
   useEffect(() => {
+    setToken(localStorage.getItem("token") || "");
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setPostData(
@@ -73,6 +72,7 @@ export default function NewPostPage() {
     try {
       assert(postData); // Check whether postData is not undefined
       console.debug(postData);
+      setToken(localStorage.getItem("token") || "");
       const res = await postAPI(postData, token);
       console.debug(res);
 
