@@ -109,7 +109,7 @@ export default function UserLogin() {
           <p className="name text-md-dark-green text-[20px] leading-6 font-bold">
             {user.name}
           </p>
-          <p className="text-[#006180] text-[12px] leading-3	">{user.email}</p>
+          <p className="text-[#006180] text-[12px] leading-3 no-underline">{user.email}</p>
         </div>
       </div>
     );
