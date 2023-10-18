@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { SweetAlertResult } from "sweetalert2";
 
 // Components
 import Buttons from "./Buttons";
@@ -11,7 +10,10 @@ import Buttons from "./Buttons";
 import styles from "./MetaDataForm.module.scss";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+
+// APIs Request Function
+import { getSigListAPI } from "@/app/new/(new)/apis/getSigListAPI";
 
 interface Props {
   discardFunction: Function;
@@ -26,24 +28,11 @@ export default function MetaDataForm({
   handleFormEventFunction,
   postData,
 }: Props) {
-  const { data, status } = useSession();
+  const { status } = useSession();
 
   const [sigs, setSigs] = useState<any[]>([]);
   useEffect(() => {
-    GetSigListAPI();
-    async function GetSigListAPI() {
-      try {
-        const res = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/list`, {
-            method: "GET",
-          })
-        ).json();
-        setSigs(res.postData);
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    getSigListAPI(setSigs);
   }, []);
 
   if (status === "unauthenticated") {
@@ -86,8 +75,8 @@ export default function MetaDataForm({
             })}
           </select>
 
-          <label className={styles.inputLabel}>Hashtag:</label>
-          <input name="hashtag" type="text" className={styles.input} disabled />
+          {/* <label className={styles.inputLabel}>Hashtag:</label>
+          <input name="hashtag" type="text" className={styles.input} disabled /> */}
         </div>
         <Buttons
           discardFunction={discardFunction}

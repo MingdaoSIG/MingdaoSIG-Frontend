@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
 
-// Components
-import MetaDataForm from "./MetaDataForm";
-
 // styles
 import styles from "./NewPost.module.scss";
+
+// Components
+import MetaDataForm from "./MetaDataForm";
+import Button from "./Buttons";
 
 // Types
 import { TPostAPI } from "../types/postAPI";
@@ -32,12 +33,19 @@ export default function NewPostMobile({
 }: Props) {
   return (
     <div className={styles.newPost}>
-      <MetaDataForm></MetaDataForm>
+      <MetaDataForm
+        postData={postData}
+        handleFormEventFunction={handleFormEventFunction}
+      ></MetaDataForm>
       <Editor
         setPostData={setPostData}
         postData={postData}
         token={token}
       ></Editor>
+      <Button
+        discardFunction={discardFunction}
+        postFunction={postFunction}
+      ></Button>
     </div>
   );
 }
