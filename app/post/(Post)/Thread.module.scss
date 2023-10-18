@@ -48,7 +48,8 @@
 .info {
   background: $panel-background-color;
   height: 100%;
-  padding: 30px;
+  padding: $padding;
+  border-radius: $border-radius;
   display: flex;
   flex-direction: column;
   align-items: stretch;

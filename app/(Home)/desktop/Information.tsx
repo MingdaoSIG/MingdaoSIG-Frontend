@@ -30,11 +30,11 @@ const LikeSIG = (child: any) => {
   const route = useRouter();
 
   return (
-    <div className="flex" onClick={() => route.push(`/post/${child._id}`)}>
-      <h2 className="text-md-dark-green text-lg font-medium cursor-pointer hover:underline  hover:decoration-1 transition  duration-300 ease-out w-[calc(100%-50px)] truncate pt-1">
+    <div className={style.likePost} onClick={() => route.push(`/post/${child._id}`)}>
+      <h3>
         {child.title}
-      </h2>
-      <p className="text-[#A6A6A6] text-xs ml-auto w-[50px] my-auto text-right">
+      </h3>
+      <p>
         {child.like} likes
       </p>
     </div>
@@ -72,15 +72,15 @@ const Information = ({ post }: { post: any }) => {
   } else {
     return (
       <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-        <div className={style.information + " rounded-[15px]"}>
-          <div className={style.top_like}>
-            <h2 className=" text-[rgb(60,_105,_180)] text-base text-[1.7rem] text-left mt-2">
+        <div className={style.information}>
+          <div className={style.likedPosts}>
+            <h2>
               Top Liked Posts
             </h2>
-            <div className="mt-3">
+            <div className={style.likePostWrapper}>
               {post
                 .sort((a: any, b: any) => b.like.length - a.like.length)
-                .slice(0, 3)
+                .slice(0, 5)
                 .map((item: any) => {
                   return (
                     <LikeSIG
@@ -94,11 +94,11 @@ const Information = ({ post }: { post: any }) => {
             </div>
           </div>
 
-          <div className={style.sig_top + " mt-10"}>
-            <h2 className=" text-[rgb(60,_105,_180)] text-base text-[1.7rem] text-left mt-2">
+          <div className={style.sigs}>
+            <h2>
               SIGs - {sigs?.length}
             </h2>
-            <div className="mt-5 flex flex-row flex-wrap gap-4 overflow-auto mx-auto h-[calc(100%-50px)]">
+            <div className={style.sig_top}>
               {sigs.map((item: any) => {
                 if (item._id !== "652d60b842cdf6a660c2b778") {
                   return <SIG _id={item._id} name={item.name} key={item._id} />;
@@ -106,35 +106,40 @@ const Information = ({ post }: { post: any }) => {
               })}
             </div>
           </div>
-        </div>
-        <div className={style.link}>
-          <Link
-            href="/post/652cabdb45c0be8f82c54d9a"
-            target="_blank"
-            className="text-black"
-          >
-            Rule
-          </Link>
-          •
-          <Link href="" className="text-black">
-            About
-          </Link>
-          •
-          <Link
-            href="/post/652e4591d04b679afdff697e"
-            target="_blank"
-            className="text-black"
-          >
-            Markdown
-          </Link>
-          •
-          <Link
-            href="mailto:mdsig20@ms.mingdao.edu.tw"
-            target="_blank"
-            className="text-black"
-          >
-            Mail
-          </Link>
+
+          <div className={style.links}>
+            {[
+              {
+                href: "/post/652cabdb45c0be8f82c54d9a",
+                text: "Rule"
+              },
+              {
+                href: "",
+                text: "About"
+              },
+              {
+                href: "/post/652e4591d04b679afdff697e",
+                text: "Markdown"
+              },
+              {
+                href: "mailto:mdsig20@ms.mingdao.edu.tw",
+                text: "Mail"
+              }
+            ].map(({ href, text }, index, array) => {
+              return (
+                <>
+                  <Link
+                    href={href}
+                    target="_blank"
+                    key={index}
+                  >
+                    {text}
+                  </Link>
+                  {index === array.length - 1 ? "" : "•"}
+                </>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -142,3 +147,5 @@ const Information = ({ post }: { post: any }) => {
 };
 
 export default Information;
+
+{/*  */ }
