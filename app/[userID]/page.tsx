@@ -50,7 +50,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   if (status === "notfound") {
     return (
       <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]">User Not Found.</h1>
+        <h1 className="text-[50px]">User or SIG Not Found.</h1>
         <button
           className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
           onClick={() => {
