@@ -35,7 +35,7 @@ const UserLogin = () => {
           })
         ).json();
         localStorage.setItem(
-          "UserID",
+          "token",
           res.authorization.toString().split(" ")[1]
         );
         localStorage.setItem("User", JSON.stringify(res.data));

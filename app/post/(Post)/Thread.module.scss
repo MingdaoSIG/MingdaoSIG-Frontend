@@ -2,32 +2,35 @@
 
 .threadContent {
   background: $panel-background-color !important;
-  border-radius: 30px;
+  border-radius: $border-radius;
 
   margin-top: 20px;
+  padding: 1rem;
   min-height: calc(65dvh - 80px) !important;
   max-height: calc(65dvh - 80px) !important;
   height: calc(65dvh - 80px) !important;
   overflow-y: auto;
-
-  // padding: 40px 54px;
-
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
+.threadContent>div {
+  padding: 0 !important;
+  padding-right: 1rem !important;
+}
+
 .threadTitle {
   background: $panel-background-color;
-  border-radius: 30px;
+  border-radius: 20px;
   height: 60px;
 
-  padding-left: 30px;
+  padding-left: 1rem;
   padding-right: 30px;
 
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  flex-direction: row;
+  align-items: center;
 
   h1 {
     width: 100%;
@@ -45,7 +48,8 @@
 .info {
   background: $panel-background-color;
   height: 100%;
-  padding: 30px;
+  padding: $padding;
+  border-radius: $border-radius;
   display: flex;
   flex-direction: column;
   align-items: stretch;

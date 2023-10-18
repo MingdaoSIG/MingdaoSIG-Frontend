@@ -1,23 +1,19 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
-  --border-radius: 30px;
-  --cover-border-radius: var(--border-radius);
-  --thread-height: 12rem;
-
   position: relative;
-  overflow-y: auto;
-  border-top-left-radius: var(--border-radius);
-  border-bottom-left-radius: var(--border-radius);
   padding-right: 10px;
+  border-top-left-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
 }
 
 .thread {
   background: $panel-background-color;
-  border-radius: var(--border-radius);
+  border-radius: $border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
   display: flex;
@@ -57,7 +53,7 @@
 .cover {
   position: relative;
   min-width: 30%;
-  border-radius: var(--cover-border-radius);
+  border-radius: $border-radius;
   overflow: hidden;
 }
 

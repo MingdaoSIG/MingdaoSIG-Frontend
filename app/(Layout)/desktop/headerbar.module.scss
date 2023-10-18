@@ -2,19 +2,19 @@ $logoBG: rgba(0, 190, 245, 35%);
 
 .nav {
   height: 60px;
-  width: 100%;
-  margin: 40px auto;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  cursor: default;
+  width: 85dvw;
+  margin: 2rem auto;
 
-  position: relative;
-  user-select: none;
-}
-
-.logo {
-  background-image: linear-gradient(90deg, $logoBG 0%, transparent 100%);
-  margin: auto 0;
-  height: 65px;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: default;
+  user-select: none;
+
+  & > img {
+    margin: auto 0;
+    cursor: pointer;
+  }
 }

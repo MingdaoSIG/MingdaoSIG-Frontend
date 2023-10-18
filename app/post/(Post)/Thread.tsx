@@ -1,7 +1,7 @@
 import { lchownSync } from "fs";
 import style from "./Thread.module.scss";
 
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";
@@ -14,7 +14,7 @@ const Thread = ({ post }: { post: IThread }) => {
   const [token, setToken] = useState<string>("");
 
   function Like() {
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       setLike(!like);
       if (like) {
         DeleteLike();
@@ -65,9 +65,9 @@ const Thread = ({ post }: { post: IThread }) => {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("UserID") || "");
+    setToken(localStorage.getItem("token") || "");
 
-    if (localStorage.getItem("UserID")) {
+    if (localStorage.getItem("token")) {
       const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
       if (post.like.includes(User._id)) {
         setLike(true);
@@ -94,7 +94,7 @@ const Thread = ({ post }: { post: IThread }) => {
     return (
       <>
         <div className={style.threadTitle + " flex relative"}>
-          <h1 className="my-auto pr-5">{post?.title}</h1>
+          <h1>{post?.title}</h1>
           <div
             className="max-h-[64px] my-auto absolute right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
             onClick={Like}

@@ -3,7 +3,7 @@
 import SplitBlock from "@/app/(Layout)/splitBlock";
 import Thread from "@/app/post/(Post)/Thread";
 import ThreadInfo from "@/app/post/(Post)/ThreadInfo";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 

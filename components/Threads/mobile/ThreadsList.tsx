@@ -1,6 +1,6 @@
 import Image from "next/image";
 import style from "./ThreadsList.module.scss";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { useRouter } from "next/navigation";
 
 const Thread = ({ threadData }: { threadData: IThread }) => {

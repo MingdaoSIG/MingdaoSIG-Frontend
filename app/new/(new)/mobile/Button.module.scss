@@ -1,0 +1,49 @@
+@import "@/app/styles/variables.scss";
+@import "./NewPost.module.scss";
+
+$button-block-height: 3rem;
+$button-font-size: 1.125rem;
+$button-font-weight: 700;
+$button-discord-background: #dc0032;
+$button-discord-text: #fff;
+$button-post-background: #fff;
+$button-post-text: #5fcdf5;
+
+.buttons {
+  height: $button-block-height;
+  width: $block-width;
+  border-radius: $button-block-height;
+
+  margin: auto;
+  padding: 0.25rem 0;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 9999px;
+  gap: 0.25rem;
+}
+
+.buttonDiscard {
+  composes: button;
+  background-color: $button-discord-background;
+  color: $button-discord-text;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+}
+
+.buttonPost {
+  composes: button;
+  background-color: $button-post-background;
+  color: $button-post-text;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+}

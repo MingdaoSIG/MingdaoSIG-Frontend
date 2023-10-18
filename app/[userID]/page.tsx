@@ -7,7 +7,7 @@ import { useRouter, notFound } from "next/navigation";
 import SwitchButton from "./(User)/SwitchButton";
 import SplitBlock from "../(Layout)/splitBlock";
 import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { GetUserPostListAPI } from "./(User)/API";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -50,7 +50,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   if (status === "notfound") {
     return (
       <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]">User Not Found.</h1>
+        <h1 className="text-[50px]">User or SIG Not Found.</h1>
         <button
           className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
           onClick={() => {
