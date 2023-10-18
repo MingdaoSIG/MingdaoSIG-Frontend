@@ -6,23 +6,23 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 // Desktop Components
-import NewPostDesktop from "./desktop/NewPost";
+import NewPostDesktop from "./(new)/desktop/NewPost";
 
 // Mobile Components
-import NewPostMobile from "./mobile/NewPost";
+import NewPostMobile from "./(new)/mobile/NewPost";
 
 // Styles
 import styles from "./page.module.scss";
 
 // Types
-import { TPostAPI } from "./types/postAPI";
+import { TPostAPI } from "./(new)/types/postAPI";
 
 // Configs
-import { popUpMessageConfigs } from "./config/popUpMessage";
-import { markdownGuide } from "./config/markdownGuide";
+import { popUpMessageConfigs } from "./(new)/config/popUpMessage";
+import { markdownGuide } from "./(new)/config/markdownGuide";
 
 // APIs Request Function
-import { postAPI } from "./apis/postAPI";
+import { postAPI } from "./(new)/apis/postAPI";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";

@@ -7,6 +7,10 @@
 $bg-color-from: #ffe69b;
 $bg-color-to: #82d7ff;
 
+* {
+  outline: none;
+}
+
 body {
   max-width: 100dvw;
   max-height: 100dvh;

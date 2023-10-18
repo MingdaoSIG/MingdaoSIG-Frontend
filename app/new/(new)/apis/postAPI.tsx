@@ -1,4 +1,4 @@
-import { TPostAPI } from "@/app/new/types/postAPI";
+import { TPostAPI } from "@/app/new/(new)/types/postAPI";
 
 export async function postAPI(
   { title, sig, hashtag, content, cover }: TPostAPI,
