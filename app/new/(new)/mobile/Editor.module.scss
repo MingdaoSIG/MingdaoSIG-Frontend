@@ -1,11 +1,15 @@
+@import "./NewPost.module.scss";
+
 .editor {
   height: 100%;
-  padding: 0.25rem 0;
+  width: $block-width;
+
   background-color: white;
   border-radius: 30px;
   overflow: hidden;
-  width: 95dvw;
+
   margin: auto;
+  padding: 0.25rem 0;
 }
 
 .editor > div {

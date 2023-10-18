@@ -32,12 +32,13 @@ export default function MetaDataForm({
   }
 
   return (
-    <div>
+    <div className={styles.meta}>
       <input
         type="text"
         name="title"
         placeholder="Title"
         onChange={(e) => handleFormEventFunction(e)}
+        className={styles.input}
       />
       <select
         name="sig"
