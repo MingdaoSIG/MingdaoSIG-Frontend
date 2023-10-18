@@ -76,6 +76,7 @@ export default function MetaDataForm({
               handleFormEventFunction(e);
             }}
           >
+            <option value="">請選擇 SIG</option>
             {sigs?.map((sig) => {
               return (
                 <option value={sig._id} key={sig._id}>
