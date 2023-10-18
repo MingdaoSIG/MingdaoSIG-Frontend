@@ -64,7 +64,7 @@ const Information = ({ post }: { post: any }) => {
   if (post.length === 0) {
     return (
       <div className="flex flex-col h-full">
-        <div className={style.information + " rounded-[30px]"}>
+        <div className={style.information + " rounded-[15px]"}>
           <div className="text-center text-[1.8rem]">Loading...</div>
         </div>
       </div>
@@ -72,7 +72,7 @@ const Information = ({ post }: { post: any }) => {
   } else {
     return (
       <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-        <div className={style.information + " rounded-[30px]"}>
+        <div className={style.information + " rounded-[15px]"}>
           <div className={style.top_like}>
             <h2 className=" text-[rgb(60,_105,_180)] text-base text-[1.7rem] text-left mt-2">
               Top Liked Posts
@@ -111,32 +111,29 @@ const Information = ({ post }: { post: any }) => {
           <Link
             href="/post/652cabdb45c0be8f82c54d9a"
             target="_blank"
-            className={
-              "text-blue-600 w-auto hover:text-blue-400 " + style.link_block
-            }
+            className="text-black"
           >
             Rule
           </Link>
-          <Link
-            href=""
-            // target="_blank"
-            className={
-              "text-blue-600 w-auto hover:text-blue-400 cursor-not-allowed " +
-              style.link_block
-            }
-            aria-disabled="true"
-          >
+          •
+          <Link href="" className="text-black">
             About
           </Link>
+          •
           <Link
             href="/post/652e4591d04b679afdff697e"
             target="_blank"
-            className={
-              "text-blue-600 w-auto hover:text-blue-400 " + style.link_block
-            }
+            className="text-black"
           >
-            <p className="max-md:hidden">Markdown</p>
-            <p className="md:hidden">MD</p>
+            Markdown
+          </Link>
+          •
+          <Link
+            href="mailto:mdsig20@ms.mingdao.edu.tw"
+            target="_blank"
+            className="text-black"
+          >
+            Mail
           </Link>
         </div>
       </div>

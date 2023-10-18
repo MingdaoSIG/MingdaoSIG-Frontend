@@ -5,23 +5,36 @@
   padding-left: 30px;
   padding-right: 30px;
   background-color: $panel-background-color;
-  height: calc(100% - 65px);
+  height: calc(100% - 30px);
 }
 
 .link {
-  // padding-left: 30px;
-  // padding-right: 30px;
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-top: 15px;
-  height: 50px;
+  overflow-x: auto;
+  opacity: 40%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-top: 5px;
+  height: auto;
   width: 100%;
-  border-radius: 30px;
-  align-items: center; /* 垂直置中 */
-  text-align: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.25rem;
+  align-items: end;
+  text-align: left;
+  display: flex;
+  gap: 1rem;
+}
+
+.link::-webkit-scrollbar {
+  height: 2px;
+  // display: none;
+}
+
+.link::-webkit-scrollbar-thumb {
+  background-color: $scrollbar-thumb-color;
+  border-radius: 5px;
+}
+
+.link::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: $scrollbar-track-color;
 }
 
 .link_block {
