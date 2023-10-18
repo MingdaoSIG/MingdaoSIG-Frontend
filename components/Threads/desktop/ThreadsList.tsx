@@ -55,7 +55,7 @@ export const ThreadsList = ({
 }) => {
   return (
     <div
-      className={style.threads + " h-full w-full"}
+      className={style.threads}
       style={{ height: height }}
     >
       {posts && posts?.length >= 1 ? (
