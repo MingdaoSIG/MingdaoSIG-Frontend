@@ -1,4 +1,4 @@
-import { TPopUpMessageConfigs } from "@/app/new/types/popUpMessageConfigs";
+import { TPopUpMessageConfigs } from "@/app/new/(new)/types/popUpMessageConfigs";
 
 export const popUpMessageConfigs: TPopUpMessageConfigs = {
   titleError: {
