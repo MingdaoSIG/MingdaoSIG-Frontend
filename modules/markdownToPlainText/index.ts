@@ -1,4 +1,4 @@
-export default function MarkdownToPlainText(markdown: string) {
+export default function markdownToPlainText(markdown: string) {
   // Remove headings
   markdown = markdown.replace(/#+\s+(.*)/g, "$1");
 

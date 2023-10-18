@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import style from "./Thread.module.scss";
 import { useEffect, useState } from "react";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

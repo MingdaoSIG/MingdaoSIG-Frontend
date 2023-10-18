@@ -1,7 +1,7 @@
 import { lchownSync } from "fs";
 import style from "./Thread.module.scss";
 
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";

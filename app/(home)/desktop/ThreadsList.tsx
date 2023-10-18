@@ -9,7 +9,7 @@ import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/Thread
 import styles from "./Threads.module.scss";
 
 // Interfaces
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 
 // APIs Request Function
 import { getPostListAPI } from "@/app/(home)/apis/getPostList";

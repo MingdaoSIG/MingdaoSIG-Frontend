@@ -1,8 +1,8 @@
 import Image from "next/image";
 import style from "./ThreadsList.module.scss";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { useRouter } from "next/navigation";
-import MarkdownToPlainText from "@/modules/MarkdownToPlainText";
+import markdownToPlainText from "@/modules/markdownToPlainText";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 const pinned = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
@@ -24,7 +24,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           {pinned.includes(threadData._id) && " • 已置頂"}
         </h1>
         <p className={style.previewContent}>
-          {MarkdownToPlainText(threadData.content)}
+          {markdownToPlainText(threadData.content)}
         </p>
       </div>
       <div
@@ -54,10 +54,7 @@ export const ThreadsList = ({
   height?: string;
 }) => {
   return (
-    <div
-      className={style.threads}
-      style={{ height: height }}
-    >
+    <div className={style.threads} style={{ height: height }}>
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
           return <Thread threadData={item} key={index} />;

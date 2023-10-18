@@ -7,7 +7,7 @@ import { useRouter, notFound } from "next/navigation";
 import SwitchButton from "./(User)/SwitchButton";
 import SplitBlock from "../(Layout)/splitBlock";
 import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { GetUserPostListAPI } from "./(User)/API";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

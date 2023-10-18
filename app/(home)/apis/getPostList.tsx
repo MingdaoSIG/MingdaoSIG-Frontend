@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 // Interfaces
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

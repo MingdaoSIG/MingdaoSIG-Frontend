@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styles from "./Threads.module.scss";
 
 // Interfaces
-import { IThread } from "@/interface/Thread.interface";
+import { IThread } from "@/interfaces/Thread.interface";
 import { ThreadsList as _ThreadsList } from "@/components/Threads/mobile/ThreadsList";
 import { getPostListAPI } from "@/app/(home)/apis/getPostList";
 
