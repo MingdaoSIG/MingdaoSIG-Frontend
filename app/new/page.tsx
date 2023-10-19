@@ -133,6 +133,7 @@ export default function NewPostPage() {
       handleFormEventFunction={handleFormChange}
       discardFunction={discard}
       postFunction={NewPostAPI}
+      postButtonDisable={postButtonDisable}
     ></NewPostMobile>
   ) : (
     <NewPostDesktop
