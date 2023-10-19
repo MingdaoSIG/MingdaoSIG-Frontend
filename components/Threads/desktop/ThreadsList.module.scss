@@ -43,12 +43,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
 }
 
 .previewContent {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: black;
@@ -64,20 +63,4 @@
 .more {
   color: cadetblue;
   font-weight: bolder;
-}
-
-.title_bar {
-  display: flex;
-}
-
-.info {
-  font-size: 0.85rem;
-  width: auto;
-  display: flex;
-  flex-direction: initial;
-  // opacity: 50%;
-
-  .user {
-    opacity: 60%;
-  }
 }
