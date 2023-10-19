@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export async function getSigListAPI(
-  setSIGs: Dispatch<SetStateAction<unknown[]>>
+  setSIGs?: Dispatch<SetStateAction<unknown[]>>
 ) {
   try {
     const res = await (
@@ -10,7 +10,7 @@ export async function getSigListAPI(
       })
     ).json();
 
-    return setSIGs(res.postData);
+    return setSIGs ? setSIGs(res.postData) : res.postData;
   } catch (error) {
     console.error(error);
   }

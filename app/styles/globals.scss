@@ -2,6 +2,8 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;200;300;400;500&display=swap");
+
 @import "./variables.scss";
 
 $bg-color-from: #ffe69b;
@@ -16,6 +18,7 @@ body {
   max-height: 100dvh;
   overflow: hidden;
   color: black;
+  font-family: "Noto Sans TC", sans-serif;
 }
 
 .wrap {
@@ -48,6 +51,14 @@ body {
 
   display: grid;
   grid-template-rows: 10% 75% 15%;
+}
+
+.toolbarWrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 ::-webkit-scrollbar {

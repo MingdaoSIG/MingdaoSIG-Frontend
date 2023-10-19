@@ -13,7 +13,7 @@ import styles from "./MetaDataForm.module.scss";
 import { TPostAPI } from "@/app/new/(new)/types/postAPI";
 
 // APIs Request Function
-import { getSigListAPI } from "@/app/new/(new)/apis/getSigListAPI";
+import { getSigListAPI } from "@/modules/getSigListAPI";
 
 interface Props {
   discardFunction: Function;
