@@ -69,10 +69,13 @@ export default function NewPostPage() {
   async function NewPostAPI() {
     if (postData?.title === "")
       return Swal.fire(popUpMessageConfigs.titleError);
+    if (!postData.sig) {
+      return Swal.fire(popUpMessageConfigs.sigError);
+    }
     try {
-      assert(postData); // Check whether postData is not undefined
-      console.debug(postData);
       setToken(localStorage.getItem("token") || "");
+      assert(postData); // Check whether postData was defined
+      assert(token !== ""); // Check whether token was loaded
       const res = await postAPI(postData, token);
       console.debug(res);
 
