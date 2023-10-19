@@ -34,6 +34,7 @@ export default function NewPostPage() {
   const isMobile = useIsMobile();
   // Form data states
   const [token, setToken] = useState<string>("");
+  const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
   const [postData, setPostData] = useState<TPostAPI>({
     title: "",
     sig: "",
@@ -67,27 +68,41 @@ export default function NewPostPage() {
   }, []);
 
   async function NewPostAPI() {
+    setPostButtonDisable(true);
     if (postData?.title === "")
-      return Swal.fire(popUpMessageConfigs.titleError);
+      return Swal.fire(popUpMessageConfigs.titleError).then(() =>
+        setPostButtonDisable(false)
+      );
+    if (!postData.sig) {
+      return Swal.fire(popUpMessageConfigs.sigError).then(() =>
+        setPostButtonDisable(false)
+      );
+    }
     try {
-      assert(postData); // Check whether postData is not undefined
-      console.debug(postData);
       setToken(localStorage.getItem("token") || "");
+      assert(postData); // Check whether postData was defined
+      assert(token !== ""); // Check whether token was loaded
       const res = await postAPI(postData, token);
       console.debug(res);
 
       if (res.status === 2000) {
         return Swal.fire(popUpMessageConfigs.Success).then(() => {
+          setPostButtonDisable(false);
           localStorage.removeItem("editorContent");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
-        Swal.fire(popUpMessageConfigs.PermissionError);
+        Swal.fire(popUpMessageConfigs.PermissionError).then(() =>
+          setPostButtonDisable(false)
+        );
       } else {
+        setPostButtonDisable(false);
         throw new Error("Unexpected error");
       }
     } catch (error) {
-      Swal.fire(popUpMessageConfigs.OthersError);
+      Swal.fire(popUpMessageConfigs.OthersError).then(() =>
+        setPostButtonDisable(false)
+      );
     }
   }
 
@@ -118,6 +133,7 @@ export default function NewPostPage() {
       handleFormEventFunction={handleFormChange}
       discardFunction={discard}
       postFunction={NewPostAPI}
+      postButtonDisable={postButtonDisable}
     ></NewPostMobile>
   ) : (
     <NewPostDesktop
@@ -127,6 +143,7 @@ export default function NewPostPage() {
       postFunction={NewPostAPI}
       token={token}
       handleFormEventFunction={handleFormChange}
+      postButtonDisable={postButtonDisable}
     ></NewPostDesktop>
   );
 }

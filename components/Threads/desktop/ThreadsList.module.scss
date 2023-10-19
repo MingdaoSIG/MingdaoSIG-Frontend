@@ -1,14 +1,17 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
+  --thread-height: 12rem;
   position: relative;
-  padding-right: 10px;
-  border-top-left-radius: $border-radius;
-  border-bottom-left-radius: $border-radius;
+  border-radius: $border-radius;
   display: flex;
   flex-direction: column;
   gap: 20px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .thread {

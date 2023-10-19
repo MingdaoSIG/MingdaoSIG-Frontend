@@ -10,6 +10,7 @@ import { SweetAlertOptions } from "sweetalert2";
  */
 export type TPopUpMessageConfigs = {
   titleError: SweetAlertOptions;
+  sigError: SweetAlertOptions;
   Success: SweetAlertOptions;
   PermissionError: SweetAlertOptions;
   OthersError: SweetAlertOptions;

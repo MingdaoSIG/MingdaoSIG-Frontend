@@ -18,6 +18,7 @@ interface Props {
   discardFunction: Function;
   handleFormEventFunction: Function;
   postFunction: Function;
+  postButtonDisable: boolean;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -30,6 +31,7 @@ export default function NewPost({
   discardFunction,
   handleFormEventFunction,
   postFunction,
+  postButtonDisable,
 }: Props) {
   return (
     <SplitBlock>
@@ -45,6 +47,7 @@ export default function NewPost({
         postFunction={postFunction}
         postData={postData}
         handleFormEventFunction={handleFormEventFunction}
+        postButtonDisable={postButtonDisable}
       />
     </SplitBlock>
   );

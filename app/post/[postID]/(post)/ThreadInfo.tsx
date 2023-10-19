@@ -5,6 +5,8 @@ import Image from "next/image";
 import style from "./Thread.module.scss";
 import { useEffect, useState } from "react";
 import { IThread } from "@/interfaces/Thread.interface";
+import { RouteKind } from "next/dist/server/future/route-kind";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -37,6 +39,8 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeText, setTypeText] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
+
+  const route = useRouter();
 
   useEffect(() => {
     GetUserAPI();
@@ -75,7 +79,10 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border"}>
-      <div className="flex justify-between items-center flex-initial relative h-[64px]">
+      <div
+        className="flex justify-between items-center flex-initial relative h-[64px]"
+        onClick={() => route.push(`/@${user.customId}`)}
+      >
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}

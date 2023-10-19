@@ -20,6 +20,7 @@ interface Props {
   postFunction: Function;
   postData: TPostAPI | undefined;
   handleFormEventFunction: Function;
+  postButtonDisable: boolean;
 }
 
 export default function MetaDataForm({
@@ -27,6 +28,7 @@ export default function MetaDataForm({
   postFunction,
   handleFormEventFunction,
   postData,
+  postButtonDisable,
 }: Props) {
   const { status } = useSession();
 
@@ -81,6 +83,7 @@ export default function MetaDataForm({
         <Buttons
           discardFunction={discardFunction}
           postFunction={postFunction}
+          postButtonDisable={postButtonDisable}
         />
       </>
     );

@@ -1,8 +1,8 @@
 "use client";
 
 import SplitBlock from "@/app/(Layout)/splitBlock";
-import Thread from "@/app/post/(Post)/Thread";
-import ThreadInfo from "@/app/post/(Post)/ThreadInfo";
+import Thread from "@/app/post/[postID]/(post)/Thread";
+import ThreadInfo from "./(post)/ThreadInfo";
 import { IThread } from "@/interfaces/Thread.interface";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";

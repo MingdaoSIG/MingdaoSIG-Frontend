@@ -8,6 +8,13 @@ export const popUpMessageConfigs: TPopUpMessageConfigs = {
     confirmButtonText: "OK",
     confirmButtonColor: "#ff0000",
   },
+  sigError: {
+    title: "Error!",
+    text: "Please select SIG",
+    icon: "error",
+    confirmButtonText: "OK",
+    confirmButtonColor: "#ff0000",
+  },
   Success: {
     title: "Success!",
     text: "Post created!",
