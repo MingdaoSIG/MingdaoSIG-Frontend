@@ -4,9 +4,14 @@ import Image from "next/image";
 interface Props {
   discardFunction: Function;
   postFunction: Function;
+  postButtonDisable: boolean;
 }
 
-export default function Buttons({ discardFunction, postFunction }: Props) {
+export default function Buttons({
+  discardFunction,
+  postFunction,
+  postButtonDisable,
+}: Props) {
   return (
     <div className={styles.buttons}>
       <button
@@ -19,6 +24,7 @@ export default function Buttons({ discardFunction, postFunction }: Props) {
       <button
         className={styles.buttonPost}
         onClick={async () => await postFunction()}
+        disabled={postButtonDisable}
       >
         <Image
           src="/icons/cloud-upload.svg"
