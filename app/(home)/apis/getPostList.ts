@@ -31,7 +31,7 @@ export async function getPostListAPI(
 }
 
 function sortPosts(posts: any[]) {
-  const pinnedIds = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
+  const pinnedIds = ["652cabdb45c0be8f82c54d9a", "652e4591d04b679afdff697e"];
 
   posts.sort(
     (

@@ -26,18 +26,19 @@ const ThreadsList = ({ setParentPosts }: Props) => {
     getPostListAPI(setParentPosts, setPosts, setStatus);
   }, [setParentPosts]);
 
-  if (status !== "loading" || posts.length > 0) {
+  if (status.startsWith("loading")) {
+    return (
+      <div className={styles.messagePage}>
+        {status === "loading" ? <p>Loading...</p> : <p>No post yet.</p>}
+      </div>
+    );
+  } else if (posts.length > 0) {
     return (
       <div className={styles.threadWrap}>
         <_ThreadsList posts={posts} height="65dvh" />
       </div>
     );
   }
-  return (
-    <div className={styles.messagePage}>
-      {status === "loading" ? <p>Loading...</p> : <p>No post yet.</p>}
-    </div>
-  );
 };
 
 export default ThreadsList;

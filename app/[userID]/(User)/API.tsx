@@ -25,3 +25,29 @@ export async function GetUserPostListAPI(
     console.log(error);
   }
 }
+
+export async function GetSIGPostListAPI(
+  sig: {
+    _id: string;
+    name: string;
+    description: string;
+    avatar: string;
+    customId: string;
+  },
+  setPosts: Dispatch<SetStateAction<IThread[]>>,
+  setStatus: Dispatch<SetStateAction<string>>
+) {
+  try {
+    const res = await (
+      await fetch(`${API_URL}/post/list/sig/${sig._id}`, {
+        method: "GET",
+      })
+    ).json();
+
+    setPosts(res.postData);
+    setStatus("success2");
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+}
