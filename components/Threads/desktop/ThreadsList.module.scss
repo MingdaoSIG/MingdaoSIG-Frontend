@@ -80,4 +80,8 @@
   .user {
     opacity: 60%;
   }
+
+  & > span {
+    padding: 0 0.1rem;
+  }
 }
