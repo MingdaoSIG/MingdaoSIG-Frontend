@@ -2,14 +2,22 @@ import { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 // Styles
 import styles from "./Editor.module.scss";
 
 // Interfaces
+// import { IImageUpload } from "@/interfaces/Image.interface";
+
+// Types
 import { TPostAPI } from "../types/postAPI";
 
 // Configs
 import { toolbars } from "../config/editorToolbar";
+
+// APIs Request Function
+import { imageUpload } from "@/modules/imageUploadAPI";
 
 interface Props {
   postData: TPostAPI;
@@ -19,26 +27,21 @@ interface Props {
 
 const MdEditorSync = ({ postData, setPostData, token }: Props) => {
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
-    const res = await Promise.all(
-      files.map((file: any) => {
-        return new Promise((rev, rej) => {
-          try {
-            fetch("https://sig.zeabur.app/image", {
-              method: "POST",
-              headers: {
-                "Content-Type": "image/webp",
-                Authorization: "Bearer " + token,
-              },
-              body: file,
-            });
-          } catch (error) {
-            console.log("errrrrrrrrrr: ", error);
-          }
-        });
+    const responseImage = await Promise.all(
+      files.map(async (file: any) => {
+        try {
+          const res = await imageUpload(file, token);
+          return await res.json();
+        } catch (error) {
+          console.error("error: ", error);
+          return "fuck you";
+        }
       })
     );
 
-    callback(res.map((item: any) => item?.data.url));
+    console.log(responseImage);
+
+    callback(responseImage.map((item: any) => `${API_URL}/image/` + item?.id));
   };
 
   const handleEditorChange = (newContent: string) => {
