@@ -22,14 +22,18 @@ import { homePageLinks } from "../configs/linksList";
 // };
 
 const SIG = (child: any) => {
+  const route = useRouter();
   return (
-    <div className={style.sig}>
+    <div
+      className={style.sig}
+      onClick={() => route.push(`/@${child.customId}`)}
+    >
       <p>{child.name}</p>
     </div>
   );
 };
 
-const LikeSIG = (child: any) => {
+const LikePost = (child: any) => {
   const route = useRouter();
 
   return (
@@ -83,7 +87,7 @@ const Information = ({ post }: { post: any }) => {
                 .slice(0, 5)
                 .map((item: any) => {
                   return (
-                    <LikeSIG
+                    <LikePost
                       _id={item._id}
                       title={item.title}
                       like={item.like.length}
@@ -99,7 +103,14 @@ const Information = ({ post }: { post: any }) => {
             <div className={style.sig_top}>
               {sigs.map((item: any) => {
                 if (item._id !== "652d60b842cdf6a660c2b778") {
-                  return <SIG _id={item._id} name={item.name} key={item._id} />;
+                  return (
+                    <SIG
+                      _id={item._id}
+                      name={item.name}
+                      customId={item.customId}
+                      key={item._id}
+                    />
+                  );
                 }
               })}
             </div>
