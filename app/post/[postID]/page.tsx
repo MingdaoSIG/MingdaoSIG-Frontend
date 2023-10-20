@@ -1,16 +1,28 @@
 "use client";
-
-import SplitBlock from "@/app/(Layout)/splitBlock";
-import Thread from "@/app/post/[postID]/(post)/desktop/Thread";
-import ThreadInfo from "./(post)/desktop/ThreadInfo";
-import { IThread } from "@/interfaces/Thread.interface";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+// Layout
+import SplitBlock from "@/app/(Layout)/splitBlock";
+
+// Desktop-Side Component
+import ThreadDesktop from "@/app/post/[postID]/(post)/desktop/Thread";
+import ThreadInfo from "./(post)/desktop/ThreadInfo";
+
+// Mobile-SIde Component
+import ThreadMobile from "./(post)/mobile/Thread";
+
+// Interfaces
+import { IThread } from "@/interfaces/Thread.interface";
+
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Post = ({ params }: { params: { postID: string } }) => {
   const route = useRouter();
+  const isMobile = useIsMobile();
 
   const PostID = decodeURIComponent(params.postID);
   const [post, setPost] = useState<IThread>();
@@ -57,15 +69,17 @@ const Post = ({ params }: { params: { postID: string } }) => {
       </div>
     );
   } else if (post?.sig === "652d60b842cdf6a660c2b778") {
-    return <Thread post={post!} />;
+    return <ThreadDesktop post={post!} />;
   } else {
-    return (
+    return isMobile ? (
       <>
-        <SplitBlock>
-          <Thread post={post!} />
-          <ThreadInfo post={post!} />
-        </SplitBlock>
+        <ThreadMobile post={post!}></ThreadMobile>
       </>
+    ) : (
+      <SplitBlock>
+        <ThreadDesktop post={post!} />
+        <ThreadInfo post={post!} />
+      </SplitBlock>
     );
   }
 };
