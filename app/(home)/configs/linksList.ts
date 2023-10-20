@@ -4,7 +4,7 @@ export const homePageLinks = [
     text: "Rule",
   },
   {
-    href: "",
+    href: "/post/65325fce0b891d1f6b5b3131",
     text: "About",
   },
   {
