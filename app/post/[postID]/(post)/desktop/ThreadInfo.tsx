@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 // Components
 import Reply from "../components/Reply";
+import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 
 // Styles
 import style from "./Thread.module.scss";
@@ -13,18 +15,63 @@ import style from "./Thread.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
+import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
+  const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
+  const [comments, setComments] = useState<any>([]);
+  const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
 
   const route = useRouter();
 
+  async function handleCommandSubmit(e: any) {
+    e.preventDefault();
+    const reply = "";
+    const content = typeComments;
+    if (typeComments.length === 0)
+      return Swal.fire({
+        title: "Error!",
+        text: "Please enter comment!",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff0000",
+      });
+    try {
+      const res = await PostCommentAPI(post?._id, reply, content, token);
+      if (res.status === 2000) {
+        setTypeComments("");
+        Swal.fire({
+          title: "Success!",
+          text: "Comment success!",
+          icon: "success",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#0090BD",
+        });
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff0000",
+      });
+    }
+  }
+
   useEffect(() => {
+    setToken(localStorage.getItem("token") || "");
+
     GetUserAPI();
     GetSigAPI();
+    GetCommentAPI(post).then((res) => {
+      setComments(res.postData);
+    });
 
     async function GetUserAPI() {
       try {
@@ -55,14 +102,11 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post.user, post.sig]);
+  }, [post?.user, post?.sig, post?._id]);
 
   return (
     <div className={style.info + " box-border"}>
-      <div
-        className="flex justify-between items-center flex-initial relative h-[64px]"
-        onClick={() => route.push(`/@${user.customId}`)}
-      >
+      <div className="flex justify-between items-center flex-initial relative h-[64px]">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
@@ -72,8 +116,22 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             className="rounded-full w-[64px] h-[64px] flex-initial"
           ></Image>
           <div className="flex flex-col items-start my-auto flex-initial w-auto">
-            <div className={style.name + " flex"}>{user?.name}</div>
-            <div className="opacity-50">{sig?.name}</div>
+            <div className="flex">
+              <div
+                className={style.name + " flex"}
+                onClick={() => route.push(`/@${user?.customId}`)}
+              >
+                {user?.name}
+              </div>
+              <p className={style.dot}>•</p>
+              <div
+                className={style.name}
+                style={{ color: sigDefaultColors[sig?._id] }}
+                onClick={() => route.push(`/@${sig?.customId}`)}
+              >
+                {sig?.name}
+              </div>
+            </div>
             <div className={style.time}>
               {new Date(post?.createdAt).toLocaleString("zh-TW").split(" ")[0]}
             </div>
@@ -81,26 +139,33 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
-        {/* <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply> */}
+        {comments?.map((comment: any) => {
+          return (
+            <Reply
+              key={comment._id}
+              customId={comment.user.customId}
+              avatar={comment.user.avatar}
+              content={comment.content}
+              createdAt={comment.createdAt}
+            />
+          );
+        })}
       </div>
-      <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5">
+      <form
+        className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5"
+        onSubmit={handleCommandSubmit}
+      >
         <input
           className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1 disabled:cursor-not-allowed"
           placeholder="Reply..."
           onChange={(e) => {
             e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
+            setTypeComments(e.target.value);
           }}
-          disabled
+          value={typeComments}
+          // disabled
         />
-        <div className="h-full w-[40px] flex-none">
+        <button className="h-full w-[40px] flex-none">
           <Image
             src={"/icons/bx-send.svg"}
             height={24}
@@ -113,8 +178,8 @@ export default function ThreadInfo({ post }: { post: IThread }) {
                 : "opacity-30 cursor-not-allowed")
             }
           />
-        </div>
-      </div>
+        </button>
+      </form>
     </div>
   );
 }

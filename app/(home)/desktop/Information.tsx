@@ -24,12 +24,9 @@ import { homePageLinks } from "../configs/linksList";
 const SIG = (child: any) => {
   const route = useRouter();
   return (
-    <div
-      className={style.sig}
-      onClick={() => route.push(`/@${child.customId}`)}
-    >
+    <Link className={style.sig} href={`/@${child.customId}`}>
       <p>{child.name}</p>
-    </div>
+    </Link>
   );
 };
 
@@ -37,13 +34,10 @@ const LikePost = (child: any) => {
   const route = useRouter();
 
   return (
-    <div
-      className={style.likePost}
-      onClick={() => route.push(`/post/${child._id}`)}
-    >
-      <h3>{child.title}</h3>
+    <Link className={style.likePost} href={`/post/${child._id}`}>
+      <h3 className={style.likeTitle}>{child.title}</h3>
       <p>{child.like} likes</p>
-    </div>
+    </Link>
   );
 };
 
@@ -79,43 +73,44 @@ const Information = ({ post }: { post: any }) => {
     return (
       <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
         <div className={style.information}>
-          <div className={style.likedPosts}>
-            <h2>Top Liked Posts</h2>
-            <div className={style.likePostWrapper}>
-              {post
-                .sort((a: any, b: any) => b.like.length - a.like.length)
-                .slice(0, 5)
-                .map((item: any) => {
-                  return (
-                    <LikePost
-                      _id={item._id}
-                      title={item.title}
-                      like={item.like.length}
-                      key={item._id}
-                    />
-                  );
+          <div className={style.wrapper}>
+            <div className={style.likedPosts}>
+              <h2>Top 5 Posts</h2>
+              <div className={style.likePostWrapper}>
+                {post
+                  .sort((a: any, b: any) => b.like.length - a.like.length)
+                  .slice(0, 5)
+                  .map((item: any) => {
+                    return (
+                      <LikePost
+                        _id={item._id}
+                        title={item.title}
+                        like={item.like.length}
+                        key={item._id}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
+
+            <div className={style.sigs}>
+              <h2>SIGs - {sigs?.length - 1}</h2>
+              <div className={style.sigTop}>
+                {sigs.map((item: any) => {
+                  if (item._id !== "652d60b842cdf6a660c2b778") {
+                    return (
+                      <SIG
+                        _id={item._id}
+                        name={item.name}
+                        customId={item.customId}
+                        key={item._id}
+                      />
+                    );
+                  }
                 })}
+              </div>
             </div>
           </div>
-
-          <div className={style.sigs}>
-            <h2>SIGs - {sigs?.length - 1}</h2>
-            <div className={style.sig_top}>
-              {sigs.map((item: any) => {
-                if (item._id !== "652d60b842cdf6a660c2b778") {
-                  return (
-                    <SIG
-                      _id={item._id}
-                      name={item.name}
-                      customId={item.customId}
-                      key={item._id}
-                    />
-                  );
-                }
-              })}
-            </div>
-          </div>
-
           <div className={style.links}>
             {homePageLinks.map(({ href, text }, index, array) => {
               return (

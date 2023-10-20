@@ -1,5 +1,8 @@
 @import "@/app/styles/variables.scss";
 
+$linksHeight: 1.5rem;
+$h2TitleHeight: 1.8rem;
+
 .information {
   padding: $padding;
   background-color: $panel-background-color;
@@ -11,16 +14,17 @@
   h2 {
     color: #3c69b4;
     font-size: 1.3rem;
+    line-height: $h2TitleHeight ;
     font-weight: bolder;
   }
 }
 
-.likedPosts {
-  position: relative;
-  h3:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  height: calc(100% - $linksHeight);
 }
 
 .likePostWrapper {
@@ -54,50 +58,49 @@
   }
 }
 
-// .link {
-//   overflow-x: auto;
-//   opacity: 40%;
-//   padding-left: 15px;
-//   padding-right: 15px;
-//   margin-top: 5px;
-//   height: auto;
-//   width: 100%;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-around;
-// }
+.likeTitle {
+  position: relative;
+  font-weight: 500;
+}
 
-// .link::-webkit-scrollbar {
-//   height: 2px;
-// }
+.likeTitle::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0%;
+  height: 1.5px;
+  background-color: black;
+  transition-duration: 0.2s;
+  transform-origin: right;
+}
 
-// .link::-webkit-scrollbar-thumb {
-//   background-color: $scrollbar-thumb-color;
-//   border-radius: 5px;
-// }
-
-// .link::-webkit-scrollbar-track {
-//   border-radius: 5px;
-//   background: $scrollbar-track-color;
-// }
-
-// .link_block {
-//   padding-left: 10px;
-//   padding-right: 10px;
-//   background-color: $panel-background-color;
-//   padding: 10px;
-//   border-radius: 10px;
-// }
+.likePost:hover .likeTitle::before {
+  width: 100%;
+  transform-origin: left;
+}
 
 .sigs {
+  flex-grow: 1;
   position: relative;
-  height: 65%;
-  margin-top: 1.5rem;
+}
+
+.sigTop {
+  position: absolute;
+  $margin: 0.3rem;
+  margin-top: $margin;
+  height: calc(100% - $h2TitleHeight - $margin);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-around;
+  justify-content: space-evenly;
+  gap: 1.8rem;
+  overflow-y: auto;
 }
 
 .sig {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   flex-shrink: 0;
   border-radius: 10px;
   background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
@@ -105,11 +108,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  :hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
 
   p {
     width: 88px;
@@ -123,27 +121,24 @@
   }
 }
 
-.sig_top {
-  margin-top: 0.3rem;
-  height: 80%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 1.8rem;
-  overflow-y: auto;
+.sig:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #fff;
 }
 
 .links {
   position: absolute;
-  bottom: $padding;
+  bottom: calc($padding * 0.5);
   left: $padding;
   right: $padding;
+  line-height: $linksHeight;
   display: flex;
   align-items: center;
   justify-content: space-around;
   color: #646464;
- :hover {
-  text-decoration: underline;
- }
+
+  :hover {
+    text-decoration: underline;
+  }
 }
