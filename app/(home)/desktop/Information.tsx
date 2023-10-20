@@ -1,9 +1,12 @@
 "use client";
 
-import style from "./Information.module.scss";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+
+// Styles
+import style from "./Information.module.scss";
+import { homePageLinks } from "../configs/linksList";
 
 // const Hashtag = (child: any) => {
 //   return (
@@ -30,13 +33,12 @@ const LikeSIG = (child: any) => {
   const route = useRouter();
 
   return (
-    <div className={style.likePost} onClick={() => route.push(`/post/${child._id}`)}>
-      <h3>
-        {child.title}
-      </h3>
-      <p>
-        {child.like} likes
-      </p>
+    <div
+      className={style.likePost}
+      onClick={() => route.push(`/post/${child._id}`)}
+    >
+      <h3>{child.title}</h3>
+      <p>{child.like} likes</p>
     </div>
   );
 };
@@ -74,9 +76,7 @@ const Information = ({ post }: { post: any }) => {
       <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
         <div className={style.information}>
           <div className={style.likedPosts}>
-            <h2>
-              Top Liked Posts
-            </h2>
+            <h2>Top Liked Posts</h2>
             <div className={style.likePostWrapper}>
               {post
                 .sort((a: any, b: any) => b.like.length - a.like.length)
@@ -95,9 +95,7 @@ const Information = ({ post }: { post: any }) => {
           </div>
 
           <div className={style.sigs}>
-            <h2>
-              SIGs - {sigs?.length}
-            </h2>
+            <h2>SIGs - {sigs?.length}</h2>
             <div className={style.sig_top}>
               {sigs.map((item: any) => {
                 if (item._id !== "652d60b842cdf6a660c2b778") {
@@ -108,31 +106,10 @@ const Information = ({ post }: { post: any }) => {
           </div>
 
           <div className={style.links}>
-            {[
-              {
-                href: "/post/652cabdb45c0be8f82c54d9a",
-                text: "Rule"
-              },
-              {
-                href: "",
-                text: "About"
-              },
-              {
-                href: "/post/652e4591d04b679afdff697e",
-                text: "Markdown"
-              },
-              {
-                href: "mailto:mdsig20@ms.mingdao.edu.tw",
-                text: "Mail"
-              }
-            ].map(({ href, text }, index, array) => {
+            {homePageLinks.map(({ href, text }, index, array) => {
               return (
                 <>
-                  <Link
-                    href={href}
-                    target="_blank"
-                    key={index}
-                  >
+                  <Link href={href} target="_blank" key={index}>
                     {text}
                   </Link>
                   {index === array.length - 1 ? "" : "•"}
@@ -148,4 +125,6 @@ const Information = ({ post }: { post: any }) => {
 
 export default Information;
 
-{/*  */ }
+{
+  /*  */
+}
