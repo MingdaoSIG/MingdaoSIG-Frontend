@@ -68,13 +68,13 @@ const Thread = ({ post }: { post: IThread }) => {
 
     if (localStorage.getItem("token")) {
       const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
-      if (post.like.includes(User._id)) {
+      if (post?.like.includes(User._id)) {
         setLike(true);
       }
     }
   }, [post?.like]);
 
-  if (post.sig === "652d60b842cdf6a660c2b778") {
+  if (post?.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
         <div className="py-[1rem]">

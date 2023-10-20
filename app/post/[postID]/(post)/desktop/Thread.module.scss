@@ -15,7 +15,7 @@
   align-items: stretch;
 }
 
-.threadContent>div {
+.threadContent > div {
   padding: 0 !important;
   padding-right: 1rem !important;
 }
@@ -53,6 +53,11 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+
+  .name:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .author {
@@ -62,10 +67,17 @@
 
 .name {
   color: #002024;
-  font-size: 20px;
+  font-size: 1.3rem;
   font-style: normal;
   font-weight: 800;
   line-height: normal;
+}
+
+.dot {
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 1.3rem;
+  font-weight: bolder;
 }
 
 .time {
@@ -77,12 +89,6 @@
   line-height: normal;
   letter-spacing: 0.6px;
   margin-left: 2px;
-}
-
-.reply {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .content {

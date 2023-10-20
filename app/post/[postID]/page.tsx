@@ -18,6 +18,8 @@ import { IThread } from "@/interfaces/Thread.interface";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 
+import { PostCommentAPI } from "./(post)/apis/CommentAPI";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Post = ({ params }: { params: { postID: string } }) => {
@@ -26,9 +28,16 @@ const Post = ({ params }: { params: { postID: string } }) => {
 
   const PostID = decodeURIComponent(params.postID);
   const [post, setPost] = useState<IThread>();
+  const [token, setToken] = useState<string>("");
   const [status, setStatus] = useState("loading");
 
+  async function PostCommand(reply: any, content: any) {
+    await PostCommentAPI(post?._id, reply, content, token);
+  }
+
   useEffect(() => {
+    setToken(localStorage.getItem("token") || "");
+
     GetPostListAPI();
 
     async function GetPostListAPI() {
@@ -38,7 +47,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
             method: "GET",
           })
         ).json();
-        if (res.status === 4000 || res.status === 4008) {
+        if (res.status === 4000 || res.status === 4008 || res.status === 4018) {
           setStatus("notfound");
         } else {
           setPost(res.postData);
@@ -53,7 +62,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
   }, [PostID]);
 
   if (status === "loading") {
-    return <div className="flex m-auto text-[50px]">Loading...</div>;
+    return <div className="flex align-middle justify-center text-[50px]">Loading...</div>;
   } else if (status === "notfound") {
     return (
       <div className="flex flex-col m-auto">

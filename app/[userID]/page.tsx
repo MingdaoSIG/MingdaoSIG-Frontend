@@ -122,39 +122,43 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     status === "loading3"
   ) {
     return (
-      <div className="flex flex-col m-auto">
+      <div className="flex align-middle justify-center">
         <h1 className="text-[50px]"> Loading...</h1>
       </div>
     );
   } else if (status === "success" || status === "success2") {
     const badge = [
       <div
-        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[35px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%_+_10px)] grid-cols-2 left-[8rem]"
+        className="bg-[rgb(100,100,100)] bg-opacity-0 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-[0.2rem] absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[6rem]"
         key={"badge"}
       >
-        <div className="group my-auto relative" key={"developer"}>
-          <Image
-            src={"/badges/developer.svg"}
-            height={24}
-            width={24}
-            alt="developer"
-            className="developer my-auto"
-          />
-          <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block">
-            Developer
-          </span>
+        <div className="my-auto relative select-none" key={"developer"}>
+          <div className="h-[24px] w-[24px] group cursor-pointer">
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block">
+              Developer
+            </span>
+            <Image
+              src={"/badges/developer.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className="developer my-auto"
+            />
+          </div>
         </div>
-        <div className="group my-auto relative" key={"developer"}>
-          <Image
-            src={"/badges/1021user.svg"}
-            height={24}
-            width={24}
-            alt="developer"
-            className="developer my-auto"
-          />
-          <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block">
-            10/21 Event Participant
-          </span>
+        <div className="my-auto relative select-none" key={"developer"}>
+          <div className="h-[24px] w-[24px] group cursor-pointer">
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block">
+              10/21 Event Participant
+            </span>
+            <Image
+              src={"/badges/1021user.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className="developer my-auto"
+            />
+          </div>
         </div>
       </div>,
     ];

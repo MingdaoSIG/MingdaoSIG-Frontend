@@ -13,6 +13,7 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+import Link from "next/link";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 const pinned = [
@@ -68,9 +69,9 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   }, [threadData.sig, threadData.user]);
 
   return (
-    <div
+    <Link
+      href={`/post/${threadData._id}`}
       className={style.thread + "  cursor-pointer select-none "}
-      onClick={() => router.push("/post/" + threadData._id)}
       style={{
         backgroundColor: pinned.includes(threadData._id) ? "white" : "",
       }}
@@ -123,7 +124,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           fill
         ></Image>
       </div>
-    </div>
+    </Link>
   );
 };
 

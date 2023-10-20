@@ -1,0 +1,23 @@
+@import "@/app/styles/variables.scss";
+
+.reply {
+  height: 100%;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+
+  padding: 0.5rem 1rem;
+
+  h4 {
+    color: $dark-text;
+    font-weight: 500;
+  }
+
+  p {
+    color: $gray-text;
+  }
+}
+
+.title {
+  display: flex;
+  gap: 0.5rem;
+}
