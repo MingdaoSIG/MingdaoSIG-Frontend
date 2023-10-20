@@ -4,6 +4,7 @@
 import React from "react";
 import { signOut } from "next-auth/react";
 import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
 
 // Styles
 import "@/app/styles/globals.scss";
@@ -29,32 +30,77 @@ export default function RootLayout({
   const isMobile = useIsMobile();
 
   return (
-    <SessionProvider>
-      <html lang="en" onLoad={resetLocalStorage}>
-        <head>
-          <title>MDSIG</title>
-        </head>
-        {isMobile ? (
-          <body className="">
-            <div className="wrapMobile">
-              <HeaderBarMobile></HeaderBarMobile>
-              {children}
-              <div className="toolbarWrap">
-                <ToolBarMobile></ToolBarMobile>
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+
+        <meta name="author" content="OnCloud, HACO, Lazp, Meru" />
+        <meta name="theme-color" content="#FFFFFF" />
+        <meta
+          name="description"
+          content="MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!"
+        />
+        <meta name="copyright" content="Copyright (c) by OnCloud, HACO, Lazp, Meru" />
+
+        <meta httpEquiv="content-Type" content="text/html; charset=utf-8" />
+        <meta httpEquiv="content-language" content="zh-TW" />
+        <meta httpEquiv="widow-target" content="_top" />
+
+        {/* <!-- Twitter --> */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="MDSIG - 讓學習不再有時空的限制"
+        />
+        <meta
+          name="twitter:description"
+          content="MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!"
+        />
+        <meta name="twitter:site" content="@" />
+        <meta name="twitter:creator" content="@" />
+        <meta name="twitter:image" content="https://i.imgur.com/tPYMyLP.png" />
+
+        {/* <!-- Open Graph --> */}
+        <meta property="og:url" content="https://sig.mingdao.edu.tw" />
+        <meta
+          property="og:title"
+          content="MDSIG - 讓學習不再有時空的限制"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:description"
+          content="MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!"
+        />
+        <meta property="og:image" content="https://i.imgur.com/tPYMyLP.png" />
+      </Head>
+      <SessionProvider>
+        <html lang="en" onLoad={resetLocalStorage}>
+          <head>
+            <title>MDSIG</title>
+          </head>
+          {isMobile ? (
+            <body className="">
+              <div className="wrapMobile">
+                <HeaderBarMobile></HeaderBarMobile>
+                {children}
+                <div className="toolbarWrap">
+                  <ToolBarMobile></ToolBarMobile>
+                </div>
               </div>
-            </div>
-          </body>
-        ) : (
-          <body>
-            <div className="wrap">
-              <HeaderBarDesktop />
-              {children}
-              <ToolBarDesktop />
-            </div>
-          </body>
-        )}
-      </html>
-    </SessionProvider>
+            </body>
+          ) : (
+            <body>
+              <div className="wrap">
+                <HeaderBarDesktop />
+                {children}
+                <ToolBarDesktop />
+              </div>
+            </body>
+          )}
+        </html>
+      </SessionProvider>
+    </>
   );
 }
 
