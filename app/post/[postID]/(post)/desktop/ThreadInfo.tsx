@@ -1,39 +1,19 @@
 "use client";
 
 import Image from "next/image";
-
-import style from "./Thread.module.scss";
 import { useEffect, useState } from "react";
-import { IThread } from "@/interfaces/Thread.interface";
-import { RouteKind } from "next/dist/server/future/route-kind";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Components
+import Reply from "../components/Reply";
 
-// const Reply = () => {
-//   return (
-//     <div className={style.reply}>
-//       <Image
-//         src={"/images/reply-avatar.svg"}
-//         width={45}
-//         height={45}
-//         alt="Avatar"
-//         className="rounded-full"
-//       ></Image>
-//       <div className={style.content}>
-//         <div className="info flex gap-2 items-center">
-//           <div className="no font-medium text-[12px]">@11v148</div>
-//           <div className="time text-[10px] text-[#BDBDBD] font-extralight">
-//             2023/09/19
-//           </div>
-//         </div>
-//         <p className="text-md-dark-green font-extralight text-[12px]">
-//           社長什麼時候才會交這個，我好想學喔
-//         </p>
-//       </div>
-//     </div>
-//   );
-// };
+// Styles
+import style from "./Thread.module.scss";
+
+// Interfaces
+import { IThread } from "@/interfaces/Thread.interface";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeText, setTypeText] = useState(false);
