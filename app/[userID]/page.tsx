@@ -129,7 +129,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   } else if (status === "success" || status === "success2") {
     const badge = [
       <div
-        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[7rem]"
+        className="bg-[rgb(100,100,100)] bg-opacity-0 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-[0.2rem] absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[6rem]"
         key={"badge"}
       >
         <div className="my-auto relative" key={"developer"}>
