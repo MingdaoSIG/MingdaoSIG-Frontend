@@ -2,6 +2,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  img {
+    margin-bottom: 0 !important;
+  }
 }
 
 .content {

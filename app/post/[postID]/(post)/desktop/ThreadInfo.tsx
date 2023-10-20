@@ -55,7 +55,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post.user, post.sig]);
+  }, [post?.user, post?.sig]);
 
   return (
     <div className={style.info + " box-border"}>
@@ -81,15 +81,15 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
-        {/* <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply>
-        <Reply></Reply> */}
+        <Reply
+          customId={"haco"}
+          avatar={"https://sig-api.lazco.dev/image/653296b40b891d1f6b5b4412"}
+          content={
+            "測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中"
+          }
+          createdAt={"2023/10/20"}
+        />
+        {/* Reply */}
       </div>
       <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5">
         <input

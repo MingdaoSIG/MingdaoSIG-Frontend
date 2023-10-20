@@ -1,13 +1,28 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Styles
 import styles from "./Reply.module.scss";
 
-export default function Reply() {
+export default function Reply({
+  customId,
+  avatar,
+  content,
+  createAt,
+}: {
+  customId: any;
+  avatar: any;
+  content: any;
+  createAt: any;
+}) {
+  const route = useRouter();
   return (
-    <div className={styles.reply}>
+    <div
+      className={styles.reply}
+      onClick={() => route.push(`/@${customId}`)}
+    >
       <Image
-        src={"/images/reply-avatar.svg"}
+        src={avatar}
         width={45}
         height={45}
         alt="Avatar"
@@ -15,13 +30,13 @@ export default function Reply() {
       ></Image>
       <div className={styles.content}>
         <div className="info flex gap-2 items-center">
-          <div className="no font-medium text-[12px]">@11v148</div>
+          <div className="font-medium text-[12px]">@{customId}</div>
           <div className="time text-[10px] text-[#BDBDBD] font-extralight">
-            2023/09/19
+            {createdAt}
           </div>
         </div>
         <p className="text-md-dark-green font-extralight text-[12px]">
-          社長什麼時候才會交這個，我好想學喔
+          {content}
         </p>
       </div>
     </div>
