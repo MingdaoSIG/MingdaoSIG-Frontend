@@ -141,8 +141,8 @@ export default function UserPage({ params }: { params: { userID: string } }) {
           <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
           <_ThreadsList posts={posts} height="auto" />
         </div>
-        <div className="flex flex-col h-full relative max-w-[23dvw]">
-          <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover rounded-t-[30px]"></div>
+        <div className="flex flex-col h-full relative">
+          <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover bg-center rounded-t-[30px]"></div>
           <div className="flex flex-col h-2/3 bg-white py-2 items-stretch rounded-b-[30px]">
             <div className="mt-[50px] ml-10">
               <div className="text-[#002024] font-normal text-[24px] flex h-[36px]">
