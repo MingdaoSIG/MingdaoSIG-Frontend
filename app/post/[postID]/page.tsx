@@ -62,7 +62,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
   }, [PostID]);
 
   if (status === "loading") {
-    return <div className="flex m-auto text-[50px]">Loading...</div>;
+    return <div className="flex align-middle justify-center text-[50px]">Loading...</div>;
   } else if (status === "notfound") {
     return (
       <div className="flex flex-col m-auto">
