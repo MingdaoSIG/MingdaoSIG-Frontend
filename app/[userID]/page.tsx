@@ -106,7 +106,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   } else if (status === "success" || status === "success2") {
     const badge = [
       <div
-        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[35px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%+20px)] grid-cols-2 left-[7rem]"
+        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[35px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%_+_10px)] grid-cols-2 left-[8rem]"
         key={"badge"}
       >
         <div className="group my-auto relative" key={"developer"}>
@@ -144,7 +144,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         <div className="flex flex-col h-full relative max-w-[23dvw]">
           <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover rounded-t-[30px]"></div>
           <div className="flex flex-col h-2/3 bg-white py-2 items-stretch rounded-b-[30px]">
-            <div className="mt-[70px] ml-10">
+            <div className="mt-[50px] ml-10">
               <div className="text-[#002024] font-normal text-[24px] flex h-[36px]">
                 {user?.name}
               </div>
