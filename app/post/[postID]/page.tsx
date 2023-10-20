@@ -18,7 +18,7 @@ import { IThread } from "@/interfaces/Thread.interface";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 
-import { PostCommentAPI } from "./apis/CommentAPI";
+import { PostCommentAPI } from "./(post)/apis/CommentAPI";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

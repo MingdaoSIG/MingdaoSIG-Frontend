@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 // Components
 import Reply from "../components/Reply";
@@ -13,16 +14,57 @@ import style from "./Thread.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
+import { PostCommentAPI } from "../apis/CommentAPI";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeText, setTypeText] = useState(false);
+  const [comments, setComments] = useState<string>("");
+  const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
 
   const route = useRouter();
 
+  async function handleCommandSubmit(e: any) {
+    e.preventDefault();
+    const reply = "";
+    const content = comments;
+    if (comments.length === 0)
+      return Swal.fire({
+        title: "Error!",
+        text: "Please enter comment!",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff0000",
+      });
+    try {
+      const res = await PostCommentAPI(post?._id, reply, content, token);
+      if (res.status === 2000) {
+        setComments("");
+        Swal.fire({
+          title: "Success!",
+          text: "Comment success!",
+          icon: "success",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#0090BD",
+        });
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff0000",
+      });
+    }
+  }
+
   useEffect(() => {
+    setToken(localStorage.getItem("token") || "");
+
     GetUserAPI();
     GetSigAPI();
 
@@ -55,7 +97,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post?.user, post?.sig]);
+  }, [post.user, post.sig, post?._id]);
 
   return (
     <div className={style.info + " box-border"}>
@@ -91,16 +133,21 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         />
         {/* Reply */}
       </div>
-      <div className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5">
+      <form
+        className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5"
+        onSubmit={handleCommandSubmit}
+      >
         <input
           className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1 disabled:cursor-not-allowed"
           placeholder="Reply..."
           onChange={(e) => {
             e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
+            setComments(e.target.value);
           }}
-          disabled
+          value={comments}
+          // disabled
         />
-        <div className="h-full w-[40px] flex-none">
+        <button className="h-full w-[40px] flex-none">
           <Image
             src={"/icons/bx-send.svg"}
             height={24}
@@ -113,8 +160,8 @@ export default function ThreadInfo({ post }: { post: IThread }) {
                 : "opacity-30 cursor-not-allowed")
             }
           />
-        </div>
-      </div>
+        </button>
+      </form>
     </div>
   );
 }
