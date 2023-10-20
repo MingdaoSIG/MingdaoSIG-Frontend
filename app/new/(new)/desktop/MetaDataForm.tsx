@@ -69,6 +69,7 @@ export default function MetaDataForm({
           >
             <option value="">請選擇 SIG</option>
             {sigs?.map((sig) => {
+              if (sig._id === "652d60b842cdf6a660c2b778") return;
               return (
                 <option value={sig._id} key={sig._id}>
                   {sig.name}
