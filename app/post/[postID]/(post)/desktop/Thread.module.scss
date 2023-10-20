@@ -53,6 +53,11 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+
+  .name:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .author {
@@ -62,10 +67,17 @@
 
 .name {
   color: #002024;
-  font-size: 20px;
+  font-size: 1.3rem;
   font-style: normal;
   font-weight: 800;
   line-height: normal;
+}
+
+.dot {
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 1.3rem;
+  font-weight: bolder;
 }
 
 .time {
@@ -77,17 +89,6 @@
   line-height: normal;
   letter-spacing: 0.6px;
   margin-left: 2px;
-}
-
-.reply {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  img {
-    margin-bottom: 0 !important;
-  }
 }
 
 .content {

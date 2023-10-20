@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 
 // Components
 import Reply from "../components/Reply";
+import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 
 // Styles
 import style from "./Thread.module.scss";
@@ -101,10 +102,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border"}>
-      <div
-        className="flex justify-between items-center flex-initial relative h-[64px]"
-        onClick={() => route.push(`/@${user.customId}`)}
-      >
+      <div className="flex justify-between items-center flex-initial relative h-[64px]">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
@@ -114,8 +112,22 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             className="rounded-full w-[64px] h-[64px] flex-initial"
           ></Image>
           <div className="flex flex-col items-start my-auto flex-initial w-auto">
-            <div className={style.name + " flex"}>{user?.name}</div>
-            <div className="opacity-50">{sig?.name}</div>
+            <div className="flex">
+              <div
+                className={style.name + " flex"}
+                onClick={() => route.push(`/@${user?.customId}`)}
+              >
+                {user?.name}
+              </div>
+              <p className={style.dot}>•</p>
+              <div
+                className={style.name}
+                style={{ color: sigDefaultColors[sig?._id] }}
+                onClick={() => route.push(`/@${sig?.customId}`)}
+              >
+                {sig?.name}
+              </div>
+            </div>
             <div className={style.time}>
               {new Date(post?.createdAt).toLocaleString("zh-TW").split(" ")[0]}
             </div>

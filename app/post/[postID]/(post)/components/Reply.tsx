@@ -17,7 +17,7 @@ export default function Reply({
 }) {
   const route = useRouter();
   return (
-    <div className={styles.reply} onClick={() => route.push(`/@${customId}`)}>
+    <div className={styles.reply}>
       <Image
         src={avatar}
         width={45}
@@ -27,8 +27,13 @@ export default function Reply({
       ></Image>
       <div className={styles.content}>
         <div className="info flex gap-2 items-center">
-          <div className="font-medium text-[12px]">@{customId}</div>
-          <div className="time text-[10px] text-[#BDBDBD] font-extralight">
+          <div
+            className={"font-semibold text-[12px] " + styles.name}
+            onClick={() => route.push(`/@${customId}`)}
+          >
+            @{customId}
+          </div>
+          <div className="time text-[10px] text-[#979797] font-extralight">
             {createdAt}
           </div>
         </div>
