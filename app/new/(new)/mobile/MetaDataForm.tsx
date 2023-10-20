@@ -10,7 +10,7 @@ import styles from "./MetaDataForm.module.scss";
 import { TPostAPI } from "../types/postAPI";
 
 // APIs Request Function
-import { getSigListAPI } from "@/app/new/(new)/apis/getSigListAPI";
+import { getSigListAPI } from "@/modules/getSigListAPI";
 
 interface Props {
   postData: TPostAPI | undefined;

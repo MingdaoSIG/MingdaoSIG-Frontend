@@ -2,7 +2,7 @@
 @import "./NewPost.module.scss";
 
 $button-block-height: 3rem;
-$button-font-size: 1.125rem;
+$button-font-size: 1rem;
 $button-font-weight: 700;
 $button-discord-background: #dc0032;
 $button-discord-text: #fff;
@@ -10,16 +10,16 @@ $button-post-background: #fff;
 $button-post-text: #5fcdf5;
 
 .buttons {
-  height: $button-block-height;
+  height: 100%;
   width: $block-width;
   border-radius: $button-block-height;
 
   margin: auto;
-  padding: 0.25rem 0;
+  padding: 2% 0;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .button {
