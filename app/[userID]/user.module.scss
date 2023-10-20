@@ -8,3 +8,19 @@
   border-radius: 50%;
   transition: 0.5s;
 }
+
+.avatar {
+  $height: 6rem;
+  $border: 0.7rem;
+  display: block;
+  position: absolute;
+  top: 25%;
+  margin-left: calc(2.5rem - $border);
+  border-radius: 9999px;
+  border: solid $border white;
+  background: white;
+  width: $height;
+  aspect-ratio: 1/1;
+  line-height: calc($height - 1rem);
+  text-align: center;
+}

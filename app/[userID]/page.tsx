@@ -9,6 +9,7 @@ import SplitBlock from "../(Layout)/splitBlock";
 import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
 import { IThread } from "@/interfaces/Thread.interface";
 import { GetUserPostListAPI, GetSIGPostListAPI } from "./(User)/API";
+import style from "./user.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -152,7 +153,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
                 {user?.customId}
               </div>
             </div>
-            <div className="my-5 mx-10 h-[60%] overflow-y-auto px-1">
+            <div className="my-5 mx-10 h-[60%] overflow-y-auto">
               {user?.description.split("\n").map((line) => (
                 <>
                   <p key={line}>{line}</p>
@@ -160,19 +161,17 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               ))}
             </div>
           </div>
-          <div className="h-[120px] w-[120px] bg-white flex-none absolute top-1/4 left-[15px] rounded-full">
-            <Image
-              src={user?.avatar || sigDefaultCover[user._id]}
-              width={100}
-              height={100}
-              alt="Avatar"
-              className="rounded-full m-auto block mt-[10px]"
-            />
-          </div>
-          {(user?._id === "65179f64cf392fefee97191f" || // Haco
-            user?._id === "652f28f5577c25ec87b5050e" || // Meru
-            user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
-            user?._id === "6525225146132ec53332a820") && // Lazp
+          <Image
+            src={user?.avatar || sigDefaultCover[user._id]}
+            width={100}
+            height={100}
+            alt="Avatar"
+            className={style.avatar}
+          />
+          {(user?._id === "65179f64cf392fefee97191f" ||
+            user?._id === "6517b7b22ee473ac669f205b" ||
+            user?._id === "6517b7b22ee473ac669f205b" ||
+            user?._id === "6525225146132ec53332a820") &&
             badge[0]}
         </div>
       </SplitBlock>
