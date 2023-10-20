@@ -2,6 +2,7 @@ import style from "./userlogin.module.scss";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -52,9 +53,19 @@ const UserLogin = () => {
     return (
       <div
         className={style.userPanel}
-        onClick={() => {
-          signOut();
-          localStorage.clear();
+        onClick={async () => {
+          await Swal.fire({
+            text: "Are you sure you want to logout?",
+            icon: "question",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            confirmButtonText: "Logout me out now",
+            confirmButtonColor: "#DC0032",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              logout();
+            }
+          });
         }}
       >
         <div className="avatar">
@@ -83,7 +94,8 @@ const UserLogin = () => {
         }
       >
         {!isLogin ? (
-          <p className="m-auto text-[#004C64] font-medium">Login</p>
+          <p className="m-auto text
+          -[#004C64] font-medium">Login</p>
         ) : (
           <p className="m-auto text-[#004C64] font-medium">Loading...</p>
         )}
@@ -93,3 +105,8 @@ const UserLogin = () => {
 };
 
 export default UserLogin;
+
+function logout() {
+  signOut();
+  localStorage.clear();
+}
