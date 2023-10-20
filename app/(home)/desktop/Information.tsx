@@ -34,12 +34,6 @@ const LikePost = (child: any) => {
   const route = useRouter();
 
   return (
-    // <div
-    //   
-    //   onClick={() => route.push(`/post/${child._id}`)}
-    // >
-    //   
-    // </div>
     <Link className={style.likePost} href={`/post/${child._id}`}>
       <h3 className={style.likeTitle}>{child.title}</h3>
       <p>{child.like} likes</p>
