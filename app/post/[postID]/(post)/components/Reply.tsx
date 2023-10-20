@@ -20,7 +20,8 @@ export default function Reply() {
             2023/09/19
           </div>
         </div>
-        <p className="text-md-dark-green font-extralight text-[12px]">
+        <p className="text-md-dark-green font-extralight w-[65dvw] truncate text-[12px]">
+          社長什麼時候才會交這個，我好想學喔 社長什麼時候才會交這個，我好想學喔
           社長什麼時候才會交這個，我好想學喔
         </p>
       </div>

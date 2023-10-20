@@ -1,11 +1,19 @@
 @import "@/app/styles/variables.scss";
 
-.reply {
-  height: 100%;
+.replies {
   background-color: $panel-background-color;
   border-radius: $border-radius;
+  width: 95dvw;
 
   padding: 0.5rem 1rem;
+
+  position: absolute; /* 回覆元素設置為絕對定位 */
+  bottom: 0;
+  left: 2.5dvw;
+  align-self: end;
+  transition: 0.5s;
+
+  z-index: 999999;
 
   h4 {
     color: $dark-text;
@@ -20,4 +28,16 @@
 .title {
   display: flex;
   gap: 0.5rem;
+}
+
+.firstReply {
+  padding: 0.25rem 0;
+}
+
+.replyList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  transition: 0.3s;
 }
