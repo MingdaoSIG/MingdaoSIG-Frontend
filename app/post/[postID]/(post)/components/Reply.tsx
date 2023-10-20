@@ -8,19 +8,16 @@ export default function Reply({
   customId,
   avatar,
   content,
-  createAt,
+  createdAt,
 }: {
   customId: any;
   avatar: any;
   content: any;
-  createAt: any;
+  createdAt: any;
 }) {
   const route = useRouter();
   return (
-    <div
-      className={styles.reply}
-      onClick={() => route.push(`/@${customId}`)}
-    >
+    <div className={styles.reply} onClick={() => route.push(`/@${customId}`)}>
       <Image
         src={avatar}
         width={45}
