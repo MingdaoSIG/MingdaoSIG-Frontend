@@ -15,7 +15,11 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 import { sigDefaultColors } from "../configs/sigDefaultColors";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
-const pinned = ["652e4591d04b679afdff697e", "652cabdb45c0be8f82c54d9a"];
+const pinned = [
+  "652e4591d04b679afdff697e",
+  "65325fce0b891d1f6b5b3131",
+  "652cabdb45c0be8f82c54d9a",
+];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
   const router = useRouter();
