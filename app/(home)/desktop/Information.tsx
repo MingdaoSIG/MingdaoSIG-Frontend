@@ -95,7 +95,7 @@ const Information = ({ post }: { post: any }) => {
           </div>
 
           <div className={style.sigs}>
-            <h2>SIGs - {sigs?.length}</h2>
+            <h2>SIGs - {sigs?.length - 1}</h2>
             <div className={style.sig_top}>
               {sigs.map((item: any) => {
                 if (item._id !== "652d60b842cdf6a660c2b778") {
