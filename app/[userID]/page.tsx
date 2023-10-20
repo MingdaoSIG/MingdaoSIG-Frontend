@@ -169,10 +169,10 @@ export default function UserPage({ params }: { params: { userID: string } }) {
               className="rounded-full m-auto block mt-[10px]"
             />
           </div>
-          {(user?._id === "65179f64cf392fefee97191f" ||
-            user?._id === "6517b7b22ee473ac669f205b" ||
-            user?._id === "6517b7b22ee473ac669f205b" ||
-            user?._id === "6525225146132ec53332a820") &&
+          {(user?._id === "65179f64cf392fefee97191f" || // Haco
+            user?._id === "652f28f5577c25ec87b5050e" || // Meru
+            user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
+            user?._id === "6525225146132ec53332a820") && // Lazp
             badge[0]}
         </div>
       </SplitBlock>
