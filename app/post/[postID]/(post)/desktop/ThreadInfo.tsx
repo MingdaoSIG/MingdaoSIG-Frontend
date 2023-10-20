@@ -15,13 +15,14 @@ import style from "./Thread.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
-import { PostCommentAPI } from "../apis/CommentAPI";
+import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
+  const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
-  const [comments, setComments] = useState<string>("");
+  const [comments, setComments] = useState<any>([]);
   const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
@@ -31,8 +32,8 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   async function handleCommandSubmit(e: any) {
     e.preventDefault();
     const reply = "";
-    const content = comments;
-    if (comments.length === 0)
+    const content = typeComments;
+    if (typeComments.length === 0)
       return Swal.fire({
         title: "Error!",
         text: "Please enter comment!",
@@ -43,7 +44,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
     try {
       const res = await PostCommentAPI(post?._id, reply, content, token);
       if (res.status === 2000) {
-        setComments("");
+        setTypeComments("");
         Swal.fire({
           title: "Success!",
           text: "Comment success!",
@@ -68,6 +69,9 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
     GetUserAPI();
     GetSigAPI();
+    GetCommentAPI(post).then((res) => {
+      setComments(res.postData);
+    });
 
     async function GetUserAPI() {
       try {
@@ -98,7 +102,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post.user, post.sig, post?._id]);
+  }, [post?.user, post?.sig, post?._id]);
 
   return (
     <div className={style.info + " box-border"}>
@@ -135,15 +139,17 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
-        <Reply
-          customId={"haco"}
-          avatar={"https://sig-api.lazco.dev/image/653296b40b891d1f6b5b4412"}
-          content={
-            "測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中測試留言中"
-          }
-          createdAt={"2023/10/20"}
-        />
-        {/* Reply */}
+        {comments?.map((comment: any) => {
+          return (
+            <Reply
+              key={comment._id}
+              customId={comment.user.customId}
+              avatar={comment.user.avatar}
+              content={comment.content}
+              createdAt={comment.createdAt}
+            />
+          );
+        })}
       </div>
       <form
         className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5"
@@ -154,9 +160,9 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           placeholder="Reply..."
           onChange={(e) => {
             e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
-            setComments(e.target.value);
+            setTypeComments(e.target.value);
           }}
-          value={comments}
+          value={typeComments}
           // disabled
         />
         <button className="h-full w-[40px] flex-none">
