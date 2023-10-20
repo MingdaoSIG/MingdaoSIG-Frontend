@@ -129,32 +129,36 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   } else if (status === "success" || status === "success2") {
     const badge = [
       <div
-        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[35px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%_+_10px)] grid-cols-2 left-[8rem]"
+        className="bg-[rgb(100,100,100)] bg-opacity-10 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-3 absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[7rem]"
         key={"badge"}
       >
-        <div className="group my-auto relative" key={"developer"}>
-          <Image
-            src={"/badges/developer.svg"}
-            height={24}
-            width={24}
-            alt="developer"
-            className="developer my-auto"
-          />
-          <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block">
-            Developer
-          </span>
+        <div className="my-auto relative" key={"developer"}>
+          <div className="h-[24px] w-[24px] group">
+            <Image
+              src={"/badges/developer.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className="developer my-auto"
+            />
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block hover:hidden">
+              Developer
+            </span>
+          </div>
         </div>
-        <div className="group my-auto relative" key={"developer"}>
-          <Image
-            src={"/badges/1021user.svg"}
-            height={24}
-            width={24}
-            alt="developer"
-            className="developer my-auto"
-          />
-          <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block">
-            10/21 Event Participant
-          </span>
+        <div className="my-auto relative" key={"developer"}>
+          <div className="h-[24px] w-[24px] group">
+            <Image
+              src={"/badges/1021user.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className="developer my-auto"
+            />
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 translate-y-none opacity-0 m-4 mx-auto whitespace-nowrap inline-block hover:hidden">
+              10/21 Event Participant
+            </span>
+          </div>
         </div>
       </div>,
     ];
@@ -164,7 +168,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
           <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
           <_ThreadsList posts={posts} height="auto" />
         </div>
-        <div className="flex flex-col h-full relative">
+        <div className="flex flex-col h-full relative select-none">
           <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover bg-center rounded-t-[30px]"></div>
           <div className="flex flex-col h-2/3 bg-white py-2 items-stretch rounded-b-[30px]">
             <div className="mt-[50px] ml-10">
