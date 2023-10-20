@@ -1,9 +1,10 @@
 .reply {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding-left: 1rem;
   padding-right: 1rem;
+
   img {
     margin-bottom: 0 !important;
   }
