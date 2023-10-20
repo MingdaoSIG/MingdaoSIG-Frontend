@@ -10,6 +10,7 @@
 }
 
 .avatar {
+  $height: 6rem;
   $border: 0.7rem;
   display: block;
   position: absolute;
@@ -18,4 +19,8 @@
   border-radius: 9999px;
   border: solid $border white;
   background: white;
+  width: $height;
+  aspect-ratio: 1/1;
+  line-height: calc($height - 1rem);
+  text-align: center;
 }
