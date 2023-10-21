@@ -111,7 +111,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border"}>
-      <div className="flex justify-between items-center flex-initial relative h-[64px]">
+      <div className="flex justify-between items-center flex-initial relative h-[64px] mb-3">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
