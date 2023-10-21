@@ -52,6 +52,10 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           icon: "success",
           confirmButtonText: "OK",
           confirmButtonColor: "#0090BD",
+        }).then(() => {
+          GetCommentAPI(post).then((res) => {
+            setComments(res.postData);
+          });
         });
       }
     } catch (e) {
@@ -103,7 +107,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         console.log(error);
       }
     }
-  }, [post?.user, post?.sig, post?._id]);
+  }, [post]);
 
   return (
     <div className={style.info + " box-border"}>
