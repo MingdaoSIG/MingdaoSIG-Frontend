@@ -143,17 +143,19 @@ export default function ThreadInfo({ post }: { post: IThread }) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
-        {comments?.map((comment: any) => {
-          return (
-            <Reply
-              key={comment._id}
-              customId={comment.user.customId}
-              avatar={comment.user.avatar}
-              content={comment.content}
-              createdAt={comment.createdAt}
-            />
-          );
-        })}
+        {comments.length === 0
+          ? comments?.map((comment: any) => {
+            return (
+              <Reply
+                key={comment._id}
+                customId={comment.user.customId}
+                avatar={comment.user.avatar}
+                content={comment.content}
+                createdAt={comment.createdAt}
+              />
+            );
+          })
+          : <p className="mx-auto font-medium text-[1.5rem] my-auto">No comments</p>}
       </div>
       <form
         className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5"
@@ -167,7 +169,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-          // disabled
+        // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image
