@@ -15,6 +15,7 @@ import style from "./Thread.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
+// API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

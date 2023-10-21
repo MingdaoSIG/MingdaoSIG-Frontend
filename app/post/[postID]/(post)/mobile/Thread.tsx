@@ -103,7 +103,7 @@ const Thread = ({ post }: { post: IThread }) => {
         className={styles.threadContent}
         previewTheme="github"
       />
-      <Reply></Reply>
+      <Reply post={post}></Reply>
     </div>
   );
 };

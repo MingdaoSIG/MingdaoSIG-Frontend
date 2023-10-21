@@ -37,7 +37,7 @@ export default function Reply({
             {createdAt}
           </div>
         </div>
-        <p className="text-md-dark-green font-extralight text-[12px]">
+        <p className="text-md-dark-green font-extralight w-[65dvw] truncate text-[12px]">
           {content}
         </p>
       </div>
