@@ -46,6 +46,7 @@ export default function Replies({ post }: { post: IThread }) {
               avatar={comments[0].user.avatar}
               content={comments[0].content}
               createdAt={comments.createdAt}
+              overflow={true}
             ></Reply>
           ) : (
             ""
@@ -61,6 +62,7 @@ export default function Replies({ post }: { post: IThread }) {
                   avatar={comment.user.avatar}
                   content={comment.content}
                   createdAt={comment.createdAt}
+                  overflow={false}
                 />
               </div>
             );
