@@ -38,8 +38,7 @@ export default function Reply({
           </div>
         </div>
         <p className="text-md-dark-green font-extralight w-[65dvw] truncate text-[12px]">
-          社長什麼時候才會交這個，我好想學喔 社長什麼時候才會交這個，我好想學喔
-          社長什麼時候才會交這個，我好想學喔
+          {content}
         </p>
       </div>
     </div>

@@ -1,16 +1,30 @@
 // Components
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Reply from "../components/Reply";
 
 // Styles
 import styles from "./Replies.module.scss";
 
-export default function Replies() {
+// Interfaces
+import { IThread } from "@/interfaces/Thread.interface";
+
+// API Request Function
+import { GetCommentAPI } from "../apis/CommentAPI";
+
+export default function Replies({ post }: { post: IThread }) {
   const [extend, setExtend] = useState(false);
+  const [comments, setComments] = useState<any>([]);
+  const [token, setToken] = useState<string>("");
 
   const handleCommentClick = () => {
     setExtend(!extend);
   };
+
+  useEffect(() => {
+    GetCommentAPI(post).then((res) => {
+      setComments(res.postData);
+    });
+  });
 
   return (
     <div
@@ -26,19 +40,31 @@ export default function Replies() {
       </div>
       {!extend ? (
         <div className={styles.firstReply}>
-          <Reply></Reply>
+          {comments[0] ? (
+            <Reply
+              customId={comments[0].user.customId}
+              avatar={comments[0].user.avatar}
+              content={comments[0].content}
+              createdAt={comments.createdAt}
+            ></Reply>
+          ) : (
+            ""
+          )}
         </div>
       ) : (
         <div className={styles.replyList}>
-          <div className={styles.reply}>
-            <Reply></Reply>
-          </div>
-          <div className={styles.reply}>
-            <Reply></Reply>
-          </div>
-          <div className={styles.reply}>
-            <Reply></Reply>
-          </div>
+          {comments?.map((comment: any, index: number) => {
+            return (
+              <div className={styles.reply} key={index}>
+                <Reply
+                  customId={comment.user.customId}
+                  avatar={comment.user.avatar}
+                  content={comment.content}
+                  createdAt={comment.createdAt}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
