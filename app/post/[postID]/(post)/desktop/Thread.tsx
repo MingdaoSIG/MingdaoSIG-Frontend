@@ -95,7 +95,7 @@ const Thread = ({ post }: { post: IThread }) => {
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post?.title}</h1>
           <div
-            className="max-h-[64px] my-auto absolute right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+            className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
             onClick={onLike}
           >
             <svg

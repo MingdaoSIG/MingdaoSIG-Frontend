@@ -134,7 +134,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       >
         <div className="my-auto relative select-none" key={"developer"}>
           <div className="h-[24px] w-[24px] group cursor-pointer">
-            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block">
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
               Developer
             </span>
             <Image
@@ -148,7 +148,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         </div>
         <div className="my-auto relative select-none" key={"developer"}>
           <div className="h-[24px] w-[24px] group cursor-pointer">
-            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block">
+            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
               10/21 Event Participant
             </span>
             <Image
@@ -165,7 +165,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     return (
       <SplitBlock>
         <div className="flex flex-col items-start gap-[20px] max-h-[65dvh]">
-          <SwitchButton callback={setListType} posts={posts!}></SwitchButton>
+          {/* <SwitchButton callback={setListType} posts={posts!}></SwitchButton> */}
           <_ThreadsList posts={posts} height="auto" />
         </div>
         <div className="flex flex-col h-full relative">
