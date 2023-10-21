@@ -9,11 +9,13 @@ export default function Reply({
   avatar,
   content,
   createdAt,
+  overflow,
 }: {
   customId: any;
   avatar: any;
   content: any;
   createdAt: any;
+  overflow: boolean;
 }) {
   const route = useRouter();
   return (
@@ -37,7 +39,12 @@ export default function Reply({
             {createdAt}
           </div>
         </div>
-        <p className="text-md-dark-green font-extralight text-[12px]">
+        <p
+          className={
+            "text-md-dark-green font-extralight text-[12px] " +
+            (overflow ? "w-[65dvw] truncate" : "")
+          }
+        >
           {content}
         </p>
       </div>

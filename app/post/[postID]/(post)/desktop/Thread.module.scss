@@ -15,7 +15,7 @@
   align-items: stretch;
 }
 
-.threadContent > div {
+.threadContent>div {
   padding: 0 !important;
   padding-right: 1rem !important;
 }
@@ -25,12 +25,12 @@
   border-radius: 20px;
   height: 60px;
 
-  padding-left: 1rem;
-  padding-right: 30px;
+  padding: 0 1rem;
 
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 0.5rem;
 
   h1 {
     width: 100%;

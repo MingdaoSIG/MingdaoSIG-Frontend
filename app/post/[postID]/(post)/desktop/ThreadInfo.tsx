@@ -15,6 +15,7 @@ import style from "./Thread.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
+// API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -110,7 +111,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
 
   return (
     <div className={style.info + " box-border"}>
-      <div className="flex justify-between items-center flex-initial relative h-[64px]">
+      <div className="flex justify-between items-center flex-initial relative h-[64px] mb-3">
         <div className={style.author + " select-none"}>
           <Image
             src={user?.avatar}
@@ -142,18 +143,27 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-auto h-[calc(100%-42px-64px)]">
-        {comments?.map((comment: any) => {
-          return (
-            <Reply
-              key={comment._id}
-              customId={comment.user.customId}
-              avatar={comment.user.avatar}
-              content={comment.content}
-              createdAt={comment.createdAt}
-            />
-          );
-        })}
+      <div className="mt-5 flex flex-col gap-[40px] overflow-y-auto h-[calc(100%-42px-64px)]">
+        {comments.length !== 0 ? (
+          comments?.map((comment: any) => {
+            return (
+              <Reply
+                key={comment._id}
+                overflow={false}
+                customId={comment.user.customId}
+                avatar={comment.user.avatar}
+                content={comment.content}
+                createdAt={new Date(comment.createdAt || "").toLocaleString(
+                  "zh-TW"
+                )}
+              />
+            );
+          })
+        ) : (
+          <p className="mx-auto font-medium text-[1.5rem] my-auto">
+            No comments
+          </p>
+        )}
       </div>
       <form
         className="h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5"

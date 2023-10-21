@@ -2,8 +2,6 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding-left: 1rem;
-  padding-right: 1rem;
   cursor: default;
 
   img {
@@ -18,6 +16,6 @@
 }
 
 .name:hover {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
