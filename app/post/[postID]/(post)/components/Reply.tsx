@@ -44,7 +44,7 @@ export default function Reply({
         <p
           className={
             "text-md-dark-green font-extralight text-[12px] " +
-            (overflow ? "w-[65dvw] truncate " : " ") + styles.contentLink
+            (overflow ? "w-[65dvw] truncate " : " ") + styles.content
           }
         >
           <Linkify>{content}</Linkify>
