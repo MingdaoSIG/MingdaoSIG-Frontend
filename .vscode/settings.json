@@ -1,6 +1,14 @@
 {
   "editor.tabSize": 2,
-  "cSpell.words": ["Haco", "Lazp", "MDSIG", "Meru", "Swal", "sweetalert"],
+  "cSpell.words": [
+    "Haco",
+    "Lazp",
+    "Linkify",
+    "MDSIG",
+    "Meru",
+    "Swal",
+    "sweetalert"
+  ],
   "commit-ai.prompt.openAiTemperature": 0.5,
   "commit-ai.prompt.openAiMaxToken": 100
 }

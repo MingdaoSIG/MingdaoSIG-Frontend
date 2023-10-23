@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Linkify from "react-linkify";
 
 // Styles
 import styles from "./Reply.module.scss";
@@ -18,6 +19,7 @@ export default function Reply({
   overflow: boolean;
 }) {
   const route = useRouter();
+
   return (
     <div className={styles.reply}>
       <Image
@@ -42,10 +44,10 @@ export default function Reply({
         <p
           className={
             "text-md-dark-green font-extralight text-[12px] " +
-            (overflow ? "w-[65dvw] truncate" : "")
+            (overflow ? "w-[65dvw] truncate " : " ") + styles.contentLink
           }
         >
-          {content}
+          <Linkify>{content}</Linkify>
         </p>
       </div>
     </div>
