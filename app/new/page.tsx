@@ -45,8 +45,7 @@ export default function NewPostPage() {
   // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
-      (prev: TPostAPI | undefined) =>
-      ({
+      (prev: TPostAPI | undefined) => ({
         ...prev,
         [e.target.name]: e.target.value,
       } as TPostAPI)
@@ -58,8 +57,7 @@ export default function NewPostPage() {
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setPostData(
-        (prev: TPostAPI | undefined) =>
-        ({
+        (prev: TPostAPI | undefined) => ({
           ...prev,
           content: storedContent,
         } as TPostAPI)
