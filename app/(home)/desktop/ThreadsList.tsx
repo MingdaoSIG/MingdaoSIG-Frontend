@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 //Components
-import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
+import { ThreadsList as _ThreadsList, InfinityThreadsList } from "@/components/Threads/desktop/ThreadsList";
 
 // Styles
 import styles from "./Threads.module.scss";
@@ -13,6 +13,7 @@ import { IThread } from "@/interfaces/Thread.interface";
 
 // APIs Request Function
 import { getPostListAPI } from "@/app/(home)/apis/getPostList";
+import usePosts from "@/components/usePost";
 
 interface Props {
   setParentPosts: Dispatch<SetStateAction<IThread[]>>;
@@ -21,6 +22,8 @@ interface Props {
 const ThreadsList = ({ setParentPosts }: Props) => {
   const [status, setStatus] = useState("loading");
   const [posts, setPosts] = useState<IThread[]>([]);
+  const pageSize = 10;
+  const { data, fetchNextPage, isFetchingNextPage } = usePosts({ pageSize });
 
   useEffect(() => {
     getPostListAPI(setParentPosts, setPosts, setStatus);
@@ -35,7 +38,7 @@ const ThreadsList = ({ setParentPosts }: Props) => {
   } else if (posts.length > 0) {
     return (
       <div className={styles.threadWrap}>
-        <_ThreadsList posts={posts} height="65dvh" />
+        <InfinityThreadsList data={data} height="65dvh" fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
       </div>
     );
   }
