@@ -12,7 +12,7 @@ import Button from "./Buttons";
 import { TPostAPI } from "../types/postAPI";
 
 interface Props {
-  postData: TPostAPI;
+  data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
   discardFunction: Function;
@@ -26,7 +26,7 @@ const Editor = dynamic(() => import("./Editor"), {
 });
 export default function NewPostMobile({
   setPostData,
-  postData,
+  data,
   token,
   discardFunction,
   handleFormEventFunction,
@@ -36,12 +36,12 @@ export default function NewPostMobile({
   return (
     <div className={styles.newPost}>
       <MetaDataForm
-        postData={postData}
+        data={data}
         handleFormEventFunction={handleFormEventFunction}
       ></MetaDataForm>
       <Editor
         setPostData={setPostData}
-        postData={postData}
+        data={data}
         token={token}
       ></Editor>
       <Button

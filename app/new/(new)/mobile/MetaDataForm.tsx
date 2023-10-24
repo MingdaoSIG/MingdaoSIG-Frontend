@@ -13,12 +13,12 @@ import { TPostAPI } from "../types/postAPI";
 import { getSigListAPI } from "@/modules/getSigListAPI";
 
 interface Props {
-  postData: TPostAPI | undefined;
+  data: TPostAPI | undefined;
   handleFormEventFunction: Function;
 }
 
 export default function MetaDataForm({
-  postData,
+  data,
   handleFormEventFunction,
 }: Props) {
   const { status } = useSession();
@@ -43,7 +43,7 @@ export default function MetaDataForm({
       <select
         name="sig"
         className={styles.input}
-        value={postData?.sig}
+        value={data?.sig}
         onChange={(e) => {
           handleFormEventFunction(e);
         }}

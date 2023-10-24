@@ -50,7 +50,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
         if (res.status === 4000 || res.status === 4008 || res.status === 4018) {
           setStatus("notfound");
         } else {
-          setPost(res.postData);
+          setPost(res.data);
           setStatus("success");
         }
 

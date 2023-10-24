@@ -20,12 +20,12 @@ import { toolbars } from "../config/editorToolbar";
 import { imageUpload } from "@/modules/imageUploadAPI";
 
 interface Props {
-  postData: TPostAPI;
+  data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
 }
 
-const MdEditorSync = ({ postData, setPostData, token }: Props) => {
+const MdEditorSync = ({ data, setPostData, token }: Props) => {
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     const responseImage = await Promise.all(
       files.map(async (file: any) => {
@@ -47,10 +47,10 @@ const MdEditorSync = ({ postData, setPostData, token }: Props) => {
   const handleEditorChange = (newContent: string) => {
     setPostData(
       (prev: TPostAPI | undefined) =>
-        ({
-          ...prev,
-          content: newContent,
-        } as TPostAPI)
+      ({
+        ...prev,
+        content: newContent,
+      } as TPostAPI)
     );
     localStorage.setItem("editorContent", newContent);
   };
@@ -58,7 +58,7 @@ const MdEditorSync = ({ postData, setPostData, token }: Props) => {
   return (
     <div className={styles.editor}>
       <MdEditor
-        modelValue={postData?.content || ""}
+        modelValue={data?.content || ""}
         onChange={handleEditorChange}
         toolbars={toolbars}
         onUploadImg={onUploadImg}

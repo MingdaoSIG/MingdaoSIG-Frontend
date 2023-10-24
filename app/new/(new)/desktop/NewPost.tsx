@@ -12,7 +12,7 @@ import MetaDataForm from "./MetaDataForm";
 import { TPostAPI } from "../types/postAPI";
 
 interface Props {
-  postData: TPostAPI;
+  data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
   discardFunction: Function;
@@ -25,7 +25,7 @@ const Editor = dynamic(() => import("./Editor"), {
   ssr: false,
 });
 export default function NewPost({
-  postData,
+  data,
   setPostData,
   token,
   discardFunction,
@@ -38,14 +38,14 @@ export default function NewPost({
       <Suspense fallback={null}>
         <Editor
           setPostData={setPostData}
-          postData={postData}
+          data={data}
           token={token}
         ></Editor>
       </Suspense>
       <MetaDataForm
         discardFunction={discardFunction}
         postFunction={postFunction}
-        postData={postData}
+        data={data}
         handleFormEventFunction={handleFormEventFunction}
         postButtonDisable={postButtonDisable}
       />

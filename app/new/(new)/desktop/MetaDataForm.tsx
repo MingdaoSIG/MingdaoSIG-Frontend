@@ -18,7 +18,7 @@ import { getSigListAPI } from "@/modules/getSigListAPI";
 interface Props {
   discardFunction: Function;
   postFunction: Function;
-  postData: TPostAPI | undefined;
+  data: TPostAPI | undefined;
   handleFormEventFunction: Function;
   postButtonDisable: boolean;
 }
@@ -27,7 +27,7 @@ export default function MetaDataForm({
   discardFunction,
   postFunction,
   handleFormEventFunction,
-  postData,
+  data,
   postButtonDisable,
 }: Props) {
   const { status } = useSession();
@@ -54,7 +54,7 @@ export default function MetaDataForm({
             type="text"
             name="title"
             className={styles.input}
-            value={postData?.title}
+            value={data?.title}
             onChange={(e) => handleFormEventFunction(e)}
           />
 
@@ -62,7 +62,7 @@ export default function MetaDataForm({
           <select
             name="sig"
             className={styles.input}
-            value={postData?.sig}
+            value={data?.sig}
             onChange={(e) => {
               handleFormEventFunction(e);
             }}

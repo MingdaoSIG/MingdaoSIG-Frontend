@@ -17,12 +17,13 @@ export async function getPostListAPI(
       })
     ).json();
 
-    setParentsPost(res.postData);
+    setParentsPost(res.data);
 
-    const posts: any = res.postData;
-    const sortedPosts = sortPosts(posts);
+    const posts: any = res.data;
+    // const sortedPosts = sortPosts(posts);
 
-    setPosts(sortedPosts);
+    // setPosts(sortedPosts);
+    setPosts(posts);
     setStatus("success");
     return;
   } catch (error) {

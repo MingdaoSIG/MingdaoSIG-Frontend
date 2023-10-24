@@ -53,7 +53,7 @@ const Information = ({ post }: { post: any }) => {
             method: "GET",
           })
         ).json();
-        setSigs(res.postData);
+        setSigs(res.data);
         return;
       } catch (error) {
         console.log(error);
