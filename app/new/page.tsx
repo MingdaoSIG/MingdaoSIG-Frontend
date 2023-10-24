@@ -35,7 +35,7 @@ export default function NewPostPage() {
   // Form data states
   const [token, setToken] = useState<string>("");
   const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
-  const [postData, setPostData] = useState<TPostAPI>({
+  const [data, setPostData] = useState<TPostAPI>({
     title: "",
     sig: "",
     content: markdownGuide,
@@ -46,10 +46,10 @@ export default function NewPostPage() {
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
       (prev: TPostAPI | undefined) =>
-        ({
-          ...prev,
-          [e.target.name]: e.target.value,
-        } as TPostAPI)
+      ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      } as TPostAPI)
     );
   }
 
@@ -59,30 +59,30 @@ export default function NewPostPage() {
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
-          ({
-            ...prev,
-            content: storedContent,
-          } as TPostAPI)
+        ({
+          ...prev,
+          content: storedContent,
+        } as TPostAPI)
       );
     }
   }, []);
 
   async function NewPostAPI() {
     setPostButtonDisable(true);
-    if (postData?.title === "")
+    if (data?.title === "")
       return Swal.fire(popUpMessageConfigs.titleError).then(() =>
         setPostButtonDisable(false)
       );
-    if (!postData.sig) {
+    if (!data.sig) {
       return Swal.fire(popUpMessageConfigs.sigError).then(() =>
         setPostButtonDisable(false)
       );
     }
     try {
       setToken(localStorage.getItem("token") || "");
-      assert(postData); // Check whether postData was defined
+      assert(data); // Check whether data was defined
       assert(token !== ""); // Check whether token was loaded
-      const res = await postAPI(postData, token);
+      const res = await postAPI(data, token);
       console.debug(res);
 
       if (res.status === 2000) {
@@ -127,7 +127,7 @@ export default function NewPostPage() {
 
   return isMobile ? (
     <NewPostMobile
-      postData={postData}
+      data={data}
       setPostData={setPostData}
       token={token}
       handleFormEventFunction={handleFormChange}
@@ -137,7 +137,7 @@ export default function NewPostPage() {
     ></NewPostMobile>
   ) : (
     <NewPostDesktop
-      postData={postData}
+      data={data}
       setPostData={setPostData}
       discardFunction={discard}
       postFunction={NewPostAPI}

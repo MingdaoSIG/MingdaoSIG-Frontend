@@ -19,7 +19,7 @@ export async function GetUserPostListAPI(
       })
     ).json();
 
-    setPosts(res.postData);
+    setPosts(res.data);
     return;
   } catch (error) {
     console.log(error);
@@ -44,7 +44,7 @@ export async function GetSIGPostListAPI(
       })
     ).json();
 
-    setPosts(res.postData);
+    setPosts(res.data);
     setStatus("success2");
     return;
   } catch (error) {

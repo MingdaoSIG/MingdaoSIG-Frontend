@@ -10,7 +10,7 @@ export async function getSigListAPI(
       })
     ).json();
 
-    return setSIGs ? setSIGs(res.postData) : res.postData;
+    return setSIGs ? setSIGs(res.data) : res.data;
   } catch (error) {
     console.error(error);
   }

@@ -54,7 +54,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           confirmButtonColor: "#0090BD",
         }).then(() => {
           GetCommentAPI(post).then((res) => {
-            setComments(res.postData);
+            setComments(res.data);
           });
         });
       }
@@ -75,7 +75,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
     GetUserAPI();
     GetSigAPI();
     GetCommentAPI(post).then((res) => {
-      setComments(res.postData);
+      setComments(res.data);
     });
 
     async function GetUserAPI() {
@@ -177,7 +177,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-          // disabled
+        // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

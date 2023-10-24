@@ -22,7 +22,7 @@ export default function Replies({ post }: { post: IThread }) {
 
   useEffect(() => {
     GetCommentAPI(post).then((res) => {
-      setComments(res.postData);
+      setComments(res.data);
     });
   });
 
