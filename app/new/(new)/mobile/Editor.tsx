@@ -45,13 +45,10 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
   };
 
   const handleEditorChange = (newContent: string) => {
-    setPostData(
-      (prev: TPostAPI | undefined) =>
-      ({
-        ...prev,
-        content: newContent,
-      } as TPostAPI)
-    );
+    setPostData((prev: TPostAPI) => ({
+      ...prev,
+      content: newContent,
+    } as TPostAPI));
     localStorage.setItem("editorContent", newContent);
   };
 
