@@ -138,7 +138,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
               </div>
             </div>
             <div className={style.time}>
-              {new Date(post?.createAt!).toLocaleString("zh-TW").split(" ")[0]}
+              {new Date(post?.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
             </div>
           </div>
         </div>
