@@ -143,7 +143,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-y-auto h-[calc(100%-42px-64px)]">
+      <div className="mt-5 flex flex-col gap-[40px] overflow-y- overflow-x-hidden h-[calc(100%-42px-64px)]">
         {comments.length !== 0 ? (
           comments?.map((comment: any) => {
             return (

@@ -19,7 +19,7 @@
   width: 95dvw;
 
   padding-left: 1rem;
-  padding-right: 30px;
+  padding-right: 1rem;
 
   display: flex;
   flex-direction: row;
@@ -33,8 +33,17 @@
     font-weight: 500;
     line-height: normal;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-right: 10px;
+    overflow: auto;
+
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+  }
+
+  h1::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    color: transparent;
   }
 }
 
