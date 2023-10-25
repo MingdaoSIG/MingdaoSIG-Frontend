@@ -1,10 +1,10 @@
 import Image from "next/image";
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
 
 // Styles
 import style from "./ThreadsList.module.scss";
+import skeleton from "./Skeleton.module.scss";
 
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
@@ -24,7 +24,6 @@ const pinned = [
 ];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
-  const router = useRouter();
   const [sig, setSig] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
 
@@ -129,6 +128,23 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   );
 };
 
+const ThreadSkeleton = () => {
+  return (
+    <div className={skeleton.thread}>
+      <div className={skeleton.preview}>
+        <div className={skeleton.info}>
+          <p className={skeleton.user}></p>
+          <span>•</span>
+          <p className={skeleton.sig}></p>
+        </div>
+        <div className={skeleton.title}></div>
+        <p className={skeleton.content}></p>
+      </div>
+      <div className={skeleton.cover}></div>
+    </div>
+  );
+};
+
 export const ThreadsList = ({
   posts,
   height,
@@ -213,8 +229,16 @@ export const InfinityThreadsList = ({
       )}
 
       {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
-        <p>Loading ...</p>
+        <ThreadSkeleton />
       )}
+    </div>
+  );
+};
+
+export const ThreadsListSkeleton = ({ repeat, height }: { repeat: number, height?: string }) => {
+  return (
+    <div className={style.threads} style={{ height }}>
+      {[...Array(repeat)].map((_, index) => <ThreadSkeleton key={index} />)}
     </div>
   );
 };
