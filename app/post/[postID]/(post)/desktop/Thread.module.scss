@@ -25,7 +25,8 @@
   border-radius: 20px;
   height: 60px;
 
-  padding: 0 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 
   display: flex;
   flex-direction: row;
@@ -40,8 +41,15 @@
     font-weight: 500;
     line-height: normal;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: auto;
+
+    //overflow: hidden;
+    // text-overflow: ellipsis;
+  }
+
+  h1::-webkit-scrollbar {
+    width: 0;
+    height: 0;
   }
 }
 
