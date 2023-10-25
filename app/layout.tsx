@@ -1,5 +1,11 @@
 "use client";
 
+// Infinity scroll
+import {
+  QueryClient,
+  QueryClientProvider
+} from "@tanstack/react-query";
+
 // Third-Party Package
 import React from "react";
 import { signOut } from "next-auth/react";
@@ -19,6 +25,8 @@ import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   title,
@@ -75,30 +83,32 @@ export default function RootLayout({
         <meta property="og:image" content="https://i.imgur.com/tPYMyLP.png" />
       </Head>
       <SessionProvider>
-        <html lang="en" onLoad={resetLocalStorage}>
-          <head>
-            <title>MDSIG</title>
-          </head>
-          {isMobile ? (
-            <body className="">
-              <div className="wrapMobile">
-                <HeaderBarMobile></HeaderBarMobile>
-                {children}
-                <div className="toolbarWrap">
-                  <ToolBarMobile></ToolBarMobile>
+        <QueryClientProvider client={queryClient}>
+          <html lang="en" onLoad={resetLocalStorage}>
+            <head>
+              <title>MDSIG</title>
+            </head>
+            {isMobile ? (
+              <body className="">
+                <div className="wrapMobile">
+                  <HeaderBarMobile></HeaderBarMobile>
+                  {children}
+                  <div className="toolbarWrap">
+                    <ToolBarMobile></ToolBarMobile>
+                  </div>
                 </div>
-              </div>
-            </body>
-          ) : (
-            <body>
-              <div className="wrap">
-                <HeaderBarDesktop />
-                {children}
-                <ToolBarDesktop />
-              </div>
-            </body>
-          )}
-        </html>
+              </body>
+            ) : (
+              <body>
+                <div className="wrap">
+                  <HeaderBarDesktop />
+                  {children}
+                  <ToolBarDesktop />
+                </div>
+              </body>
+            )}
+          </html>
+        </QueryClientProvider>
       </SessionProvider>
     </>
   );
