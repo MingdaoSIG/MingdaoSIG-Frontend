@@ -155,7 +155,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
                 content={comment.content}
                 createdAt={new Date(comment.createdAt || "").toLocaleString(
                   "zh-TW"
-                )}
+                ).split(" ")[0]}
               />
             );
           })
