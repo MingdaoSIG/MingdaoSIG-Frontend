@@ -1,3 +1,5 @@
+"use client";
+
 import style from "./Thread.module.scss";
 
 import { IThread } from "@/interfaces/Thread.interface";
@@ -7,10 +9,16 @@ import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Thread = ({ post }: { post: IThread }) => {
   const [like, setLike] = useState<any>(false);
   const [token, setToken] = useState<string>("");
+
+  const { status } = useSession();
+  const route = useRouter();
 
   function onLike() {
     if (localStorage.getItem("token")) {
@@ -30,6 +38,54 @@ const Thread = ({ post }: { post: IThread }) => {
       });
     }
   }
+
+  function onDelete() {
+    Swal.fire({
+      title: "你確定要刪除自己的貼文嗎？",
+      icon: "question",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#EE5757",
+      showCancelButton: true,
+      cancelButtonText: "取消",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        DeletePost();
+        Swal.fire({
+          title: "貼文刪除成功",
+          icon: "success",
+          confirmButtonText: "回首頁",
+          confirmButtonColor: "#6e7881",
+          showDenyButton: true,
+          denyButtonText: "新增貼文",
+          denyButtonColor: "#82D7FF",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            route.push("/");
+          } else if (result.isDenied) {
+            route.push("/new");
+          }
+        });
+      }
+    });
+  }
+
+  async function DeletePost() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function PostLike() {
     try {
       const res = await fetch(
@@ -68,7 +124,7 @@ const Thread = ({ post }: { post: IThread }) => {
 
     if (localStorage.getItem("token")) {
       const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
-      if (post?.like.includes(User._id)) {
+      if (post?.like?.includes(User._id)) {
         setLike(true);
       }
     }
@@ -94,6 +150,17 @@ const Thread = ({ post }: { post: IThread }) => {
       <>
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post?.title}</h1>
+          {
+            (status === "authenticated" && post?.user === JSON.parse(localStorage.getItem("User")?.toString()!)._id) &&
+            [<div
+              key="delete"
+              className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+              onClick={onDelete}
+            >
+              <Image src="/icons/delete.svg" width={32} height={32} alt="delete" />
+            </div>
+            ]
+          }
           <div
             className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
             onClick={onLike}

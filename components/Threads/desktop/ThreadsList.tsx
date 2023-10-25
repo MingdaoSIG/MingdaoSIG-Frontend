@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
 
 // Styles
 import style from "./ThreadsList.module.scss";
@@ -73,7 +74,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       href={`/post/${threadData._id}`}
       className={style.thread + "  cursor-pointer select-none "}
       style={{
-        backgroundColor: pinned.includes(threadData._id) ? "white" : "",
+        backgroundColor: pinned.includes(threadData._id!) ? "white" : "",
       }}
     >
       <div className={style.preview}>
@@ -95,7 +96,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           <h1 className={style.previewTitle}>
             {threadData.sig === announcementSigId && "🔔 公告 - "}
             {threadData.title}
-            {pinned.includes(threadData._id) && " • 已置頂"}
+            {pinned.includes(threadData._id!) && " • 已置頂"}
           </h1>
         </div>
 
@@ -112,7 +113,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       <div
         className={style.cover}
         style={{
-          display: pinned.includes(threadData._id) ? "none" : "",
+          display: pinned.includes(threadData._id!) ? "none" : "",
         }}
       >
         <Image
@@ -149,6 +150,70 @@ export const ThreadsList = ({
         >
           No Post Yet.
         </div>
+      )}
+    </div>
+  );
+};
+
+export const InfinityThreadsList = ({
+  data,
+  height,
+  fetchNextPage,
+  isFetchingNextPage
+}: {
+  data: any,
+  height?: string,
+  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<IThread[], unknown>, Error>>,
+  isFetchingNextPage: boolean
+}) => {
+  const postList = useRef(null);
+
+  const onScroll = () => {
+    if (postList.current) {
+      const { scrollTop, scrollHeight, clientHeight } = postList.current;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
+
+      if (isNearBottom) {
+        fetchNextPage();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const listInnerElement: HTMLElement = postList.current!;
+
+    if (listInnerElement) {
+      listInnerElement.addEventListener("scroll", onScroll);
+
+      return () => {
+        listInnerElement.removeEventListener("scroll", onScroll);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className={style.threads} style={{ height }} ref={postList}>
+      {data && data.pages.length >= 1 ? (
+        data.pages.map((page: IThread[], index: number) => (
+          <Fragment key={index}>
+            {page.map((item, index) => {
+              return <Thread threadData={item} key={index} />;
+            })}
+          </Fragment>
+        ))
+      ) : (
+        <div
+          className={
+            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
+          }
+        >
+          No Post Yet.
+        </div>
+      )}
+
+      {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
+        <p>Loading ...</p>
       )}
     </div>
   );

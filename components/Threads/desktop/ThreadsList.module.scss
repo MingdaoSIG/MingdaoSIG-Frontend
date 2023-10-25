@@ -10,7 +10,14 @@
   gap: 20px;
   overflow-y: auto;
 
+  >p {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0.5rem;
+  }
+
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -84,7 +91,7 @@
     opacity: 60%;
   }
 
-  & > span {
+  &>span {
     padding: 0 0.1rem;
   }
 }

@@ -1,10 +1,17 @@
 export interface IThread {
+  _id?: string;
   sig: string;
-  createdAt: string;
-  _id: string;
   title: string;
-  content: string;
   cover: string;
+  content: string;
   user: string;
-  like: Array<string>;
+  hashtag: string[];
+  like?: string[];
+  likes?: number;
+  priority?: number;
+  pinned?: boolean;
+  removed?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
