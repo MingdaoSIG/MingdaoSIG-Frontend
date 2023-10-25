@@ -30,13 +30,13 @@ export default function Replies({ post }: { post: IThread }) {
     <div
       className={styles.replies}
       style={
-        extend ? { height: "60dvh", background: "white" } : { height: "93px" }
+        extend ? { height: "60dvh", background: "white", paddingTop: "1rem" } : { height: "93px", paddingTop: "0.5rem" }
       }
       onClick={handleCommentClick}
     >
       <div className={styles.title}>
         <h4>Comments</h4>
-        <p>0</p>
+        <p>{comments.length}</p>
       </div>
       {!extend ? (
         <div className={styles.firstReply}>
@@ -45,7 +45,7 @@ export default function Replies({ post }: { post: IThread }) {
               customId={comments[0].user.customId}
               avatar={comments[0].user.avatar}
               content={comments[0].content}
-              createdAt={comments.createdAt}
+              createdAt={comments[0].createdAt}
               overflow={true}
             ></Reply>
           ) : (
@@ -61,7 +61,9 @@ export default function Replies({ post }: { post: IThread }) {
                   customId={comment.user.customId}
                   avatar={comment.user.avatar}
                   content={comment.content}
-                  createdAt={comment.createdAt}
+                  createdAt={new Date(comments[0].createdAt || "").toLocaleString(
+                    "zh-TW"
+                  ).split(" ")[0]}
                   overflow={false}
                 />
               </div>
