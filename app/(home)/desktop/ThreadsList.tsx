@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 //Components
-import { ThreadsList as _ThreadsList, InfinityThreadsList } from "@/components/Threads/desktop/ThreadsList";
+import { ThreadsList as _ThreadsList, InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
 
 // Styles
 import styles from "./Threads.module.scss";
@@ -29,19 +29,15 @@ const ThreadsList = ({ setParentPosts }: Props) => {
     getPostListAPI(setParentPosts, setPosts, setStatus);
   }, [setParentPosts]);
 
-  if (status.startsWith("loading")) {
-    return (
-      <div className={styles.messagePage}>
-        {status === "loading" ? <p>Loading...</p> : <p>No post yet.</p>}
-      </div>
-    );
-  } else if (posts.length > 0) {
-    return (
-      <div className={styles.threadWrap}>
+  return (
+    <div className={styles.threadWrap}>
+      {status === "loading" ? (
+        <ThreadsListSkeleton repeat={10} height="65dvh" />
+      ) : (
         <InfinityThreadsList data={data} height="65dvh" fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 };
 
 export default ThreadsList;

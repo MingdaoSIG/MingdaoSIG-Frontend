@@ -5,7 +5,7 @@ export interface IThread {
   cover: string;
   content: string;
   user: string;
-  hashtag: string[];
+  hashtag?: string[];
   like?: string[];
   likes?: number;
   priority?: number;

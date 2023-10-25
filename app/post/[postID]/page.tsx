@@ -82,7 +82,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
   } else {
     return isMobile ? (
       <>
-        <ThreadMobile post={post!}></ThreadMobile>x
+        <ThreadMobile post={post!}></ThreadMobile>
       </>
     ) : (
       <SplitBlock>
