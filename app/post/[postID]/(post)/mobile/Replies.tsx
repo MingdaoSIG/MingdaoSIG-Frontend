@@ -30,7 +30,7 @@ export default function Replies({ post }: { post: IThread }) {
     <div
       className={styles.replies}
       style={
-        extend ? { height: "60dvh", background: "white" } : { height: "93px" }
+        extend ? { height: "60dvh", background: "white", paddingTop: "1rem" } : { height: "93px", paddingTop: "0.5rem" }
       }
       onClick={handleCommentClick}
     >
