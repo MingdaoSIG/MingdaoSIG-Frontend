@@ -1,7 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .nav {
-  height: 8dvh;
+  height: $mobile-headerbar-height;
   width: 100%;
   margin: 0;
   padding: 10px;

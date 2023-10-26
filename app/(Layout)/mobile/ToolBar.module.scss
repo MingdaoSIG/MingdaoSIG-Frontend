@@ -1,7 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .toolbar {
-  height: 10dvh;
+  height: $mobile-toolbar-height;
   width: 100dvw;
 
   position: fixed;
