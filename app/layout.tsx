@@ -25,6 +25,7 @@ import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+import Script from "next/script";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ export default function RootLayout({
         />
         <meta property="og:image" content="https://i.imgur.com/tPYMyLP.png" />
       </Head>
+      <Script async src="https://sig-analytics.lazco.dev/script.js" data-website-id="e034897b-bce7-4a20-b5e8-4c98ef67e30d"></Script>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
           <html lang="en" onLoad={resetLocalStorage}>
