@@ -93,11 +93,9 @@ export default function RootLayout({
             {isMobile ? (
               <body className="">
                 <div className="wrapMobile">
-                  <HeaderBarMobile></HeaderBarMobile>
+                  <HeaderBarMobile />
                   {children}
-                  <div className="toolbarWrap">
-                    <ToolBarMobile></ToolBarMobile>
-                  </div>
+                  <ToolBarMobile />
                 </div>
               </body>
             ) : (

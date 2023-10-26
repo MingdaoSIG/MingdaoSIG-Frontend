@@ -10,20 +10,18 @@ const HeaderBar = () => {
   const router = useRouter();
 
   return (
-    <>
-      <div className={styles.nav}>
-        <Image
-          src="/images/logo_mobile.png"
-          alt="Logo"
-          width={60}
-          height={60}
-          priority
-          className="h-16 hover:cursor-pointer"
-          onClick={() => router.push("/")}
-        />
-        <UserLogin />
-      </div>
-    </>
+    <div className={styles.nav}>
+      <Image
+        src="/images/logo_mobile.png"
+        alt="Logo"
+        width={60}
+        height={60}
+        priority
+        className="h-16 hover:cursor-pointer"
+        onClick={() => router.push("/")}
+      />
+      <UserLogin />
+    </div>
   );
 };
 

@@ -6,17 +6,11 @@
   --thread-height: 12rem;
 
   position: relative;
-  overflow-y: auto;
-  border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: 95dvw;
-  margin: 0 auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  gap: 1rem;
+  margin: 0.5rem;
+  padding: 8dvh 0 10dvh 0;
 }
 
 .thread {
