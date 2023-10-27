@@ -1,6 +1,6 @@
 "use client";
 
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter, notFound } from "next/navigation";
 
@@ -10,6 +10,9 @@ import useIsMobile from "@/utils/useIsMobile";
 import { Sig, User } from "@/interfaces/User";
 import Info from "./(User)/desktop/Info";
 import { useSigPost, useUserPost } from "@/components/usePost";
+
+import styles from "./User.module.scss";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,20 +45,19 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         return setIsLoading(false);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isLoading && dataType === null) {
     return (
-      <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]">User or SIG Not Found.</h1>
-        <button
-          className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
-          onClick={() => {
-            route.push("/");
-          }}
+      <div className={styles.notFound}>
+        <h1>User or SIG Not Found.</h1>
+        <Link
+          href={"/"}
+          className={styles.backToHome}
         >
-          Back to home
-        </button>
+          Back to Home
+        </Link>
       </div>
     );
   }
