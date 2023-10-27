@@ -3,6 +3,7 @@
 $margin: 2.5rem;
 $avatar-height: 6.5rem;
 $avatar-border: 0.3rem;
+$badge-height: 1.3rem;
 
 .info {
   position: relative;
@@ -22,11 +23,21 @@ $avatar-border: 0.3rem;
   z-index: 1;
 }
 
-.avatar {
-  display: block;
+.avatarWrapper {
   position: absolute;
   bottom: calc(-1 * $avatar-height / 2);
-  margin-left: calc($margin - $avatar-border);
+  padding-left: calc($margin - $avatar-border);
+  padding-right: $margin;
+  width: 100%;
+  user-select: none;
+
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.avatar {
   border-radius: 9999px;
   border: solid $avatar-border white;
   background: white;
@@ -34,7 +45,27 @@ $avatar-border: 0.3rem;
   aspect-ratio: 1/1;
   line-height: calc($avatar-height - 1rem);
   text-align: center;
-  user-select: none;
+}
+
+.badgeWrapper {
+  $badgeWrapper-padding: 0.3rem;
+  // position: absolute;
+  // right: 0;
+  // bottom: calc(-1 * $badge-height * 2.4);
+  // margin-right: $margin;
+  padding: $badgeWrapper-padding;
+
+  display: flex;
+  gap: $badgeWrapper-padding;
+
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+}
+
+.badge {
+  height: $badge-height;
+  width: $badge-height;
+  cursor: pointer;
 }
 
 .content {

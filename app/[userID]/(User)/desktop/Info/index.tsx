@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { User } from "@/interfaces/User";
+import { Sig, User } from "@/interfaces/User";
 
 import styles from "./Info.module.scss";
 
@@ -40,20 +40,43 @@ const badge = [
   </div>,
 ];
 
-export default function Info({ user }: { user: User }) {
+export default function Info({ user }: { user: User | Sig }) {
   return (
     <div className={styles.info}>
       <div
         className={styles.banner}
         style={{ backgroundImage: "url(/images/banner.svg)" }}
       >
-        <Image
-          src={user?.avatar}
-          width={100}
-          height={100}
-          alt="Avatar"
-          className={styles.avatar}
-        />
+        <div className={styles.avatarWrapper}>
+          <Image
+            src={user?.avatar}
+            width={100}
+            height={100}
+            alt="Avatar"
+            className={styles.avatar}
+          />
+          <div className={styles.badgeWrapper}>
+            <Image
+              src={"/badges/developer.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className={styles.badge}
+            />
+            <Image
+              src={"/badges/1021user.svg"}
+              height={24}
+              width={24}
+              alt="developer"
+              className={styles.badge}
+            />
+          </div>
+        </div>
+        {/* {(user?._id === "65179f64cf392fefee97191f" || // Haco
+            user?._id === "652f28f5577c25ec87b5050e" || // Meru
+            user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
+            user?._id === "6525225146132ec53332a820") && // Lazp
+            badge[0]} */}
       </div>
       <div className={styles.content}>
         <div className={styles.name}>
@@ -61,11 +84,6 @@ export default function Info({ user }: { user: User }) {
           <p>
             {user?.customId.length !== 0 && "@"}
             {user?.customId}
-            {/* {(user?._id === "65179f64cf392fefee97191f" || // Haco
-        user?._id === "652f28f5577c25ec87b5050e" || // Meru
-        user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
-        user?._id === "6525225146132ec53332a820") && // Lazp
-        badge[0]} */}
           </p>
         </div>
         <div className={styles.description}>
