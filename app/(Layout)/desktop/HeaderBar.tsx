@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import style from "./headerbar.module.scss";
 import UserLogin from "./UserLogin";
 import Image from "next/image";
@@ -12,14 +13,17 @@ const HeaderBar = () => {
   return (
     <>
       <div className={style.nav}>
-        <Image
-          src="/images/logo.svg"
-          alt="Logo"
-          width={214}
-          height={46}
-          priority
-          onClick={() => router.push("/")}
-        />
+        <Link
+          href={"/"}
+        >
+          <Image
+            src="/images/logo.svg"
+            alt="Logo"
+            width={214}
+            height={46}
+            priority
+          />
+        </Link>
         <UserLogin />
       </div>
     </>
