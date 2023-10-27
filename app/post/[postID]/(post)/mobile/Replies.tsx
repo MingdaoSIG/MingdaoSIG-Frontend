@@ -21,7 +21,8 @@ export default function Replies({ post }: { post: IThread }) {
     GetCommentAPI(post).then((res) => {
       setComments(res.data);
     });
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ClickExtend
