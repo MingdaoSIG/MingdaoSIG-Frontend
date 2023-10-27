@@ -22,7 +22,7 @@ const Home = () => {
     return (
       <SplitBlock>
         <ThreadsListDesktop />
-        <Information post={post} />
+        <Information />
       </SplitBlock>
     );
   }
