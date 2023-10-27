@@ -208,23 +208,26 @@ export const InfinityThreadsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  console.log(data);
+
+
+  return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
-      {data && data.pages.length >= 1 ? (
-        data.pages.map((page: IThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              return <Thread threadData={item} key={index} />;
-            })}
-          </Fragment>
-        ))
-      ) : (
-        <h1>No Post Yet.</h1>
-      )}
+      {data.pages.map((page: IThread[], index: number) => (
+        <Fragment key={index}>
+          {page.map((item, index) => {
+            return <Thread threadData={item} key={index} />;
+          })}
+        </Fragment>
+      ))}
 
       {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
         <ThreadSkeleton />
       )}
+    </div>
+  ) : (
+    <div className={style.noPost}>
+      <h1>No Post Yet.</h1>
     </div>
   );
 };
