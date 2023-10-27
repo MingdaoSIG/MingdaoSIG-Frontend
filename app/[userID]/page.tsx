@@ -6,57 +6,15 @@ import { useRouter, notFound } from "next/navigation";
 
 import SwitchButton from "./(User)/SwitchButton";
 import SplitBlock from "../(Layout)/splitBlock";
-import { ThreadsList as _ThreadsList } from "@/components/Threads/desktop/ThreadsList";
+import { ThreadsList } from "@/components/Threads/desktop/ThreadsList";
 import { IThread } from "@/interfaces/Thread.interface";
 import { GetUserPostListAPI, GetSIGPostListAPI } from "./(User)/API";
+import useIsMobile from "@/utils/useIsMobile";
 import style from "./user.module.scss";
+import { User } from "@/interfaces/User";
+import Info from "./(User)/desktop/Info";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const sigDefaultCover: { [key: string]: string } = {
-  "651799ebfa1d45d97b139864":
-    "https://sig-api.lazco.dev/image/653296b40b891d1f6b5b4412", // 資安
-  "6529ed87df4ae96f279cd5e3":
-    "https://sig-api.lazco.dev/image/653299ff0b891d1f6b5b4460", // 資訊程式設計
-  "6529ee3cdf4ae96f279cd5e4":
-    "https://sig-api.lazco.dev/image/653297ed0b891d1f6b5b4416", // 機器人
-  "6529ee57df4ae96f279cd5e5":
-    "https://sig-api.lazco.dev/image/653299f10b891d1f6b5b445c", // 建築設計
-  "6529eed9df4ae96f279cd5e6":
-    "https://sig-api.lazco.dev/image/6532988f0b891d1f6b5b4432", // 生科動科與環境
-  "6529eeeddf4ae96f279cd5e7":
-    "https://sig-api.lazco.dev/image/653298e00b891d1f6b5b4446", // 醫學
-  "6529efbfdf4ae96f279cd5ec":
-    "https://sig-api.lazco.dev/image/6532983d0b891d1f6b5b4422", // 醫學相關
-  "6529efe9df4ae96f279cd5ee":
-    "https://sig-api.lazco.dev/image/6532982d0b891d1f6b5b441e", // 法政
-  "6529effbdf4ae96f279cd5ef":
-    "https://sig-api.lazco.dev/image/653298c70b891d1f6b5b4442", // 社心教育
-  "6529f011df4ae96f279cd5f0":
-    "https://sig-api.lazco.dev/image/65329a0f0b891d1f6b5b4464", // 音樂表藝
-  "6529f05ddf4ae96f279cd5f1":
-    "https://sig-api.lazco.dev/image/653298fa0b891d1f6b5b444e", // 大眾傳播
-  "6529f06edf4ae96f279cd5f2":
-    "https://sig-api.lazco.dev/image/653298490b891d1f6b5b4426", // 文史哲
-  "6529f07ddf4ae96f279cd5f3":
-    "https://sig-api.lazco.dev/image/653298eb0b891d1f6b5b444a", // 財經
-  "6529f094df4ae96f279cd5f4":
-    "https://sig-api.lazco.dev/image/653298b00b891d1f6b5b443e", // 無人機
-  "6529f0a2df4ae96f279cd5f5":
-    "https://sig-api.lazco.dev/image/653298620b891d1f6b5b442e", // 經濟與管理
-  "6529f0c4df4ae96f279cd5f6":
-    "https://sig-api.lazco.dev/image/653298a60b891d1f6b5b443a", // 元宇宙
-  "6529f0dbdf4ae96f279cd5f7":
-    "https://sig-api.lazco.dev/image/653298570b891d1f6b5b442a", // 直播
-  "6529f0eedf4ae96f279cd5f8":
-    "https://sig-api.lazco.dev/image/653298110b891d1f6b5b441a", // 科學教育
-  "652d60b842cdf6a660c2b778":
-    "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458", // 公告
-  "65321d65e226c78161c22807":
-    "https://sig-api.lazco.dev/image/653298990b891d1f6b5b4436", // 遊憩運動
-  "65321d83e226c78161c22808":
-    "https://sig-api.lazco.dev/image/653299040b891d1f6b5b4452", // 電機物理
-};
 
 export default function UserPage({ params }: { params: { userID: string } }) {
   if (!decodeURIComponent(params.userID).startsWith("@")) {
@@ -65,12 +23,13 @@ export default function UserPage({ params }: { params: { userID: string } }) {
 
   const UserID = decodeURIComponent(params.userID);
   const route = useRouter();
+  const isMobile = useIsMobile();
 
   const [posts, setPosts] = useState<IThread[]>([]);
   const [status, setStatus] = useState("loading");
   const [listType, setListType] = useState(0);
   const [reqTime, setReqTime] = useState<number>(0);
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<User>({
     _id: "",
     name: "",
     description: "",
@@ -127,81 +86,16 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       </div>
     );
   } else if (status === "success" || status === "success2") {
-    const badge = [
-      <div
-        className="bg-[rgb(100,100,100)] bg-opacity-0 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-[0.2rem] absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[6rem]"
-        key={"badge"}
-      >
-        <div className="my-auto relative select-none" key={"developer"}>
-          <div className="h-[24px] w-[24px] group cursor-pointer">
-            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
-              Developer
-            </span>
-            <Image
-              src={"/badges/developer.svg"}
-              height={24}
-              width={24}
-              alt="developer"
-              className="developer my-auto"
-            />
-          </div>
-        </div>
-        <div className="my-auto relative select-none" key={"developer"}>
-          <div className="h-[24px] w-[24px] group cursor-pointer">
-            <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
-              10/21 Event Participant
-            </span>
-            <Image
-              src={"/badges/1021user.svg"}
-              height={24}
-              width={24}
-              alt="developer"
-              className="developer my-auto"
-            />
-          </div>
-        </div>
-      </div>,
-    ];
-    return (
+    return isMobile ? (
+      <></>
+    ) : (
       <SplitBlock>
         <div className="flex flex-col items-start gap-[20px] max-h-[65dvh]">
           {/* <SwitchButton callback={setListType} posts={posts!}></SwitchButton> */}
-          <_ThreadsList posts={posts} height="auto" />
-        </div>
-        <div className="flex flex-col h-full relative">
-          <div className="flex-initial h-1/3 bg-[url('/images/banner.svg')] bg-cover bg-center rounded-t-[30px]"></div>
-          <div className="flex flex-col h-2/3 bg-white py-2 items-stretch rounded-b-[30px]">
-            <div className="mt-[50px] ml-10">
-              <div className="text-[#002024] font-normal text-[24px] flex h-[36px]">
-                {user?.name}
-              </div>
-              <div className="text-[#006180] font-normal text-[14px]">
-                {user?.customId.length !== 0 && "@"}
-                {user?.customId}
-              </div>
-            </div>
-            <div className="my-5 mx-10 h-[60%] overflow-y-auto">
-              {user?.description.split("\n").map((line) => (
-                <>
-                  <p key={line}>{line}</p>
-                </>
-              ))}
-            </div>
-          </div>
-          <Image
-            src={user?.avatar || sigDefaultCover[user._id]}
-            width={100}
-            height={100}
-            alt="Avatar"
-            className={style.avatar}
-          />
-          {(user?._id === "65179f64cf392fefee97191f" || // Haco
-            user?._id === "652f28f5577c25ec87b5050e" || // Meru
-            user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
-            user?._id === "6525225146132ec53332a820") && // Lazp
-            badge[0]}
-        </div>
-      </SplitBlock>
+          < ThreadsList posts={posts} height="auto" />
+        </div >
+        <Info user={user} />
+      </SplitBlock >
     );
   }
 }
