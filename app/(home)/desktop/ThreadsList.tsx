@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 //Components
-import { ThreadsList as _ThreadsList, InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
+import { InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
 
 // Styles
 import styles from "./Threads.module.scss";
@@ -13,7 +13,7 @@ import { IThread } from "@/interfaces/Thread.interface";
 
 // APIs Request Function
 import { getPostListAPI } from "@/app/(home)/apis/getPostList";
-import usePosts from "@/components/usePost";
+import { useAllPost } from "@/components/usePost";
 
 interface Props {
   setParentPosts: Dispatch<SetStateAction<IThread[]>>;
@@ -23,7 +23,7 @@ const ThreadsList = ({ setParentPosts }: Props) => {
   const [status, setStatus] = useState("loading");
   const [posts, setPosts] = useState<IThread[]>([]);
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage } = usePosts({ pageSize });
+  const { data, fetchNextPage, isFetchingNextPage } = useAllPost({ pageSize });
 
   useEffect(() => {
     getPostListAPI(setParentPosts, setPosts, setStatus);

@@ -219,13 +219,7 @@ export const InfinityThreadsList = ({
           </Fragment>
         ))
       ) : (
-        <div
-          className={
-            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
-          }
-        >
-          No Post Yet.
-        </div>
+        <h1>No Post Yet.</h1>
       )}
 
       {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
