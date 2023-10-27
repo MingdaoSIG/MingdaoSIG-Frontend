@@ -208,9 +208,6 @@ export const InfinityThreadsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(data);
-
-
   return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
       {data.pages.map((page: IThread[], index: number) => (
