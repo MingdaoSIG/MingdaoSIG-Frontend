@@ -11,7 +11,7 @@ import { Sig, User } from "@/interfaces/User";
 import Info from "./(User)/desktop/Info";
 import { useSigPost, useUserPost } from "@/components/usePost";
 
-import styles from "./User.module.scss";
+import styles from "./user.module.scss";
 import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
