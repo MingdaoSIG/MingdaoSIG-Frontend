@@ -1,5 +1,6 @@
 import { IThread } from "@/interfaces/Thread.interface";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 
 type PostQuery = {
@@ -9,8 +10,14 @@ type PostQuery = {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const useAllPost = (query: PostQuery) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["allPost"] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return useInfiniteQuery<IThread[], Error>({
-    queryKey: ["posts", query],
+    queryKey: ["allPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
@@ -31,8 +38,14 @@ export const useAllPost = (query: PostQuery) => {
 };
 
 export const useUserPost = (userId: string, query: PostQuery) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["userPost"] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return useInfiniteQuery<IThread[], Error>({
-    queryKey: ["posts", query],
+    queryKey: ["userPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list/user/${userId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
@@ -52,11 +65,17 @@ export const useUserPost = (userId: string, query: PostQuery) => {
   });
 };
 
-export const useSigPost = (userId: string, query: PostQuery) => {
+export const useSigPost = (sigId: string, query: PostQuery) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["sigPost"] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return useInfiniteQuery<IThread[], Error>({
-    queryKey: ["posts", query],
+    queryKey: ["sigPost", query],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(`${API_URL}/post/list/sig/${userId}?` + new URLSearchParams({
+      const response = await fetch(`${API_URL}/post/list/sig/${sigId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
       }), {

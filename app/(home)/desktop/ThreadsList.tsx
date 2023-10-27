@@ -19,19 +19,13 @@ interface Props {
   setParentPosts: Dispatch<SetStateAction<IThread[]>>;
 }
 
-const ThreadsList = ({ setParentPosts }: Props) => {
-  const [status, setStatus] = useState("loading");
-  const [posts, setPosts] = useState<IThread[]>([]);
+const ThreadsList = () => {
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage } = useAllPost({ pageSize });
-
-  useEffect(() => {
-    getPostListAPI(setParentPosts, setPosts, setStatus);
-  }, [setParentPosts]);
+  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useAllPost({ pageSize });
 
   return (
     <div className={styles.threadWrap}>
-      {status === "loading" ? (
+      {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="65dvh" />
       ) : (
         <InfinityThreadsList data={data} height="65dvh" fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
