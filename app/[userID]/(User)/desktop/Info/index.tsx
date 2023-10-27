@@ -40,7 +40,7 @@ const badge = [
   </div>,
 ];
 
-export default function Info({ user }: { user: User | Sig }) {
+export default function Info({ user, isLoading }: { user: User | Sig | null, isLoading: boolean }) {
   return (
     <div className={styles.info}>
       <div
@@ -49,7 +49,7 @@ export default function Info({ user }: { user: User | Sig }) {
       >
         <div className={styles.avatarWrapper}>
           <Image
-            src={user?.avatar}
+            src={user ? user?.avatar : "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"}
             width={100}
             height={100}
             alt="Avatar"

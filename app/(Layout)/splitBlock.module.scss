@@ -21,6 +21,8 @@
   max-width: 90dvw;
   max-height: 65dvh;
 
+  overflow-y: auto;
+
   @media screen and (max-width: 1280px) {
     grid-column: span 6;
   }

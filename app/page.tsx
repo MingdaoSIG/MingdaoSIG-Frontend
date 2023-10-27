@@ -21,12 +21,8 @@ const Home = () => {
   } else {
     return (
       <SplitBlock>
-        <div className="h-full w-full">
-          <ThreadsListDesktop setParentPosts={setPosts} />
-        </div>
-        <div className="h-full">
-          <Information post={post} />
-        </div>
+        <ThreadsListDesktop />
+        <Information post={post} />
       </SplitBlock>
     );
   }
