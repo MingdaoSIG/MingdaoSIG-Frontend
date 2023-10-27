@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 //Components
 import { InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
@@ -12,7 +12,6 @@ import styles from "./Threads.module.scss";
 import { IThread } from "@/interfaces/Thread.interface";
 
 // APIs Request Function
-import { getPostListAPI } from "@/app/(home)/apis/getPostList";
 import { useAllPost } from "@/components/usePost";
 
 interface Props {
