@@ -3,12 +3,40 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function UserLogin() {
   const [isLogin, setIsLogin] = useState(false);
   const { data: session, status } = useSession();
+  const [cookie, setCookie, removeCookie] = useCookies(["confirmed_1"]);
+  const route = useRouter();
+
+  useEffect(() => {
+    if (isLogin) {
+      const userData = JSON.parse(localStorage.getItem("User") || "{}");
+      if (userData.badge.includes("10.21_user")) {
+        if (!cookie.confirmed_1) {
+          Swal.fire({
+            title: "Thanks for coming to school anniversary 😁",
+            text: "Checkout your awesome badge!",
+            icon: "info",
+            confirmButtonText: "Bring me there!",
+            showCancelButton: true,
+            cancelButtonText: "Do not show again",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              route.push(`/@${userData.customId}`);
+            }
+            setCookie("confirmed_1", true, { path: "/" });
+          });
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookie.confirmed_1, isLogin]);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -43,6 +71,7 @@ export default function UserLogin() {
         setIsLogin(true);
         return;
       } catch (error) {
+        logout();
         console.log(error);
       }
     }
