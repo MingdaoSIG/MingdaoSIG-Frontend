@@ -1,8 +1,13 @@
 import Image from "next/image";
 
-import { Sig, User } from "@/interfaces/User";
-
+// Styles
 import styles from "./Info.module.scss";
+
+// Components
+import CustomPopover from "@/components/Popover";
+
+// Interfaces
+import { Sig, User } from "@/interfaces/User";
 
 const badge = [
   <div
@@ -40,7 +45,13 @@ const badge = [
   </div>,
 ];
 
-export default function Info({ user, isLoading }: { user: User | Sig | null, isLoading: boolean }) {
+export default function Info({
+  user,
+  isLoading,
+}: {
+  user: User | Sig | null;
+  isLoading: boolean;
+}) {
   return (
     <div className={styles.info}>
       <div
@@ -49,27 +60,35 @@ export default function Info({ user, isLoading }: { user: User | Sig | null, isL
       >
         <div className={styles.avatarWrapper}>
           <Image
-            src={user ? user?.avatar : "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"}
+            src={
+              user
+                ? user?.avatar
+                : "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
+            }
             width={100}
             height={100}
             alt="Avatar"
             className={styles.avatar}
           />
           <div className={styles.badgeWrapper}>
-            <Image
-              src={"/badges/developer.svg"}
-              height={24}
-              width={24}
-              alt="developer"
-              className={styles.badge}
-            />
-            <Image
-              src={"/badges/1021user.svg"}
-              height={24}
-              width={24}
-              alt="developer"
-              className={styles.badge}
-            />
+            <CustomPopover popoverContent="SIG Developer">
+              <Image
+                src={"/badges/developer.svg"}
+                height={24}
+                width={24}
+                alt="developer"
+                className={styles.badge}
+              />
+            </CustomPopover>
+            <CustomPopover popoverContent="10/21 Event Participant">
+              <Image
+                src={"/badges/1021user.svg"}
+                height={24}
+                width={24}
+                alt="1021user"
+                className={styles.badge}
+              />
+            </CustomPopover>
           </div>
         </div>
         {/* {(user?._id === "65179f64cf392fefee97191f" || // Haco
