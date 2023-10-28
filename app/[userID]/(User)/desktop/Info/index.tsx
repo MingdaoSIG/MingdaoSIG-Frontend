@@ -7,7 +7,8 @@ import styles from "./Info.module.scss";
 import CustomPopover from "@/components/Popover";
 
 // Interfaces
-import { Sig, User } from "@/interfaces/User";
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
 
 const badge = [
   <div
@@ -106,7 +107,7 @@ export default function Info({
           </p>
         </div>
         <div className={styles.description}>
-          {user?.description.split("\n").map((line) => (
+          {user?.description?.split("\n").map((line) => (
             <>
               <p key={line}>{line}</p>
             </>

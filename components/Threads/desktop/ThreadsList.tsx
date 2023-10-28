@@ -6,8 +6,10 @@ import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from 
 import style from "./ThreadsList.module.scss";
 import skeleton from "./Skeleton.module.scss";
 
-// Interfaces
+// Interfaces, Types
 import { IThread } from "@/interfaces/Thread.interface";
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
@@ -24,8 +26,8 @@ const pinned = [
 ];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
-  const [sig, setSig] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [sig, setSig] = useState<Sig | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     GetUserAPI();
@@ -88,7 +90,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
         >
           <p className={style.user}>{user?.name} </p>
           <span>•</span>
-          <p style={{ color: sigDefaultColors[sig?._id] }}>{sig?.name}</p>
+          <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
         </div>
 
         <div className={style.title_bar}>
@@ -159,12 +161,8 @@ export const ThreadsList = ({
           return <Thread threadData={item} key={index} />;
         })
       ) : (
-        <div
-          className={
-            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
-          }
-        >
-          No Post Yet.
+        <div className={style.noPost}>
+          <h1>No Post Yet</h1>
         </div>
       )}
     </div>
@@ -224,7 +222,7 @@ export const InfinityThreadsList = ({
     </div>
   ) : (
     <div className={style.noPost}>
-      <h1>No Post Yet.</h1>
+      <h1>No Post Yet</h1>
     </div>
   );
 };

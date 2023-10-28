@@ -7,7 +7,8 @@ import { useRouter, notFound } from "next/navigation";
 import SplitBlock from "../(Layout)/splitBlock";
 import { InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
 import useIsMobile from "@/utils/useIsMobile";
-import { Sig, User } from "@/interfaces/User";
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
 import Info from "./(User)/desktop/Info";
 import { useSigPost, useUserPost } from "@/components/usePost";
 
