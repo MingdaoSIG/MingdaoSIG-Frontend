@@ -54,10 +54,8 @@ export default function Info({
           </p>
         </div>
         <div className={styles.description}>
-          {accountData?.description?.split("\n").map((line) => (
-            <>
-              <p key={line}>{line}</p>
-            </>
+          {accountData?.description?.split("\n").map((line, index) => (
+            <p key={index}>{line}</p>
           ))}
         </div>
       </div>
@@ -67,7 +65,7 @@ export default function Info({
 
 const badgeList = {
   "developer": (
-    <Popover popoverContent="SIG Developer">
+    <Popover popoverContent="SIG Developer" key={"developer"}>
       <Image
         src={"/badges/developer.svg"}
         height={24}
@@ -78,7 +76,7 @@ const badgeList = {
     </Popover>
   ),
   "10.21_user": (
-    <Popover popoverContent="10/21 Event Participant">
+    <Popover popoverContent="10/21 Event Participant" key={"10.21_user"}>
       <Image
         src={"/badges/10.21_user.svg"}
         height={24}
