@@ -5,12 +5,15 @@ import { useEffect, useState } from "react";
 import { useRouter, notFound } from "next/navigation";
 
 import SplitBlock from "../(Layout)/splitBlock";
-import { InfinityThreadsList, ThreadsListSkeleton } from "@/components/Threads/desktop/ThreadsList";
+import {
+  InfinityThreadsList,
+  ThreadsListSkeleton,
+} from "@/components/Threads/desktop/ThreadsList";
 import useIsMobile from "@/utils/useIsMobile";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 import Info from "./(User)/desktop/Info";
-import { useSigPost, useUserPost } from "@/components/usePost";
+import { useSigPost, useUserPost } from "@/utils/usePost";
 
 import styles from "./user.module.scss";
 import Link from "next/link";
@@ -53,10 +56,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     return (
       <div className={styles.notFound}>
         <h1>User or SIG Not Found.</h1>
-        <Link
-          href={"/"}
-          className={styles.backToHome}
-        >
+        <Link href={"/"} className={styles.backToHome}>
           Back to Home
         </Link>
       </div>
@@ -69,37 +69,51 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     <SplitBlock>
       {isLoading ? (
         <ThreadsListSkeleton repeat={3} height="auto" />
+      ) : dataType === "user" ? (
+        <UserInfinityThreadList id={data?._id!} />
       ) : (
-        dataType === "user" ? (
-          <UserInfinityThreadList id={data?._id!} />
-        ) : (
-          <SIGInfinityThreadList id={data?._id!} />
-        )
+        <SIGInfinityThreadList id={data?._id!} />
       )}
       <Info user={data} isLoading={isLoading} />
-    </SplitBlock >
+    </SplitBlock>
   );
 }
 
 function UserInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useUserPost(id, { pageSize });
+  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useUserPost(
+    id,
+    { pageSize }
+  );
 
   return isLoading ? (
     <ThreadsListSkeleton repeat={3} height="auto" />
   ) : (
-    <InfinityThreadsList data={data} height="auto" fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
+    <InfinityThreadsList
+      data={data}
+      height="auto"
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+    />
   );
 }
 
 function SIGInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useSigPost(id, { pageSize });
+  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useSigPost(
+    id,
+    { pageSize }
+  );
 
   return isLoading ? (
     <ThreadsListSkeleton repeat={3} height="auto" />
   ) : (
-    <InfinityThreadsList data={data} height="auto" fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} />
+    <InfinityThreadsList
+      data={data}
+      height="auto"
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+    />
   );
 }
 
