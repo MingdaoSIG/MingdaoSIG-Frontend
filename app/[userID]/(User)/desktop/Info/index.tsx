@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-import { Sig, User } from "@/interfaces/User";
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
 
 import styles from "./Info.module.scss";
 
