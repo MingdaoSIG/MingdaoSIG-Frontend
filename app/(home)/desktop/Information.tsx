@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 
 // Styles
@@ -126,12 +126,12 @@ const Information = () => {
           <div className={style.links}>
             {homePageLinks.map(({ href, text }, index, array) => {
               return (
-                <>
+                <Fragment key={index}>
                   <Link href={href} target="_blank" key={index}>
                     {text}
                   </Link>
                   {index === array.length - 1 ? "" : "•"}
-                </>
+                </Fragment>
               );
             })}
           </div>
