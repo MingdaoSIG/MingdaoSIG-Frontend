@@ -1,19 +1,21 @@
-"use client";
-
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const ToolBar = () => {
-  const [userID, setUserID] = useState("/");
+  const [userID, setUserID] = useState(null);
   const pathname = usePathname();
   const route = useRouter();
 
   useEffect(() => {
-    const _localStorage: any = JSON.parse(
-      localStorage.getItem("User")?.toString() || "{}"
-    );
-    setUserID(_localStorage.customId);
+    (async () => {
+      setTimeout(() => {
+        const localStorage: any = JSON.parse(
+          window.localStorage.getItem("User")?.toString() || "{}"
+        );
+        setUserID(localStorage.customId);
+      }, 1000);
+    })();
   }, []);
 
   const menu = [
@@ -36,7 +38,7 @@ const ToolBar = () => {
       path: "/new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: true,
+      clickable: false,
     },
     {
       name: "hash",
