@@ -147,28 +147,6 @@ const ThreadSkeleton = () => {
   );
 };
 
-export const ThreadsList = ({
-  posts,
-  height,
-}: {
-  posts: IThread[];
-  height?: string;
-}) => {
-  return (
-    <div className={style.threads} style={{ height: height }}>
-      {posts && posts?.length >= 1 ? (
-        posts.map((item, index) => {
-          return <Thread threadData={item} key={index} />;
-        })
-      ) : (
-        <div className={style.noPost}>
-          <h1>No Post Yet</h1>
-        </div>
-      )}
-    </div>
-  );
-};
-
 export const InfinityThreadsList = ({
   data,
   height,
