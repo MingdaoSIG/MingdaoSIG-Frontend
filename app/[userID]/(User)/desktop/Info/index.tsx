@@ -4,50 +4,14 @@ import Image from "next/image";
 import styles from "./Info.module.scss";
 
 // Components
-import CustomPopover from "@/components/Popover";
+import Popover from "@/components/Popover";
 
 // Interfaces
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
-const badge = [
-  <div
-    className="bg-[rgb(100,100,100)] bg-opacity-0 ml-5 px-3 py-auto h-[36px] rounded-md my-auto grid gap-[0.2rem] absolute top-[calc(33.333333%_+_60px)] grid-cols-2 left-[6rem]"
-    key={"badge"}
-  >
-    <div className="my-auto relative select-none" key={"developer"}>
-      <div className="h-[24px] w-[24px] group cursor-pointer">
-        <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
-          Developer
-        </span>
-        <Image
-          src={"/badges/developer.svg"}
-          height={24}
-          width={24}
-          alt="developer"
-          className="developer my-auto"
-        />
-      </div>
-    </div>
-    <div className="my-auto relative select-none" key={"developer"}>
-      <div className="h-[24px] w-[24px] group cursor-pointer">
-        <span className="group-hover:opacity-100 transition-opacity bg-[rgb(0,190,245)] px-1 text-sm text-white rounded-md absolute left-1/2 -translate-x-1/2 -translate-y-7 opacity-0 mx-auto whitespace-nowrap inline-block hover:hidden hover:cursor-default">
-          10/21 Event Participant
-        </span>
-        <Image
-          src={"/badges/1021user.svg"}
-          height={24}
-          width={24}
-          alt="developer"
-          className="developer my-auto"
-        />
-      </div>
-    </div>
-  </div>,
-];
-
 export default function Info({
-  user,
+  user: accountData,
   isLoading,
 }: {
   user: User | Sig | null;
@@ -62,35 +26,18 @@ export default function Info({
         <div className={styles.avatarWrapper}>
           <Image
             src={
-              user
-                ? user?.avatar
-                : "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
+              accountData?.avatar ?? "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
             }
             width={100}
             height={100}
             alt="Avatar"
             className={styles.avatar}
           />
-          <div className={styles.badgeWrapper}>
-            <CustomPopover popoverContent="SIG Developer">
-              <Image
-                src={"/badges/developer.svg"}
-                height={24}
-                width={24}
-                alt="developer"
-                className={styles.badge}
-              />
-            </CustomPopover>
-            <CustomPopover popoverContent="10/21 Event Participant">
-              <Image
-                src={"/badges/1021user.svg"}
-                height={24}
-                width={24}
-                alt="1021user"
-                className={styles.badge}
-              />
-            </CustomPopover>
-          </div>
+          {accountData?.badge ? (
+            <BadgeList userData={accountData} />
+          ) : (
+            <></>
+          )}
         </div>
         {/* {(user?._id === "65179f64cf392fefee97191f" || // Haco
             user?._id === "652f28f5577c25ec87b5050e" || // Meru
@@ -100,14 +47,14 @@ export default function Info({
       </div>
       <div className={styles.content}>
         <div className={styles.name}>
-          {user?.name}
+          {accountData?.name}
           <p>
-            {user?.customId.length !== 0 && "@"}
-            {user?.customId}
+            {accountData && "@"}
+            {accountData?.customId}
           </p>
         </div>
         <div className={styles.description}>
-          {user?.description?.split("\n").map((line) => (
+          {accountData?.description?.split("\n").map((line) => (
             <>
               <p key={line}>{line}</p>
             </>
@@ -116,4 +63,42 @@ export default function Info({
       </div>
     </div>
   );
+}
+
+const badgeList = {
+  "developer": (
+    <Popover popoverContent="SIG Developer">
+      <Image
+        src={"/badges/developer.svg"}
+        height={24}
+        width={24}
+        alt="developer"
+        className={styles.badge}
+      />
+    </Popover>
+  ),
+  "10.21_user": (
+    <Popover popoverContent="10/21 Event Participant">
+      <Image
+        src={"/badges/10.21_user.svg"}
+        height={24}
+        width={24}
+        alt="1021user"
+        className={styles.badge}
+      />
+    </Popover>
+  )
+};
+function BadgeList({ userData }: { userData: User | null }) {
+  const chosenBadge = userData?.badge;
+
+  if (userData && chosenBadge && chosenBadge.length > 0) {
+    return (
+      <div className={styles.badgeWrapper}>
+        {chosenBadge.map((badge) => badgeList[badge])}
+      </div>
+    );
+  } else {
+    return <></>;
+  }
 }
