@@ -8,21 +8,22 @@ import styles from "./Replies.module.scss";
 // Interfaces
 import { IThread } from "@/interfaces/Thread.interface";
 
+// Types
+import { TComments } from "@/interfaces/comments";
+
 // API Request Function
-import { GetCommentAPI } from "../apis/CommentAPI";
 import ClickExtend from "@/app/(Layout)/mobile/ClickExtend";
+
+// Utils
+import { useFetch } from "@/utils/useFetch";
 
 export default function Replies({ post }: { post: IThread }) {
   const extendedState = useState(false);
   const [extended] = extendedState;
-  const [comments, setComments] = useState<any>([]);
+  const { data, error, isLoading } =
+    useFetch<Array<TComments>>(`/comment/list/post/${post._id}`) || [];
 
-  useEffect(() => {
-    GetCommentAPI(post).then((res) => {
-      setComments(res.data);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  console.info(data);
 
   return (
     <ClickExtend
@@ -30,35 +31,42 @@ export default function Replies({ post }: { post: IThread }) {
       heightAfter={"65dvh"}
       extendedState={extendedState}
       customStyles={{
-        backgroundColor: extended ? "white" : ""
+        backgroundColor: extended ? "white" : "",
       }}
     >
       <div
         className={styles.repliesWrapper}
         style={{
           overflowY: extended ? "auto" : "hidden",
-        }}>
+        }}
+      >
         <div className={styles.title}>
           <h4>Comments</h4>
-          <p>{comments.length}</p>
+          <p>{data?.length}</p>
         </div>
-        <div className={styles.replyList}>
-          {comments?.map((comment: any, index: number) => {
-            return (
-              <div className={styles.reply} key={index}>
-                <Reply
-                  customId={comment.user.customId}
-                  avatar={comment.user.avatar}
-                  content={comment.content}
-                  createdAt={new Date(comments[0].createdAt || "").toLocaleString(
-                    "zh-TW"
-                  ).split(" ")[0]}
-                  overflow={false}
-                />
-              </div>
-            );
-          })}
-        </div>
+        {isLoading ? (
+          <>Loading...</>
+        ) : (
+          <div className={styles.replyList}>
+            {data?.map((comment: any, index: number) => {
+              return (
+                <div className={styles.reply} key={index}>
+                  <Reply
+                    customId={comment.user.customId}
+                    avatar={comment.user.avatar}
+                    content={comment.content}
+                    createdAt={
+                      new Date(data[0].createdAt || "")
+                        .toLocaleString("zh-TW")
+                        .split(" ")[0]
+                    }
+                    overflow={false}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </ClickExtend>
   );
