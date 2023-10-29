@@ -20,6 +20,7 @@
     "csstype": "^3.1.2",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
+    "i": "^0.3.7",
     "jwt-decode": "^3.1.2",
     "md-editor-rt": "^4.7.0",
     "next": "^13.5.6",
@@ -33,7 +34,8 @@
     "sweetalert2": "^11.7.32",
     "swr": "^2.2.4",
     "tailwindcss": "3.3.3",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "usehooks-ts": "^2.9.1"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.4.13",
