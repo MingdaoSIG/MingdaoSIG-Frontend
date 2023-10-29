@@ -35,7 +35,7 @@ function useLocalStorage(key: string, initialValue: string) {
     setValue(initialRef.current);
   }, [key]);
 
-  return { storedValue, setValue, getItem };
+  return [storedValue, setValue, getItem];
 }
 
 function getInitialValue(key: string, initialValue: string) {
