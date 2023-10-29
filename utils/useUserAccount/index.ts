@@ -47,7 +47,7 @@ export function useUserAccount() {
   }, [isLogin]);
 
   const login = useCallback(() => {
-    signIn();
+    signIn("google");
   }, []);
 
   const logout = useCallback(() => {
@@ -81,3 +81,24 @@ async function platformLogin(accessToken: string) {
     throw new Error("Failed to login to platform");
   }
 }
+
+// function Test() {
+//   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
+//   return (
+//     <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center">
+//       <h1>{isLogin ? "logged in" : "logged out"}</h1>
+//       <h1>{JSON.stringify(userData)}</h1>
+//       <h1>{isLoading ? "loading" : "not loading"}</h1>
+//       <button
+//         onClick={() => login()}
+//       >
+//         login
+//       </button>
+//       <button
+//         onClick={() => logout()}
+//       >
+//         logout
+//       </button>
+//     </div>
+//   );
+// }
