@@ -18,6 +18,12 @@ import { IThread } from "@/interfaces/Thread.interface";
 // API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
+// Custom Hooks
+import useAlert from "@/utils/useAlert";
+
+// Configs
+import { alertMessageConfigs } from "../configs/alertMessages";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
@@ -27,6 +33,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
+  const { showAlert, showLoading, hideLoading, isLoading } = useAlert();
 
   const route = useRouter();
 
@@ -35,37 +42,19 @@ export default function ThreadInfo({ post }: { post: IThread }) {
     const reply = "";
     const content = typeComments;
     if (typeComments.length === 0)
-      return Swal.fire({
-        title: "Error!",
-        text: "Please enter comment!",
-        icon: "error",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#ff0000",
-      });
+      return showAlert(alertMessageConfigs.noComment);
     try {
       const res = await PostCommentAPI(post?._id, reply, content, token);
       if (res.status === 2000) {
         setTypeComments("");
-        Swal.fire({
-          title: "Success!",
-          text: "Comment success!",
-          icon: "success",
-          confirmButtonText: "OK",
-          confirmButtonColor: "#0090BD",
-        }).then(async () => {
+        showAlert(alertMessageConfigs.commentSuccess).then(async () => {
           await GetCommentAPI(post).then((res) => {
             setComments(res.data);
           });
         });
       }
     } catch (e) {
-      Swal.fire({
-        title: "Error!",
-        text: "Something went wrong. Please try again later.",
-        icon: "error",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#ff0000",
-      });
+      Swal.fire(alertMessageConfigs.otherError);
     }
   }
 
@@ -153,9 +142,11 @@ export default function ThreadInfo({ post }: { post: IThread }) {
                 customId={comment.user.customId}
                 avatar={comment.user.avatar}
                 content={comment.content}
-                createdAt={new Date(comment.createdAt || "").toLocaleString(
-                  "zh-TW"
-                ).split(" ")[0]}
+                createdAt={
+                  new Date(comment.createdAt || "")
+                    .toLocaleString("zh-TW")
+                    .split(" ")[0]
+                }
               />
             );
           })
@@ -177,7 +168,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-        // disabled
+          // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

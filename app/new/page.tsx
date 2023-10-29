@@ -18,7 +18,7 @@ import styles from "./page.module.scss";
 import { TPostAPI } from "./(new)/types/postAPI";
 
 // Configs
-import { popUpMessageConfigs } from "./(new)/config/popUpMessage";
+import { alertMessageConfigs } from "./(new)/config/alertMessages";
 import { markdownGuide } from "./(new)/config/markdownGuide";
 
 // APIs Request Function
@@ -45,10 +45,11 @@ export default function NewPostPage() {
   // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
-      (prev: TPostAPI | undefined) => ({
-        ...prev,
-        [e.target.name]: e.target.value,
-      } as TPostAPI)
+      (prev: TPostAPI | undefined) =>
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as TPostAPI)
     );
   }
 
@@ -57,10 +58,11 @@ export default function NewPostPage() {
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setPostData(
-        (prev: TPostAPI | undefined) => ({
-          ...prev,
-          content: storedContent,
-        } as TPostAPI)
+        (prev: TPostAPI | undefined) =>
+          ({
+            ...prev,
+            content: storedContent,
+          } as TPostAPI)
       );
     }
   }, []);
@@ -68,11 +70,11 @@ export default function NewPostPage() {
   async function NewPostAPI() {
     setPostButtonDisable(true);
     if (data?.title === "")
-      return Swal.fire(popUpMessageConfigs.titleError).then(() =>
+      return Swal.fire(alertMessageConfigs.titleError).then(() =>
         setPostButtonDisable(false)
       );
     if (!data.sig) {
-      return Swal.fire(popUpMessageConfigs.sigError).then(() =>
+      return Swal.fire(alertMessageConfigs.sigError).then(() =>
         setPostButtonDisable(false)
       );
     }
@@ -84,13 +86,13 @@ export default function NewPostPage() {
       console.debug(res);
 
       if (res.status === 2000) {
-        return Swal.fire(popUpMessageConfigs.Success).then(() => {
+        return Swal.fire(alertMessageConfigs.Success).then(() => {
           setPostButtonDisable(false);
           localStorage.removeItem("editorContent");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
-        Swal.fire(popUpMessageConfigs.PermissionError).then(() =>
+        Swal.fire(alertMessageConfigs.PermissionError).then(() =>
           setPostButtonDisable(false)
         );
       } else {
@@ -98,7 +100,7 @@ export default function NewPostPage() {
         throw new Error("Unexpected error");
       }
     } catch (error) {
-      Swal.fire(popUpMessageConfigs.OthersError).then(() =>
+      Swal.fire(alertMessageConfigs.OthersError).then(() =>
         setPostButtonDisable(false)
       );
     }

@@ -1,6 +1,6 @@
-import { TPopUpMessageConfigs } from "@/app/new/(new)/types/popUpMessageConfigs";
+import { TAlertMessageConfigs } from "@/app/new/(new)/types/alertMessageConfigs";
 
-export const popUpMessageConfigs: TPopUpMessageConfigs = {
+export const alertMessageConfigs: TAlertMessageConfigs = {
   titleError: {
     title: "Error!",
     text: "Please enter title!",
