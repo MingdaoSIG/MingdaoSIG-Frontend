@@ -9,15 +9,11 @@ import Information from "./(home)/desktop/Information";
 import ThreadsListMobile from "./(home)/mobile/ThreadsList";
 import useIsMobile from "@/utils/useIsMobile";
 
-// Mobile Style
-import { useState } from "react";
-
 const Home = () => {
   const isMobile = useIsMobile();
-  const [post, setPosts] = useState<any>([]);
 
   if (isMobile) {
-    return <ThreadsListMobile setParentPosts={setPosts}></ThreadsListMobile>;
+    return <ThreadsListMobile />;
   } else {
     return (
       <SplitBlock>
