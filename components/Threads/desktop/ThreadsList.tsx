@@ -19,11 +19,6 @@ import { sigDefaultColors } from "../configs/sigDefaultColors";
 import Link from "next/link";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
-const pinned = [
-  "652e4591d04b679afdff697e",
-  "65325fce0b891d1f6b5b3131",
-  "652cabdb45c0be8f82c54d9a",
-];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
   const [sig, setSig] = useState<Sig | null>(null);
@@ -75,7 +70,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       href={`/post/${threadData._id}`}
       className={style.thread + "  cursor-pointer select-none "}
       style={{
-        backgroundColor: pinned.includes(threadData._id!) ? "white" : "",
+        backgroundColor: threadData.pinned ? "white" : "",
       }}
     >
       <div className={style.preview}>
@@ -97,7 +92,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
           <h1 className={style.previewTitle}>
             {threadData.sig === announcementSigId && "🔔 公告 - "}
             {threadData.title}
-            {pinned.includes(threadData._id!) && " • 已置頂"}
+            {threadData.pinned && " • 已置頂"}
           </h1>
         </div>
 
@@ -114,7 +109,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       <div
         className={style.cover}
         style={{
-          display: pinned.includes(threadData._id!) ? "none" : "",
+          display: threadData.pinned ? "none" : "",
         }}
       >
         <Image
