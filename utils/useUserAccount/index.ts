@@ -11,6 +11,7 @@ export function useUserAccount() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -24,6 +25,7 @@ export function useUserAccount() {
           const { token, data } = await platformLogin(accessToken);
           localStorage.setItem("token", token);
           localStorage.setItem("User", JSON.stringify(data));
+          setToken(token);
           setUserData(data);
           setIsLogin(true);
           setIsLoading(false);
@@ -43,6 +45,8 @@ export function useUserAccount() {
     if (!isLogin) {
       localStorage.removeItem("token");
       localStorage.removeItem("User");
+      setToken(null);
+      setUserData(null);
     }
   }, [isLogin]);
 
@@ -54,7 +58,7 @@ export function useUserAccount() {
     signOut();
   }, []);
 
-  return { isLogin, userData, isLoading, login, logout };
+  return { isLogin, token, userData, isLoading, login, logout };
 }
 
 async function platformLogin(accessToken: string) {
@@ -81,24 +85,3 @@ async function platformLogin(accessToken: string) {
     throw new Error("Failed to login to platform");
   }
 }
-
-// function Test() {
-//   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
-//   return (
-//     <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center">
-//       <h1>{isLogin ? "logged in" : "logged out"}</h1>
-//       <h1>{JSON.stringify(userData)}</h1>
-//       <h1>{isLoading ? "loading" : "not loading"}</h1>
-//       <button
-//         onClick={() => login()}
-//       >
-//         login
-//       </button>
-//       <button
-//         onClick={() => logout()}
-//       >
-//         logout
-//       </button>
-//     </div>
-//   );
-// }
