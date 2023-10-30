@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { useRouter, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import SplitBlock from "../(Layout)/splitBlock";
 import {
@@ -15,8 +15,7 @@ import { Sig } from "@/interfaces/Sig";
 import Info from "./(User)/desktop/Info";
 import { useSigPost, useUserPost } from "@/utils/usePost";
 
-import styles from "./user.module.scss";
-import Link from "next/link";
+import { NotFound } from "@/components/NotFound";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -26,7 +25,6 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   }
 
   const id = decodeURIComponent(params.userID);
-  const route = useRouter();
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -54,12 +52,12 @@ export default function UserPage({ params }: { params: { userID: string } }) {
 
   if (!isLoading && dataType === null) {
     return (
-      <div className={styles.notFound}>
-        <h1>User or SIG Not Found.</h1>
-        <Link href={"/"} className={styles.backToHome}>
-          Back to Home
-        </Link>
-      </div>
+      <NotFound
+        message="User or SIG Not Found"
+        image={{
+          show: false
+        }}
+      />
     );
   }
 
