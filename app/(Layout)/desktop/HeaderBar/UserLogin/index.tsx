@@ -1,4 +1,4 @@
-import styles from "@/app/(Layout)/desktop/UserLogin.module.scss";
+import styles from "./UserLogin.module.scss";
 import Image from "next/image";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
