@@ -12,12 +12,13 @@ import Swal from "sweetalert2";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: IThread }) => {
-  const [like, setLike] = useState<any>(false);
-  const [token, setToken] = useState<string>("");
+  const { isLogin, token, userData, isLoading, login, logout } = useUserAccount();
 
-  const { status } = useSession();
+  const [like, setLike] = useState<any>(false);
+
   const route = useRouter();
 
   function onLike() {
@@ -30,33 +31,31 @@ const Thread = ({ post }: { post: IThread }) => {
       }
     } else {
       Swal.fire({
-        title: "請先登入",
-        text: "你必須登入才可以使用按讚功能",
+        title: "Please login first",
+        text: "You must login to like someone's post",
         icon: "warning",
-        confirmButtonText: "確定",
-        confirmButtonColor: "#82D7FF",
+        confirmButtonText: "Confirm",
       });
     }
   }
 
   function onDelete() {
     Swal.fire({
-      title: "你確定要刪除自己的貼文嗎？",
+      title: "Are you sure you want to delete this post",
       icon: "question",
-      confirmButtonText: "確定",
-      confirmButtonColor: "#EE5757",
+      confirmButtonText: "Confirm",
       showCancelButton: true,
-      cancelButtonText: "取消",
+      cancelButtonText: "Cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
         DeletePost();
         Swal.fire({
-          title: "貼文刪除成功",
+          title: "Successfully delete post",
           icon: "success",
-          confirmButtonText: "回首頁",
+          confirmButtonText: "Back to home",
           confirmButtonColor: "#6e7881",
           showDenyButton: true,
-          denyButtonText: "新增貼文",
+          denyButtonText: "Create new post",
           denyButtonColor: "#82D7FF",
         }).then(async (result) => {
           if (result.isConfirmed) {
@@ -71,7 +70,7 @@ const Thread = ({ post }: { post: IThread }) => {
 
   async function DeletePost() {
     try {
-      const res = await fetch(
+      await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}`,
         {
           method: "DELETE",
@@ -88,7 +87,7 @@ const Thread = ({ post }: { post: IThread }) => {
 
   async function PostLike() {
     try {
-      const res = await fetch(
+      await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
         {
           method: "POST",
@@ -104,7 +103,7 @@ const Thread = ({ post }: { post: IThread }) => {
   }
   async function DeleteLike() {
     try {
-      const res = await fetch(
+      await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
         {
           method: "DELETE",
@@ -120,15 +119,10 @@ const Thread = ({ post }: { post: IThread }) => {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
-
-    if (localStorage.getItem("token")) {
-      const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
-      if (post?.like?.includes(User._id)) {
-        setLike(true);
-      }
+    if (isLogin) {
+      post.like?.includes(userData?._id!) ? setLike(true) : setLike(false);
     }
-  }, [post?.like]);
+  }, [isLogin, post.like, userData?._id]);
 
   if (post?.sig === "652d60b842cdf6a660c2b778") {
     return (
@@ -151,7 +145,7 @@ const Thread = ({ post }: { post: IThread }) => {
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post?.title}</h1>
           {
-            (status === "authenticated" && post?.user === JSON.parse(localStorage.getItem("User")?.toString()!)._id) &&
+            (isLogin && post?.user === userData?._id) &&
             [<div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
