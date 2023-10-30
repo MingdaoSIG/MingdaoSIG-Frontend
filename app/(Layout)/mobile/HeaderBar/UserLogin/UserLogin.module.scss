@@ -2,10 +2,9 @@
 
 .userPanel {
   aspect-ratio: 1 / 1;
-  height: calc($mobile-headerbar-height - 0.4rem);
+  height: calc($mobile-headerbar-height - 0.7rem);
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.8);
-  padding: 0.1rem;
   cursor: pointer;
 
   display: flex;
