@@ -49,16 +49,12 @@ $badge-height: 1.3rem;
 
 .badgeWrapper {
   $badgeWrapper-padding: 0.3rem;
-  // position: absolute;
-  // right: 0;
-  // bottom: calc(-1 * $badge-height * 2.4);
-  // margin-right: $margin;
   padding: $badgeWrapper-padding;
 
   display: flex;
   gap: $badgeWrapper-padding;
 
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.3rem;
 }
 
