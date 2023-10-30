@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,11 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | number>(pathToSelected(path));
+  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(pathToSelected(path));
+
+  useEffect(() => {
+    setSelected(pathToSelected(path));
+  }, [path]);
 
   const menu = [
     {
@@ -75,6 +79,7 @@ const ToolBar = () => {
         })}
         <div
           style={{
+            display: selected === -1 ? "none" : "block",
             left: `${selected / 4 * 100}%`
           }}
           className={styles.selected}
