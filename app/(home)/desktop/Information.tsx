@@ -7,6 +7,10 @@ import Link from "next/link";
 import style from "./Information.module.scss";
 import { homePageLinks } from "../configs/linksList";
 
+// APIs Request Function
+import { useTopPost } from "@/utils/usePost";
+import { IThread } from "@/interfaces/Thread.interface";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // const Hashtag = (child: any) => {
@@ -59,24 +63,11 @@ const Information = () => {
     })();
   }, []);
 
-  // TODO: refactor
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/post/list?skip=0&limit=5`, {
-            method: "GET",
-          })
-        ).json();
+  // TODO: refactor HACO doing
+  const pageSize = 5;
+  const { data, isLoading } = useTopPost({ pageSize });
 
-        return setPosts(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
-
-  if (posts.length === 0) {
+  if (isLoading) {
     return (
       <div className="flex flex-col h-full">
         <div className={style.information + " rounded-[15px]"}>
@@ -92,12 +83,12 @@ const Information = () => {
             <div className={style.likedPosts}>
               <h2>Top 5 Posts</h2>
               <div className={style.likePostWrapper}>
-                {posts.map((item: any) => {
+                {data?.pages[0].map((item: IThread) => {
                   return (
                     <LikePost
                       _id={item._id}
                       title={item.title}
-                      like={item.like.length}
+                      like={item.likes}
                       key={item._id}
                     />
                   );
