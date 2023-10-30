@@ -1,0 +1,38 @@
+@import "@/app/styles/variables.scss";
+
+.image {
+  user-select: none;
+}
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+
+  animation: 1s ease-out 0s 1 fadeIn;
+
+  >div {
+    text-align: center;
+
+    >h2 {
+      font-size: $info-code-font-size;
+      line-height: $info-code-font-size;
+    }
+
+    >h1 {
+      font-size: $info-title-font-size;
+      line-height: calc($info-title-font-size + 0.5rem);
+    }
+  }
+}
+
+.backToHome {
+  color: white;
+  font-size: large;
+  background-color: rgb(0, 145, 189);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  user-select: none;
+}

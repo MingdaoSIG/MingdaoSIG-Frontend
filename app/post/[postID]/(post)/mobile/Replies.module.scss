@@ -1,21 +1,18 @@
 @import "@/app/styles/variables.scss";
 
 .replies {
+  --padding: 0.5rem;
   background-color: $panel-background-color;
   border-radius: $border-radius;
-  width: 95dvw;
-  height: 65dvh;
+  width: 100%;
 
-  padding: 1rem;
+  padding: var(--padding);
 
-  position: absolute; /* 回覆元素設置為絕對定位 */
-  bottom: 0;
-  left: 2.5dvw;
-  align-self: end;
+  position: absolute;
+  bottom: calc(-1 * ($mobile-border-margin + $mobile-replies-min-height));
   transition: 0.5s;
-  overflow-y: auto;
 
-  z-index: 999999;
+  z-index: 999;
 
   h4 {
     color: $dark-text;
@@ -25,6 +22,12 @@
   p {
     color: $gray-text;
   }
+}
+
+.repliesWrapper {
+  overflow-y: auto;
+  height: 100%;
+  border-radius: calc($border-radius - var(--padding));
 }
 
 .replies::-webkit-scrollbar {
@@ -37,8 +40,7 @@
 }
 
 .firstReply {
-  margin-top: 0.5rem;
-  height: 65dvh;
+  margin-top: 1rem;
   overflow-y: auto;
 }
 

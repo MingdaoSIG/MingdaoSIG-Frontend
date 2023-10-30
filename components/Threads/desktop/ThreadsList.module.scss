@@ -95,3 +95,16 @@
     padding: 0 0.1rem;
   }
 }
+
+.noPost {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  >h1 {
+    font-size: $info-title-font-size;
+  }
+}

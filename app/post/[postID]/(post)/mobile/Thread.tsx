@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 // Components
-import Reply from "./Replies";
+import Replies from "./Replies";
 
 // Styles
 import styles from "./Thread.module.scss";
@@ -103,7 +103,7 @@ const Thread = ({ post }: { post: IThread }) => {
         className={styles.threadContent}
         previewTheme="github"
       />
-      <Reply post={post}></Reply>
+      <Replies post={post} />
     </div>
   );
 };

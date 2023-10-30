@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 // Styles
 import style from "./Information.module.scss";
 import { homePageLinks } from "../configs/linksList";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // const Hashtag = (child: any) => {
 //   return (
@@ -22,7 +23,6 @@ import { homePageLinks } from "../configs/linksList";
 // };
 
 const SIG = (child: any) => {
-  const route = useRouter();
   return (
     <Link className={style.sig} href={`/@${child.customId}`}>
       <p>{child.name}</p>
@@ -31,8 +31,6 @@ const SIG = (child: any) => {
 };
 
 const LikePost = (child: any) => {
-  const route = useRouter();
-
   return (
     <Link className={style.likePost} href={`/post/${child._id}`}>
       <h3 className={style.likeTitle}>{child.title}</h3>
@@ -41,27 +39,44 @@ const LikePost = (child: any) => {
   );
 };
 
-const Information = ({ post }: { post: any }) => {
+const Information = () => {
   const [sigs, setSigs] = useState<any>([]);
+  const [posts, setPosts] = useState<any>([]);
 
   useEffect(() => {
-    GetSigListAPI();
-    async function GetSigListAPI() {
+    (async () => {
       try {
         const res = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/list`, {
+          await fetch(`${API_URL}/sig/list`, {
             method: "GET",
           })
         ).json();
-        setSigs(res.data);
-        return;
+
+        return setSigs(res.data);
       } catch (error) {
         console.log(error);
       }
-    }
+    })();
   }, []);
 
-  if (post.length === 0) {
+  // TODO: refactor
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await (
+          await fetch(`${API_URL}/post/list?skip=0&limit=5`, {
+            method: "GET",
+          })
+        ).json();
+
+        return setPosts(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  if (posts.length === 0) {
     return (
       <div className="flex flex-col h-full">
         <div className={style.information + " rounded-[15px]"}>
@@ -77,19 +92,16 @@ const Information = ({ post }: { post: any }) => {
             <div className={style.likedPosts}>
               <h2>Top 5 Posts</h2>
               <div className={style.likePostWrapper}>
-                {post
-                  .sort((a: any, b: any) => b.like.length - a.like.length)
-                  .slice(0, 5)
-                  .map((item: any) => {
-                    return (
-                      <LikePost
-                        _id={item._id}
-                        title={item.title}
-                        like={item.like.length}
-                        key={item._id}
-                      />
-                    );
-                  })}
+                {posts.map((item: any) => {
+                  return (
+                    <LikePost
+                      _id={item._id}
+                      title={item.title}
+                      like={item.like.length}
+                      key={item._id}
+                    />
+                  );
+                })}
               </div>
             </div>
 
@@ -114,12 +126,12 @@ const Information = ({ post }: { post: any }) => {
           <div className={style.links}>
             {homePageLinks.map(({ href, text }, index, array) => {
               return (
-                <>
+                <Fragment key={index}>
                   <Link href={href} target="_blank" key={index}>
                     {text}
                   </Link>
                   {index === array.length - 1 ? "" : "•"}
-                </>
+                </Fragment>
               );
             })}
           </div>
@@ -130,7 +142,3 @@ const Information = ({ post }: { post: any }) => {
 };
 
 export default Information;
-
-{
-  /*  */
-}

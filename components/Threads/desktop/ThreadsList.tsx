@@ -6,8 +6,10 @@ import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from 
 import style from "./ThreadsList.module.scss";
 import skeleton from "./Skeleton.module.scss";
 
-// Interfaces
+// Interfaces, Types
 import { IThread } from "@/interfaces/Thread.interface";
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
@@ -17,15 +19,10 @@ import { sigDefaultColors } from "../configs/sigDefaultColors";
 import Link from "next/link";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
-const pinned = [
-  "652e4591d04b679afdff697e",
-  "65325fce0b891d1f6b5b3131",
-  "652cabdb45c0be8f82c54d9a",
-];
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
-  const [sig, setSig] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [sig, setSig] = useState<Sig | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     GetUserAPI();
@@ -73,7 +70,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       href={`/post/${threadData._id}`}
       className={style.thread + "  cursor-pointer select-none "}
       style={{
-        backgroundColor: pinned.includes(threadData._id!) ? "white" : "",
+        backgroundColor: threadData.pinned ? "white" : "",
       }}
     >
       <div className={style.preview}>
@@ -88,14 +85,14 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
         >
           <p className={style.user}>{user?.name} </p>
           <span>•</span>
-          <p style={{ color: sigDefaultColors[sig?._id] }}>{sig?.name}</p>
+          <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
         </div>
 
         <div className={style.title_bar}>
           <h1 className={style.previewTitle}>
             {threadData.sig === announcementSigId && "🔔 公告 - "}
             {threadData.title}
-            {pinned.includes(threadData._id!) && " • 已置頂"}
+            {threadData.pinned && " • 已置頂"}
           </h1>
         </div>
 
@@ -112,7 +109,7 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
       <div
         className={style.cover}
         style={{
-          display: pinned.includes(threadData._id!) ? "none" : "",
+          display: threadData.pinned ? "none" : "",
         }}
       >
         <Image
@@ -141,32 +138,6 @@ const ThreadSkeleton = () => {
         <p className={skeleton.content}></p>
       </div>
       <div className={skeleton.cover}></div>
-    </div>
-  );
-};
-
-export const ThreadsList = ({
-  posts,
-  height,
-}: {
-  posts: IThread[];
-  height?: string;
-}) => {
-  return (
-    <div className={style.threads} style={{ height: height }}>
-      {posts && posts?.length >= 1 ? (
-        posts.map((item, index) => {
-          return <Thread threadData={item} key={index} />;
-        })
-      ) : (
-        <div
-          className={
-            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
-          }
-        >
-          No Post Yet.
-        </div>
-      )}
     </div>
   );
 };
@@ -208,29 +179,23 @@ export const InfinityThreadsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
-      {data && data.pages.length >= 1 ? (
-        data.pages.map((page: IThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              return <Thread threadData={item} key={index} />;
-            })}
-          </Fragment>
-        ))
-      ) : (
-        <div
-          className={
-            "h-full w-full text-center justify-center align-middle font-bold text-[40px]"
-          }
-        >
-          No Post Yet.
-        </div>
-      )}
+      {data.pages.map((page: IThread[], index: number) => (
+        <Fragment key={index}>
+          {page.map((item, index) => {
+            return <Thread threadData={item} key={index} />;
+          })}
+        </Fragment>
+      ))}
 
       {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
         <ThreadSkeleton />
       )}
+    </div>
+  ) : (
+    <div className={style.noPost}>
+      <h1>No Post Yet</h1>
     </div>
   );
 };

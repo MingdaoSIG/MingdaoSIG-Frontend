@@ -1,109 +1,111 @@
-"use client";
-
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { useUserAccount } from "@/utils/useUserAccount";
+import styles from "./ToolBar.module.scss";
 
 const ToolBar = () => {
-  const [userID, setUserID] = useState("/");
-  const pathname = usePathname();
-  const route = useRouter();
+  const { isLogin, userData, isLoading } = useUserAccount();
+
+  const path = usePathname();
+  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(pathToSelected(path));
 
   useEffect(() => {
-    const _localStorage: any = JSON.parse(
-      localStorage.getItem("User")?.toString() || "{}"
-    );
-    setUserID(_localStorage.customId);
-  }, []);
+    setSelected(pathToSelected(path));
+  }, [path]);
 
   const menu = [
     {
       name: "home",
-      path: "/",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      clickable: true,
+      clickable: !isLoading && true
     },
     {
       name: "user",
-      path: "/@",
-      route: `/@${userID}`,
+      route: userData ? `/@${userData.customId}` : "/",
       icon: "/icons/bx-user.svg",
-      clickable: false,
+      clickable: !isLoading && isLogin
     },
     {
       name: "new",
-      path: "/new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: true,
+      clickable: !isLoading && isLogin
     },
     {
       name: "hash",
-      path: "/#",
       route: "/hashtag",
       icon: "/icons/hash.svg",
-      clickable: true,
+      clickable: !isLoading && true
     },
   ];
 
   return (
-    <div className="h-[5rem] w-[25rem] bg-white bg-opacity-50 mx-auto rounded-full border-white border-opacity-60 border select-none">
-      <div className="h-full w-[22em] mx-auto flex">
+    <div className={styles.toolBarWrapper}>
+      <div className={styles.iconWrapper}>
         {menu.map((item, index) => {
-          if (item.path === "/") {
-            return (
-              <button
-                key={index}
-                className={
-                  "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 cursor-pointer" +
-                  (pathname === "/" ? " bg-opacity-30" : " bg-opacity-0")
-                }
-                onClick={() => {
-                  route.push(item.route);
+          return (
+            <div
+              key={index}
+              className={styles.icon}
+            >
+              <div
+                style={{
+                  cursor: item.clickable ? "pointer" : "not-allowed"
                 }}
+                className={styles.iconCursor}
+              />
+              <Link
+                href={item.route}
+                style={{
+                  opacity: item.clickable ? 1 : 0.5,
+                  pointerEvents: item.clickable ? "auto" : "none"
+                }}
+                className={styles.icon}
+                onClick={() => setSelected(index)}
               >
                 <Image
                   src={item.icon}
                   height={32}
                   width={32}
                   alt={item.name}
-                  className="mx-auto"
                 ></Image>
-              </button>
-            );
-          } else {
-            return (
-              <button
-                key={index}
-                className={
-                  "flex-1 my-auto rounded-full bg-slate-400 py-2 transition-opacity duration-500 disabled:opacity-40 " +
-                  (pathname.startsWith(item.path) && userID
-                    ? "bg-opacity-30 "
-                    : "bg-opacity-0 ") +
-                  (!userID && !item.clickable
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer")
-                }
-                onClick={() => {
-                  route.push(item.route);
-                }}
-                disabled={!userID && !item.clickable}
-              >
-                <Image
-                  src={item.icon}
-                  height={32}
-                  width={32}
-                  alt={item.name}
-                  className="mx-auto"
-                ></Image>
-              </button>
-            );
-          }
+              </Link>
+            </div>
+          );
         })}
+        <div
+          style={{
+            display: selected === -1 ? "none" : "block",
+            left: `${selected / 4 * 100}%`
+          }}
+          className={styles.selected}
+        />
       </div>
     </div>
   );
 };
 
 export default ToolBar;
+
+function pathToSelected(path: string) {
+  const homeRegex = /^\/$/gm;
+  const userRegex = /^\/@(?!$)(?=.{1,25}$)[a-z0-9_]+(\.[a-z0-9_]+)*$/gm;
+  const newRegex = /^\/new$/gm;
+  const hashRegex = /^\/hashtag$/gm;
+
+  if (homeRegex.test(path)) {
+    return 0;
+  } else if (userRegex.test(path)) {
+    return 1;
+  } else if (newRegex.test(path)) {
+    return 2;
+  } else if (hashRegex.test(path)) {
+    return 3;
+  }
+
+  return -1;
+}

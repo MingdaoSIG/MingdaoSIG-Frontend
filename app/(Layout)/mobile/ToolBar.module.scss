@@ -1,12 +1,16 @@
-.toolbar {
-  height: 5rem;
-  width: 25rem;
-  max-width: 95dvw;
-  margin: 0 auto;
+@import "@/app/styles/variables.scss";
 
-  background-color: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 2.5rem;
+.toolbar {
+  height: $mobile-toolbar-height;
+  width: 100dvw;
+
+  position: fixed;
+  bottom: 0;
+
+  user-select: none;
+  backdrop-filter: blur(10px);
+  background-color: $mobile-toolbar-color;
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .toolbarInner {

@@ -1,3 +1,5 @@
+@import "@/app/styles/variables.scss";
+
 .app {
   width: 90dvw;
   height: 65dvh;
@@ -20,9 +22,20 @@
   grid-column: span 7;
   max-width: 90dvw;
   max-height: 65dvh;
+  border-radius: $border-radius;
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @media screen and (max-width: 1280px) {
     grid-column: span 6;
+  }
+
+  @media screen and (max-width: 800px) {
+    grid-column: span 5;
   }
 }
 
@@ -36,5 +49,9 @@
   overflow-y: hidden;
   @media screen and (max-width: 1280px) {
     grid-column: span 4;
+  }
+
+  @media screen and (max-width: 800px) {
+    grid-column: span 5;
   }
 }

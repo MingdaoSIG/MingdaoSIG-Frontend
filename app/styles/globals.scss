@@ -19,6 +19,7 @@ body {
   overflow: hidden;
   color: black;
   font-family: "Noto Sans TC", sans-serif;
+  animation: 1s ease-out 0s 1 fadeIn;
 }
 
 .wrap {
@@ -27,11 +28,9 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(
-    90% 90% at 0% 0%,
-    $bg-color-from 0%,
-    $bg-color-to 100%
-  );
+  background: radial-gradient(90% 90% at 0% 0%,
+      $bg-color-from 0%,
+      $bg-color-to 100%);
 
   display: grid;
   grid-template-rows: 15% 70% 15%;
@@ -43,32 +42,21 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(
-    90% 90% at 0% 0%,
-    $bg-color-from 0%,
-    $bg-color-to 100%
-  );
-
-  display: grid;
-  grid-template-rows: 10% 75% 15%;
-}
-
-.toolbarWrap {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: radial-gradient(90% 90% at 0% 0%,
+      $bg-color-from 0%,
+      $bg-color-to 100%);
 }
 
 ::-webkit-scrollbar {
   width: 10px;
   margin-left: 5px;
 }
+
 ::-webkit-scrollbar-track {
   border-radius: 5px;
   background: $scrollbar-track-color;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background: $scrollbar-thumb-color;

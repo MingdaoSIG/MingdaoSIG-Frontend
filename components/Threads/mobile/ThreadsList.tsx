@@ -30,13 +30,12 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
 
 export const ThreadsList = ({
   posts,
-  height,
 }: {
   posts: IThread[];
   height?: string;
 }) => {
   return (
-    <div className={style.threads} style={{ height: height }}>
+    <div className={style.threads}>
       {posts && posts?.length >= 1 ? (
         posts.map((item, index) => {
           return <Thread threadData={item} key={index} />;

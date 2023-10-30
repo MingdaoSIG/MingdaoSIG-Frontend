@@ -1,8 +1,12 @@
+@import "@/app/styles/variables.scss";
+
 .nav {
-  height: 10dvh;
+  height: $mobile-headerbar-height;
   width: 100%;
   margin: 0;
   padding: 10px;
+  position: fixed;
+  z-index: 9999;
 
   display: flex;
   flex-direction: row;
@@ -10,5 +14,7 @@
   justify-content: space-between;
 
   user-select: none;
-  background-color: #fff;
+  backdrop-filter: blur(10px);
+  background-color: $panel-background-color;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }

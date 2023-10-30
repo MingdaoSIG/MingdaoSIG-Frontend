@@ -1,6 +1,6 @@
 $scrollbar-thumb-color: #004c64;
 $scrollbar-track-color: rgba(0, 76, 100, 0.29);
-$panel-background-color: rgba(255, 255, 255, 0.47);
+$panel-background-color: rgba(255, 255, 255, 0.6);
 $border-radius: 1.2rem;
 $padding: 1.5rem;
 
@@ -10,3 +10,21 @@ $skeleton-background-color: rgba(150, 150, 150, 0.3);
 // Fonts
 $dark-text: #003f47;
 $gray-text: #354242;
+$info-code-font-size: 2.5rem;
+$info-title-font-size: 3rem;
+
+$mobile-headerbar-height: 8dvh;
+$mobile-toolbar-height: 10dvh;
+$mobile-border-margin: 0.5rem;
+$mobile-replies-min-height: 6.5rem;
+$mobile-toolbar-color: rgba(255, 255, 255);
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

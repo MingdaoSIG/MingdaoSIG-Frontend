@@ -1,3 +1,5 @@
+@import "@/app/styles/variables.scss";
+
 .toggleBtn {
   width: 100px;
   height: 56px;
@@ -9,19 +11,22 @@
   transition: 0.5s;
 }
 
-.avatar {
-  $height: 6.5rem;
-  $border: 0.3rem;
-  display: block;
-  position: absolute;
-  top: 25%;
-  margin-left: calc(2.5rem - $border);
-  border-radius: 9999px;
-  border: solid $border white;
-  background: white;
-  width: $height;
-  aspect-ratio: 1/1;
-  line-height: calc($height - 1rem);
-  text-align: center;
-  user-select: none;
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+
+  >h1 {
+    font-size: $info-title-font-size;
+  }
+}
+
+.backToHome {
+  color: white;
+  font-size: large;
+  background-color: rgb(0, 145, 189);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
 }

@@ -8,7 +8,7 @@ import { SweetAlertOptions } from "sweetalert2";
  * @property {SweetAlertOptions} PermissionError - Configuration for displaying an error related to permissions.
  * @property {SweetAlertOptions} OthersError - Configuration for displaying other types of errors not covered by the previous properties.
  */
-export type TPopUpMessageConfigs = {
+export type TAlertMessageConfigs = {
   titleError: SweetAlertOptions;
   sigError: SweetAlertOptions;
   Success: SweetAlertOptions;

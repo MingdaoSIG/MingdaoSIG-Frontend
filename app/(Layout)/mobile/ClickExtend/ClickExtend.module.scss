@@ -1,0 +1,16 @@
+@import "@/app/styles/variables.scss";
+
+.wrapper {
+  --padding: 0.5rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  width: 100%;
+
+  padding: var(--padding);
+
+  position: absolute;
+  bottom: calc(-1 * ($mobile-border-margin + $mobile-replies-min-height));
+  transition: 0.5s;
+
+  z-index: 999;
+}
