@@ -53,7 +53,9 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   if (!isLoading && dataType === null) {
     return (
       <NotFound
-        message="User or SIG Not Found"
+        content={{
+          message: "User or SIG Not Found"
+        }}
         image={{
           show: false
         }}

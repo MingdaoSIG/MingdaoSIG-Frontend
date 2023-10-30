@@ -19,6 +19,7 @@ import { IThread } from "@/interfaces/Thread.interface";
 import useIsMobile from "@/utils/useIsMobile";
 
 import { PostCommentAPI } from "./(post)/apis/CommentAPI";
+import { NotFound } from "@/components/NotFound";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -65,17 +66,14 @@ const Post = ({ params }: { params: { postID: string } }) => {
     return <div className="flex align-middle justify-center text-[50px]">Loading...</div>;
   } else if (status === "notfound") {
     return (
-      <div className="flex flex-col m-auto">
-        <h1 className="text-[50px]">Post Not Found.</h1>
-        <button
-          className="bg-[#0090BD] bg-opacity-60 rounded-2xl w-[180px] h-[60px] block m-auto text-white mt-5 text-[20px]"
-          onClick={() => {
-            route.push("/");
-          }}
-        >
-          Back to home
-        </button>
-      </div>
+      <NotFound
+        content={{
+          message: "Post Not Found"
+        }}
+        image={{
+          show: false
+        }}
+      />
     );
   } else if (post?.sig === "652d60b842cdf6a660c2b778") {
     return <ThreadDesktop post={post!} />;
