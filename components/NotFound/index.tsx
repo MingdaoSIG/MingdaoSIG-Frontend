@@ -52,7 +52,7 @@ export function NotFound({
 
   const defaultButton = {
     show: true,
-    message: "Go Home",
+    message: "Bact To Home",
     href: "/"
   };
   button = { ...defaultButton, ...button };
