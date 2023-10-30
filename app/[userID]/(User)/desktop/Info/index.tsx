@@ -1,10 +1,9 @@
 import Image from "next/image";
+import { Tooltip } from "react-tooltip";
+import { Fragment } from "react";
 
 // Styles
 import styles from "./Info.module.scss";
-
-// Components
-import Popover from "@/components/Popover";
 
 // Interfaces
 import { User } from "@/interfaces/User";
@@ -39,11 +38,6 @@ export default function Info({
             <></>
           )}
         </div>
-        {/* {(user?._id === "65179f64cf392fefee97191f" || // Haco
-            user?._id === "652f28f5577c25ec87b5050e" || // Meru
-            user?._id === "6517b7b22ee473ac669f205b" || // OnCloud
-            user?._id === "6525225146132ec53332a820") && // Lazp
-            badge[0]} */}
       </div>
       <div className={styles.content}>
         <div className={styles.name}>
@@ -64,28 +58,16 @@ export default function Info({
 }
 
 const badgeList = {
-  "developer": (
-    <Popover popoverContent="SIG Developer" key={"developer"}>
-      <Image
-        src={"/badges/developer.svg"}
-        height={24}
-        width={24}
-        alt="developer"
-        className={styles.badge}
-      />
-    </Popover>
-  ),
-  "10.21_user": (
-    <Popover popoverContent="10/21 Event Participant" key={"10.21_user"}>
-      <Image
-        src={"/badges/10.21_user.svg"}
-        height={24}
-        width={24}
-        alt="1021user"
-        className={styles.badge}
-      />
-    </Popover>
-  )
+  "developer": {
+    name: "developer",
+    icon: "/badges/developer.svg",
+    content: "Developer"
+  },
+  "10.21_user": {
+    name: "10.21_user",
+    icon: "/badges/10.21_user.svg",
+    content: "10/21 Event Participant"
+  }
 };
 function BadgeList({ userData }: { userData: User | null }) {
   const chosenBadge = userData?.badge;
@@ -93,7 +75,27 @@ function BadgeList({ userData }: { userData: User | null }) {
   if (userData && chosenBadge && chosenBadge.length > 0) {
     return (
       <div className={styles.badgeWrapper}>
-        {chosenBadge.map((badge) => badgeList[badge])}
+        {chosenBadge.map((badge) => (
+          <Fragment key={badge}>
+            <Image
+              src={badgeList[badge].icon}
+              height={24}
+              width={24}
+              alt={badgeList[badge].name}
+              className={styles.badge}
+              data-tooltip-id={badgeList[badge].name}
+              data-tooltip-content={badgeList[badge].content}
+              data-tooltip-place="top"
+            />
+            <Tooltip
+              id={badgeList[badge].name}
+              style={{
+                padding: "0.2rem 0.4rem",
+                backgroundColor: "rgb(50, 50, 50)"
+              }}
+            />
+          </Fragment>
+        ))}
       </div>
     );
   } else {
