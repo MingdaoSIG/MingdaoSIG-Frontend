@@ -1,13 +1,12 @@
 "use client";
 
-// Infinity scroll
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 // Third-Party Package
 import React from "react";
 import { signOut } from "next-auth/react";
-import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
+
+// Providers
+import { Providers } from "./providers";
 
 // Styles
 import "@/app/styles/globals.scss";
@@ -23,8 +22,6 @@ import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import Script from "next/script";
-
-const queryClient = new QueryClient();
 
 export default function RootLayout({
   title,
@@ -82,32 +79,28 @@ export default function RootLayout({
         src="https://sig-analytics.lazco.dev/script.js"
         data-website-id="e034897b-bce7-4a20-b5e8-4c98ef67e30d"
       ></Script>
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          <html lang="en" onLoad={resetLocalStorage}>
-            <head>
-              <title>MDSIG</title>
-            </head>
+      <html lang="en" onLoad={resetLocalStorage}>
+        <head>
+          <title>MDSIG</title>
+        </head>
+        <body>
+          <Providers>
             {isMobile ? (
-              <body className="">
-                <div className="wrapMobile">
-                  <HeaderBarMobile />
-                  {children}
-                  <ToolBarMobile />
-                </div>
-              </body>
+              <div className="wrapMobile">
+                <HeaderBarMobile />
+                {children}
+                <ToolBarMobile />
+              </div>
             ) : (
-              <body>
-                <div className="wrap">
-                  <HeaderBarDesktop />
-                  {children}
-                  <ToolBarDesktop />
-                </div>
-              </body>
+              <div className="wrap">
+                <HeaderBarDesktop />
+                {children}
+                <ToolBarDesktop />
+              </div>
             )}
-          </html>
-        </QueryClientProvider>
-      </SessionProvider>
+          </Providers>
+        </body>
+      </html>
     </>
   );
 }
