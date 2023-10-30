@@ -3,10 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 
 export function NotFound({
+  code,
   message,
   image,
   button
 }: {
+  code?: string;
   message?: string;
   image?: {
     show?: boolean;
@@ -21,6 +23,7 @@ export function NotFound({
     href?: string;
   }
 }) {
+  if (!code) code = "404";
   if (!message) message = "Page Not Found";
 
   const defaultImage = {
@@ -52,10 +55,14 @@ export function NotFound({
             width={image.width}
             height={image.height}
             alt={image.alt}
+            className={styles.image}
           />
         )
       }
-      <h1>{message}</h1>
+      <div>
+        <h2>{code}</h2>
+        <h1>{message}</h1>
+      </div>
       {
         button.show &&
         button.href &&
