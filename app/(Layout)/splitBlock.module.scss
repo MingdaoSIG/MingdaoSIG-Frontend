@@ -1,3 +1,5 @@
+@import "@/app/styles/variables.scss";
+
 .app {
   width: 90dvw;
   height: 65dvh;
@@ -20,6 +22,7 @@
   grid-column: span 7;
   max-width: 90dvw;
   max-height: 65dvh;
+  border-radius: $border-radius;
 
   overflow-y: auto;
 
