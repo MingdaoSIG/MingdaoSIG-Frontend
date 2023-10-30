@@ -1,4 +1,3 @@
-import Post from "@/app/post/[postID]/page";
 import { IThread } from "@/interfaces/Thread.interface";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
