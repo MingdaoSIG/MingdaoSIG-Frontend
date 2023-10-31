@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 import { Fragment } from "react";
+import Linkify from "react-linkify";
 
 // Styles
 import styles from "./Info.module.scss";
@@ -39,21 +40,29 @@ export default function Info({
           )}
         </div>
       </div>
-      <div className={styles.content}>
-        <div className={styles.name}>
-          {accountData?.name}
-          <p>
-            {accountData && "@"}
-            {accountData?.customId}
-          </p>
-        </div>
-        <div className={styles.description}>
-          {accountData?.description?.split("\n").map((line, index) => (
-            <p key={index}>{line}</p>
-          ))}
+      <div className={styles.contentWrapper}>
+        <div className={styles.content}>
+          <div className={styles.name}>
+            <h1>
+              {accountData?.name}
+            </h1>
+            <p>
+              {accountData && "@"}
+              {accountData?.customId}
+            </p>
+          </div>
+          <hr className={styles.contentHR} />
+          <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
+          <div className={styles.description}>
+            <Linkify>
+              {accountData?.description?.split("\n").map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </Linkify>
+          </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
