@@ -11,6 +11,9 @@ import { homePageLinks } from "../configs/linksList";
 import { useTopPost } from "@/utils/usePost";
 import { IThread } from "@/interfaces/Thread.interface";
 
+//Components
+import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // const Hashtag = (child: any) => {
@@ -45,7 +48,6 @@ const LikePost = (child: any) => {
 
 const Information = () => {
   const [sigs, setSigs] = useState<any>([]);
-  const [posts, setPosts] = useState<any>([]);
 
   useEffect(() => {
     (async () => {
@@ -69,11 +71,7 @@ const Information = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col h-full">
-        <div className={style.information + " rounded-[15px]"}>
-          <div className="text-center text-[1.8rem]">Loading...</div>
-        </div>
-      </div>
+      <InformationSkeleton />
     );
   } else {
     return (
