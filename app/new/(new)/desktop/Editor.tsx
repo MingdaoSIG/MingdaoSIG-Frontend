@@ -13,6 +13,10 @@ import { TPostAPI } from "../types/postAPI";
 // Configs
 import { toolbars } from "../config/editorToolbar";
 import { imageUpload } from "@/modules/imageUploadAPI";
+import Swal from "sweetalert2";
+
+// Use User Account
+import { useUserAccount } from "@/utils/useUserAccount";
 
 interface Props {
   data: TPostAPI;
@@ -20,23 +24,39 @@ interface Props {
   token: string;
 }
 
-const MdEditorSync = ({ data, setPostData, token }: Props) => {
+const MdEditorSync = ({ data, setPostData }: Props) => {
+  const { token } = useUserAccount();
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
+    if (!files.length) return;
     const responseImage = await Promise.all(
       files.map(async (file: any) => {
+        console.log(file.type);
+        const validImageTypes = ["image/webp", "image/jpeg", "image/png"];
+
+        if (!validImageTypes.includes(file.type)) {
+          Swal.fire("File type not supported", "You can only upload  png,  jpg,  webp", "error");
+          return;
+        }
+
+        if (file.size > 99000) {
+          Swal.fire("File too large", "You can only upload files under 99KB", "error");
+          return;
+        }
+
         try {
           const res = await imageUpload(file, token);
           return await res.json();
         } catch (error) {
           console.error("error: ", error);
-          return "fuck you";
+          Swal.fire("Error", "Something went wrong. Please try again later", "error");
+          return;
         }
       })
     );
 
-    console.log(responseImage);
-
-    callback(responseImage.map((item: any) => `${API_URL}/image/` + item?.id));
+    if (responseImage[0] !== undefined) {
+      callback(responseImage.map((item: any) => `${API_URL}/image/` + item?.id));
+    }
   };
 
   const handleEditorChange = (newContent: string) => {
