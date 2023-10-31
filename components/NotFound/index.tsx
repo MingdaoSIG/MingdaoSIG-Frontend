@@ -4,27 +4,42 @@ import Image from "next/image";
 
 export function NotFound({
   code,
-  message,
+  content,
   image,
   button
 }: {
-  code?: string;
-  message?: string;
+  code?: {
+    show?: boolean;
+    message?: string;
+  };
+  content?: {
+    show?: boolean;
+    message?: string;
+  };
   image?: {
     show?: boolean;
     src?: string;
     width?: number;
     height?: number;
     alt?: string;
-  }
+  };
   button?: {
     show?: boolean;
     message?: string;
     href?: string;
-  }
+  };
 }) {
-  if (!code) code = "404";
-  if (!message) message = "Page Not Found";
+  const defaultCode = {
+    show: true,
+    message: "404"
+  };
+  code = { ...defaultCode, ...code };
+
+  const defaultContent = {
+    show: true,
+    message: "Page Not Found"
+  };
+  content = { ...defaultContent, ...content };
 
   const defaultImage = {
     show: true,
@@ -37,7 +52,7 @@ export function NotFound({
 
   const defaultButton = {
     show: true,
-    message: "Go Home",
+    message: "Bact To Home",
     href: "/"
   };
   button = { ...defaultButton, ...button };
@@ -45,7 +60,7 @@ export function NotFound({
   return (
     <div className={styles.notFound}>
       {
-        image?.show &&
+        image.show &&
         image.src &&
         image.height &&
         image.width &&
@@ -60,8 +75,18 @@ export function NotFound({
         )
       }
       <div>
-        <h2>{code}</h2>
-        <h1>{message}</h1>
+        {
+          code.show &&
+          code.message && (
+            <h2>{code.message}</h2>
+          )
+        }
+        {
+          content.show &&
+          content.message && (
+            <h1>{content.message}</h1>
+          )
+        }
       </div>
       {
         button.show &&

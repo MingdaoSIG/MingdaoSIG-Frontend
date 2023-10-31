@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./headerbar.module.scss";
+import styles from "./HeaderBar.module.scss";
 import UserLogin from "./UserLogin";
 import Image from "next/image";
 
@@ -14,10 +14,10 @@ const HeaderBar = () => {
       <Image
         src="/images/logo_mobile.png"
         alt="Logo"
-        width={60}
-        height={60}
+        width={80}
+        height={80}
         priority
-        className="h-16 hover:cursor-pointer"
+        className={styles.logo}
         onClick={() => router.push("/")}
       />
       <UserLogin />

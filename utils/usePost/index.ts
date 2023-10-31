@@ -92,3 +92,29 @@ export const useSigPost = (sigId: string, query: PostQuery) => {
     initialPageParam: 0,
   });
 };
+
+export const useTopPost = (query: PostQuery) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["topPost"] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return useInfiniteQuery<IThread[], Error>({
+    queryKey: ["topPost", query],
+    queryFn: async () => {
+      const response = await fetch(
+        `${API_URL}/post/list?skip=0&limit=${String(Number(query.pageSize))}`,
+        {
+          method: "GET",
+        });
+      const responseData = await response.json();
+      return responseData.data as IThread[];
+    },
+    staleTime: 1 * 60 * 1000,
+    getNextPageParam: (lastPage = [], allPages) => {
+      return lastPage.length > 0 ? allPages.length + 1 : undefined;
+    },
+    initialPageParam: 0,
+  });
+};

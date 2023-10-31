@@ -1,32 +1,41 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
-  --border-radius: 30px;
-  --cover-border-radius: var(--border-radius);
   --thread-height: 12rem;
-
   position: relative;
+  width: 100%;
+  border-radius: $border-radius;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin: $mobile-border-margin;
-  padding: $mobile-headerbar-height 0 $mobile-toolbar-height 0;
+  gap: $mobile-border-margin;
+  overflow-y: auto;
+  padding: calc($mobile-headerbar-height + $mobile-border-margin) $mobile-border-margin calc($mobile-toolbar-height + $mobile-border-margin) $mobile-border-margin;
+  scrollbar-width: none;
+
+  >p {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0.5rem;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .thread {
   background: $panel-background-color;
-  border-radius: var(--border-radius);
+  border-radius: $border-radius;
   max-height: var(--thread-height);
+  height: var(--thread-height);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
 }
 
 .preview {
   position: relative;
-  padding: 30px;
+  padding: 2rem;
   box-sizing: border-box;
   height: var(--thread-height);
   overflow: hidden;
@@ -43,11 +52,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
 }
 
 .previewContent {
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: black;
@@ -55,8 +65,8 @@
 
 .cover {
   position: relative;
-  min-width: 30%;
-  border-radius: var(--cover-border-radius);
+  min-width: 25%;
+  border-radius: $border-radius;
   overflow: hidden;
 }
 
@@ -65,11 +75,36 @@
   font-weight: bolder;
 }
 
-.loading {
-  height: 100%;
+.title_bar {
   display: flex;
-  justify-content: center;
+}
+
+.info {
+  font-size: 0.85rem;
+  width: auto;
+  display: flex;
+  flex-direction: initial;
+
+  margin-bottom: 0.3rem;
+
+  .user {
+    opacity: 60%;
+  }
+
+  &>span {
+    padding: 0 0.1rem;
+  }
+}
+
+.noPost {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
   align-items: center;
-  font-size: xx-large;
-  font-weight: bolder;
+  justify-content: center;
+
+  >h1 {
+    font-size: $info-title-font-size;
+  }
 }

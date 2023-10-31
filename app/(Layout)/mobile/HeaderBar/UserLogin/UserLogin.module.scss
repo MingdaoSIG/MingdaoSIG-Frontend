@@ -1,0 +1,46 @@
+@import "@/app/styles/variables.scss";
+
+.userPanel {
+  aspect-ratio: 1 / 1;
+  height: calc($mobile-headerbar-height - 0.7rem);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.avatar {
+  border-radius: 9999px;
+  aspect-ratio: 1 / 1;
+  height: 100%;
+  width: auto;
+}
+
+.loginUserPanelWrapper {
+  aspect-ratio: 2.2 / 1;
+  height: calc($mobile-headerbar-height - 0.7rem);
+  border-radius: 9999px;
+  padding: 0.1rem;
+  cursor: pointer;
+  background-image: linear-gradient(to right, #6FA8FF, #003F47);
+}
+
+.loginUserPanel {
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  >p {
+    font-size: 1.2rem;
+    color: #004C64;
+    font-weight: 500;
+  }
+}

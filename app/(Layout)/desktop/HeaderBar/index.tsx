@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import style from "./Headerbar.module.scss";
+import style from "./HeaderBar.module.scss";
 import UserLogin from "./UserLogin";
 import Image from "next/image";
 
