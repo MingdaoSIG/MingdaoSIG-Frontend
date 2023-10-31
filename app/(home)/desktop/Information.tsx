@@ -65,7 +65,6 @@ const Information = () => {
     })();
   }, []);
 
-  // TODO: refactor HACO doing
   const pageSize = 5;
   const { data, isLoading } = useTopPost({ pageSize });
 
