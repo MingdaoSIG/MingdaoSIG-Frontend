@@ -61,14 +61,14 @@ export const metadata: Metadata = {
     title: "MDSIG - 讓學習不再有時空的限制",
     description: "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
     images: [{
-      url: "https://sig.mingdao.edu.tw/images/banner.svg",
+      url: "https://sig.mingdao.edu.tw/images/banner.png",
     }],
   },
   twitter: {
     title: "MDSIG - 讓學習不再有時空的限制",
     description: "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
     card: "summary_large_image",
-    images: "https://sig.mingdao.edu.tw/images/banner.svg"
+    images: "https://sig.mingdao.edu.tw/images/banner.png"
   },
   other: {
     "twitter:url": "https://sig.mingdao.edu.tw"
