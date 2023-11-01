@@ -40,7 +40,7 @@ export default function RootLayout({
     </>
   );
 }
-
+//
 export const metadata: Metadata = {
   metadataBase: new URL("https://sig.mingdao.edu"),
   title: "MDSIG - 讓學習不再有時空的限制",
