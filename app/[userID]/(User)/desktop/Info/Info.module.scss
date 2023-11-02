@@ -118,6 +118,17 @@ $badge-height: 1.3rem;
   font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
+  cursor: auto;
+
+  a {
+    color: #0070f3;
+    text-decoration: none;
+    overflow-x: hidden;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 .description::-webkit-scrollbar {

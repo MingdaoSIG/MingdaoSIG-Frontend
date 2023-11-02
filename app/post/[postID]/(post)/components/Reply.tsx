@@ -47,7 +47,11 @@ export default function Reply({
             (overflow ? "w-[65dvw] truncate " : " ") + styles.content
           }
         >
-          <Linkify>{content}</Linkify>
+          <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+            <a target="blank" href={decoratedHref} key={key}>
+              {decoratedText}
+            </a>
+          )}>{content}</Linkify>
         </p>
       </div>
     </div>

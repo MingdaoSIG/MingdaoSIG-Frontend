@@ -54,7 +54,11 @@ export default function Info({
           <hr className={styles.contentHR} />
           <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
           <div className={styles.description}>
-            <Linkify>
+            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+              <a target="blank" href={decoratedHref} key={key}>
+                {decoratedText}
+              </a>
+            )}>
               {accountData?.description?.split("\n").map((line, index) => (
                 <p key={index}>{line}</p>
               ))}
