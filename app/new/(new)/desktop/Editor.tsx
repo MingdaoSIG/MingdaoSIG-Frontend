@@ -30,16 +30,15 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     if (!files.length) return;
     const responseImage = await Promise.all(
       files.map(async (file: any) => {
-        console.log(file.type);
-        const validImageTypes = ["image/webp", "image/jpeg", "image/png"];
+        const validImageTypes = ["image/webp", "image/jpeg", "image/png", "image/tiff"];
 
         if (!validImageTypes.includes(file.type)) {
-          Swal.fire("File type not supported", "You can only upload  png,  jpg,  webp", "error");
+          Swal.fire("File type not supported", "You can only upload  png,  jpg,  webp, tiff", "error");
           return;
         }
 
-        if (file.size > 99000) {
-          Swal.fire("File too large", "You can only upload files under 99KB", "error");
+        if (file.size > 5 * 1000 * 1000) {
+          Swal.fire("File too large", "You can only upload files under 5MB", "error");
           return;
         }
 
