@@ -23,9 +23,13 @@
 .content{
   cursor: auto;
 
-  a {
+  button {
     color: #0070f3;
     text-decoration: none;
     overflow-x: hidden;
+  }
+
+  button:hover {
+    text-decoration: underline;
   }
 }

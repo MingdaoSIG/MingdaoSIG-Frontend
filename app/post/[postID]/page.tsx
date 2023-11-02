@@ -18,27 +18,18 @@ import { IThread } from "@/interfaces/Thread.interface";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 
-import { PostCommentAPI } from "./(post)/apis/CommentAPI";
 import { NotFound } from "@/components/NotFound";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Post = ({ params }: { params: { postID: string } }) => {
-  const route = useRouter();
   const isMobile = useIsMobile();
 
   const PostID = decodeURIComponent(params.postID);
   const [post, setPost] = useState<IThread>();
-  const [token, setToken] = useState<string>("");
   const [status, setStatus] = useState("loading");
 
-  async function PostCommand(reply: any, content: any) {
-    await PostCommentAPI(post?._id, reply, content, token);
-  }
-
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
-
     GetPostListAPI();
 
     async function GetPostListAPI() {
