@@ -120,13 +120,13 @@ $badge-height: 1.3rem;
   padding-right: 0.25rem;
   cursor: auto;
 
-  a {
+  button {
     color: #0070f3;
     text-decoration: none;
     overflow-x: hidden;
   }
 
-  a:hover {
+  button:hover {
     text-decoration: underline;
   }
 }

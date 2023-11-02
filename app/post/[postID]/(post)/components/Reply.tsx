@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Linkify from "react-linkify";
+import Swal from "sweetalert2";
 
 // Styles
 import styles from "./Reply.module.scss";
@@ -19,6 +20,21 @@ export default function Reply({
   overflow: boolean;
 }) {
   const route = useRouter();
+
+  function JumpOut(url: any) {
+    Swal.fire({
+      title: "<strong>HOLD UP</strong>",
+      html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yep!",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        window.open(url, "_blank");
+      }
+    });
+  }
 
   return (
     <div className={styles.reply}>
@@ -48,9 +64,11 @@ export default function Reply({
           }
         >
           <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-            <a target="blank" href={decoratedHref} key={key}>
+            <button key={key} onClick={() => {
+              JumpOut(decoratedHref);
+            }}>
               {decoratedText}
-            </a>
+            </button>
           )}>{content}</Linkify>
         </p>
       </div>
