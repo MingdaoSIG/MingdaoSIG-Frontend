@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 import { Fragment } from "react";
 import Linkify from "react-linkify";
+import Swal from "sweetalert2";
 
 // Styles
 import styles from "./Info.module.scss";
@@ -17,6 +18,22 @@ export default function Info({
   user: User | Sig | null;
   isLoading: boolean;
 }) {
+
+  function JumpOut(url: any) {
+    Swal.fire({
+      title: "<strong>HOLD UP</strong>",
+      html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yep!",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        window.open(url, "_blank");
+      }
+    });
+  }
+
   return (
     <div className={styles.info}>
       <div
@@ -55,9 +72,11 @@ export default function Info({
           <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
           <div className={styles.description}>
             <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-              <a target="blank" href={decoratedHref} key={key}>
+              <button key={key} onClick={() => {
+                JumpOut(decoratedHref);
+              }}>
                 {decoratedText}
-              </a>
+              </button>
             )}>
               {accountData?.description?.split("\n").map((line, index) => (
                 <p key={index}>{line}</p>

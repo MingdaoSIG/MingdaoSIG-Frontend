@@ -24,21 +24,27 @@ import useAlert from "@/utils/useAlert";
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
 
+// Utils
+import { useUserAccount } from "@/utils/useUserAccount";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ThreadInfo({ post }: { post: IThread }) {
   const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
   const [comments, setComments] = useState<any>([]);
-  const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
+  const { token } = useUserAccount();
   const { showAlert, showLoading, hideLoading, isLoading } = useAlert();
+
+
 
   const route = useRouter();
 
   async function handleCommandSubmit(e: any) {
     e.preventDefault();
+    console.log(token);
     const reply = "";
     const content = typeComments;
     if (typeComments.length === 0)
@@ -59,8 +65,6 @@ export default function ThreadInfo({ post }: { post: IThread }) {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
-
     GetUserAPI();
     GetSigAPI();
     GetCommentAPI(post).then((res) => {
@@ -168,7 +172,7 @@ export default function ThreadInfo({ post }: { post: IThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-          // disabled
+        // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

@@ -23,13 +23,13 @@
 .content{
   cursor: auto;
 
-  a {
+  button {
     color: #0070f3;
     text-decoration: none;
     overflow-x: hidden;
   }
 
-  a:hover {
+  button:hover {
     text-decoration: underline;
   }
 }

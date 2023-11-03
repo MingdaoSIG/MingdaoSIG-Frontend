@@ -4,7 +4,7 @@ export async function PostCommentAPI(
   post: any,
   reply: any,
   content: any,
-  token: string
+  token: any
 ) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comment`, {
     method: "POST",
