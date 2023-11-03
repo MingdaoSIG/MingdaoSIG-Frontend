@@ -20,7 +20,7 @@ import { useFetch } from "@/utils/useFetch";
 export default function Replies({ post }: { post: IThread }) {
   const extendedState = useState(false);
   const [extended] = extendedState;
-  const { data, error, isLoading } =
+  const [data, error, isLoading] =
     useFetch<Array<TComments>>(`/comment/list/post/${post._id}`) || [];
 
   console.info(data);
