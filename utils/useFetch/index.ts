@@ -17,7 +17,7 @@ export function useFetch<T>(
   url: string,
   // eslint-disable-next-line no-undef
   options?: RequestInit
-): [T | any, Error | undefined, boolean] {
+): State<T> {
   const [state, setState] = useState<State<T>>({
     data: undefined,
     error: undefined,
@@ -44,5 +44,5 @@ export function useFetch<T>(
     fetchData();
   }, [url]);
 
-  return [state.data, state.error, state.isLoading];
+  return state;
 }

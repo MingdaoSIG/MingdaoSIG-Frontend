@@ -20,10 +20,10 @@ import { useFetch } from "@/utils/useFetch";
 export default function Replies({ post }: { post: IThread }) {
   const extendedState = useState(false);
   const [extended] = extendedState;
-  const [data, error, isLoading] =
+  const { data: replyData, isLoading: replyIsLoading } =
     useFetch<Array<TComments>>(`/comment/list/post/${post._id}`) || [];
 
-  console.info(data);
+  console.info(replyData);
 
   return (
     <ClickExtend
@@ -42,13 +42,13 @@ export default function Replies({ post }: { post: IThread }) {
       >
         <div className={styles.title}>
           <h4>Comments</h4>
-          <p>{data?.length}</p>
+          <p>{replyData?.length}</p>
         </div>
-        {isLoading ? (
+        {replyIsLoading ? (
           <>Loading...</>
         ) : (
           <div className={styles.replyList}>
-            {data?.map((comment: any, index: number) => {
+            {replyData?.map((comment: any, index: number) => {
               return (
                 <div className={styles.reply} key={index}>
                   <Reply
@@ -56,7 +56,7 @@ export default function Replies({ post }: { post: IThread }) {
                     avatar={comment.user.avatar}
                     content={comment.content}
                     createdAt={
-                      new Date(data[0].createdAt || "")
+                      new Date(replyData[0].createdAt || "")
                         .toLocaleString("zh-TW")
                         .split(" ")[0]
                     }
