@@ -39,11 +39,7 @@ export default function NewPostMobile({
         data={data}
         handleFormEventFunction={handleFormEventFunction}
       ></MetaDataForm>
-      <Editor
-        setPostData={setPostData}
-        data={data}
-        token={token}
-      ></Editor>
+      <Editor setPostData={setPostData} data={data} token={token}></Editor>
       <Button
         discardFunction={discardFunction}
         postFunction={postFunction}
