@@ -1,6 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
+import debounce from "lodash.debounce";
 
 // Styles
 import style from "./ThreadsList.module.scss";
@@ -13,11 +15,10 @@ import { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
+import sigAPI from "@/modules/sigAPI";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import Link from "next/link";
-import sigAPI from "@/modules/sigAPI";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
@@ -132,7 +133,7 @@ export const InfinityThreadsList = ({
   const onScroll = () => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
+      const isNearBottom = scrollTop + clientHeight === scrollHeight;
 
       if (isNearBottom) {
         fetchNextPage();

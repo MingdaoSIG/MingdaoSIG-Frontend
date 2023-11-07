@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
 
@@ -13,10 +14,10 @@ import { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
+import sigAPI from "@/modules/sigAPI";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import Link from "next/link";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
@@ -25,44 +26,17 @@ const Thread = ({ threadData }: { threadData: IThread }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    GetUserAPI();
-    GetSigAPI();
-
-    async function GetUserAPI() {
+    (async () => {
       try {
-        const res = await (
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/user/${threadData.user}`,
-            {
-              method: "GET",
-            }
-          )
-        ).json();
-        setUser(res.data);
+        const userData = await sigAPI.getUserData(threadData.user);
+        setUser(userData);
 
-        return;
-      } catch (error) {
-        console.log(error);
+        const sigData = await sigAPI.getSigData(threadData.sig);
+        setSig(sigData);
+      } catch (error: any) {
+        console.error(error.message);
       }
-    }
-
-    async function GetSigAPI() {
-      try {
-        const res = await (
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/sig/${threadData.sig}`,
-            {
-              method: "GET",
-            }
-          )
-        ).json();
-        setSig(res.data);
-
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    })();
   }, [threadData.sig, threadData.user]);
 
   return (
@@ -157,11 +131,14 @@ export const InfinityThreadsList = ({
 
   const onScroll = () => {
     if (postList.current) {
+      console.log("mobile scroll");
+
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
+      const isNearBottom = scrollTop + clientHeight === scrollHeight;
 
       if (isNearBottom) {
-        fetchNextPage();
+        console.log("mobile fetch data");
+        // fetchNextPage();
       }
     }
   };
