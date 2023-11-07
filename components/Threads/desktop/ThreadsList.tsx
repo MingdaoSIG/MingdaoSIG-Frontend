@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
-import debounce from "lodash.debounce";
 
 // Styles
 import style from "./ThreadsList.module.scss";
@@ -130,16 +129,16 @@ export const InfinityThreadsList = ({
 }) => {
   const postList = useRef(null);
 
-  const onScroll = () => {
+  const onScroll = useCallback(() => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight === scrollHeight;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
-      if (isNearBottom) {
+      if (isNearBottom && !isFetchingNextPage) {
         fetchNextPage();
       }
     }
-  };
+  }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
     const listInnerElement: HTMLElement = postList.current!;
@@ -151,8 +150,7 @@ export const InfinityThreadsList = ({
         listInnerElement.removeEventListener("scroll", onScroll);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onScroll]);
 
   return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
@@ -163,8 +161,7 @@ export const InfinityThreadsList = ({
           })}
         </Fragment>
       ))}
-
-      {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
+      {data && isFetchingNextPage && (
         <ThreadSkeleton />
       )}
     </div>
