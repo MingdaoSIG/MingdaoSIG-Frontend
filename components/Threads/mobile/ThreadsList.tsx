@@ -14,7 +14,6 @@ import { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
-import sigAPI from "@/modules/sigAPI";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
@@ -22,22 +21,8 @@ import { sigDefaultColors } from "../configs/sigDefaultColors";
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
-  const [sig, setSig] = useState<Sig | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const userData = await sigAPI.getUserData(threadData.user);
-        setUser(userData);
-
-        const sigData = await sigAPI.getSigData(threadData.sig);
-        setSig(sigData);
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
-  }, [threadData.sig, threadData.user]);
+  const user = threadData.user as User;
+  const sig = threadData.sig as Sig;
 
   return (
     <Link
