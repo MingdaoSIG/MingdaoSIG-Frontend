@@ -160,8 +160,6 @@ export const InfinityThreadsList = ({
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
-      console.log((scrollTop + clientHeight), scrollHeight);
-
       if (isNearBottom) {
         fetchNextPage();
       }
