@@ -1,5 +1,9 @@
 @import "@/app/styles/variables.scss";
 
+.thread {
+  animation: 1s ease-out 0s 1 fadeIn;
+}
+
 .threadContent {
   background: $panel-background-color !important;
   border-radius: $border-radius;
@@ -61,6 +65,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  animation: 1s ease-out 0s 1 fadeIn;
 
   .name:hover {
     text-decoration: underline;

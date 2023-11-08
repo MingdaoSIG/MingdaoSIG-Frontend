@@ -141,19 +141,18 @@ const Thread = ({ post }: { post: IThread }) => {
     );
   } else {
     return (
-      <>
+      <div className={style.thread}>
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post?.title}</h1>
           {
             (isLogin && post?.user === userData?._id) &&
-            [<div
+            <div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
               onClick={onDelete}
             >
               <Image src="/icons/delete.svg" width={32} height={32} alt="delete" />
             </div>
-            ]
           }
           <div
             className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
@@ -178,7 +177,7 @@ const Thread = ({ post }: { post: IThread }) => {
           className={style.threadContent}
           previewTheme="github"
         />
-      </>
+      </div>
     );
   }
 };
