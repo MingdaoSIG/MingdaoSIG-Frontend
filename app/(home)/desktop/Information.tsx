@@ -11,6 +11,9 @@ import { homePageLinks } from "../configs/linksList";
 import { useTopPost } from "@/utils/usePost";
 import { IThread } from "@/interfaces/Thread.interface";
 
+// Modules
+import maxMatch from "@/modules/maxMatch";
+
 //Components
 import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
 
@@ -32,7 +35,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const SIG = (child: any) => {
   return (
     <Link className={style.sig} href={`/@${child.customId}`}>
-      <p>{child.name}</p>
+      {maxMatch(child.name).map((name, index) => <p key={index}>{name}</p>)}
     </Link>
   );
 };
