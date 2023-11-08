@@ -14,9 +14,11 @@ import { Sig } from "@/interfaces/Sig";
 export default function Info({
   user: accountData,
   isLoading,
+  dataType,
 }: {
   user: User | Sig | null;
   isLoading: boolean;
+  dataType: String | null;
 }) {
 
   function JumpOut(url: any) {
@@ -70,9 +72,9 @@ export default function Info({
               </p>
             </div>
             <div className={styles.space}></div>
-            <button className={styles.joinBtn} disabled>
-              Join SIG
-            </button>
+            {
+              (dataType === "sig") && [<Fragment key="JoinSigBtn"><button className={styles.joinBtn} disabled>Join SIG</button></Fragment>]
+            }
           </div>
           <hr className={styles.contentHR} />
           <h1 className={styles.descriptionTitle}>ABOUT ME</h1>

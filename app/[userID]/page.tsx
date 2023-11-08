@@ -74,7 +74,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
       ) : (
         <SIGInfinityThreadList id={data?._id!} />
       )}
-      <Info user={data} isLoading={isLoading} />
+      <Info user={data} isLoading={isLoading} dataType={dataType} />
     </SplitBlock>
   );
 }
