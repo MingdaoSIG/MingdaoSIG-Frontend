@@ -40,7 +40,7 @@ export default function NewPost({
           setPostData={setPostData}
           data={data}
           token={token}
-        ></Editor>
+        />
       </Suspense>
       <MetaDataForm
         discardFunction={discardFunction}

@@ -1,5 +1,6 @@
 import Image from "next/image";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
 
 // Styles
@@ -16,54 +17,12 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import Link from "next/link";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: IThread }) => {
-  const [sig, setSig] = useState<Sig | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    GetUserAPI();
-    GetSigAPI();
-
-    async function GetUserAPI() {
-      try {
-        const res = await (
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/user/${threadData.user}`,
-            {
-              method: "GET",
-            }
-          )
-        ).json();
-        setUser(res.data);
-
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    async function GetSigAPI() {
-      try {
-        const res = await (
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/sig/${threadData.sig}`,
-            {
-              method: "GET",
-            }
-          )
-        ).json();
-        setSig(res.data);
-
-        return;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [threadData.sig, threadData.user]);
+  const user = threadData.user as User;
+  const sig = threadData.sig as Sig;
 
   return (
     <Link
@@ -155,16 +114,16 @@ export const InfinityThreadsList = ({
 }) => {
   const postList = useRef(null);
 
-  const onScroll = () => {
+  const onScroll = useCallback(() => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
-      if (isNearBottom) {
+      if (isNearBottom && !isFetchingNextPage) {
         fetchNextPage();
       }
     }
-  };
+  }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
     const listInnerElement: HTMLElement = postList.current!;
@@ -176,8 +135,7 @@ export const InfinityThreadsList = ({
         listInnerElement.removeEventListener("scroll", onScroll);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onScroll]);
 
   return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
@@ -188,8 +146,7 @@ export const InfinityThreadsList = ({
           })}
         </Fragment>
       ))}
-
-      {data && data.pages[data.pages.length - 1].length > 0 && isFetchingNextPage && (
+      {data && isFetchingNextPage && (
         <ThreadSkeleton />
       )}
     </div>

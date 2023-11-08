@@ -12,8 +12,8 @@ import styles from "./MetaDataForm.module.scss";
 // Types
 import { TPostAPI } from "@/app/new/(new)/types/postAPI";
 
-// APIs Request Function
-import { getSigListAPI } from "@/modules/getSigListAPI";
+// Modules
+import sigAPI from "@/modules/sigAPI";
 
 interface Props {
   discardFunction: Function;
@@ -34,7 +34,14 @@ export default function MetaDataForm({
 
   const [sigs, setSigs] = useState<any[]>([]);
   useEffect(() => {
-    getSigListAPI(setSigs);
+    (async () => {
+      try {
+        const response = await sigAPI.getSigList();
+        setSigs(response);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    })();
   }, []);
 
   if (status === "unauthenticated") {
