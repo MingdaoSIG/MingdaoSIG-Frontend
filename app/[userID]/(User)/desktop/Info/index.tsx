@@ -73,7 +73,7 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {
-              (dataType === "sig") && [<Fragment key="JoinSigBtn"><button className={styles.joinBtn} disabled>Join SIG</button></Fragment>]
+              (dataType === "sig") && [<button className={styles.joinBtn} key={"Join SIG Button"} disabled>Join SIG</button>]
             }
           </div>
           <hr className={styles.contentHR} />
