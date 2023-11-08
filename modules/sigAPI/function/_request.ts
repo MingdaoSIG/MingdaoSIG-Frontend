@@ -1,13 +1,22 @@
 import { LimitedRequestInit, PaginationQuery, ParsedPaginationQuery } from "@/interfaces/Request";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const baseUrlMap = {
+  "default": API_BASE_URL,
+  "dev": "http://localhost:3001"
+};
+
 async function get(
-  url: string,
+  baseUrlType: "default" | "dev",
+  path: string,
   option?: {
     token?: string;
     requestQuery?: PaginationQuery;
     requestOption?: LimitedRequestInit;
   }
 ) {
+  let baseUrl = baseUrlMap[baseUrlType];
+
   let parsedQuery: ParsedPaginationQuery | "" = "";
   if (option?.requestQuery) {
     parsedQuery = {
@@ -18,7 +27,7 @@ async function get(
 
   const response = await (
     await fetch(
-      url + new URLSearchParams(parsedQuery),
+      baseUrl + path + new URLSearchParams(parsedQuery),
       {
         ...option?.requestOption,
         method: "GET",
@@ -36,7 +45,8 @@ async function get(
 }
 
 async function post(
-  url: string,
+  baseUrlType: "default",
+  path: string,
   body?: object,
   option?: {
     token?: string;
@@ -44,6 +54,8 @@ async function post(
     requestOptions?: LimitedRequestInit;
   }
 ) {
+  let baseUrl = baseUrlMap[baseUrlType];
+
   let parsedQuery: ParsedPaginationQuery | "" = "";
   if (option?.requestQuery) {
     parsedQuery = {
@@ -54,7 +66,7 @@ async function post(
 
   const response = await (
     await fetch(
-      url + new URLSearchParams(parsedQuery),
+      baseUrl + path + new URLSearchParams(parsedQuery),
       {
         ...option?.requestOptions,
         method: "POST",

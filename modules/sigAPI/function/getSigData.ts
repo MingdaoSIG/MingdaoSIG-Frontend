@@ -3,5 +3,5 @@ import request from "./_request";
 export default async function getSigData(
   sigId: string
 ) {
-  return await request.get(`${process.env.NEXT_PUBLIC_API_URL}/sig/${sigId}`);
+  return await request.get("default", `/sig/${sigId}`);
 }
