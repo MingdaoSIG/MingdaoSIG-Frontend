@@ -93,7 +93,13 @@ $badge-height: 1.3rem;
   margin-bottom: 0.5rem;
 }
 
+.nameWrapper {
+  display: flex;
+  width: 100%;
+}
+
 .name {
+  width: auto;
   font-weight: bold;
   font-size: 1.5rem;
   line-height: 1.5rem;
@@ -102,6 +108,31 @@ $badge-height: 1.3rem;
     color: #006180;
     font-size: small; 
     font-weight: 400;
+  }
+  
+}
+
+.space {
+  display: flex;
+  flex: 1 1 0%;
+}
+
+.joinBtn {
+  width: auto;
+  height: 90%;
+  display: flex;
+  flex: initial;
+  align-items: center;
+  justify-content: end;
+  background-color: #5fcdf5;
+  color: white;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  border-radius: 0.5rem;
+
+  &:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
   }
 }
 

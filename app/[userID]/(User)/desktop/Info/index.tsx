@@ -59,14 +59,20 @@ export default function Info({
       </div>
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
-          <div className={styles.name}>
-            <h1>
-              {accountData?.name}
-            </h1>
-            <p>
-              {accountData && "@"}
-              {accountData?.customId}
-            </p>
+          <div className={styles.nameWrapper}>
+            <div className={styles.name}>
+              <h1>
+                {accountData?.name}
+              </h1>
+              <p>
+                {accountData && "@"}
+                {accountData?.customId}
+              </p>
+            </div>
+            <div className={styles.space}></div>
+            <button className={styles.joinBtn} disabled>
+              Join SIG
+            </button>
           </div>
           <hr className={styles.contentHR} />
           <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
