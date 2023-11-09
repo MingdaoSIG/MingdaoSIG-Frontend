@@ -3,6 +3,7 @@ import { Tooltip } from "react-tooltip";
 import { Fragment } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
+import ReactDOMServer from "react-dom/server";
 
 // Styles
 import styles from "./Info.module.scss";
@@ -33,6 +34,72 @@ export default function Info({
       if (res.isConfirmed) {
         window.open(url, "_blank");
       }
+    });
+  }
+
+  const ApplySIGForm = [
+    <Fragment key="ApplySIGForm">
+      <span>Introduce yourself</span>
+      <br />
+      <textarea
+        id="aboutYou"
+        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        style={{ height: "5rem" }}
+        placeholder="I am ..."
+      />
+      <br />
+      <br />
+      <span>Reasons of join this SIG</span>
+      <br />
+      <textarea
+        id="whyJoin"
+        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        style={{ height: "5rem" }}
+        placeholder="I want to join ..."
+      />
+      <br />
+      <br />
+      <span>Topic you are interested in</span>
+      <br />
+      <textarea
+        id="whichTopic"
+        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        style={{ height: "5rem" }}
+        placeholder="I am interest in ..." />
+    </Fragment>
+  ];
+
+  function JoinSIGhandle() {
+    let aboutYou: HTMLTextAreaElement;
+    let whyJoin: HTMLTextAreaElement;
+    let whichTopic: HTMLTextAreaElement;
+
+    Swal.fire({
+      title: "Fill up the following questions",
+      html: ReactDOMServer.renderToString(ApplySIGForm[0]),
+      confirmButtonText: "Apply",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      focusConfirm: false,
+      didOpen: () => {
+        const popup = Swal.getPopup()!;
+        aboutYou = popup.querySelector("#aboutYou") as HTMLTextAreaElement;
+        whyJoin = popup.querySelector("#whyJoin") as HTMLTextAreaElement;
+        whichTopic = popup.querySelector("#whichTopic") as HTMLTextAreaElement;
+        aboutYou.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
+        whyJoin.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
+        whichTopic.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
+      },
+      preConfirm: () => {
+        const aboutRes = aboutYou.value;
+        const joinRes = whyJoin.value;
+        const topicRes = whichTopic.value;
+        if (!aboutRes || !joinRes || !topicRes) {
+          Swal.showValidationMessage("Please fill up the following questions");
+        }
+        console.log(aboutRes, joinRes, topicRes);
+
+      },
     });
   }
 
@@ -73,7 +140,18 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {
-              (dataType === "sig") && [<button className={styles.joinBtn} key={"Join SIG Button"} disabled>Join SIG</button>]
+              (dataType === "sig")
+              &&
+              [
+                <button
+                  className={styles.joinBtn}
+                  onClick={JoinSIGhandle}
+                  key={"Join SIG Button"}
+                  disabled
+                >
+                  Join SIG
+                </button>
+              ]
             }
           </div>
           <hr className={styles.contentHR} />
