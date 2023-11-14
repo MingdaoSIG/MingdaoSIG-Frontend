@@ -15,7 +15,7 @@ export function useUserAccount() {
 
   useEffect(() => {
     (async () => {
-      const userLocalStorage = localStorage.getItem("User");
+      const userLocalStorage = localStorage.getItem("user");
 
       if (OAuth === "loading" || !userLocalStorage) setIsLoading(true);
 
@@ -24,7 +24,7 @@ export function useUserAccount() {
           const accessToken = (session as any)?.accessToken;
           const { token, data } = await platformLogin(accessToken);
           localStorage.setItem("token", token);
-          localStorage.setItem("User", JSON.stringify(data));
+          localStorage.setItem("user", JSON.stringify(data));
           setToken(token);
           setUserData(data);
           setIsLogin(true);
@@ -44,7 +44,7 @@ export function useUserAccount() {
   useEffect(() => {
     if (!isLogin) {
       localStorage.removeItem("token");
-      localStorage.removeItem("User");
+      localStorage.removeItem("user");
       setToken(null);
       setUserData(null);
     }
@@ -81,7 +81,7 @@ async function platformLogin(accessToken: string) {
       token: response.authorization.toString().split(" ")[1],
       data: response.data,
     };
-  } catch (error) {
-    throw new Error("Failed to login to platform");
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }
