@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
+import { useState } from "react";
 
 // Styles
 import styles from "./Info.module.scss";
@@ -11,6 +12,15 @@ import styles from "./Info.module.scss";
 // Interfaces
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
+
+// Types
+import { TJoinSigAPI } from "@/app/[userID]/(User)/types/joinSigAPI";
+
+// API
+import { JoinSigAPI } from "@/app/[userID]/(User)/apis/JoinSigAPI";
+
+// Hooks
+import { useUserAccount } from "@/utils/useUserAccount";
 
 export default function Info({
   user: accountData,
@@ -21,6 +31,7 @@ export default function Info({
   isLoading: boolean;
   dataType: String | null;
 }) {
+  const { token } = useUserAccount();
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -90,14 +101,31 @@ export default function Info({
         whyJoin.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
         whichTopic.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
       },
-      preConfirm: () => {
+      preConfirm: async () => {
         const aboutRes = aboutYou.value;
         const joinRes = whyJoin.value;
         const topicRes = whichTopic.value;
         if (!aboutRes || !joinRes || !topicRes) {
           Swal.showValidationMessage("Please fill up the following questions");
         }
-        console.log(aboutRes, joinRes, topicRes);
+
+        const res = await JoinSigAPI({ sig: accountData?._id!, q1: aboutRes, q2: joinRes, q3: topicRes }, token!);
+
+        if (res.status === 2000) {
+          Swal.fire({
+            title: "Success",
+            text: "You have successfully applied to join this SIG",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Something went wrong, please try again later",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
 
       },
     });
@@ -147,7 +175,6 @@ export default function Info({
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
-                  disabled
                 >
                   Join SIG
                 </button>
