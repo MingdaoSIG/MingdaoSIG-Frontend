@@ -88,6 +88,7 @@ function UserInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      dataType="top"
     />
   );
 }
@@ -107,6 +108,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      dataType="top"
     />
   );
 }
