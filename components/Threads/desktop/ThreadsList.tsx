@@ -105,12 +105,14 @@ export const InfinityThreadsList = ({
   data,
   height,
   fetchNextPage,
-  isFetchingNextPage
+  isFetchingNextPage,
+  dataType
 }: {
   data: any,
   height?: string,
   fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<IThread[], unknown>, Error>>,
-  isFetchingNextPage: boolean
+  isFetchingNextPage: boolean,
+  dataType: string
 }) => {
   const postList = useRef(null);
 
