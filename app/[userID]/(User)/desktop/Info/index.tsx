@@ -78,6 +78,13 @@ export default function Info({
   ];
 
   function JoinSIGhandle() {
+    if (!token) return Swal.fire({
+      title: "Please login first",
+      text: "You must login to join a SIG",
+      icon: "warning",
+      confirmButtonText: "Confirm",
+    });
+
     let aboutYou: HTMLTextAreaElement;
     let whyJoin: HTMLTextAreaElement;
     let whichTopic: HTMLTextAreaElement;
@@ -120,7 +127,7 @@ export default function Info({
             title: "Error",
             text: "Something went wrong, please try again later",
             icon: "error",
-            confirmButtonText: "OK",
+            confirmButtonText: "Confirm",
           });
         }
 
@@ -172,7 +179,6 @@ export default function Info({
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
-                  disabled={isLoading || !token}
                 >
                   Join SIG
                 </button>
