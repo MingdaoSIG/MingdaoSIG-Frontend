@@ -1,22 +1,21 @@
-import styles from "./UserLogin.module.scss";
 import Image from "next/image";
+import { useLocalStorage } from "usehooks-ts";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
-import { useCookies } from "react-cookie";
 import { useRouter } from "next/navigation";
+import styles from "./UserLogin.module.scss";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 export default function UserLogin() {
   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
-  const [cookie, setCookie] = useCookies(["confirmed_1"]);
-
+  const [confirmed_1, setConfirmed_1] = useLocalStorage("confirmed_1", false);
   const route = useRouter();
 
   useEffect(() => {
     if (isLogin) {
-      const userData = JSON.parse(localStorage.getItem("User") || "{}");
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
       if (userData?.badge && userData?.badge.includes("10.21_user")) {
-        if (!cookie.confirmed_1) {
+        if (! confirmed_1) {
           Swal.fire({
             title: "Thanks for coming to school anniversary 😁",
             text: "Checkout your awesome badge!",
@@ -28,13 +27,13 @@ export default function UserLogin() {
             if (result.isConfirmed) {
               route.push(`/@${userData.customId}`);
             }
-            setCookie("confirmed_1", true, { path: "/" });
+            setConfirmed_1(true);
           });
         }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookie.confirmed_1, isLogin]);
+  }, [confirmed_1, isLogin]);
 
   if (isLoading) {
     return (
@@ -87,7 +86,7 @@ function confirmLogout(logout: () => void) {
     icon: "question",
     showCancelButton: true,
     cancelButtonText: "Cancel",
-    confirmButtonText: "Logout me out now",
+    confirmButtonText: "Sure!",
     confirmButtonColor: "#DC0032",
   }).then((result) => {
     if (result.isConfirmed) {

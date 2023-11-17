@@ -16,15 +16,14 @@ import Info from "./(User)/desktop/Info";
 import { useSigPost, useUserPost } from "@/utils/usePost";
 
 import { NotFound } from "@/components/NotFound";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import sigAPI from "@/modules/sigAPI";
 
 export default function UserPage({ params }: { params: { userID: string } }) {
   if (!decodeURIComponent(params.userID).startsWith("@")) {
     notFound();
   }
 
-  const id = decodeURIComponent(params.userID);
+  const accountId = decodeURIComponent(params.userID);
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -33,19 +32,14 @@ export default function UserPage({ params }: { params: { userID: string } }) {
 
   useEffect(() => {
     (async () => {
-      const userData = await GetUser(id);
-      const sigData = await GetSIG(id);
-
       setIsLoading(true);
-      if (!(userData && sigData)) {
-        setData(userData || sigData || null);
-        setDataType(userData ? "user" : sigData ? "sig" : null);
-        return setIsLoading(false);
-      } else {
-        setData(null);
-        setDataType(null);
-        return setIsLoading(false);
-      }
+
+      const { data, dataType } = await getAccountData(accountId);
+
+      setData(data);
+      setDataType(dataType);
+
+      return setIsLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,6 +88,7 @@ function UserInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      dataType="top"
     />
   );
 }
@@ -113,38 +108,43 @@ function SIGInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      dataType="top"
     />
   );
 }
 
-async function GetUser(userId: string) {
+async function getUser(userId: string) {
   try {
-    const response = await (
-      await fetch(`${API_URL}/user/${userId.toLowerCase()}`, {
-        method: "GET",
-      })
-    ).json();
-
-    if (response.status !== 2000) throw new Error("Internal Error");
-
-    return response.data;
+    return await sigAPI.getUserData(userId);
   } catch (error) {
     return false;
   }
 }
 
-async function GetSIG(userId: string) {
+async function getSIG(userId: string) {
   try {
-    const response = await (
-      await fetch(`${API_URL}/sig/${userId.toLowerCase()}`, {
-        method: "GET",
-      })
-    ).json();
-
-    if (response.status !== 2000) throw new Error("Internal Error");
-
-    return response.data;
+    return await sigAPI.getSigData(userId);
   } catch (error) {
     return false;
+  }
+}
+
+async function getAccountData(accountId: string): Promise<{
+  data: User | Sig | null;
+  dataType: "user" | "sig" | null;
+}> {
+  const userData = await getUser(accountId);
+  const sigData = await getSIG(accountId);
+
+  if (!(userData && sigData)) {
+    return {
+      data: userData || sigData || null,
+      dataType: userData ? "user" : sigData ? "sig" : null
+    };
+  } else {
+    return {
+      data: null,
+      dataType: null
+    };
   }
 }
