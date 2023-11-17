@@ -7,20 +7,20 @@ const SwitchButton = ({
 }) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
-    "w-[100px] text-center duration-500 relative text-white h-[3rem]"
+    "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
   );
   const [rightStyle, setRightStyle] = useState(
-    "w-[100px] text-center duration-500 relative text-md-dark-green h-[3rem]"
+    "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
   );
 
   return (
     <div
       className={
-        "flex bg-white bg-opacity-50 rounded-full relative select-none w-[200px] mb-[1rem] "
+        "flex bg-white bg-opacity-50 rounded-full relative select-none w-[12rem] mb-[1rem] "
       }
     >
       <div
-        className={`transition-all duration-500 w-[100px] h-[3rem] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
+        className={`transition-all duration-500 w-[6rem] h-[3rem] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
       ></div>
       <button
         className={leftStyle}
@@ -28,10 +28,10 @@ const SwitchButton = ({
           setButtonStyle("left-0");
           callback(0);
           setLeftStyle(
-            "w-[100px] text-center duration-500 relative text-white h-[3rem]"
+            "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
           );
           setRightStyle(
-            "w-[100px] text-center duration-500 relative text-md-dark-green h-[3rem]"
+            "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
           );
         }}
       >
@@ -40,13 +40,13 @@ const SwitchButton = ({
       <button
         className={rightStyle}
         onClick={() => {
-          setButtonStyle("left-[100px]");
+          setButtonStyle("left-[6rem]");
           callback(1);
           setLeftStyle(
-            "w-[100px] text-center duration-500 relative text-md-dark-green h-[3rem]"
+            "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
           );
           setRightStyle(
-            "w-[100px] text-center duration-500 relative text-white h-[3rem]"
+            "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
           );
         }}
       >
