@@ -14,7 +14,7 @@ export default function UserLogin() {
 
   useEffect(() => {
     if (isLogin) {
-      const userData = JSON.parse(localStorage.getItem("User") || "{}");
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
       if (userData?.badge && userData?.badge.includes("10.21_user")) {
         if (!cookie.confirmed_1) {
           Swal.fire({

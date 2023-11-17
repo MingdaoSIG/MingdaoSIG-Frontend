@@ -72,7 +72,7 @@ const Thread = ({ post }: { post: IThread }) => {
     setToken(localStorage.getItem("token") || "");
 
     if (localStorage.getItem("token")) {
-      const User: any = JSON.parse(localStorage.getItem("User")?.toString()!);
+      const User: any = JSON.parse(localStorage.getItem("user")?.toString()!);
       if (post?.like?.includes(User._id)) {
         setLike(true);
       }
