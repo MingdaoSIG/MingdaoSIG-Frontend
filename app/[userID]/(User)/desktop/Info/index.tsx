@@ -13,9 +13,6 @@ import styles from "./Info.module.scss";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
-// Types
-import { TJoinSigAPI } from "@/app/[userID]/(User)/types/joinSigAPI";
-
 // API
 import { JoinSigAPI } from "@/app/[userID]/(User)/apis/JoinSigAPI";
 
@@ -175,6 +172,7 @@ export default function Info({
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
+                  disabled={isLoading || !token}
                 >
                   Join SIG
                 </button>
