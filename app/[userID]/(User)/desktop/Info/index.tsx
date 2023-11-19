@@ -101,13 +101,14 @@ const badgeList = {
     content: "10/21 Event Participant"
   }
 };
+
 function BadgeList({ userData }: { userData: User | null }) {
   const chosenBadge = userData?.badge;
 
   if (userData && chosenBadge && chosenBadge.length > 0) {
     return (
       <div className={styles.badgeWrapper}>
-        {chosenBadge.map((badge) => (
+        {chosenBadge.sort().map((badge) => (
           <Fragment key={badge}>
             <Image
               src={badgeList[badge].icon}
