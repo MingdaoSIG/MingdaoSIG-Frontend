@@ -121,17 +121,21 @@ $badge-height: 1.3rem;
   flex: initial;
 }
 
-.descriptionEditIcon {
-  margin-left: 0.5rem;
+.descriptionEditButton {
+  margin-left: 0.3rem;
   cursor: pointer;
+  height: 1.2rem;
+  width: 1.2rem;
 }
 
 .description {
+  height: 100%;
   color: rgba(0,0,0,0.75);
   font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
+  resize: none;
 
   button {
     color: #0070f3;

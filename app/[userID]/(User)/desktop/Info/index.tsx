@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 
@@ -23,6 +23,7 @@ export default function Info({
 }) {
 
   const { userData } = useUserAccount();
+  const [isInput, setIsInput] = useState(false);
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -40,7 +41,7 @@ export default function Info({
   }
 
   function EditDescription(e: any) {
-    console.log(e);
+    setIsInput(!isInput);
   }
 
   return (
@@ -82,22 +83,35 @@ export default function Info({
             <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
             {
               userData &&
-              <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} className={styles.descriptionEditIcon} onClick={EditDescription} />
+              <button className={styles.descriptionEditButton} onClick={EditDescription}>
+                <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} />
+              </button>
             }
           </div>
-          <div className={styles.description}>
-            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-              <button key={key} onClick={() => {
-                JumpOut(decoratedHref);
-              }}>
-                {decoratedText}
-              </button>
-            )}>
-              {accountData?.description?.split("\n").map((line, index) => (
-                <p key={index}>{line}</p>
-              ))}
-            </Linkify>
-          </div>
+          {
+            (isInput) ?
+              (
+                <textarea className={styles.description}>
+                  {accountData?.description}
+                </textarea>
+              )
+              :
+              (
+                <div className={styles.description}>
+                  <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+                    <button key={key} onClick={() => {
+                      JumpOut(decoratedHref);
+                    }}>
+                      {decoratedText}
+                    </button>
+                  )}>
+                    {accountData?.description?.split("\n").map((line, index) => (
+                      <p key={index}>{line}</p>
+                    ))}
+                  </Linkify>
+                </div>
+              )
+          }
         </div>
       </div>
     </div >
