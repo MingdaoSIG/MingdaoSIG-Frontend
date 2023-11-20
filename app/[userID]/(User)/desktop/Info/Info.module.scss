@@ -105,12 +105,25 @@ $badge-height: 1.3rem;
   }
 }
 
+.descriptionTitleWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
 .descriptionTitle {
   color: black;
   font-weight: bolder;
   letter-spacing: 0;
   font-size: small;
-  margin-bottom: 0.3rem;
+  width: auto;
+  flex: initial;
+}
+
+.descriptionEditIcon {
+  margin-left: 0.5rem;
+  cursor: pointer;
 }
 
 .description {

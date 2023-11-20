@@ -11,6 +11,9 @@ import styles from "./Info.module.scss";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
+// Hooks
+import { useUserAccount } from "@/utils/useUserAccount";
+
 export default function Info({
   user: accountData,
   isLoading,
@@ -18,6 +21,8 @@ export default function Info({
   user: User | Sig | null;
   isLoading: boolean;
 }) {
+
+  const { userData } = useUserAccount();
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -32,6 +37,10 @@ export default function Info({
         window.open(url, "_blank");
       }
     });
+  }
+
+  function EditDescription(e: any) {
+    console.log(e);
   }
 
   return (
@@ -69,7 +78,13 @@ export default function Info({
             </p>
           </div>
           <hr className={styles.contentHR} />
-          <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
+          <div className={styles.descriptionTitleWrapper}>
+            <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
+            {
+              userData &&
+              <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} className={styles.descriptionEditIcon} onClick={EditDescription} />
+            }
+          </div>
           <div className={styles.description}>
             <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
               <button key={key} onClick={() => {
