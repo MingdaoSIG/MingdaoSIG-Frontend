@@ -105,20 +105,38 @@ $badge-height: 1.3rem;
   }
 }
 
+.descriptionTitleWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
 .descriptionTitle {
   color: black;
   font-weight: bolder;
   letter-spacing: 0;
   font-size: small;
-  margin-bottom: 0.3rem;
+  width: auto;
+  flex: initial;
+}
+
+.descriptionEditButton {
+  margin-left: 0.3rem;
+  cursor: pointer;
+  height: 1.2rem;
+  width: 1.2rem;
 }
 
 .description {
+  height: 100%;
   color: rgba(0,0,0,0.75);
   font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
+  resize: none;
+  border-radius: 0.3rem;
 
   button {
     color: #0070f3;
