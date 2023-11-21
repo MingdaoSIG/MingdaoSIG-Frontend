@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Fragment, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 
@@ -20,9 +20,11 @@ import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 export default function Info({
   user: accountData,
   isLoading,
+  setInfo
 }: {
   user: User | Sig | null;
   isLoading: boolean;
+  setInfo: Dispatch<SetStateAction<any>>
 }) {
 
   const { userData, token } = useUserAccount();
@@ -59,6 +61,7 @@ export default function Info({
       }).then(async (res) => {
         if (res.isConfirmed) {
           const response = await postUser({ description: newDescription }, token!);
+          setInfo((prev: any) => ({ ...prev, description: newDescription }));
           if (response.status !== 2000) {
             Swal.fire("Error", "Something went wrong. Please try again later", "error");
           } else {
