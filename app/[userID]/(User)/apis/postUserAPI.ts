@@ -5,8 +5,6 @@ export async function postUser(
   { description }: TPostUserAPI,
   token: string
 ) {
-  console.log(token);
-  console.log(description);
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
     method: "POST",
     headers: {

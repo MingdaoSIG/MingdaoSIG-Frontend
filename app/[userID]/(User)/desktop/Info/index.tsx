@@ -11,9 +11,6 @@ import styles from "./Info.module.scss";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
-// Types
-import { TPostUserAPI } from "@/app/[userID]/(User)/types/postUserAPI";
-
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -62,9 +59,13 @@ export default function Info({
       }).then(async (res) => {
         if (res.isConfirmed) {
           const response = await postUser({ description: newDescription }, token!);
-          console.log(response);
-          setIsInput(false);
-          setIsEdit(false);
+          if (response.status !== 2000) {
+            Swal.fire("Error", "Something went wrong. Please try again later", "error");
+          } else {
+            Swal.fire("Success", "Successfully changed description", "success");
+            setIsInput(false);
+            setIsEdit(false);
+          }
         } else if (res.isDenied) {
           setNewDescription("");
           setIsInput(false);
@@ -77,13 +78,11 @@ export default function Info({
   }
 
   function OnEditDescription(e: any) {
-    if (userData?.description) {
-      if (e.target.value !== userData?.description) {
-        setIsEdit(true);
-        setNewDescription(e.target.value);
-      } else {
-        setIsEdit(false);
-      }
+    if (e.target.value !== userData?.description) {
+      setIsEdit(true);
+      setNewDescription(e.target.value);
+    } else {
+      setIsEdit(false);
     }
   }
 
