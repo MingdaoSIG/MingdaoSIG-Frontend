@@ -27,7 +27,7 @@ export default function Reply({
       html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yep!",
+      confirmButtonText: "Yep",
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {

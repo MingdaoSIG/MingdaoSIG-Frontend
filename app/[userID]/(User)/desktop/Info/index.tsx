@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 
@@ -11,8 +11,14 @@ import styles from "./Info.module.scss";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
+// Types
+import { TPostUserAPI } from "@/app/[userID]/(User)/types/postUserAPI";
+
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
+
+// APIs
+import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 
 export default function Info({
   user: accountData,
@@ -22,8 +28,10 @@ export default function Info({
   isLoading: boolean;
 }) {
 
-  const { userData } = useUserAccount();
+  const { userData, token } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [newDescription, setNewDescription] = useState("");
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -31,7 +39,7 @@ export default function Info({
       html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yep!",
+      confirmButtonText: "Yep",
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
@@ -40,9 +48,45 @@ export default function Info({
     });
   }
 
-  function EditDescription(e: any) {
-    setIsInput(!isInput);
+  function EditDescriptionButtonHandle() {
+    if (isInput && isEdit) {
+      Swal.fire({
+        title: "HOLD UP",
+        text: "Are you sure you want to change your description",
+        icon: "warning",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "Yep",
+        denyButtonText: "Recover",
+        cancelButtonText: "Cancel",
+      }).then(async (res) => {
+        if (res.isConfirmed) {
+          const response = await postUser({ description: newDescription }, token!);
+          console.log(response);
+          setIsInput(false);
+          setIsEdit(false);
+        } else if (res.isDenied) {
+          setNewDescription("");
+          setIsInput(false);
+          setIsEdit(false);
+        }
+      });
+    } else {
+      setIsInput(!isInput);
+    }
   }
+
+  function OnEditDescription(e: any) {
+    if (userData?.description) {
+      if (e.target.value !== userData?.description) {
+        setIsEdit(true);
+        setNewDescription(e.target.value);
+      } else {
+        setIsEdit(false);
+      }
+    }
+  }
+
 
   return (
     <div className={styles.info}>
@@ -82,8 +126,8 @@ export default function Info({
           <div className={styles.descriptionTitleWrapper}>
             <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
             {
-              userData &&
-              <button className={styles.descriptionEditButton} onClick={EditDescription}>
+              (userData && (userData.customId === accountData?.customId)) &&
+              <button className={styles.descriptionEditButton} onClick={EditDescriptionButtonHandle}>
                 <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} />
               </button>
             }
@@ -91,9 +135,7 @@ export default function Info({
           {
             (isInput) ?
               (
-                <textarea className={styles.description}>
-                  {accountData?.description}
-                </textarea>
+                <textarea className={styles.description} onChange={OnEditDescription} defaultValue={accountData?.description} />
               )
               :
               (
