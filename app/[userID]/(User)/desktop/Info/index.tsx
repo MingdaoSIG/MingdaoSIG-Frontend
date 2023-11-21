@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Fragment } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 
@@ -11,13 +11,26 @@ import styles from "./Info.module.scss";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
+// Hooks
+import { useUserAccount } from "@/utils/useUserAccount";
+
+// APIs
+import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
+
 export default function Info({
   user: accountData,
   isLoading,
+  setInfo
 }: {
   user: User | Sig | null;
   isLoading: boolean;
+  setInfo: Dispatch<SetStateAction<any>>
 }) {
+
+  const { userData, token } = useUserAccount();
+  const [isInput, setIsInput] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [newDescription, setNewDescription] = useState("");
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -25,7 +38,7 @@ export default function Info({
       html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yep!",
+      confirmButtonText: "Yep",
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
@@ -33,6 +46,49 @@ export default function Info({
       }
     });
   }
+
+  function EditDescriptionButtonHandle() {
+    if (isInput && isEdit) {
+      Swal.fire({
+        title: "HOLD UP",
+        text: "Are you sure you want to change your description",
+        icon: "warning",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "Yep",
+        denyButtonText: "Recover",
+        cancelButtonText: "Cancel",
+      }).then(async (res) => {
+        if (res.isConfirmed) {
+          const response = await postUser({ description: newDescription }, token!);
+          setInfo((prev: any) => ({ ...prev, description: newDescription }));
+          if (response.status !== 2000) {
+            Swal.fire("Error", "Something went wrong. Please try again later", "error");
+          } else {
+            Swal.fire("Success", "Successfully changed description", "success");
+            setIsInput(false);
+            setIsEdit(false);
+          }
+        } else if (res.isDenied) {
+          setNewDescription("");
+          setIsInput(false);
+          setIsEdit(false);
+        }
+      });
+    } else {
+      setIsInput(!isInput);
+    }
+  }
+
+  function OnEditDescription(e: any) {
+    if (e.target.value !== userData?.description) {
+      setIsEdit(true);
+      setNewDescription(e.target.value);
+    } else {
+      setIsEdit(false);
+    }
+  }
+
 
   return (
     <div className={styles.info}>
@@ -69,20 +125,37 @@ export default function Info({
             </p>
           </div>
           <hr className={styles.contentHR} />
-          <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
-          <div className={styles.description}>
-            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-              <button key={key} onClick={() => {
-                JumpOut(decoratedHref);
-              }}>
-                {decoratedText}
+          <div className={styles.descriptionTitleWrapper}>
+            <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
+            {
+              (userData && (userData.customId === accountData?.customId)) &&
+              <button className={styles.descriptionEditButton} onClick={EditDescriptionButtonHandle}>
+                <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} />
               </button>
-            )}>
-              {accountData?.description?.split("\n").map((line, index) => (
-                <p key={index}>{line}</p>
-              ))}
-            </Linkify>
+            }
           </div>
+          {
+            (isInput) ?
+              (
+                <textarea className={styles.description} onChange={OnEditDescription} defaultValue={accountData?.description} />
+              )
+              :
+              (
+                <div className={styles.description}>
+                  <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+                    <button key={key} onClick={() => {
+                      JumpOut(decoratedHref);
+                    }}>
+                      {decoratedText}
+                    </button>
+                  )}>
+                    {accountData?.description?.split("\n").map((line, index) => (
+                      <p key={index}>{line}</p>
+                    ))}
+                  </Linkify>
+                </div>
+              )
+          }
         </div>
       </div>
     </div >
