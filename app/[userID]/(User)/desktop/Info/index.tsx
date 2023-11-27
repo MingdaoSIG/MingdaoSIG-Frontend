@@ -4,7 +4,6 @@ import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
-import { useState } from "react";
 
 // Styles
 import styles from "./Info.module.scss";
@@ -31,8 +30,6 @@ export default function Info({
   dataType: String | null;
   setInfo: Dispatch<SetStateAction<any>>
 }) {
-  const { token } = useUserAccount();
-
   const { userData, token } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
