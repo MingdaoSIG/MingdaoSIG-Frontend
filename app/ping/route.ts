@@ -5,7 +5,7 @@ import ReadableTime from "@/modules/api/ReadableTime";
 import GetOnlineAppVersion from "@/modules/api/GetOnlineAppVersion";
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 
   const packageJSON = JSON.parse(readFileSync("./package.json").toString());
   const { mainVersion, developmentVersion } = await GetOnlineAppVersion();
