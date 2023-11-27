@@ -30,9 +30,6 @@ const ThreadsList = () => {
     }
   }
 
-  // TODO: Fix different data type should have different fetchNextPage function
-  // TODO: See InfinityThreadsList.tsx to fix the following code
-
   return (
     <div className={styles.threadWrap}>
       <SwitchButton callback={callback} />

@@ -140,18 +140,32 @@ export const InfinityThreadsList = ({
   }, [onScroll]);
 
   return data && data.pages[0].length >= 1 ? (
-    <div className={style.threads} style={{ height }} ref={postList}>
-      {data.pages.map((page: IThread[], index: number) => (
-        <Fragment key={index}>
-          {page.map((item, index) => {
-            return <Thread threadData={item} key={index} />;
-          })}
-        </Fragment>
-      ))}
-      {data && isFetchingNextPage && (
-        <ThreadSkeleton />
-      )}
-    </div>
+    <Fragment>
+      <div className={style.threads} style={{ height, display: ((dataType === "top") ? "none" : "") }} ref={postList}>
+        {data.pages.map((page: IThread[], index: number) => (
+          <Fragment key={index}>
+            {page.map((item, index) => {
+              return <Thread threadData={item} key={index} />;
+            })}
+          </Fragment>
+        ))}
+        {data && isFetchingNextPage && (
+          <ThreadSkeleton />
+        )}
+      </div>
+      <div className={style.threads} style={{ height, display: ((dataType === "latest") ? "none" : "") }} ref={postList}>
+        {data.pages.map((page: IThread[], index: number) => (
+          <Fragment key={index}>
+            {page.map((item, index) => {
+              return <Thread threadData={item} key={index} />;
+            })}
+          </Fragment>
+        ))}
+        {data && isFetchingNextPage && (
+          <ThreadSkeleton />
+        )}
+      </div>
+    </Fragment>
   ) : (
     <div className={style.noPost}>
       <h1>No Post Yet</h1>
