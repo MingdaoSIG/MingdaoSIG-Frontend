@@ -93,13 +93,7 @@ $badge-height: 1.3rem;
   margin-bottom: 0.5rem;
 }
 
-.nameWrapper {
-  display: flex;
-  width: 100%;
-}
-
 .name {
-  width: auto;
   font-weight: bold;
   font-size: 1.5rem;
   line-height: 1.5rem;
@@ -109,31 +103,13 @@ $badge-height: 1.3rem;
     font-size: 0.9rem;
     font-weight: 400;
   }
-  
 }
 
-.space {
+.descriptionTitleWrapper{
   display: flex;
-  flex: 1 1 0%;
-}
-
-.joinBtn {
-  width: auto;
-  height: 90%;
-  display: flex;
-  flex: initial;
+  flex-direction: row;
   align-items: center;
-  justify-content: end;
-  background-color: #5fcdf5;
-  color: white;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  border-radius: 0.5rem;
-
-  &:disabled {
-    opacity: 60%;
-    cursor: not-allowed;
-  }
+  margin-bottom: 0.3rem;
 }
 
 .descriptionTitle {
@@ -141,15 +117,26 @@ $badge-height: 1.3rem;
   font-weight: bolder;
   letter-spacing: 0;
   font-size: small;
-  margin-bottom: 0.3rem;
+  width: auto;
+  flex: initial;
+}
+
+.descriptionEditButton {
+  margin-left: 0.3rem;
+  cursor: pointer;
+  height: 1.2rem;
+  width: 1.2rem;
 }
 
 .description {
+  height: 100%;
   color: rgba(0,0,0,0.75);
   font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
+  resize: none;
+  border-radius: 0.3rem;
 
   button {
     color: #0070f3;
@@ -164,11 +151,4 @@ $badge-height: 1.3rem;
 
 .description::-webkit-scrollbar {
   width: 0.3rem;
-}
-
-.JoinSIGFormInput {
-  padding: 0 !important;
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-  margin-top: 0.1rem !important;
 }
