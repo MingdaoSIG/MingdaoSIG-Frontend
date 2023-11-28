@@ -39,6 +39,10 @@ const Thread = ({ post }: { post: IThread }) => {
     }
   }
 
+  function onEdit() {
+    route.push(`/post/${post._id}/edit`);
+  }
+
   function onDelete() {
     Swal.fire({
       title: "Are you sure you want to delete this post",
@@ -144,6 +148,16 @@ const Thread = ({ post }: { post: IThread }) => {
       <div className={style.thread}>
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post?.title}</h1>
+          {
+            (isLogin && post?.user === userData?._id) &&
+            <div
+              key="delete"
+              className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+              onClick={onEdit}
+            >
+              <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
+            </div>
+          }
           {
             (isLogin && post?.user === userData?._id) &&
             <div
