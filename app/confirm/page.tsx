@@ -15,10 +15,13 @@ const Confirm = () => {
   //   route.replace("/");
   // }
 
+  const confirmUrl = `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`;
+
   return (
     <div className={styles.main}>
       <h1>
-        Confirm URL : {`${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`}
+        Confirm URL :
+        <a href={confirmUrl}>{confirmUrl}</a>
       </h1>
       <div
         onClick={() => route.replace("/")} // prevent user from going back to confirm page
