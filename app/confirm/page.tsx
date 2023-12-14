@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.scss";
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
-
 export default function Confirm() {
   const route = useRouter();
   const searchParams = useSearchParams();
@@ -15,14 +13,15 @@ export default function Confirm() {
   const accept = searchParams.get("accept");
 
   const [reqSentRes, setReqSentRes] = useState("none"); // none, 2000 success, fail, 4031 already
+  const [reqSentResMessage, setReqSentResMessage] = useState("");
+  const confirmUrl = `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`;
 
-  if (!isValidConfirmId(confirmId) || !isValidAccept(accept)) {
+  if (!accept || !isValidConfirmId(confirmId) || !isValidAccept(accept)) {
     route.replace("/");
   }
 
-  const confirmUrl = `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`;
-
   useEffect(() => {
+    let acceptMessage = { "true": "accepted", "false": "rejected" };
     (async () => {
       const res = await sendConfirmRequest(new URL(confirmUrl));
       if (res.status === 2000) {
@@ -32,8 +31,10 @@ export default function Confirm() {
       } else {
         setReqSentRes("fail");
       }
+      setReqSentResMessage(acceptMessage[accept as keyof typeof acceptMessage]);
     })();
   }, [confirmUrl]);
+
 
 
   if (reqSentRes === "none") {
@@ -50,7 +51,7 @@ export default function Confirm() {
           <circle className={styles.status_path + " " + styles.circle} fill="none" stroke="#73AF55" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1" />
           <polyline className={styles.status_path + " " + styles.check} fill="none" stroke="#73AF55" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
         </svg>
-        <h1 className={styles.status_text + " " + styles.success}>Success</h1>
+        <h1 className={styles.status_text + " " + styles.success}>Successfully {reqSentResMessage}</h1>
         {/* <div
           onClick={() => route.replace("/")} // prevent user from going back to confirm page
           className={styles.backToHome}
