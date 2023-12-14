@@ -35,36 +35,35 @@ export default function Confirm() {
     })();
   }, [confirmUrl]);
 
-  return (
-    <div className={styles.main}>
-      {isLoading ? (
+  if (isLoading) {
+    return (
+      <>
+        <span className={styles.loader}></span>
+        <h1 className={styles.loader_text}>Confirming</h1>
+      </>
+    );
+  } else {
+    return (
+      confirmStatus === 0 ? (
         <>
-          <span className={styles.loader}></span>
-          <h1 className={styles.loader_text}>Confirming</h1>
+          <Success message={`Successfully ${acceptMessage}`} />
+          <BackToHome />
         </>
       ) : (
-        confirmStatus === 0 ? (
+        confirmStatus === 1 ? (
           <>
-            <Success message={`Successfully ${acceptMessage}`} />
+            <Success message="Already Confirmed" />
             <BackToHome />
           </>
         ) : (
-          confirmStatus === 1 ? (
-            <>
-              <Success message="Already Confirmed" />
-              <BackToHome />
-            </>
-          ) : (
-            <>
-              <Failed message="Please try again later" />
-              <BackToHome />
-            </>
-          )
+          <>
+            <Failed message="Please try again later" />
+            <BackToHome />
+          </>
         )
       )
-      }
-    </div >
-  );
+    );
+  }
 }
 
 async function sendConfirmRequest(confirmUrl: URL) {
