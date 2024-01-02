@@ -1,11 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-
-import styles from "./page.module.scss";
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
+import styles from "./page.module.scss";
+import { CustomStatus } from "@/modules/customStatusCode";
+
+import Failed from "./Status/Failed/Failed";
+import Success from "./Status/Success/Success";
+import BackToHome from "./Status/BackToHome/BackToHome";
 
 export default function Confirm() {
   const route = useRouter();
@@ -14,93 +17,68 @@ export default function Confirm() {
   const confirmId = searchParams.get("confirmId");
   const accept = searchParams.get("accept");
 
-  const [reqSentRes, setReqSentRes] = useState("none"); // none, 2000 success, fail, 4031 already
+  const [isLoading, setIsLoading] = useState(true);
+  const [confirmStatus, setConfirmStatus] = useState(0); // 0: success, 1: already, 2: fail
+
+  const confirmUrl = `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`;
 
   if (!isValidConfirmId(confirmId) || !isValidAccept(accept)) {
     route.replace("/");
   }
 
-  const confirmUrl = `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`;
+  const acceptMessage = accept === "true" ? "Accepted" : "Rejected";
 
   useEffect(() => {
     (async () => {
-      const res = await sendConfirmRequest(new URL(confirmUrl));
-      if (res.status === 2000) {
-        setReqSentRes("success");
-      } else if (res.status === 4031) {
-        setReqSentRes("already");
-      } else {
-        setReqSentRes("fail");
-      }
+      setConfirmStatus(await sendConfirmRequest(new URL(confirmUrl)));
+      setIsLoading(false);
     })();
   }, [confirmUrl]);
 
-
-  if (reqSentRes === "none") {
+  if (isLoading) {
     return (
-      <div className={styles.main}>
+      <>
         <span className={styles.loader}></span>
         <h1 className={styles.loader_text}>Confirming</h1>
-      </div>
+      </>
     );
-  } else if (reqSentRes === "success") {
+  } else {
     return (
-      <div className={styles.main}>
-        <svg className={styles.status_svg} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-          <circle className={styles.status_path + " " + styles.circle} fill="none" stroke="#73AF55" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-          <polyline className={styles.status_path + " " + styles.check} fill="none" stroke="#73AF55" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
-        </svg>
-        <h1 className={styles.status_text + " " + styles.success}>Success</h1>
-        {/* <div
-          onClick={() => route.replace("/")} // prevent user from going back to confirm page
-          className={styles.backToHome}
-        >
-          Back To Home
-        </div> */}
-      </div>
-    );
-  } else if (reqSentRes === "already") {
-    return (
-      <div className={styles.main}>
-        <svg className={styles.status_svg} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-          <circle className={styles.status_path + " " + styles.circle} fill="none" stroke="#73AF55" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-          <polyline className={styles.status_path + " " + styles.check} fill="none" stroke="#73AF55" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
-        </svg>
-        <h1 className={styles.status_text + " " + styles.success}>Already Confirmed</h1>
-        {/* <div
-          onClick={() => route.replace("/")} // prevent user from going back to confirm page
-          className={styles.backToHome}
-        >
-          Back To Home
-        </div> */}
-      </div>
-    );
-  } else if (reqSentRes === "fail") {
-    return (
-      <div className={styles.main}>
-        <svg className={styles.status_svg} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-          <circle className={styles.status_path + " " + styles.circle} fill="none" stroke="#D06079" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-          <line className={styles.path + " " + styles.line} fill="none" stroke="#D06079" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
-          <line className={styles.path + " " + styles.line} fill="none" stroke="#D06079" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
-        </svg>
-        <h1 className={styles.status_text + " " + styles.error}>Please try again later</h1>
-        {/* <div
-          onClick={() => route.replace("/")} // prevent user from going back to confirm page
-          className={styles.backToHome}
-        >
-          Back To Home
-        </div> */}
-      </div>
+      confirmStatus === 0 ? (
+        <>
+          <Success message={`Successfully ${acceptMessage}`} />
+          <BackToHome />
+        </>
+      ) : (
+        confirmStatus === 1 ? (
+          <>
+            <Success message="Already Confirmed" />
+            <BackToHome />
+          </>
+        ) : (
+          <>
+            <Failed message="Please try again later" />
+            <BackToHome />
+          </>
+        )
+      )
     );
   }
 }
 
 async function sendConfirmRequest(confirmUrl: URL) {
-  return await (await fetch(confirmUrl, {
+  const response = await (await fetch(confirmUrl, {
     method: "GET",
   })).json();
-}
 
+  if (response.status === CustomStatus.OK) {
+    return 0;
+  } else if (response.status === CustomStatus.ALREADY_CONFIRMED) {
+    return 1;
+  } else {
+    return 3;
+  }
+}
 
 function isValidConfirmId(uuid: string | null) {
   if (!uuid) {
