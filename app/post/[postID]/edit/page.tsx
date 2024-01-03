@@ -1,34 +1,34 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 // Desktop Components
-import NewPostDesktop from "@/app/new/(new)/desktop/NewPost";
+import NewPostDesktop from "@/app/post/[postID]/edit/(edit)/desktop/NewPost";
 
 // Mobile Components
-import NewPostMobile from "@/app/new/(new)/mobile/NewPost";
+import NewPostMobile from "@/app/post/[postID]/edit/(edit)/mobile/NewPost";
 
 // Styles
 import styles from "@/app/new/page.module.scss";
 
 // Types
-import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+import { TPostAPI } from "@/app/post/[postID]/edit/(edit)/types/postAPI";
 
 // Configs
-import { alertMessageConfigs } from "@/app/new/(new)/config/alertMessages";
-import { markdownGuide } from "@/app/new/(new)/config/markdownGuide";
+import { alertMessageConfigs } from "@/app/post/[postID]/edit/(edit)/config/alertMessages";
+import { markdownGuide } from "@/app/post/[postID]/edit/(edit)/config/markdownGuide";
 
 // APIs Request Function
-import { postAPI } from "@/app/new/(new)/apis/postAPI";
+import { postPostAPI, getPostAPI } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import assert from "assert";
 
-export default function NewPostPage() {
+export default function EditPostPage({ params }: { params: { postID: string } }) {
   const { status } = useSession();
   const route = useRouter();
   const isMobile = useIsMobile();
@@ -42,112 +42,41 @@ export default function NewPostPage() {
     cover: "",
   });
 
-  // Adjust form data function
-  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
-    setPostData(
-      (
-        prev: TPostAPI | undefined
-      ) => (
-        {
-          ...prev,
-          [e.target.name]: e.target.value,
-        } as TPostAPI
-      )
-    );
-  }
-
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
-    const storedContent = localStorage?.getItem("editorContent");
-    if (storedContent) {
-      setPostData(
-        (
-          prev: TPostAPI | undefined
-        ) => (
-          {
-            ...prev,
-            content: storedContent,
-          } as TPostAPI)
-      );
+    if (status === "authenticated") {
+      (async () => {
+        const { postID } = params;
+        const data = await getPostAPI(postID);
+        setPostData(data);
+      })();
     }
-  }, []);
-
-  async function NewPostAPI() {
-    setPostButtonDisable(true);
-    if (data?.title === "")
-      return Swal.fire(alertMessageConfigs.titleError).then(() =>
-        setPostButtonDisable(false)
-      );
-    if (!data.sig) {
-      return Swal.fire(alertMessageConfigs.sigError).then(() =>
-        setPostButtonDisable(false)
-      );
-    }
-    try {
-      setToken(localStorage.getItem("token") || "");
-      assert(data); // Check whether data was defined
-      assert(token !== ""); // Check whether token was loaded
-      const res = await postAPI(data, token);
-      console.debug(res);
-
-      if (res.status === 2000) {
-        return Swal.fire(alertMessageConfigs.Success).then(() => {
-          setPostButtonDisable(false);
-          localStorage.removeItem("editorContent");
-          route.push(`/post/${res.data._id}`);
-        });
-      } else if (res.status === 4001) {
-        Swal.fire(alertMessageConfigs.PermissionError).then(() =>
-          setPostButtonDisable(false)
-        );
-      } else {
-        setPostButtonDisable(false);
-        throw new Error("Unexpected error");
-      }
-    } catch (error) {
-      Swal.fire(alertMessageConfigs.OthersError).then(() =>
-        setPostButtonDisable(false)
-      );
-    }
-  }
-
-  function discard(e: ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
-    setPostData({
-      title: "",
-      sig: "",
-      content: markdownGuide,
-      cover: "",
-    });
-    localStorage.removeItem("editorContent");
-  }
+  }, [params, status]);
 
   if (status === "loading") {
     return (
-      <div className={styles.loading}>
-        <h1> Loading...</h1>
-      </div>
+      <div></div>
     );
   }
 
   return isMobile ? (
-    <NewPostMobile
-      data={data}
-      setPostData={setPostData}
-      token={token}
-      handleFormEventFunction={handleFormChange}
-      discardFunction={discard}
-      postFunction={NewPostAPI}
-      postButtonDisable={postButtonDisable}
-    ></NewPostMobile>
+    <></>
+    // <NewPostMobile
+    //   data={data}
+    //   setPostData={setPostData}
+    //   token={token}
+    //   handleFormEventFunction={handleFormChange}
+    //   discardFunction={discard}
+    //   postFunction={NewPostAPI}
+    //   postButtonDisable={postButtonDisable}
+    // ></NewPostMobile>
   ) : (
     <NewPostDesktop
       data={data}
       setPostData={setPostData}
-      discardFunction={discard}
-      postFunction={NewPostAPI}
+      // discardFunction={discard}
+      // postFunction={NewPostAPI}
       token={token}
-      handleFormEventFunction={handleFormChange}
+      // handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
     ></NewPostDesktop>
   );

@@ -1,0 +1,20 @@
+@import "@/app/styles/variables.scss";
+@import "./NewPost.module.scss";
+
+.meta {
+  height: 100%;
+  width: $block-width;
+
+  margin: auto;
+  padding: 2% 0;
+
+  display: grid;
+  grid-template-columns: 49% 49%;
+  gap: 2%;
+}
+
+.input {
+  border-radius: 9999px;
+
+  padding: 1dvh;
+}

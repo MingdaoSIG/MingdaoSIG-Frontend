@@ -1,0 +1,25 @@
+@import "@/app/styles/variables.scss";
+
+$editor-background: white;
+
+.editor {
+  height: 65dvh;
+  padding: 0.25rem 0;
+  background-color: $editor-background;
+  border-radius: 30px;
+  overflow: hidden;
+  animation: 1s ease-out 0s 1 fadeIn;
+}
+
+.editor>div {
+  border: none !important;
+  height: 100%;
+}
+
+.editor>div>div:nth-child(1) {
+  padding: 0 15px;
+}
+
+.editor>div>div:nth-child(6) {
+  padding: 0 15px;
+}
