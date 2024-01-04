@@ -14,4 +14,5 @@ export type TPostAPI = {
   hashtag?: string[];
   content: string;
   cover: string;
+  user: string;
 };

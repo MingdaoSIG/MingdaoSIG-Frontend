@@ -13,7 +13,7 @@ import { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;
-  setPostData: Dispatch<SetStateAction<TPostAPI>>;
+  // setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
   // discardFunction: Function;
   // handleFormEventFunction: Function;
@@ -26,7 +26,7 @@ const Editor = dynamic(() => import("./Editor"), {
 });
 export default function NewPost({
   data,
-  setPostData,
+  // setPostData,
   token,
   // discardFunction,
   // handleFormEventFunction,
@@ -37,7 +37,7 @@ export default function NewPost({
     <SplitBlock>
       <Suspense fallback={null}>
         <Editor
-          setPostData={setPostData}
+          // setPostData={setPostData}
           data={data}
           token={token}
         />

@@ -20,11 +20,11 @@ import { useUserAccount } from "@/utils/useUserAccount";
 
 interface Props {
   data: TPostAPI;
-  setPostData: Dispatch<SetStateAction<TPostAPI>>;
+  // setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
 }
 
-const MdEditorSync = ({ data, setPostData }: Props) => {
+const MdEditorSync = ({ data }: Props) => { //, setPostData
   const { token } = useUserAccount();
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     if (!files.length) return;
@@ -58,19 +58,19 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     }
   };
 
-  const handleEditorChange = (newContent: string) => {
-    setPostData((prev: TPostAPI) => ({
-      ...prev,
-      content: newContent,
-    } as TPostAPI));
-    localStorage.setItem("editorContent", newContent);
-  };
+  // const handleEditorChange = (newContent: string) => {
+  //   setPostData((prev: TPostAPI) => ({
+  //     ...prev,
+  //     content: newContent,
+  //   } as TPostAPI));
+  //   localStorage.setItem("editorContent", newContent);
+  // };
 
   return (
     <div className={styles.editor}>
       <MdEditor
         modelValue={data?.content || ""}
-        onChange={handleEditorChange}
+        // onChange={handleEditorChange}
         toolbars={toolbars}
         onUploadImg={onUploadImg}
         language="en-US"
