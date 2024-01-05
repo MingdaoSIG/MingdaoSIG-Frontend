@@ -13,28 +13,31 @@ import styles from "./Thread.module.scss";
 // Interfaces
 import { TThread } from "@/interfaces/Thread";
 
+// Utils
+import { useUserAccount } from "@/utils/useUserAccount";
+
 const Thread = ({ post }: { post: TThread }) => {
+  const { isLogin, isLoading, token, userData } = useUserAccount();
   const [like, setLike] = useState<any>(false);
-  const [token, setToken] = useState<string>("");
 
   function onLike() {
-    if (localStorage.getItem("token")) {
+    if (!isLoading && !isLogin) {
+      Swal.fire({
+        title: "Please login first",
+        text: "You must login to like someone's post",
+        icon: "warning",
+        confirmButtonText: "Confirm",
+      });
+    } else {
       setLike(!like);
       if (like) {
         DeleteLike();
       } else {
         PostLike();
       }
-    } else {
-      Swal.fire({
-        title: "請先登入",
-        text: "你必須登入才可以使用按讚功能",
-        icon: "warning",
-        confirmButtonText: "確定",
-        confirmButtonColor: "#82D7FF",
-      });
     }
   }
+
   async function PostLike() {
     try {
       const res = await fetch(
@@ -69,20 +72,15 @@ const Thread = ({ post }: { post: TThread }) => {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
-
-    if (localStorage.getItem("token")) {
-      const User: any = JSON.parse(localStorage.getItem("user")?.toString()!);
-      if (post?.like?.includes(User._id)) {
-        setLike(true);
-      }
+    if (isLogin) {
+      post.like?.includes(userData?._id!) ? setLike(true) : setLike(false);
     }
-  }, [post?.like]);
+  }, [isLogin, post.like, userData?._id]);
 
   return (
     <div className={styles.thread}>
       <div className={styles.threadTitle}>
-        <h1>{post?.title}</h1>
+        <h1>{post.title}</h1>
         <div onClick={onLike}>
           <svg
             width="32"
@@ -99,7 +97,7 @@ const Thread = ({ post }: { post: TThread }) => {
         </div>
       </div>
       <MdPreview
-        modelValue={post?.content}
+        modelValue={post.content}
         className={styles.threadContent}
         previewTheme="github"
       />
