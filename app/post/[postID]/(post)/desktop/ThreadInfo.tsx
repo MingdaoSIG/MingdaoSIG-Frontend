@@ -138,7 +138,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       </div>
       <div className="mt-5 flex flex-col gap-[40px] overflow-y- overflow-x-hidden h-[calc(100%-42px-64px)]">
         {comments.length !== 0 ? (
-          comments?.map((comment: any) => {
+          comments.map((comment: any) => {
             return (
               <Reply
                 key={comment._id}

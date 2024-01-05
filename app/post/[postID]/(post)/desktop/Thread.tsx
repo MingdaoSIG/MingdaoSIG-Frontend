@@ -10,32 +10,31 @@ import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
-  const { isLogin, token, userData, isLoading, login, logout } = useUserAccount();
+  const { isLogin, isLoading, token, userData } = useUserAccount();
 
   const [like, setLike] = useState<any>(false);
 
   const route = useRouter();
 
   function onLike() {
-    if (localStorage.getItem("token")) {
-      setLike(!like);
-      if (like) {
-        DeleteLike();
-      } else {
-        PostLike();
-      }
-    } else {
+    if (!isLoading && !isLogin) {
       Swal.fire({
         title: "Please login first",
         text: "You must login to like someone's post",
         icon: "warning",
         confirmButtonText: "Confirm",
       });
+    } else {
+      setLike(!like);
+      if (like) {
+        DeleteLike();
+      } else {
+        PostLike();
+      }
     }
   }
 
@@ -128,15 +127,15 @@ const Thread = ({ post }: { post: TThread }) => {
     }
   }, [isLogin, post.like, userData?._id]);
 
-  if (post?.sig === "652d60b842cdf6a660c2b778") {
+  if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
         <div className="py-[1rem]">
           <div className={style.threadTitle + " " + style.customTitle}>
-            <h1 className="my-auto">{post?.title}</h1>
+            <h1 className="my-auto">{post.title}</h1>
           </div>
           <MdPreview
-            modelValue={post?.content}
+            modelValue={post.content}
             className={style.threadContent + " " + style.customThread}
             previewTheme="github"
           />
@@ -147,9 +146,9 @@ const Thread = ({ post }: { post: TThread }) => {
     return (
       <div className={style.thread}>
         <div className={style.threadTitle + " flex relative"}>
-          <h1>{post?.title}</h1>
+          <h1>{post.title}</h1>
           {
-            (isLogin && post?.user === userData?._id) &&
+            (isLogin && post.user === userData?._id) &&
             <div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
@@ -159,7 +158,7 @@ const Thread = ({ post }: { post: TThread }) => {
             </div>
           }
           {
-            (isLogin && post?.user === userData?._id) &&
+            (isLogin && post.user === userData?._id) &&
             <div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
@@ -187,7 +186,7 @@ const Thread = ({ post }: { post: TThread }) => {
           </div>
         </div>
         <MdPreview
-          modelValue={post?.content}
+          modelValue={post.content}
           className={style.threadContent}
           previewTheme="github"
         />
