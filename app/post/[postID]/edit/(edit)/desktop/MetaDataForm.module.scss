@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   animation: 1s ease-out 0s 1 fadeIn;
+  user-select: none;
 }
 
 .label {
@@ -29,4 +30,5 @@
   line-height: 1rem;
   padding: 0.5rem 0.6rem;
   margin-bottom: 0.5rem;
+  cursor: not-allowed;
 }
