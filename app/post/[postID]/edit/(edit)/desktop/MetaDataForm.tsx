@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 
 // Components
 import Buttons from "./Buttons";
@@ -10,90 +9,61 @@ import Buttons from "./Buttons";
 import styles from "./MetaDataForm.module.scss";
 
 // Types
-import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+import { Sig } from "@/interfaces/Sig";
+import { TThread } from "@/interfaces/Thread";
 
 // Modules
 import sigAPI from "@/modules/sigAPI";
 
+//utils
+import { useUserAccount } from "@/utils/useUserAccount";
+
 interface Props {
-  discardFunction: Function;
-  postFunction: Function;
-  data: TPostAPI | undefined;
-  handleFormEventFunction: Function;
-  postButtonDisable: boolean;
+  oldPostData: TThread;
+  undoFunction: Function;
+  editButtonDisable: boolean;
 }
 
 export default function MetaDataForm({
-  discardFunction,
-  postFunction,
-  handleFormEventFunction,
-  data,
-  postButtonDisable,
+  oldPostData,
+  undoFunction,
+  editButtonDisable,
 }: Props) {
-  const { status } = useSession();
+  const { isLoading } = useUserAccount();
+  const [sig, setSig] = useState<Sig>();
 
-  const [sigs, setSigs] = useState<any[]>([]);
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await sigAPI.getSigList();
-        setSigs(response);
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
-  }, []);
+    if (oldPostData.sig) {
+      (async () => {
+        try {
+          const response = await sigAPI.getSigData(oldPostData.sig);
+          setSig(response);
+        } catch (error: any) {
+          console.error(error.message);
+        }
+      })();
+    }
+  }, [oldPostData]);
 
-  if (status === "unauthenticated") {
+  if (isLoading || !oldPostData) {
     return (
-      <div className={styles.unLoginMessage}>
-        <h1>Please login to post.</h1>
-      </div>
-    );
-  } else if (status === "loading") {
-    return <div></div>;
-  } else {
-    return (
-      <>
-        <div className={styles.meta}>
-          <label className={styles.inputLabel}>Title:</label>
-          <input
-            type="text"
-            name="title"
-            className={styles.input}
-            value={data?.title}
-            onChange={(e) => handleFormEventFunction(e)}
-          />
-
-          <label className={styles.inputLabel}>SIGs:</label>
-          <select
-            name="sig"
-            className={styles.input}
-            value={data?.sig}
-            onChange={(e) => {
-              handleFormEventFunction(e);
-            }}
-          >
-            <option value="">請選擇 SIG</option>
-            {sigs?.map((sig) => {
-              if (sig._id === "652d60b842cdf6a660c2b778") return;
-              return (
-                <option value={sig._id} key={sig._id}>
-                  {sig.name}
-                </option>
-              );
-            })}
-          </select>
-
-          {/* <label className={styles.inputLabel}>Hashtag:</label>
-          <input name="hashtag" type="text" className={styles.input} disabled /> */}
-        </div>
-        <Buttons
-          discardFunction={discardFunction}
-          postFunction={postFunction}
-          postButtonDisable={postButtonDisable}
-        />
-      </>
+      <div></div>
     );
   }
+
+  return (
+    <>
+      <div className={styles.meta}>
+        <label className={styles.label}>Title:</label>
+        <p className={styles.title_name}>{oldPostData.title}</p>
+        <label className={styles.label}>SIGs:</label>
+        <p className={styles.title_name}>{sig?.name}</p>
+        <p>※ Metadata was locked.</p>
+      </div >
+      <Buttons
+        undoFunction={undoFunction}
+        editButtonDisable={editButtonDisable}
+      />
+    </>
+  );
 }

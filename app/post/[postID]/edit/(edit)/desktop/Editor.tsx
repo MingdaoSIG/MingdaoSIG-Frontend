@@ -7,24 +7,21 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 // Styles
 import styles from "./Editor.module.scss";
 
-// Interfaces
-import { TPostAPI } from "../types/postAPI";
+// Types
+import { TThread } from "@/interfaces/Thread";
 
 // Configs
 import { toolbars } from "../config/editorToolbar";
 import { imageUpload } from "@/modules/imageUploadAPI";
 import Swal from "sweetalert2";
 
-// Use User Account
-import { useUserAccount } from "@/utils/useUserAccount";
-
 interface Props {
-  data: TPostAPI;
-  // setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
+  newPostData: TThread;
+  setNewPostData?: Dispatch<SetStateAction<TThread>>;
 }
 
-const MdEditorSync = ({ data, token }: Props) => { //, setPostData
+const MdEditorSync = ({ token, newPostData, setNewPostData }: Props) => {
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     if (!files.length) return;
     const responseImage = await Promise.all(
@@ -57,19 +54,17 @@ const MdEditorSync = ({ data, token }: Props) => { //, setPostData
     }
   };
 
-  // const handleEditorChange = (newContent: string) => {
-  //   setPostData((prev: TPostAPI) => ({
-  //     ...prev,
-  //     content: newContent,
-  //   } as TPostAPI));
-  //   localStorage.setItem("editorContent", newContent);
-  // };
-
+  function handleEditorChange(newContent: string, setNewPostData: Dispatch<SetStateAction<TThread>>) {
+    setNewPostData((prev: TThread) => ({
+      ...prev,
+      content: newContent,
+    } as TThread));
+  }
   return (
     <div className={styles.editor}>
       <MdEditor
-        modelValue={data?.content || ""}
-        // onChange={handleEditorChange}
+        modelValue={newPostData?.content || ""}
+        onChange={(e) => handleEditorChange(e, setNewPostData!)}
         toolbars={toolbars}
         onUploadImg={onUploadImg}
         language="en-US"

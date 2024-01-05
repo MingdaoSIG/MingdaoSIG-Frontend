@@ -97,7 +97,7 @@ const Information = () => {
             </div>
 
             <div className={style.sigs}>
-              <h2>SIGs - {sigs?.length}</h2>
+              <h2>SIGs - {sigs.length}</h2>
               <div className={style.sigTop}>
                 {sigs.map((item: any) => {
                   if (item._id !== "652d60b842cdf6a660c2b778") {

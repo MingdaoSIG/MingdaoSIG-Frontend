@@ -28,7 +28,7 @@ $button-post-text: #5fcdf5;
   gap: 0.25rem;
 }
 
-.buttonDiscard {
+.buttonUndo {
   composes: button;
   background-color: $button-discord-background;
   color: $button-discord-text;
@@ -36,10 +36,15 @@ $button-post-text: #5fcdf5;
   font-weight: $button-font-weight;
 }
 
-.buttonPost {
+.buttonEdit {
   composes: button;
   background-color: $button-post-background;
   color: $button-post-text;
   font-size: $button-font-size;
   font-weight: $button-font-weight;
+}
+
+.buttonEdit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }

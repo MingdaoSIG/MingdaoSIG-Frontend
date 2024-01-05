@@ -2,29 +2,29 @@ import styles from "./Button.module.scss";
 import Image from "next/image";
 
 interface Props {
-  discardFunction: Function;
-  postFunction: Function;
-  postButtonDisable: boolean;
+  undoFunction: Function;
+  // postFunction: Function;
+  editButtonDisable: boolean;
 }
 
 export default function Buttons({
-  discardFunction,
-  postFunction,
-  postButtonDisable,
+  undoFunction,
+  // postFunction,
+  editButtonDisable,
 }: Props) {
   return (
     <div className={styles.buttons}>
       <button
-        className={styles.buttonDiscard}
-        onClick={(e) => discardFunction(e)}
+        className={styles.buttonUndo}
+        onClick={(e) => undoFunction(e)}
       >
         <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
-        DISCARD
+        UNDO
       </button>
       <button
-        className={styles.buttonPost}
-        onClick={async () => await postFunction()}
-        disabled={postButtonDisable}
+        className={styles.buttonEdit}
+        // onClick={async () => await postFunction()}
+        disabled={editButtonDisable}
       >
         <Image
           src="/icons/cloud-upload.svg"
@@ -32,7 +32,7 @@ export default function Buttons({
           height={28}
           alt="cloud-upload"
         />
-        POST
+        EDIT
       </button>
     </div>
   );

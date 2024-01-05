@@ -5,12 +5,12 @@
   height: calc(100% - 60px);
   border-radius: 30px;
   padding: 2rem;
-
   display: flex;
   flex-direction: column;
+  animation: 1s ease-out 0s 1 fadeIn;
 }
 
-.inputLabel {
+.label {
   font-size: 1.125rem;
   line-height: 1.75rem;
 }
@@ -23,18 +23,10 @@
   outline: none;
 }
 
-.unLoginMessage {
-  height: 100%;
-  width: 100%;
-  background-color: $panel-background-color;
-  border-radius: 30px;
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem;
-
-  h1 {
-    font-size: 2rem;
-    text-align: center;
-    margin: auto;
-  }
+.title_name {
+  background-color: white;
+  border-radius: 2rem;
+  line-height: 1rem;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
 }

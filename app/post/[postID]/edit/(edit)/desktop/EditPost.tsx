@@ -1,9 +1,6 @@
 import { Suspense, Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
 
-// Style
-import styles from "./NewPost.module.scss";
-
 // Components
 import SplitBlock from "@/app/(Layout)/splitBlock";
 import MetaDataForm from "./MetaDataForm";
@@ -12,13 +9,12 @@ import MetaDataForm from "./MetaDataForm";
 import { TThread } from "@/interfaces/Thread";
 
 interface Props {
-  data: TThread;
-  // setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
-  // discardFunction: Function;
-  // handleFormEventFunction: Function;
-  // postFunction: Function;
-  // postButtonDisable: boolean;
+  oldPostData: TThread;
+  newPostData: TThread;
+  setNewPostData: Dispatch<SetStateAction<TThread>>;
+  undoFunction: Function;
+  editButtonDisable: boolean;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -26,30 +22,27 @@ const Editor = dynamic(() => import("./Editor"), {
 });
 
 export default function NewPost({
-  data,
-  // setPostData,
   token,
-  // discardFunction,
-  // handleFormEventFunction,
-  // postFunction,
-  // postButtonDisable,
+  oldPostData,
+  newPostData,
+  setNewPostData,
+  undoFunction,
+  editButtonDisable,
 }: Props) {
   return (
     <SplitBlock>
       <Suspense fallback={null}>
         <Editor
-          // setPostData={setPostData}
-          data={data}
           token={token}
+          newPostData={newPostData}
+          setNewPostData={setNewPostData}
         />
       </Suspense>
-      {/* <MetaDataForm
-        discardFunction={discardFunction}
-        postFunction={postFunction}
-        data={data}
-        handleFormEventFunction={handleFormEventFunction}
-        postButtonDisable={postButtonDisable}
-      /> */}
+      <MetaDataForm
+        oldPostData={oldPostData}
+        undoFunction={undoFunction}
+        editButtonDisable={editButtonDisable}
+      />
     </SplitBlock>
   );
 }
