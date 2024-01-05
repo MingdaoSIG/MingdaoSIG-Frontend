@@ -11,9 +11,9 @@ import Replies from "./Replies";
 import styles from "./Thread.module.scss";
 
 // Interfaces
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
-const Thread = ({ post }: { post: IThread }) => {
+const Thread = ({ post }: { post: TThread }) => {
   const [like, setLike] = useState<any>(false);
   const [token, setToken] = useState<string>("");
 

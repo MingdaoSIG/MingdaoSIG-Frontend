@@ -9,21 +9,22 @@ import SplitBlock from "@/app/(Layout)/splitBlock";
 import MetaDataForm from "./MetaDataForm";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import { TThread } from "@/interfaces/Thread";
 
 interface Props {
-  data: TPostAPI;
+  data: TThread;
   // setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
   // discardFunction: Function;
   // handleFormEventFunction: Function;
   // postFunction: Function;
-  postButtonDisable: boolean;
+  // postButtonDisable: boolean;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
   ssr: false,
 });
+
 export default function NewPost({
   data,
   // setPostData,
@@ -31,7 +32,7 @@ export default function NewPost({
   // discardFunction,
   // handleFormEventFunction,
   // postFunction,
-  postButtonDisable,
+  // postButtonDisable,
 }: Props) {
   return (
     <SplitBlock>

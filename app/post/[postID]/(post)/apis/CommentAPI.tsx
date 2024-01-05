@@ -1,4 +1,4 @@
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 export async function PostCommentAPI(
   post: any,
@@ -21,7 +21,7 @@ export async function PostCommentAPI(
   return await res.json();
 }
 
-export async function GetCommentAPI({ _id }: IThread) {
+export async function GetCommentAPI({ _id }: TThread) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/comment/list/post/${_id}`,
     {

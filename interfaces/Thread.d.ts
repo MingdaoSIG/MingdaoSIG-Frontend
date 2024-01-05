@@ -1,4 +1,4 @@
-export interface IThread {
+export type TThread =  {
   _id?: string;
   sig: string;
   title: string;

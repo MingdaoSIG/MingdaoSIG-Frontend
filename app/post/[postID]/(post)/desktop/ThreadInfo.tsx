@@ -13,7 +13,7 @@ import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors"
 import style from "./Thread.module.scss";
 
 // Interfaces
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 // API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
@@ -29,7 +29,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function ThreadInfo({ post }: { post: IThread }) {
+export default function ThreadInfo({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
   const [comments, setComments] = useState<any>([]);

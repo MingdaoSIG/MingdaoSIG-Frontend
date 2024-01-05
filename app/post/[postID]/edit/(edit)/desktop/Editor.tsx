@@ -24,8 +24,7 @@ interface Props {
   token: string;
 }
 
-const MdEditorSync = ({ data }: Props) => { //, setPostData
-  const { token } = useUserAccount();
+const MdEditorSync = ({ data, token }: Props) => { //, setPostData
   const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
     if (!files.length) return;
     const responseImage = await Promise.all(

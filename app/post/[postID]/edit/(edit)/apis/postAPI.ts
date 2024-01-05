@@ -75,7 +75,7 @@ export async function getPostAPI(
         method: "GET",
       })
     ).json();
-    return res.data;
+    return res;
   } catch (error) {
     console.log(error);
   }

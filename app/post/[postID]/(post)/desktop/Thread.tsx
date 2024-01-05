@@ -2,7 +2,7 @@
 
 import style from "./Thread.module.scss";
 
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";
@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-const Thread = ({ post }: { post: IThread }) => {
+const Thread = ({ post }: { post: TThread }) => {
   const { isLogin, token, userData, isLoading, login, logout } = useUserAccount();
 
   const [like, setLike] = useState<any>(false);
