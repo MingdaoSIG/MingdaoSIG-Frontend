@@ -56,7 +56,7 @@ export default function EditPostPage({ params }: { params: { postID: string } })
     } else {
       setEditButtonDisable(false);
     }
-  }, [newPostData.content, oldPostData.content]);
+  }, [newPostData, oldPostData]);
 
   function undo() {
     setNewPostData(oldPostData);
