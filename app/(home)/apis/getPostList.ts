@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
 
 // Interfaces
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getPostListAPI(
-  setParentsPost: Dispatch<SetStateAction<IThread[]>>,
-  setPosts: Dispatch<SetStateAction<IThread[]>>,
+  setParentsPost: Dispatch<SetStateAction<TThread[]>>,
+  setPosts: Dispatch<SetStateAction<TThread[]>>,
   setStatus: Dispatch<SetStateAction<string>>
 ) {
   try {

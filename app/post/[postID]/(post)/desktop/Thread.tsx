@@ -2,7 +2,7 @@
 
 import style from "./Thread.module.scss";
 
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";
@@ -10,33 +10,36 @@ import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-const Thread = ({ post }: { post: IThread }) => {
-  const { isLogin, token, userData, isLoading, login, logout } = useUserAccount();
+const Thread = ({ post }: { post: TThread }) => {
+  const { isLogin, isLoading, token, userData } = useUserAccount();
 
   const [like, setLike] = useState<any>(false);
 
   const route = useRouter();
 
   function onLike() {
-    if (localStorage.getItem("token")) {
-      setLike(!like);
-      if (like) {
-        DeleteLike();
-      } else {
-        PostLike();
-      }
-    } else {
+    if (!isLoading && !isLogin) {
       Swal.fire({
         title: "Please login first",
         text: "You must login to like someone's post",
         icon: "warning",
         confirmButtonText: "Confirm",
       });
+    } else {
+      setLike(!like);
+      if (like) {
+        DeleteLike();
+      } else {
+        PostLike();
+      }
     }
+  }
+
+  function onEdit() {
+    route.push(`/post/${post._id}/edit`);
   }
 
   function onDelete() {
@@ -124,15 +127,15 @@ const Thread = ({ post }: { post: IThread }) => {
     }
   }, [isLogin, post.like, userData?._id]);
 
-  if (post?.sig === "652d60b842cdf6a660c2b778") {
+  if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
         <div className="py-[1rem]">
           <div className={style.threadTitle + " " + style.customTitle}>
-            <h1 className="my-auto">{post?.title}</h1>
+            <h1 className="my-auto">{post.title}</h1>
           </div>
           <MdPreview
-            modelValue={post?.content}
+            modelValue={post.content}
             className={style.threadContent + " " + style.customThread}
             previewTheme="github"
           />
@@ -143,9 +146,19 @@ const Thread = ({ post }: { post: IThread }) => {
     return (
       <div className={style.thread}>
         <div className={style.threadTitle + " flex relative"}>
-          <h1>{post?.title}</h1>
+          <h1>{post.title}</h1>
           {
-            (isLogin && post?.user === userData?._id) &&
+            (isLogin && post.user === userData?._id) &&
+            <div
+              key="edit"
+              className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+              onClick={onEdit}
+            >
+              <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
+            </div>
+          }
+          {
+            (isLogin && post.user === userData?._id) &&
             <div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
@@ -173,7 +186,7 @@ const Thread = ({ post }: { post: IThread }) => {
           </div>
         </div>
         <MdPreview
-          modelValue={post?.content}
+          modelValue={post.content}
           className={style.threadContent}
           previewTheme="github"
         />

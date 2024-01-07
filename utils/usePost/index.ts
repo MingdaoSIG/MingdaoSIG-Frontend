@@ -1,4 +1,4 @@
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -17,19 +17,19 @@ export const useAllPost = (query: PostQuery) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return useInfiniteQuery<IThread[], Error>({
+  return useInfiniteQuery<TThread[], Error>({
     queryKey: ["allPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query?.sort),
+        sort: String(query.sort),
       }), {
         method: "GET",
       });
 
       const responseData = await response.json();
-      return responseData.data as IThread[];
+      return responseData.data as TThread[];
     },
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage = [], allPages) => {
@@ -46,19 +46,19 @@ export const useUserPost = (userId: string, query: PostQuery) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return useInfiniteQuery<IThread[], Error>({
+  return useInfiniteQuery<TThread[], Error>({
     queryKey: ["userPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list/user/${userId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query?.sort),
+        sort: String(query.sort),
       }), {
         method: "GET",
       });
 
       const responseData = await response.json();
-      return responseData.data as IThread[];
+      return responseData.data as TThread[];
     },
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage = [], allPages) => {
@@ -75,19 +75,19 @@ export const useSigPost = (sigId: string, query: PostQuery) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return useInfiniteQuery<IThread[], Error>({
+  return useInfiniteQuery<TThread[], Error>({
     queryKey: ["sigPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list/sig/${sigId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query?.sort),
+        sort: String(query.sort),
       }), {
         method: "GET",
       });
 
       const responseData = await response.json();
-      return responseData.data as IThread[];
+      return responseData.data as TThread[];
     },
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage = [], allPages) => {
@@ -104,7 +104,7 @@ export const useTopPost = (query: PostQuery) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return useInfiniteQuery<IThread[], Error>({
+  return useInfiniteQuery<TThread[], Error>({
     queryKey: ["topPost", query],
     queryFn: async () => {
       const response = await fetch(
@@ -113,7 +113,7 @@ export const useTopPost = (query: PostQuery) => {
           method: "GET",
         });
       const responseData = await response.json();
-      return responseData.data as IThread[];
+      return responseData.data as TThread[];
     },
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage = [], allPages) => {

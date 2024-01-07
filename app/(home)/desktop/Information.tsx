@@ -9,7 +9,7 @@ import { homePageLinks } from "../configs/linksList";
 
 // APIs Request Function
 import { useTopPost } from "@/utils/usePost";
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 // Modules
 import maxMatch from "@/modules/maxMatch";
@@ -83,7 +83,7 @@ const Information = () => {
             <div className={style.likedPosts}>
               <h2>Top 5 Posts</h2>
               <div className={style.likePostWrapper}>
-                {data?.pages[0].map((item: IThread) => {
+                {data?.pages[0].map((item: TThread) => {
                   return (
                     <LikePost
                       _id={item._id}
@@ -97,7 +97,7 @@ const Information = () => {
             </div>
 
             <div className={style.sigs}>
-              <h2>SIGs - {sigs?.length}</h2>
+              <h2>SIGs - {sigs.length}</h2>
               <div className={style.sigTop}>
                 {sigs.map((item: any) => {
                   if (item._id !== "652d60b842cdf6a660c2b778") {

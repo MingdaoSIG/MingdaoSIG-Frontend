@@ -11,5 +11,8 @@
     "sweetalert",
     "webp"
   ],
-  "editor.defaultFormatter": "vscode.typescript-language-features"
+  "commit-ai.prompt.openAiTemperature": 0.5,
+  "commit-ai.prompt.openAiMaxToken": 100,
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "deepscan.enable": true
 }

@@ -6,7 +6,7 @@ import Reply from "../components/Reply";
 import styles from "./Replies.module.scss";
 
 // Interfaces
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 // Types
 import { TComments } from "@/interfaces/comments";
@@ -17,7 +17,7 @@ import ClickExtend from "@/app/(Layout)/mobile/ClickExtend";
 // Utils
 import { useFetch } from "@/utils/useFetch";
 
-export default function Replies({ post }: { post: IThread }) {
+export default function Replies({ post }: { post: TThread }) {
   const extendedState = useState(false);
   const [extended] = extendedState;
   const { data: replyData, isLoading: replyIsLoading } =
