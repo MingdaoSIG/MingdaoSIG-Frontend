@@ -32,7 +32,7 @@ export default function Buttons({
           height={28}
           alt="cloud-upload"
         />
-        EDIT
+        SEND
       </button>
     </div>
   );
