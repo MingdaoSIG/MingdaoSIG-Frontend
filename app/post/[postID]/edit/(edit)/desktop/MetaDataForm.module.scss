@@ -1,0 +1,34 @@
+@import "@/app/styles/variables.scss";
+
+.meta {
+  background-color: $panel-background-color;
+  height: calc(100% - 60px);
+  border-radius: 30px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  animation: 1s ease-out 0s 1 fadeIn;
+  user-select: none;
+}
+
+.label {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.input {
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 2rem;
+  margin-bottom: 0.5rem;
+  outline: none;
+}
+
+.title_name {
+  background-color: white;
+  border-radius: 2rem;
+  line-height: 1rem;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
+  cursor: not-allowed;
+}

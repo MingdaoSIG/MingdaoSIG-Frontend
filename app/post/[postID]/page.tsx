@@ -13,7 +13,7 @@ import ThreadInfo from "./(post)/desktop/ThreadInfo";
 import ThreadMobile from "./(post)/mobile/Thread";
 
 // Interfaces
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
@@ -26,7 +26,7 @@ const Post = ({ params }: { params: { postID: string } }) => {
   const isMobile = useIsMobile();
 
   const PostID = decodeURIComponent(params.postID);
-  const [post, setPost] = useState<IThread>();
+  const [post, setPost] = useState<TThread>();
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {

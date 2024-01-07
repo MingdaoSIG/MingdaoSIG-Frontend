@@ -1,4 +1,4 @@
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -14,7 +14,7 @@ export async function getSigDataById(id: string) {
       })
     ).json();
 
-    return (response as IThread) || "";
+    return (response as TThread) || "";
   } catch (error) {
     return "";
   }

@@ -45,8 +45,8 @@ export default function NewPostPage() {
   // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
-      (prev: TPostAPI | undefined) =>
-        ({
+      (prev: TPostAPI | undefined) => (
+        {
           ...prev,
           [e.target.name]: e.target.value,
         } as TPostAPI)
@@ -58,8 +58,8 @@ export default function NewPostPage() {
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setPostData(
-        (prev: TPostAPI | undefined) =>
-          ({
+        (prev: TPostAPI | undefined) => (
+          {
             ...prev,
             content: storedContent,
           } as TPostAPI)
@@ -69,6 +69,9 @@ export default function NewPostPage() {
 
   async function NewPostAPI() {
     setPostButtonDisable(true);
+
+    if (!data) return;
+
     if (data?.title === "")
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
         setPostButtonDisable(false)
@@ -78,6 +81,7 @@ export default function NewPostPage() {
         setPostButtonDisable(false)
       );
     }
+
     try {
       setToken(localStorage.getItem("token") || "");
       assert(data); // Check whether data was defined

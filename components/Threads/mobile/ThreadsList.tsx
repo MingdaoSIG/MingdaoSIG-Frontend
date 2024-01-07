@@ -8,7 +8,7 @@ import style from "./ThreadsList.module.scss";
 import skeleton from "./Skeleton.module.scss";
 
 // Interfaces, Types
-import { IThread } from "@/interfaces/Thread.interface";
+import { TThread } from "@/interfaces/Thread";
 import { User } from "@/interfaces/User";
 import { Sig } from "@/interfaces/Sig";
 
@@ -20,7 +20,7 @@ import { sigDefaultColors } from "../configs/sigDefaultColors";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
-const Thread = ({ threadData }: { threadData: IThread }) => {
+const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
 
@@ -109,7 +109,7 @@ export const InfinityThreadsList = ({
 }: {
   data: any,
   height?: string,
-  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<IThread[], unknown>, Error>>,
+  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
   isFetchingNextPage: boolean
 }) => {
   const postList = useRef(null);
@@ -139,7 +139,7 @@ export const InfinityThreadsList = ({
 
   return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
-      {data.pages.map((page: IThread[], index: number) => (
+      {data.pages.map((page: TThread[], index: number) => (
         <Fragment key={index}>
           {page.map((item, index) => {
             return <Thread threadData={item} key={index} />;
