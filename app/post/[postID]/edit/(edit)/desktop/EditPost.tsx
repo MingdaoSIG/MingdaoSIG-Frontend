@@ -14,6 +14,7 @@ interface Props {
   newPostData: TThread;
   setNewPostData: Dispatch<SetStateAction<TThread>>;
   undoFunction: Function;
+  sendEditFunction: Function;
   editButtonDisable: boolean;
 }
 
@@ -27,6 +28,7 @@ export default function NewPost({
   newPostData,
   setNewPostData,
   undoFunction,
+  sendEditFunction,
   editButtonDisable,
 }: Props) {
   return (
@@ -41,6 +43,7 @@ export default function NewPost({
       <MetaDataForm
         oldPostData={oldPostData}
         undoFunction={undoFunction}
+        sendEditFunction={sendEditFunction}
         editButtonDisable={editButtonDisable}
       />
     </SplitBlock>

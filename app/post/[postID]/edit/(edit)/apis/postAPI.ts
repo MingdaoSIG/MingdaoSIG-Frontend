@@ -1,4 +1,4 @@
-import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+import { TThread } from "@/interfaces/Thread";
 
 const sigDefaultCover: { [key: string]: string } = {
   "651799ebfa1d45d97b139864":
@@ -46,7 +46,7 @@ const sigDefaultCover: { [key: string]: string } = {
 };
 
 export async function postPostAPI(
-  { title, sig, hashtag, content, cover }: TPostAPI,
+  { title, sig, hashtag, content, cover }: TThread,
   token: string
 ) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
@@ -79,4 +79,26 @@ export async function getPostAPI(
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function editPostAPI(
+  { title, sig, hashtag, content, cover }: TThread,
+  postId: string,
+  token: string
+) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${postId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      title: title,
+      sig: sig,
+      hashtag: hashtag,
+      content: content,
+      cover: sigDefaultCover[sig],
+    }),
+  });
+  return await res.json();
 }

@@ -3,13 +3,13 @@ import Image from "next/image";
 
 interface Props {
   undoFunction: Function;
-  // postFunction: Function;
+  sendEditFunction: Function;
   editButtonDisable: boolean;
 }
 
 export default function Buttons({
   undoFunction,
-  // postFunction,
+  sendEditFunction,
   editButtonDisable,
 }: Props) {
   return (
@@ -23,7 +23,7 @@ export default function Buttons({
       </button>
       <button
         className={styles.buttonEdit}
-        // onClick={async () => await postFunction()}
+        onClick={(e) => sendEditFunction(e)}
         disabled={editButtonDisable}
       >
         <Image

@@ -21,12 +21,14 @@ import { useUserAccount } from "@/utils/useUserAccount";
 interface Props {
   oldPostData: TThread;
   undoFunction: Function;
+  sendEditFunction: Function;
   editButtonDisable: boolean;
 }
 
 export default function MetaDataForm({
   oldPostData,
   undoFunction,
+  sendEditFunction,
   editButtonDisable,
 }: Props) {
   const { isLoading } = useUserAccount();
@@ -62,6 +64,7 @@ export default function MetaDataForm({
       </div >
       <Buttons
         undoFunction={undoFunction}
+        sendEditFunction={sendEditFunction}
         editButtonDisable={editButtonDisable}
       />
     </>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 // Desktop Components
 import NewPostDesktop from "@/app/post/[postID]/edit/(edit)/desktop/EditPost";
@@ -10,7 +11,7 @@ import NewPostDesktop from "@/app/post/[postID]/edit/(edit)/desktop/EditPost";
 import { TThread } from "@/interfaces/Thread";
 
 // APIs Request Function
-import { getPostAPI } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
+import { getPostAPI, editPostAPI } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
@@ -27,9 +28,9 @@ export default function EditPostPage({ params }: { params: { postID: string } })
   const [editButtonDisable, setEditButtonDisable] = useState<boolean>(false);
 
   useEffect(() => {
-    // if ((!isLoading && !isLogin) || (!isLoading && oldPostData?.user !== userData?._id)) {
-    //   route.push(`/post/${params.postID}`);
-    // }
+    if ((!isLoading && !isLogin) || (!isLoading && oldPostData?.user !== userData?._id)) {
+      route.push(`/post/${params.postID}`);
+    }
   }, [oldPostData, userData, isLoading, isLogin, route, params.postID]);
 
   useEffect(() => {
@@ -61,11 +62,42 @@ export default function EditPostPage({ params }: { params: { postID: string } })
     setNewPostData(oldPostData);
   }
 
-  // if (isLoading || !oldPostData || !userData || oldPostData?.user !== userData?._id) {
-  //   return (
-  //     <div></div>
-  //   );
-  // }
+  function sendEdit() {
+    Swal.fire({
+      title: "Warning",
+      text: "Are you sure to edit this post?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { postID } = params;
+        const res = await editPostAPI(newPostData, postID, token!);
+        if (res.status === 2000) {
+          Swal.fire({
+            title: "Success Edit",
+            icon: "success",
+            confirmButtonText: "View Post",
+          }).then(() => {
+            route.push(`/post/${postID}`);
+          });
+        } else {
+          Swal.fire({
+            title: "Something Wrong",
+            icon: "error",
+            confirmButtonText: "Confirm",
+          });
+        }
+      }
+    });
+  }
+
+  if (isLoading || !oldPostData || !userData || oldPostData?.user !== userData?._id) {
+    return (
+      <div></div>
+    );
+  }
 
   return isMobile ? (
     <></>
@@ -76,6 +108,7 @@ export default function EditPostPage({ params }: { params: { postID: string } })
       newPostData={newPostData}
       setNewPostData={setNewPostData}
       undoFunction={undo}
+      sendEditFunction={sendEdit}
       editButtonDisable={editButtonDisable}
     />
   );

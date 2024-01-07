@@ -16,6 +16,7 @@ $button-post-text: #5fcdf5;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
+  user-select: none;
 }
 
 .button {

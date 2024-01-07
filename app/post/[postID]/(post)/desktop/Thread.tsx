@@ -150,7 +150,7 @@ const Thread = ({ post }: { post: TThread }) => {
           {
             (isLogin && post.user === userData?._id) &&
             <div
-              key="delete"
+              key="edit"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
               onClick={onEdit}
             >
