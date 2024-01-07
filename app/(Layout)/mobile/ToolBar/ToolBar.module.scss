@@ -8,6 +8,7 @@
   margin: 0 auto;
   background-color: white;
   user-select: none;
+  border-radius: 30px 30px 0 0;
 
   display: flex;
   align-items: center;
@@ -16,8 +17,8 @@
 
 .iconWrapper {
   position: relative;
-  height: calc($mobile-toolbar-height - 1rem);
-  width: calc(100% - 1rem);
+  height: calc($mobile-toolbar-height - 2rem);
+  width: calc(100% - 2rem);
   display: flex;
 }
 
