@@ -9,7 +9,6 @@
   flex-direction: column;
   gap: $mobile-border-margin;
   overflow-y: auto;
-  padding: calc($mobile-headerbar-height + $mobile-border-margin) $mobile-border-margin calc($mobile-toolbar-height + $mobile-border-margin) $mobile-border-margin;
   scrollbar-width: none;
 
   >p {
