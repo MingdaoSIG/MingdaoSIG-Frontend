@@ -115,6 +115,7 @@ export const InfinityThreadsList = ({
   dataType: string
 }) => {
   const postList = useRef(null);
+  const postList2 = useRef(null);
 
   const onScroll = useCallback(() => {
     if (postList.current) {
@@ -127,7 +128,19 @@ export const InfinityThreadsList = ({
     }
   }, [fetchNextPage, isFetchingNextPage]);
 
+  const onScroll2 = useCallback(() => {
+    if (postList2.current) {
+      const { scrollTop, scrollHeight, clientHeight } = postList2.current;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
+
+      if (isNearBottom && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [fetchNextPage, isFetchingNextPage]);
+
   useEffect(() => {
+    console.log(postList.current);
     const listInnerElement: HTMLElement = postList.current!;
 
     if (listInnerElement) {
@@ -138,6 +151,19 @@ export const InfinityThreadsList = ({
       };
     }
   }, [onScroll]);
+
+  useEffect(() => {
+    console.log(postList2.current);
+    const listInnerElement2: HTMLElement = postList2.current!;
+
+    if (listInnerElement2) {
+      listInnerElement2.addEventListener("scroll", onScroll2);
+
+      return () => {
+        listInnerElement2.removeEventListener("scroll", onScroll2);
+      };
+    }
+  }, [onScroll2]);
 
   return data && data.pages[0].length >= 1 ? (
     <Fragment>
@@ -153,7 +179,7 @@ export const InfinityThreadsList = ({
           <ThreadSkeleton />
         )}
       </div>
-      <div className={style.threads} style={{ height, display: ((dataType === "latest") ? "none" : "") }} ref={postList}>
+      <div className={style.threads} style={{ height, display: ((dataType === "latest") ? "none" : "") }} ref={postList2}>
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
