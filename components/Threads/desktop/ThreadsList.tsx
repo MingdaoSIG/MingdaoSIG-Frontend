@@ -140,7 +140,6 @@ export const InfinityThreadsList = ({
   }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    console.log(postList.current);
     const listInnerElement: HTMLElement = postList.current!;
 
     if (listInnerElement) {
@@ -153,7 +152,6 @@ export const InfinityThreadsList = ({
   }, [onScroll]);
 
   useEffect(() => {
-    console.log(postList2.current);
     const listInnerElement2: HTMLElement = postList2.current!;
 
     if (listInnerElement2) {
