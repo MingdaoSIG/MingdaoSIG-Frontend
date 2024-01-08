@@ -12,7 +12,7 @@ const HeaderBar = () => {
   return (
     <div className={styles.nav}>
       <Image
-        src="/images/logo_mobile.png"
+        src="/images/logo_mobile_v2.svg"
         alt="Logo"
         width={80}
         height={80}
