@@ -34,7 +34,7 @@ export default function EditPostPage({ params }: { params: { postID: string } })
   }, [oldPostData, userData, isLoading, isLogin, route, params.postID]);
 
   useEffect(() => {
-    if (params.postID) {
+    if (params.postID && newPostData.content === oldPostData.content) {
       (async () => {
         const { postID } = params;
         const res = await getPostAPI(postID);
@@ -46,7 +46,7 @@ export default function EditPostPage({ params }: { params: { postID: string } })
         }
       })();
     }
-  }, [params, route, userData]);
+  }, [newPostData.content, oldPostData.content, params, route, userData]);
 
   useEffect(() => {
     if (oldPostData.content === newPostData.content) {
