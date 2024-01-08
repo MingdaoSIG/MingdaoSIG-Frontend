@@ -117,6 +117,8 @@ export const InfinityThreadsList = ({
   const postList = useRef(null);
   const postList2 = useRef(null);
 
+  console.log(postList.current);
+
   const onScroll = useCallback(() => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;

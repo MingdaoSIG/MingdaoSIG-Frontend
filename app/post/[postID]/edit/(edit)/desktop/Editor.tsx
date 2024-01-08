@@ -55,6 +55,7 @@ const MdEditorSync = ({ token, newPostData, setNewPostData }: Props) => {
   };
 
   function handleEditorChange(newContent: string, setNewPostData: Dispatch<SetStateAction<TThread>>) {
+
     setNewPostData((prev: TThread) => ({
       ...prev,
       content: newContent,
