@@ -6,7 +6,7 @@
 
 @import "./variables.scss";
 
-$bg-color-from: #eed27e;
+$bg-color-from: #ffe69b;
 $bg-color-to: #82d7ff;
 
 * {
@@ -28,9 +28,11 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(90% 90% at 0% 0%,
-      $bg-color-from 0%,
-      $bg-color-to 100%);
+  background: radial-gradient(
+    90% 90% at 0% 0%,
+    $bg-color-from 0%,
+    $bg-color-to 100%
+  );
 
   display: grid;
   grid-template-rows: 15% 70% 15%;
@@ -42,9 +44,11 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(90% 90% at 0% 0%,
-      $bg-color-from 0%,
-      $bg-color-to 100%);
+  background: radial-gradient(
+    90% 90% at 0% 0%,
+    $bg-color-from 0%,
+    $bg-color-to 100%
+  );
 }
 
 ::-webkit-scrollbar {
