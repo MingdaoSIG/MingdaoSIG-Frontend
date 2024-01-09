@@ -91,7 +91,7 @@ export default function MetaDataForm({
           </select>
           <label className={styles.inputLabel}>Cover:</label>
           <label htmlFor="file" className={styles.upload} style={{ cursor: (data?.cover) && "not-allowed" }}>
-            {(data?.cover !== "") ? "FIle Uploaded" : "No file uploaded"}
+            {(data?.cover !== "") ? "File uploaded" : "No file uploaded"}
           </label>
           <input id="file" type="file" className={styles.input} onChange={(e) => handleFileChange(e)} />
           {/* <label className={styles.inputLabel}>Hashtag:</label>
