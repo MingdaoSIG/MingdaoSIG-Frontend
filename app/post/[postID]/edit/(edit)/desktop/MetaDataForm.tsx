@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -60,7 +61,14 @@ export default function MetaDataForm({
         <p className={styles.title_name}>{oldPostData.title}</p>
         <label className={styles.label}>SIGs:</label>
         <p className={styles.title_name}>{sig?.name}</p>
-        <p>※ Metadata was locked.</p>
+        <label className={styles.label}>Cover:</label>
+        <img
+          src={oldPostData?.cover!}
+          alt="cover" hidden={(oldPostData.cover) ? false : true}
+          className={styles.cover}
+          style={{ objectFit: "cover" }}
+          sizes="100%"
+        />
       </div >
       <Buttons
         undoFunction={undoFunction}

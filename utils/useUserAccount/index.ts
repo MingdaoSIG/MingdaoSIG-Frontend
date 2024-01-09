@@ -31,8 +31,8 @@ export function useUserAccount() {
           setIsLoading(false);
         } catch (error) {
           console.error(error);
-          // setIsLogin(false);
-          // signOut();
+          setIsLogin(false);
+          signOut();
         }
       } else if (OAuth !== "loading") {
         setIsLogin(false);

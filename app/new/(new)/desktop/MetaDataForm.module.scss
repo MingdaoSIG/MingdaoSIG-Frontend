@@ -16,11 +16,50 @@
 }
 
 .input {
+  min-height: 2rem;
   height: 2rem;
   padding: 0 0.5rem;
   border-radius: 2rem;
-  margin-bottom: 0.5rem;
+  border-width: 0;
+  margin-bottom: 0.75rem;
   outline: none;
+  background-color: white;
+}
+
+.input[type="file"] {
+  display: none;
+}
+
+.upload{
+  height:  2rem;
+  display: inline-flex;
+  justify-content: left;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+
+.upload::before{
+  content: "Choose File";
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  padding: 0.25rem 0.75rem;
+  margin-right: 5px;
+  background: #5FCDF5;
+  border-radius: 2rem;
+  color: white;
+  user-select: none;
+}
+
+.cover {
+  max-height: calc(100% - 13.5rem);
+  width: 100%;
+  border-radius: 1.5rem ;
 }
 
 .unLoginMessage {
