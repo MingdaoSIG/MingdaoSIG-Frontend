@@ -45,7 +45,6 @@ export default function NewPostPage() {
     content: markdownGuide,
     cover: "",
   });
-  const [file, setFile] = useState<File | null>(null);
 
   // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
@@ -152,7 +151,6 @@ export default function NewPostPage() {
       Swal.fire("Error", "Something went wrong. Please try again later", "error");
       return;
     }
-
   }
 
   if (status === "loading") {
