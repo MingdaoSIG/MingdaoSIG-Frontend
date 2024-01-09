@@ -48,7 +48,7 @@ content: "Choose File";
 display: flex;
 justify-content: left;
 align-items: left;
-padding: 0.25rem 0.5rem;
+padding: 0.25rem 0.75rem;
 margin-right: 5px;
 background: #5FCDF5;
 border-radius: 2rem;
@@ -59,7 +59,7 @@ user-select: none;
 .cover {
   max-height: calc(100% - 13.5rem);
   width: 100%;
-  border-radius: 1.5rem;
+  border-radius: 1.5rem ;
 }
 
 .unLoginMessage {
