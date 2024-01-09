@@ -141,7 +141,7 @@ export default function NewPostPage() {
 
     try {
       const imageUploadAPIResponse = await imageUpload(file, token);
-      const res2 = await res.json();
+      const imageUploadReponseJson = await res.json();
       setPostData((prev: TPostAPI) => ({
         ...prev,
         cover: `${process.env.NEXT_PUBLIC_API_URL}/image/` + res2.id,
