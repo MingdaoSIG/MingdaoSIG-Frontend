@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 // Components
 import Buttons from "./Buttons";
@@ -21,6 +23,7 @@ interface Props {
   data: TPostAPI | undefined;
   handleFormEventFunction: Function;
   postButtonDisable: boolean;
+  handleFileChange: Function;
 }
 
 export default function MetaDataForm({
@@ -29,6 +32,7 @@ export default function MetaDataForm({
   handleFormEventFunction,
   data,
   postButtonDisable,
+  handleFileChange,
 }: Props) {
   const { status } = useSession();
 
@@ -43,6 +47,7 @@ export default function MetaDataForm({
       }
     })();
   }, []);
+
 
   if (status === "unauthenticated") {
     return (
@@ -84,9 +89,21 @@ export default function MetaDataForm({
               );
             })}
           </select>
-
+          <label className={styles.inputLabel}>Cover:</label>
+          <label htmlFor="file" className={styles.upload} style={{ cursor: (data?.cover) && "not-allowed" }}>
+            {(data?.cover !== "") ? "File uploaded" : "No file uploaded"}
+          </label>
+          <input id="file" type="file" className={styles.input} onChange={(e) => handleFileChange(e)} />
           {/* <label className={styles.inputLabel}>Hashtag:</label>
           <input name="hashtag" type="text" className={styles.input} disabled /> */}
+
+          <img
+            src={data?.cover!}
+            alt="cover" hidden={(data?.cover) ? false : true}
+            className={styles.cover}
+            style={{ objectFit: "cover" }}
+            sizes="100%"
+          />
         </div>
         <Buttons
           discardFunction={discardFunction}

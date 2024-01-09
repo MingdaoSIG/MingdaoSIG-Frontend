@@ -60,7 +60,7 @@ export async function postAPI(
       sig: sig,
       hashtag: hashtag,
       content: content,
-      cover: sigDefaultCover[sig],
+      cover: cover || sigDefaultCover[sig],
     }),
   });
   return await res.json();

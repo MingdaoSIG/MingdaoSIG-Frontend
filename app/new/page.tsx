@@ -27,13 +27,17 @@ import { postAPI } from "./(new)/apis/postAPI";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import assert from "assert";
+import { useUserAccount } from "@/utils/useUserAccount";
+
+// Modules
+import { imageUpload } from "@/modules/imageUploadAPI";
 
 export default function NewPostPage() {
   const { status } = useSession();
+  const { token } = useUserAccount();
   const route = useRouter();
   const isMobile = useIsMobile();
   // Form data states
-  const [token, setToken] = useState<string>("");
   const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
   const [data, setPostData] = useState<TPostAPI>({
     title: "",
@@ -54,7 +58,6 @@ export default function NewPostPage() {
   }
 
   useEffect(() => {
-    setToken(localStorage.getItem("token") || "");
     const storedContent = localStorage?.getItem("editorContent");
     if (storedContent) {
       setPostData(
@@ -83,10 +86,9 @@ export default function NewPostPage() {
     }
 
     try {
-      setToken(localStorage.getItem("token") || "");
       assert(data); // Check whether data was defined
       assert(token !== ""); // Check whether token was loaded
-      const res = await postAPI(data, token);
+      const res = await postAPI(data, token!);
       console.debug(res);
 
       if (res.status === 2000) {
@@ -121,6 +123,36 @@ export default function NewPostPage() {
     localStorage.removeItem("editorContent");
   }
 
+  async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const validImageTypes = ["image/webp", "image/jpeg", "image/png", "image/tiff"];
+
+    if (!e.target.files) return;
+
+    const file = e.target.files[0];
+    if (!validImageTypes.includes(file.type)) {
+      Swal.fire("File type not supported", "You can only upload  png,  jpg,  webp, tiff", "error");
+      return;
+    }
+
+    if (file.size > 5 * 1000 * 1000) {
+      Swal.fire("File too large", "You can only upload files under 5MB", "error");
+      return;
+    }
+
+    try {
+      const imageUploadAPIResponse = await imageUpload(file, token);
+      const imageUploadReponseJson = await res.json();
+      setPostData((prev: TPostAPI) => ({
+        ...prev,
+        cover: `${process.env.NEXT_PUBLIC_API_URL}/image/` + res2.id,
+      } as TPostAPI));
+    } catch (error) {
+      console.error("error: ", error);
+      Swal.fire("Error", "Something went wrong. Please try again later", "error");
+      return;
+    }
+  }
+
   if (status === "loading") {
     return (
       <div className={styles.loading}>
@@ -133,7 +165,7 @@ export default function NewPostPage() {
     <NewPostMobile
       data={data}
       setPostData={setPostData}
-      token={token}
+      token={token!}
       handleFormEventFunction={handleFormChange}
       discardFunction={discard}
       postFunction={NewPostAPI}
@@ -145,9 +177,10 @@ export default function NewPostPage() {
       setPostData={setPostData}
       discardFunction={discard}
       postFunction={NewPostAPI}
-      token={token}
+      token={token!}
       handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
+      handleFileChange={handleFileChange}
     ></NewPostDesktop>
   );
 }

@@ -19,6 +19,7 @@ interface Props {
   handleFormEventFunction: Function;
   postFunction: Function;
   postButtonDisable: boolean;
+  handleFileChange: Function;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -32,6 +33,7 @@ export default function NewPost({
   handleFormEventFunction,
   postFunction,
   postButtonDisable,
+  handleFileChange,
 }: Props) {
   return (
     <SplitBlock>
@@ -48,6 +50,7 @@ export default function NewPost({
         data={data}
         handleFormEventFunction={handleFormEventFunction}
         postButtonDisable={postButtonDisable}
+        handleFileChange={handleFileChange}
       />
     </SplitBlock>
   );

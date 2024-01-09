@@ -20,8 +20,18 @@
   height: 2rem;
   padding: 0 0.5rem;
   border-radius: 2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   outline: none;
+}
+
+.cover {
+  max-height: calc(100% - 10rem);
+  width: 100%;
+  border-radius: 1.5rem;
+  margin-bottom: 0.25rem;
+  &:hover {
+    cursor: not-allowed;
+  }
 }
 
 .title_name {
