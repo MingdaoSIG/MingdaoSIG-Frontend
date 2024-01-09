@@ -140,7 +140,7 @@ export default function NewPostPage() {
     }
 
     try {
-      const res = await imageUpload(file, token);
+      const imageUploadAPIResponse = await imageUpload(file, token);
       const res2 = await res.json();
       setPostData((prev: TPostAPI) => ({
         ...prev,
