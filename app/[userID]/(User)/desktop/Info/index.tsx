@@ -228,7 +228,7 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {
-              (dataType === "sig" && accountData?._id !== "652d60b842cdf6a660c2b778")
+              (dataType === "sig" && accountData?._id !== "652d60b842cdf6a660c2b778") // ID of announcement SIG
               &&
               [
                 <button
