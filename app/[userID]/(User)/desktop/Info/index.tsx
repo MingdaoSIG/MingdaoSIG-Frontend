@@ -17,7 +17,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 
 // APIs
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
-import { JoinSigAPI } from "@/app/[userID]/(User)/apis/JoinSigAPI";
+import { JoinSigAPI, ReadJoinSigAPI } from "@/app/[userID]/(User)/apis/JoinSigAPI";
 
 export default function Info({
   user: accountData,
@@ -34,6 +34,16 @@ export default function Info({
   const [isInput, setIsInput] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [newDescription, setNewDescription] = useState("");
+  const [joinRequest, setJoinRequest] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      if (dataType === "sig") {
+        const response = await ReadJoinSigAPI(accountData?._id!, token!);
+        setJoinRequest(response.data?.state);
+      }
+    })();
+  }, [accountData?._id, dataType, token]);
 
   function JumpOut(url: any) {
     Swal.fire({
@@ -225,8 +235,9 @@ export default function Info({
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
+                  disabled={joinRequest === "pending" || joinRequest === "accepted" || isLoading || joinRequest === ""}
                 >
-                  Join SIG
+                  {joinRequest === "pending" ? "Pending" : (joinRequest === "accepted" ? "Joined" : "Join SIG")}
                 </button>
               ]
             }
