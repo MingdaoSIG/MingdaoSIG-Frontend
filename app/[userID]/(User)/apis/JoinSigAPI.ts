@@ -18,3 +18,17 @@ export async function JoinSigAPI(
   });
   return await res.json();
 }
+
+export async function ReadJoinSigAPI(
+  sig: string,
+  token: string
+) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/${sig}/join`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  });
+  return await res.json();
+}
