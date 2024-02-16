@@ -35,7 +35,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const SIG = (child: any) => {
   return (
     <Link className={style.sig} href={`/@${child.customId}`}>
-      {maxMatch(child.name).map((name, index) => <p key={index}>{name}</p>)}
+      {maxMatch(child.name).map((name, index) => (
+        <p key={index}>{name}</p>
+      ))}
     </Link>
   );
 };
@@ -72,9 +74,7 @@ const Information = () => {
   const { data, isLoading } = useTopPost({ pageSize });
 
   if (isLoading) {
-    return (
-      <InformationSkeleton />
-    );
+    return <InformationSkeleton />;
   } else {
     return (
       <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
