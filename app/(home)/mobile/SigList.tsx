@@ -21,7 +21,7 @@ const SIG = (child: any) => {
   );
 };
 
-const Information = () => {
+const Information = ({ sigListToggle }: { sigListToggle: Function }) => {
   const [sigs, setSigs] = useState<any>([]);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Information = () => {
 
   return (
     <div className={style.popup}>
-      <div className={style.outer}></div>
+      <div className={style.outer} onClick={() => sigListToggle(false)}></div>
       <div className={style.sigs}>
         {sigs.map((item: any) => {
           if (item._id !== "652d60b842cdf6a660c2b778") {
