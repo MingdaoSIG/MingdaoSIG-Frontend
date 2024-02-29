@@ -6,6 +6,7 @@ import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
+import SigList from "./SigList";
 
 // Styles
 import styles from "./Threads.module.scss";
@@ -15,6 +16,8 @@ import { useAllPost } from "@/utils/usePost";
 import SwitchButton from "./SwitchButton";
 
 const ThreadsList = () => {
+  const [showList, setShowList] = useState(false);
+
   const [dataType, setDataType] = useState("top");
   const pageSize = 10;
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useAllPost({
@@ -32,6 +35,7 @@ const ThreadsList = () => {
 
   return (
     <div className={styles.threadWrap}>
+      <SigList />
       <SwitchButton callback={switchListType}></SwitchButton>
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />

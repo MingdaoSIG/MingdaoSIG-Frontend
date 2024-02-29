@@ -1,0 +1,14 @@
+@import "@/app/styles/variables.scss";
+
+.mobileProfile {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: 100%;
+
+  padding: calc($mobile-headerbar-height + $mobile-border-margin) $mobile-border-margin calc($mobile-toolbar-height + $mobile-border-margin) $mobile-border-margin;
+
+  position: relative;
+  overflow-y: auto;
+}

@@ -11,7 +11,7 @@
   "rules": {
     "semi": ["error", "always"],
     "indent": [
-      "error",
+      "warn",
       2,
       {
         "SwitchCase": 1
