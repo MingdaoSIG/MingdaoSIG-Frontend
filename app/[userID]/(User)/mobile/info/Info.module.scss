@@ -1,0 +1,194 @@
+@import "@/app/styles/variables.scss";
+
+$margin: 1rem;
+$content-padding: 1rem;
+$avatar-height: 5rem;
+$avatar-border: 0.3rem;
+$badge-height: 1.3rem;
+
+.info {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 125%;
+  max-height: 35dvh;
+  border-radius: $border-radius;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.banner {
+  position: relative;
+  flex-grow: 1;
+  background-position: center;
+  background-size: cover;
+
+  z-index: 1;
+}
+
+.avatarWrapper {
+  position: absolute;
+  bottom: calc(-1 * $avatar-height / 2);
+  padding-left: calc($margin - $avatar-border);
+  padding-right: $margin;
+  width: 100%;
+  user-select: none;
+
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.avatar {
+  border-radius: 9999px;
+  border: solid $avatar-border white;
+  background: white;
+  width: $avatar-height;
+  aspect-ratio: 1/1;
+  line-height: calc($avatar-height - 1rem);
+  text-align: center;
+}
+
+.badgeWrapper {
+  $badgeWrapper-padding: 0.3rem;
+  padding: $badgeWrapper-padding;
+
+  display: flex;
+  gap: $badgeWrapper-padding;
+
+  background-color: rgb(200 240 255 / 55%);
+  border-radius: 0.3rem;
+}
+
+.badge {
+  height: $badge-height;
+  width: $badge-height;
+  cursor: pointer;
+}
+
+.contentWrapper {
+  height: auto;
+  position: relative;
+  padding: calc($avatar-height / 1.8) $margin $margin $margin;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: white;
+}
+
+.content {
+  background-color: rgb(200 240 255 / 55%);
+  border-radius: calc($border-radius - 0.6rem);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: $content-padding $content-padding $content-padding $content-padding;
+}
+
+.contentHR {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: none;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nameWrapper {
+  display: flex;
+  width: 100%;
+}
+
+.name {
+  width: auto;
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+
+  >p {
+    color: #006180;
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+}
+
+.space {
+  display: flex;
+  flex: 1 1 0%;
+}
+
+.joinBtn {
+  width: auto;
+  height: 3rem;
+  display: flex;
+  flex: initial;
+  align-items: center;
+  justify-content: end;
+  background-color: #5fcdf5;
+  color: white;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  border-radius: 0.5rem;
+
+  &:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}
+
+.descriptionTitleWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.descriptionTitle {
+  color: black;
+  font-weight: bolder;
+  letter-spacing: 0;
+  font-size: small;
+  width: auto;
+  flex: initial;
+}
+
+.descriptionEditButton {
+  margin-left: 0.3rem;
+  cursor: pointer;
+  height: 1.2rem;
+  width: 1.2rem;
+}
+
+.description {
+  height: 100%;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: medium;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  cursor: auto;
+  resize: none;
+  border-radius: 0.3rem;
+
+  button {
+    color: #0070f3;
+    text-decoration: none;
+    overflow-x: hidden;
+  }
+
+  button:hover {
+    text-decoration: underline;
+  }
+}
+
+.description::-webkit-scrollbar {
+  width: 0.3rem;
+}
+
+.JoinSIGFormInput {
+  padding: 0 !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  margin-top: 0.1rem !important;
+}

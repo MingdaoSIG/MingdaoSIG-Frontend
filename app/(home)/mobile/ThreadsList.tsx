@@ -13,7 +13,7 @@ import styles from "./Threads.module.scss";
 
 // Interfaces
 import { useAllPost } from "@/utils/usePost";
-import SwitchButton from "./SwitchButton";
+import SwitchButton from "./ButtonTools";
 
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
@@ -35,8 +35,11 @@ const ThreadsList = () => {
 
   return (
     <div className={styles.threadWrap}>
-      <SigList />
-      <SwitchButton callback={switchListType}></SwitchButton>
+      {showList ? <SigList sigListToggle={setShowList} /> : <></>}
+      <SwitchButton
+        switchCallback={switchListType}
+        sigListCallback={setShowList}
+      ></SwitchButton>
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />
       ) : (

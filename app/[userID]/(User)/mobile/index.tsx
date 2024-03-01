@@ -1,32 +1,35 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
+import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
 
-import SplitBlock from "../(Layout)/splitBlock";
+// Interfaces
+import { User } from "@/interfaces/User";
+import { Sig } from "@/interfaces/Sig";
+
+// Styles
+import styles from "./mobile.module.scss";
+
+// Components
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/desktop/ThreadsList";
-import useIsMobile from "@/utils/useIsMobile";
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
-import Info from "./(User)/desktop/Info";
-import { useSigPost, useUserPost } from "@/utils/usePost";
+import Info from "./info";
 
-import { NotFound } from "@/components/NotFound";
+// apis
 import sigAPI from "@/modules/sigAPI";
 
-import ProfileMobile from "./(User)/mobile";
-
-export default function UserPage({ params }: { params: { userID: string } }) {
+// Hooks
+import { useSigPost, useUserPost } from "@/utils/usePost";
+export default function ProfileMobile({
+  params,
+}: {
+  params: { userID: string };
+}) {
   if (!decodeURIComponent(params.userID).startsWith("@")) {
     notFound();
   }
 
   const accountId = decodeURIComponent(params.userID);
-  const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(true);
   const [dataType, setDataType] = useState<"user" | "sig" | null>(null);
@@ -45,24 +48,8 @@ export default function UserPage({ params }: { params: { userID: string } }) {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (!isLoading && dataType === null) {
-    return (
-      <NotFound
-        content={{
-          message: "User or SIG Not Found",
-        }}
-        image={{
-          show: false,
-        }}
-      />
-    );
-  }
-
-  return isMobile ? (
-    <ProfileMobile params={params}></ProfileMobile>
-  ) : (
-    <SplitBlock>
+  return (
+    <div className={styles.mobileProfile}>
       {isLoading ? (
         <ThreadsListSkeleton repeat={3} height="auto" />
       ) : dataType === "user" ? (
@@ -76,7 +63,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
         dataType={dataType}
         setInfo={setData}
       />
-    </SplitBlock>
+    </div>
   );
 }
 
