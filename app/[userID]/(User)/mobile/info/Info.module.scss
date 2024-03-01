@@ -70,7 +70,7 @@ $badge-height: 1.3rem;
 .contentWrapper {
   height: auto;
   position: relative;
-  padding: calc($avatar-height / 2) $margin $margin $margin;
+  padding: calc($avatar-height / 1.8) $margin $margin $margin;
 
   display: flex;
   flex-direction: column;

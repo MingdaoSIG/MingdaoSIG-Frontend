@@ -15,7 +15,6 @@ import { Sig } from "@/interfaces/Sig";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 // APIs
-import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 import {
   JoinSigAPI,
   ReadJoinSigAPI,
