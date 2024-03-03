@@ -1,4 +1,4 @@
-import { TThread } from "@/interfaces/Thread";
+import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 const sigDefaultCover: { [key: string]: string } = {
   "651799ebfa1d45d97b139864":
@@ -45,30 +45,7 @@ const sigDefaultCover: { [key: string]: string } = {
     "https://sig-api.lazco.dev/image/653299040b891d1f6b5b4452", // 電機物理
 };
 
-export async function postPostAPI(
-  { title, sig, hashtag, content, cover }: TThread,
-  token: string
-) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      title: title,
-      sig: sig,
-      hashtag: hashtag,
-      content: content,
-      cover: sigDefaultCover[sig],
-    }),
-  });
-  return await res.json();
-}
-
-export async function getPostAPI(
-  postId: string,
-) {
+export async function getPostAPI(postId: string) {
   try {
     const res = await (
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${postId}`, {
@@ -82,7 +59,7 @@ export async function getPostAPI(
 }
 
 export async function editPostAPI(
-  { title, sig, hashtag, content, cover }: TThread,
+  { title, sig, hashtag, content, cover }: TPostAPI,
   postId: string,
   token: string
 ) {

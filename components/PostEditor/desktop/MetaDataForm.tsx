@@ -23,7 +23,7 @@ interface Props {
   data: TPostAPI | undefined;
   handleFormEventFunction: Function;
   postButtonDisable: boolean;
-  handleFileChange: Function;
+  handleFileChange?: Function;
 }
 
 export default function MetaDataForm({
@@ -100,7 +100,9 @@ export default function MetaDataForm({
             id="file"
             type="file"
             className={styles.input}
-            onChange={(e) => handleFileChange(e)}
+            onChange={(e) =>
+              handleFileChange ? handleFileChange(e) : () => {}
+            }
           />
           {/* <label className={styles.inputLabel}>Hashtag:</label>
           <input name="hashtag" type="text" className={styles.input} disabled /> */}

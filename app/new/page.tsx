@@ -18,8 +18,8 @@ import styles from "./page.module.scss";
 import { TPostAPI } from "../../components/PostEditor/types/postAPI";
 
 // Configs
-import { alertMessageConfigs } from "./(new)/config/alertMessages";
-import { markdownGuide } from "./(new)/config/markdownGuide";
+import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
+import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
 
 // APIs Request Function
 import { postAPI } from "./(new)/apis/postAPI";

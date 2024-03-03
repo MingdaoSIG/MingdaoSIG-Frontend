@@ -19,7 +19,7 @@ interface Props {
   handleFormEventFunction: Function;
   postFunction: Function;
   postButtonDisable: boolean;
-  handleFileChange: Function;
+  handleFileChange?: Function;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -38,11 +38,7 @@ export default function NewPost({
   return (
     <SplitBlock>
       <Suspense fallback={null}>
-        <Editor
-          setPostData={setPostData}
-          data={data}
-          token={token}
-        />
+        <Editor setPostData={setPostData} data={data} token={token} />
       </Suspense>
       <MetaDataForm
         discardFunction={discardFunction}
