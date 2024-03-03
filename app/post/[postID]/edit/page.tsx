@@ -7,6 +7,9 @@ import Swal from "sweetalert2";
 // Desktop Components
 import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 
+// Mobile Components
+import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
+
 // Types
 import { TThread } from "@/interfaces/Thread";
 
@@ -32,7 +35,7 @@ export default function EditPostPage({
 
   const [oldPostData, setOldPostData] = useState<TThread>({} as TThread);
   const [currentPostData, setCurrentPostData] = useState<TPostAPI>({
-    title: "",
+    title: oldPostData.title,
     sig: "",
     content: oldPostData.content,
     cover: "",
@@ -139,7 +142,15 @@ export default function EditPostPage({
   }
 
   return isMobile ? (
-    <></>
+    <PostEditorMobile
+      token={token!}
+      data={currentPostData}
+      setPostData={setCurrentPostData}
+      discardFunction={undo}
+      postFunction={sendEdit}
+      postButtonDisable={editButtonDisable}
+      handleFormEventFunction={handleFormChange}
+    ></PostEditorMobile>
   ) : (
     <PostEditorDesktop
       token={token!}
