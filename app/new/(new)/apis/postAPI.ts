@@ -1,4 +1,4 @@
-import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 const sigDefaultCover: { [key: string]: string } = {
   "651799ebfa1d45d97b139864":

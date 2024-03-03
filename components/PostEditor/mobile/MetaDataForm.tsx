@@ -17,10 +17,7 @@ interface Props {
   handleFormEventFunction: Function;
 }
 
-export default function MetaDataForm({
-  data,
-  handleFormEventFunction,
-}: Props) {
+export default function MetaDataForm({ data, handleFormEventFunction }: Props) {
   const { status } = useSession();
   const [sigs, setSigs] = useState<any[]>([]);
   useEffect(() => {
@@ -44,6 +41,7 @@ export default function MetaDataForm({
         type="text"
         name="title"
         placeholder="Title"
+        value={data?.title}
         onChange={(e) => handleFormEventFunction(e)}
         className={styles.input}
       />
