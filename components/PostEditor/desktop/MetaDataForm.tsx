@@ -12,7 +12,7 @@ import Buttons from "./Buttons";
 import styles from "./MetaDataForm.module.scss";
 
 // Types
-import { TPostAPI } from "@/app/new/(new)/types/postAPI";
+import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 // Modules
 import sigAPI from "@/modules/sigAPI";
@@ -47,7 +47,6 @@ export default function MetaDataForm({
       }
     })();
   }, []);
-
 
   if (status === "unauthenticated") {
     return (
@@ -90,16 +89,26 @@ export default function MetaDataForm({
             })}
           </select>
           <label className={styles.inputLabel}>Cover:</label>
-          <label htmlFor="file" className={styles.upload} style={{ cursor: (data?.cover) && "not-allowed" }}>
-            {(data?.cover !== "") ? "File uploaded" : "No file uploaded"}
+          <label
+            htmlFor="file"
+            className={styles.upload}
+            style={{ cursor: data?.cover && "not-allowed" }}
+          >
+            {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
           </label>
-          <input id="file" type="file" className={styles.input} onChange={(e) => handleFileChange(e)} />
+          <input
+            id="file"
+            type="file"
+            className={styles.input}
+            onChange={(e) => handleFileChange(e)}
+          />
           {/* <label className={styles.inputLabel}>Hashtag:</label>
           <input name="hashtag" type="text" className={styles.input} disabled /> */}
 
           <img
             src={data?.cover!}
-            alt="cover" hidden={(data?.cover) ? false : true}
+            alt="cover"
+            hidden={data?.cover ? false : true}
             className={styles.cover}
             style={{ objectFit: "cover" }}
             sizes="100%"
