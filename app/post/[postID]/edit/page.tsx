@@ -150,6 +150,7 @@ export default function EditPostPage({
       postFunction={sendEdit}
       postButtonDisable={editButtonDisable}
       handleFormEventFunction={handleFormChange}
+      isEdit
     ></PostEditorMobile>
   ) : (
     <PostEditorDesktop
@@ -160,6 +161,7 @@ export default function EditPostPage({
       postFunction={sendEdit}
       postButtonDisable={editButtonDisable}
       handleFormEventFunction={handleFormChange}
+      isEdit
     />
   );
 }

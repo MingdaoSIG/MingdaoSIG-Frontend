@@ -24,6 +24,7 @@ interface Props {
   handleFormEventFunction: Function;
   postButtonDisable: boolean;
   handleFileChange?: Function;
+  isEdit?: boolean;
 }
 
 export default function MetaDataForm({
@@ -33,6 +34,7 @@ export default function MetaDataForm({
   data,
   postButtonDisable,
   handleFileChange,
+  isEdit,
 }: Props) {
   const { status } = useSession();
 
@@ -120,6 +122,7 @@ export default function MetaDataForm({
           discardFunction={discardFunction}
           postFunction={postFunction}
           postButtonDisable={postButtonDisable}
+          isEdit={isEdit}
         />
       </>
     );

@@ -19,6 +19,7 @@ interface Props {
   handleFormEventFunction: Function;
   postFunction: Function;
   postButtonDisable: boolean;
+  isEdit?: boolean;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -32,6 +33,7 @@ export default function NewPostMobile({
   handleFormEventFunction,
   postFunction,
   postButtonDisable,
+  isEdit,
 }: Props) {
   return (
     <div className={styles.newPost}>
@@ -46,6 +48,7 @@ export default function NewPostMobile({
         discardFunction={discardFunction}
         postFunction={postFunction}
         postButtonDisable={postButtonDisable}
+        isEdit={isEdit}
       ></Button>
     </div>
   );

@@ -5,12 +5,14 @@ interface Props {
   discardFunction: Function;
   postFunction: Function;
   postButtonDisable: boolean;
+  isEdit?: boolean;
 }
 
 export default function Buttons({
   discardFunction,
   postFunction,
   postButtonDisable,
+  isEdit,
 }: Props) {
   return (
     <div className={styles.buttons}>
@@ -18,8 +20,14 @@ export default function Buttons({
         className={styles.buttonDiscard}
         onClick={(e) => discardFunction(e)}
       >
-        <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
-        DISCARD
+        {isEdit ? (
+          <>UNDO</>
+        ) : (
+          <>
+            <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
+            DISCARD
+          </>
+        )}
       </button>
       <button
         className={styles.buttonPost}
