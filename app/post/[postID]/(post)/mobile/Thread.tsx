@@ -2,7 +2,9 @@ import { MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import Image from "next/image";
 
 // Components
 import Replies from "./Replies";
@@ -19,6 +21,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 const Thread = ({ post }: { post: TThread }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
   const [like, setLike] = useState<any>(false);
+  const router = useRouter();
 
   function onLike() {
     if (!isLoading && !isLogin) {
@@ -38,6 +41,10 @@ const Thread = ({ post }: { post: TThread }) => {
     }
   }
 
+  function onEdit() {
+    router.push(`/post/${post._id}/edit`);
+  }
+
   async function PostLike() {
     try {
       const res = await fetch(
@@ -51,7 +58,7 @@ const Thread = ({ post }: { post: TThread }) => {
         }
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
   async function DeleteLike() {
@@ -67,7 +74,7 @@ const Thread = ({ post }: { post: TThread }) => {
         }
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -81,6 +88,15 @@ const Thread = ({ post }: { post: TThread }) => {
     <div className={styles.thread}>
       <div className={styles.threadTitle}>
         <h1>{post.title}</h1>
+        {isLogin && post.user === userData?._id && (
+          <div
+            key="edit"
+            className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+            onClick={onEdit}
+          >
+            <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
+          </div>
+        )}
         <div onClick={onLike}>
           <svg
             width="32"

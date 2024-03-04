@@ -1,4 +1,4 @@
-import { TAlertMessageConfigs } from "@/app/new/(new)/types/alertMessageConfigs";
+import { TAlertMessageConfigs } from "@/components/PostEditor/types/alertMessageConfigs";
 
 export const alertMessageConfigs: TAlertMessageConfigs = {
   titleError: {

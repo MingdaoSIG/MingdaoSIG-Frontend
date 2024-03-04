@@ -1,40 +1,69 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 // Desktop Components
-import NewPostDesktop from "@/app/post/[postID]/edit/(edit)/desktop/EditPost";
+import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
+
+// Mobile Components
+import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 
 // Types
 import { TThread } from "@/interfaces/Thread";
 
 // APIs Request Function
-import { getPostAPI, editPostAPI } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
+import {
+  getPostAPI,
+  editPostAPI,
+} from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
+import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
-
-export default function EditPostPage({ params }: { params: { postID: string } }) {
+export default function EditPostPage({
+  params,
+}: {
+  params: { postID: string };
+}) {
   const route = useRouter();
   const isMobile = useIsMobile();
   const { isLogin, token, userData, isLoading } = useUserAccount();
 
   const [oldPostData, setOldPostData] = useState<TThread>({} as TThread);
-  const [newPostData, setNewPostData] = useState<TThread>({} as TThread);
+  const [currentPostData, setCurrentPostData] = useState<TPostAPI>({
+    title: oldPostData.title,
+    sig: "",
+    content: oldPostData.content,
+    cover: "",
+  });
+
+  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+    setCurrentPostData(
+      (prev: TPostAPI | undefined) =>
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as TPostAPI)
+    );
+  }
+
   const [editButtonDisable, setEditButtonDisable] = useState<boolean>(false);
 
   useEffect(() => {
-    if ((!isLoading && !isLogin) || (!isLoading && oldPostData?.user !== userData?._id)) {
+    if (
+      (!isLoading && !isLogin) ||
+      (!isLoading && oldPostData?.user !== userData?._id)
+    ) {
       route.push(`/post/${params.postID}`);
     }
   }, [oldPostData, userData, isLoading, isLogin, route, params.postID]);
 
   useEffect(() => {
-    if (params.postID && newPostData.content === oldPostData.content) {
+    if (params.postID && currentPostData.content === oldPostData.content) {
       (async () => {
         const { postID } = params;
         const res = await getPostAPI(postID);
@@ -42,24 +71,34 @@ export default function EditPostPage({ params }: { params: { postID: string } })
           route.push("/");
         } else {
           setOldPostData(res.data);
-          setNewPostData(res.data);
+          setCurrentPostData({
+            title: res.data.title,
+            sig: res.data.sig,
+            content: res.data.content,
+            cover: res.data.cover,
+          });
         }
       })();
     }
-  }, [newPostData.content, oldPostData.content, params, route, userData]);
+  }, [currentPostData.content, oldPostData.content, params, route, userData]);
 
   useEffect(() => {
-    if (oldPostData.content === newPostData.content) {
+    if (oldPostData.content === currentPostData.content) {
       setEditButtonDisable(true);
-    } else if (newPostData.content === "") {
+    } else if (currentPostData.content === "") {
       setEditButtonDisable(true);
     } else {
       setEditButtonDisable(false);
     }
-  }, [newPostData, oldPostData]);
+  }, [currentPostData, oldPostData]);
 
   function undo() {
-    setNewPostData(oldPostData);
+    setCurrentPostData({
+      title: oldPostData.title,
+      sig: oldPostData.sig,
+      content: oldPostData.content,
+      cover: oldPostData.cover,
+    });
   }
 
   function sendEdit() {
@@ -73,7 +112,7 @@ export default function EditPostPage({ params }: { params: { postID: string } })
     }).then(async (result) => {
       if (result.isConfirmed) {
         const { postID } = params;
-        const res = await editPostAPI(newPostData, postID, token!);
+        const res = await editPostAPI(currentPostData, postID, token!);
         if (res.status === 2000) {
           Swal.fire({
             title: "Success Edit",
@@ -93,23 +132,36 @@ export default function EditPostPage({ params }: { params: { postID: string } })
     });
   }
 
-  if (isLoading || !oldPostData || !userData || oldPostData?.user !== userData?._id) {
-    return (
-      <div></div>
-    );
+  if (
+    isLoading ||
+    !oldPostData ||
+    !userData ||
+    oldPostData?.user !== userData?._id
+  ) {
+    return <div></div>;
   }
 
   return isMobile ? (
-    <></>
-  ) : (
-    <NewPostDesktop
+    <PostEditorMobile
       token={token!}
-      oldPostData={oldPostData}
-      newPostData={newPostData}
-      setNewPostData={setNewPostData}
-      undoFunction={undo}
-      sendEditFunction={sendEdit}
-      editButtonDisable={editButtonDisable}
+      data={currentPostData}
+      setPostData={setCurrentPostData}
+      discardFunction={undo}
+      postFunction={sendEdit}
+      postButtonDisable={editButtonDisable}
+      handleFormEventFunction={handleFormChange}
+      isEdit
+    ></PostEditorMobile>
+  ) : (
+    <PostEditorDesktop
+      token={token!}
+      data={currentPostData}
+      setPostData={setCurrentPostData}
+      discardFunction={undo}
+      postFunction={sendEdit}
+      postButtonDisable={editButtonDisable}
+      handleFormEventFunction={handleFormChange}
+      isEdit
     />
   );
 }

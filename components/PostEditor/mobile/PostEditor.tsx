@@ -1,12 +1,12 @@
-import { Suspense, Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
 
-// Style
+// styles
 import styles from "./NewPost.module.scss";
 
 // Components
-import SplitBlock from "@/app/(Layout)/splitBlock";
 import MetaDataForm from "./MetaDataForm";
+import Button from "./Buttons";
 
 // Types
 import { TPostAPI } from "../types/postAPI";
@@ -19,39 +19,37 @@ interface Props {
   handleFormEventFunction: Function;
   postFunction: Function;
   postButtonDisable: boolean;
-  handleFileChange: Function;
+  isEdit?: boolean;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
   ssr: false,
 });
-export default function NewPost({
-  data,
+export default function NewPostMobile({
   setPostData,
+  data,
   token,
   discardFunction,
   handleFormEventFunction,
   postFunction,
   postButtonDisable,
-  handleFileChange,
+  isEdit,
 }: Props) {
   return (
-    <SplitBlock>
-      <Suspense fallback={null}>
-        <Editor
-          setPostData={setPostData}
-          data={data}
-          token={token}
-        />
-      </Suspense>
+    <div className={styles.newPost}>
       <MetaDataForm
-        discardFunction={discardFunction}
-        postFunction={postFunction}
         data={data}
         handleFormEventFunction={handleFormEventFunction}
+      ></MetaDataForm>
+      <div className="h-full">
+        <Editor setPostData={setPostData} data={data} token={token}></Editor>
+      </div>
+      <Button
+        discardFunction={discardFunction}
+        postFunction={postFunction}
         postButtonDisable={postButtonDisable}
-        handleFileChange={handleFileChange}
-      />
-    </SplitBlock>
+        isEdit={isEdit}
+      ></Button>
+    </div>
   );
 }
