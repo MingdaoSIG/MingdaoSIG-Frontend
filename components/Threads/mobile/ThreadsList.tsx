@@ -1,7 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+  InfiniteData,
+} from "@tanstack/react-query";
 
 // Styles
 import style from "./ThreadsList.module.scss";
@@ -65,21 +75,6 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           {markdownToPlainText(threadData.content)}
         </p>
       </div>
-      <div
-        className={style.cover}
-        style={{
-          display: threadData.pinned ? "none" : "",
-        }}
-      >
-        <Image
-          src={threadData.cover}
-          alt="cover image"
-          style={{ objectFit: "cover" }}
-          priority
-          sizes="100%"
-          fill
-        ></Image>
-      </div>
     </Link>
   );
 };
@@ -105,12 +100,16 @@ export const InfinityThreadsList = ({
   data,
   height,
   fetchNextPage,
-  isFetchingNextPage
+  isFetchingNextPage,
 }: {
-  data: any,
-  height?: string,
-  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
-  isFetchingNextPage: boolean
+  data: any;
+  height?: string;
+  fetchNextPage: (
+    options?: FetchNextPageOptions | undefined
+  ) => Promise<
+    InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
+  >;
+  isFetchingNextPage: boolean;
 }) => {
   const postList = useRef(null);
 
@@ -146,9 +145,7 @@ export const InfinityThreadsList = ({
           })}
         </Fragment>
       ))}
-      {data && isFetchingNextPage && (
-        <ThreadSkeleton />
-      )}
+      {data && isFetchingNextPage && <ThreadSkeleton />}
     </div>
   ) : (
     <div className={style.noPost}>
@@ -157,10 +154,18 @@ export const InfinityThreadsList = ({
   );
 };
 
-export const ThreadsListSkeleton = ({ repeat, height }: { repeat: number, height?: string }) => {
+export const ThreadsListSkeleton = ({
+  repeat,
+  height,
+}: {
+  repeat: number;
+  height?: string;
+}) => {
   return (
     <div className={style.threads} style={{ height }}>
-      {[...Array(repeat)].map((_, index) => <ThreadSkeleton key={index} />)}
+      {[...Array(repeat)].map((_, index) => (
+        <ThreadSkeleton key={index} />
+      ))}
     </div>
   );
 };
