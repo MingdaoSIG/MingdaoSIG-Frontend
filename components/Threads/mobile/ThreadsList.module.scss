@@ -27,9 +27,6 @@
   border-radius: $border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .preview {
