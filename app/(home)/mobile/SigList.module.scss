@@ -27,7 +27,8 @@ $h2TitleHeight: 1.8rem;
 }
 
 .sigs {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
   width: 85dvw;
   height: 60dvh;
   padding: 1rem;
