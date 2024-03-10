@@ -18,7 +18,7 @@ import SwitchButton from "./ButtonTools";
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
 
-  const [dataType, setDataType] = useState("top");
+  const [dataType, setDataType] = useState("latest");
   const pageSize = 10;
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useAllPost({
     pageSize,
