@@ -18,7 +18,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
     <div className="flex flex-row justify-between items-center">
       <div
         className={
-          "flex bg-white bg-opacity-50 rounded-full relative select-none w-[12rem] my-3 "
+          "flex bg-white bg-opacity-50 rounded-full relative select-none w-[12rem] my-3"
         }
       >
         <div
@@ -28,7 +28,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
           className={leftStyle}
           onClick={() => {
             setButtonStyle("left-0");
-            switchCallback(0);
+            switchCallback(1);
             setLeftStyle(
               "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
             );
@@ -37,13 +37,13 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             );
           }}
         >
-          Top
+          Latest
         </button>
         <button
           className={rightStyle}
           onClick={() => {
             setButtonStyle("left-[6rem]");
-            switchCallback(1);
+            switchCallback(0);
             setLeftStyle(
               "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
             );
@@ -52,7 +52,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             );
           }}
         >
-          Latest
+          Top
         </button>
       </div>
       <button
