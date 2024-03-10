@@ -87,12 +87,28 @@
 
   margin-bottom: 0.3rem;
 
-  .user {
-    opacity: 60%;
+  .user_sig {
+    display: flex;
+
+    .user {
+      opacity: 60%;
+    }
+
+    &>span {
+      padding: 0 0.1rem;
+    }
   }
 
-  &>span {
-    padding: 0 0.1rem;
+  .statist {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 0.1rem;
+    opacity: 60%;
+
+    &>span {
+      padding: 0 0.1rem;
+    }
   }
 }
 

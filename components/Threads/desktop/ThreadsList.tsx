@@ -18,11 +18,23 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
 
+// API
+import { getPostCommentAPI } from "@/app/(home)/apis/getPostComment";
+
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: TThread }) => {
+  const [comments, setComments] = useState<any>([]);
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
+
+  useEffect(() => {
+    getPostCommentAPI(threadData).then((res) => {
+      if (res) {
+        setComments(res.data);
+      }
+    });
+  }, [threadData]);
 
   return (
     <Link
@@ -42,9 +54,24 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
                 : "flex",
           }}
         >
-          <p className={style.user}>{user?.name} </p>
-          <span>•</span>
-          <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
+          <div className={style.user_sig}>
+            <p className={style.user}>{user?.name}</p>
+            <span>•</span>
+            <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
+          </div>
+          <div className={style.statist}>
+            <p className={style.date}>
+              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
+            </p>
+            <span>•</span>
+            <p className={style.date}>
+              {threadData.likes} likes
+            </p>
+            <span>•</span>
+            <p className={style.date}>
+              {comments.length} replies
+            </p>
+          </div>
         </div>
 
         <div className={style.title_bar}>

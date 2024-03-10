@@ -1,3 +1,4 @@
+
 "use client";
 
 import style from "./Thread.module.scss";
