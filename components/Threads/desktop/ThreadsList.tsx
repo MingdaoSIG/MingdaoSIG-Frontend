@@ -63,12 +63,12 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
             <p className={style.date}>
               {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
             </p>
-            <span>•</span>
-            <p className={style.date}>
+            <span className={style.date}>•</span>
+            <p>
               {threadData.likes} likes
             </p>
             <span>•</span>
-            <p className={style.date}>
+            <p>
               {comments.length} replies
             </p>
           </div>
@@ -86,7 +86,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           className={style.previewContent}
           style={{
             WebkitLineClamp:
-              sig?._id === "652d60b842cdf6a660c2b778" ? "4" : "3",
+              sig?._id === "652d60b842cdf6a660c2b778" ? "4" : "2",
           }}
         >
           {markdownToPlainText(threadData.content)}
