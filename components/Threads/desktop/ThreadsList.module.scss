@@ -39,6 +39,7 @@
   box-sizing: border-box;
   height: var(--thread-height);
   overflow: hidden;
+  width: 100%;
 }
 
 .previewTitle {
@@ -68,6 +69,10 @@
   min-width: 25%;
   border-radius: $border-radius;
   overflow: hidden;
+
+  @media screen and (max-width: 7500px) {
+    display: none;
+  }
 }
 
 .more {
@@ -83,16 +88,40 @@
   font-size: 0.85rem;
   width: auto;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: initial;
 
   margin-bottom: 0.3rem;
+  flex-wrap: wrap;
 
-  .user {
-    opacity: 60%;
+  .user_sig {
+    display: flex;
+
+    .user {
+      opacity: 60%;
+    }
+
+    &>span {
+      padding: 0 0.1rem;
+    }
   }
 
-  &>span {
-    padding: 0 0.1rem;
+  .statist {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 0.1rem;
+    opacity: 60%;
+
+    .date {
+      @media screen and (max-width: 800px) {
+        display: none;
+      }
+    }
+
+    &>span {
+      padding: 0 0.1rem;
+    }
   }
 }
 

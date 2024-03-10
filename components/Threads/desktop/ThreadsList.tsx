@@ -18,11 +18,23 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
 
+// API
+import { getPostCommentAPI } from "@/app/(home)/apis/getPostComment";
+
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: TThread }) => {
+  const [comments, setComments] = useState<any>([]);
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
+
+  useEffect(() => {
+    getPostCommentAPI(threadData).then((res) => {
+      if (res) {
+        setComments(res.data);
+      }
+    });
+  }, [threadData]);
 
   return (
     <Link
@@ -42,9 +54,24 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
                 : "flex",
           }}
         >
-          <p className={style.user}>{user?.name} </p>
-          <span>•</span>
-          <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
+          <div className={style.user_sig}>
+            <p className={style.user}>{user?.name}</p>
+            <span>•</span>
+            <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
+          </div>
+          <div className={style.statist}>
+            <p className={style.date}>
+              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
+            </p>
+            <span className={style.date}>•</span>
+            <p>
+              {threadData.likes} likes
+            </p>
+            <span>•</span>
+            <p>
+              {comments.length} replies
+            </p>
+          </div>
         </div>
 
         <div className={style.title_bar}>
@@ -59,7 +86,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           className={style.previewContent}
           style={{
             WebkitLineClamp:
-              sig?._id === "652d60b842cdf6a660c2b778" ? "4" : "3",
+              sig?._id === "652d60b842cdf6a660c2b778" ? "4" : "2",
           }}
         >
           {markdownToPlainText(threadData.content)}
@@ -106,31 +133,17 @@ export const InfinityThreadsList = ({
   height,
   fetchNextPage,
   isFetchingNextPage,
-  dataType
 }: {
   data: any,
   height?: string,
   fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
   isFetchingNextPage: boolean,
-  dataType: string
 }) => {
   const postList = useRef(null);
-  const postList2 = useRef(null);
 
   const onScroll = useCallback(() => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
-
-      if (isNearBottom && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }
-  }, [fetchNextPage, isFetchingNextPage]);
-
-  const onScroll2 = useCallback(() => {
-    if (postList2.current) {
-      const { scrollTop, scrollHeight, clientHeight } = postList2.current;
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
       if (isNearBottom && !isFetchingNextPage) {
@@ -151,21 +164,9 @@ export const InfinityThreadsList = ({
     }
   }, [onScroll]);
 
-  useEffect(() => {
-    const listInnerElement2: HTMLElement = postList2.current!;
-
-    if (listInnerElement2) {
-      listInnerElement2.addEventListener("scroll", onScroll2);
-
-      return () => {
-        listInnerElement2.removeEventListener("scroll", onScroll2);
-      };
-    }
-  }, [onScroll2]);
-
   return data && data.pages[0].length >= 1 ? (
     <Fragment>
-      <div className={style.threads} style={{ height, display: ((dataType === "top") ? "none" : "") }} ref={postList}>
+      <div className={style.threads} style={{ height }} ref={postList}>
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
@@ -173,19 +174,7 @@ export const InfinityThreadsList = ({
             })}
           </Fragment>
         ))}
-        {data && isFetchingNextPage && (
-          <ThreadSkeleton />
-        )}
-      </div>
-      <div className={style.threads} style={{ height, display: ((dataType === "latest") ? "none" : "") }} ref={postList2}>
-        {data.pages.map((page: TThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              return <Thread threadData={item} key={index} />;
-            })}
-          </Fragment>
-        ))}
-        {data && isFetchingNextPage && (
+        {isFetchingNextPage && (
           <ThreadSkeleton />
         )}
       </div>

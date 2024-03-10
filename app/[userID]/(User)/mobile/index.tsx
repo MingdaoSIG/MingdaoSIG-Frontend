@@ -12,7 +12,7 @@ import styles from "./mobile.module.scss";
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
-} from "@/components/Threads/desktop/ThreadsList";
+} from "@/components/Threads/mobile/ThreadsList";
 import Info from "./info";
 
 // apis
@@ -82,7 +82,6 @@ function UserInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
-      dataType="top"
     />
   );
 }
@@ -102,7 +101,6 @@ function SIGInfinityThreadList({ id }: { id: string }) {
       height="auto"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
-      dataType="top"
     />
   );
 }
