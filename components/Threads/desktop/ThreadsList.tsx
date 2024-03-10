@@ -106,31 +106,17 @@ export const InfinityThreadsList = ({
   height,
   fetchNextPage,
   isFetchingNextPage,
-  dataType
 }: {
   data: any,
   height?: string,
   fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
   isFetchingNextPage: boolean,
-  dataType: string
 }) => {
   const postList = useRef(null);
-  const postList2 = useRef(null);
 
   const onScroll = useCallback(() => {
     if (postList.current) {
       const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
-
-      if (isNearBottom && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }
-  }, [fetchNextPage, isFetchingNextPage]);
-
-  const onScroll2 = useCallback(() => {
-    if (postList2.current) {
-      const { scrollTop, scrollHeight, clientHeight } = postList2.current;
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
       if (isNearBottom && !isFetchingNextPage) {
@@ -151,21 +137,9 @@ export const InfinityThreadsList = ({
     }
   }, [onScroll]);
 
-  useEffect(() => {
-    const listInnerElement2: HTMLElement = postList2.current!;
-
-    if (listInnerElement2) {
-      listInnerElement2.addEventListener("scroll", onScroll2);
-
-      return () => {
-        listInnerElement2.removeEventListener("scroll", onScroll2);
-      };
-    }
-  }, [onScroll2]);
-
   return data && data.pages[0].length >= 1 ? (
     <Fragment>
-      <div className={style.threads} style={{ height, display: ((dataType === "top") ? "none" : "") }} ref={postList}>
+      <div className={style.threads} style={{ height }} ref={postList}>
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
@@ -173,19 +147,7 @@ export const InfinityThreadsList = ({
             })}
           </Fragment>
         ))}
-        {data && isFetchingNextPage && (
-          <ThreadSkeleton />
-        )}
-      </div>
-      <div className={style.threads} style={{ height, display: ((dataType === "latest") ? "none" : "") }} ref={postList2}>
-        {data.pages.map((page: TThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              return <Thread threadData={item} key={index} />;
-            })}
-          </Fragment>
-        ))}
-        {data && isFetchingNextPage && (
+        {isFetchingNextPage && (
           <ThreadSkeleton />
         )}
       </div>

@@ -23,7 +23,7 @@ export const useAllPost = (query: PostQuery) => {
       const response = await fetch(`${API_URL}/post/list?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query.sort),
+        sort: (query.sort) ? String(query.sort) : "latest",
       }), {
         method: "GET",
       });
@@ -52,7 +52,7 @@ export const useUserPost = (userId: string, query: PostQuery) => {
       const response = await fetch(`${API_URL}/post/list/user/${userId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query.sort),
+        sort: (query.sort) ? String(query.sort) : "latest",
       }), {
         method: "GET",
       });
@@ -81,7 +81,7 @@ export const useSigPost = (sigId: string, query: PostQuery) => {
       const response = await fetch(`${API_URL}/post/list/sig/${sigId}?` + new URLSearchParams({
         skip: String(Number(pageParam) * query.pageSize),
         limit: String(query.pageSize),
-        sort: String(query.sort),
+        sort: (query.sort) ? String(query.sort) : "latest",
       }), {
         method: "GET",
       });
