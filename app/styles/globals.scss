@@ -6,8 +6,8 @@
 
 @import "./variables.scss";
 
-$bg-color-from: #ffe69b;
-$bg-color-to: #82d7ff;
+$bg-color-from: #FFD967;
+$bg-color-to: #5193E0;
 
 * {
   outline: none;
@@ -28,11 +28,8 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(
-    90% 90% at 0% 0%,
-    $bg-color-from 0%,
-    $bg-color-to 100%
-  );
+  background: rgb(255, 217, 103);
+  background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
 
   display: grid;
   grid-template-rows: 15% 70% 15%;
@@ -44,11 +41,9 @@ body {
 
   width: 100dvw;
   height: 100dvh;
-  background: radial-gradient(
-    90% 90% at 0% 0%,
-    $bg-color-from 0%,
-    $bg-color-to 100%
-  );
+  background: rgb(255, 217, 103);
+  background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
+
 }
 
 ::-webkit-scrollbar {
