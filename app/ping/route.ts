@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { readFileSync } from "fs";
 
 import ReadableTime from "@/modules/api/ReadableTime";
@@ -6,7 +6,6 @@ import GetOnlineAppVersion from "@/modules/api/GetOnlineAppVersion";
 
 
 export async function GET() {
-
   const packageJSON = JSON.parse(readFileSync("./package.json").toString());
   const { mainVersion, developmentVersion } = await GetOnlineAppVersion();
 
@@ -29,3 +28,10 @@ export async function GET() {
 
   return NextResponse.json(data);
 }
+
+export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export const revalidate = false;
+export const fetchCache = "auto";
+export const runtime = "nodejs";
+export const preferredRegion = "auto";
