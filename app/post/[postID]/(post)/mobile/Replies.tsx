@@ -54,7 +54,6 @@ export default function Replies({ post }: { post: TThread }) {
 
   async function handleCloseExtended(e: any) {
     if (!(e.target instanceof HTMLInputElement || e.target.id === "send")) {
-      console.log(e.target);
       setExtended(false);
     }
   }
@@ -117,6 +116,7 @@ export default function Replies({ post }: { post: TThread }) {
                 first={true}
               />
               :
+              (!extended && comments.length === 0) &&
               <p className="mx-auto font-medium text-[1rem] my-auto">No comments</p>
           }
         </div>
