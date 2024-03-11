@@ -36,7 +36,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
   const { token } = useUserAccount();
-  const { showAlert, showLoading, hideLoading, isLoading } = useAlert();
+  const { showAlert } = useAlert();
 
 
 
