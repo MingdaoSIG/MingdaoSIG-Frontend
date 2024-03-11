@@ -8,6 +8,13 @@ export const alertMessageConfigs: TAlertMessageConfigs = {
     confirmButtonText: "OK",
     confirmButtonColor: "#ff0000",
   },
+  noLogin: {
+    title: "Error!",
+    text: "Please login to comment!",
+    icon: "error",
+    confirmButtonText: "OK",
+    confirmButtonColor: "#ff0000",
+  },
   commentSuccess: {
     title: "Success!",
     text: "Comment success!",

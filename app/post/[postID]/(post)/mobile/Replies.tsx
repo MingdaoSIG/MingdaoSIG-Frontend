@@ -8,15 +8,10 @@ import styles from "./Replies.module.scss";
 // Interfaces
 import { TThread } from "@/interfaces/Thread";
 
-// Types
-import { TComments } from "@/interfaces/comments";
-
 // API Request Function
-import ClickExtend from "@/app/(Layout)/mobile/ClickExtend";
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
 // Utils
-import { useFetch } from "@/utils/useFetch";
 import useAlert from "@/utils/useAlert";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -31,13 +26,13 @@ export default function Replies({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
   const [comments, setComments] = useState<any>([]);
-  const extendedState = useState(false);
-  const [extended] = extendedState;
-  const { token } = useUserAccount();
+  const [extended, setExtended] = useState(false);
+  const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
 
   async function handleCommandSubmit(e: any) {
     e.preventDefault();
+    if (!isLogin) return showAlert(alertMessageConfigs.noLogin);
     const reply = "";
     const content = typeComments;
     if (typeComments.length === 0)
@@ -57,6 +52,13 @@ export default function Replies({ post }: { post: TThread }) {
     }
   }
 
+  async function handleCloseExtended(e: any) {
+    if (!(e.target instanceof HTMLInputElement || e.target.id === "send")) {
+      console.log(e.target);
+      setExtended(false);
+    }
+  }
+
   useEffect(() => {
     GetCommentAPI(post).then((res) => {
       setComments(res.data);
@@ -64,16 +66,16 @@ export default function Replies({ post }: { post: TThread }) {
   }, [post]);
 
   return (
-    <ClickExtend
-      heightBefore={"6.5rem"}
-      heightAfter={"65dvh"}
-      extendedState={extendedState}
-      customStyles={{
-        backgroundColor: extended ? "white" : "",
-      }}
-    >
+    <div
+      className={styles.wrapper + (extended ? " h-[65dvh] !bg-white" : " h-[6.5rem]")}
+      onClick={() => {
+        if (!extended) setExtended(true);
+      }}>
       <div
         className={styles.repliesWrapper + (extended ? " h-full" : " h-auto")}
+        onClick={(e: any) => {
+          if (extended) handleCloseExtended(e);
+        }}
       >
         <div className={styles.title}>
           <h4>Comments</h4>
@@ -101,18 +103,21 @@ export default function Replies({ post }: { post: TThread }) {
             }
           })}
           {
-            (comments.length > 0 && !extended) &&
-            <Reply
-              customId={comments[0].user.customId}
-              avatar={comments[0].user.avatar}
-              content={comments[0].content}
-              createdAt={
-                new Date(comments[0].createdAt || "")
-                  .toLocaleString("zh-TW")
-                  .split(" ")[0]
-              }
-              overflow={false}
-            />
+            (comments.length > 0 && !extended) ?
+              <Reply
+                customId={comments[0].user.customId}
+                avatar={comments[0].user.avatar}
+                content={comments[0].content}
+                createdAt={
+                  new Date(comments[0].createdAt || "")
+                    .toLocaleString("zh-TW")
+                    .split(" ")[0]
+                }
+                overflow={false}
+                first={true}
+              />
+              :
+              <p className="mx-auto font-medium text-[1rem] my-auto">No comments</p>
           }
         </div>
         <form
@@ -137,14 +142,15 @@ export default function Replies({ post }: { post: TThread }) {
               alt="send"
               className={
                 "mt-auto h-full " +
-                (typeText
+                (typeText && isLogin
                   ? "opacity-100 cursor-pointer"
                   : "opacity-30 cursor-not-allowed")
               }
+              id="send"
             />
           </button>
         </form>
       </div>
-    </ClickExtend >
+    </div>
   );
 }

@@ -35,7 +35,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const [comments, setComments] = useState<any>([]);
   const [user, setUser] = useState<any>(null);
   const [sig, setSig] = useState<any>(null);
-  const { token } = useUserAccount();
+  const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
 
 
@@ -44,7 +44,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
 
   async function handleCommandSubmit(e: any) {
     e.preventDefault();
-    console.log(token);
+    if (!isLogin) return showAlert(alertMessageConfigs.noLogin);
     const reply = "";
     const content = typeComments;
     if (typeComments.length === 0)
@@ -136,7 +136,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-[40px] overflow-y- overflow-x-hidden h-[calc(100%-42px-64px)]">
+      <div className="mt-5 flex flex-col gap-[10px] overflow-y- overflow-x-hidden h-[calc(100%-42px-64px)]">
         {comments.length !== 0 ? (
           comments.map((comment: any) => {
             return (
@@ -182,7 +182,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             alt="send"
             className={
               "mt-auto h-full " +
-              (typeText
+              (typeText && isLogin
                 ? "opacity-100 cursor-pointer"
                 : "opacity-30 cursor-not-allowed")
             }
