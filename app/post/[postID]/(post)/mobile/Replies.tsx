@@ -8,10 +8,14 @@ import styles from "./Replies.module.scss";
 // Interfaces
 import { TThread } from "@/interfaces/Thread";
 
+// Types
+import { TComments } from "@/interfaces/comments";
+
 // API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
 
 // Utils
+import { useFetch } from "@/utils/useFetch";
 import useAlert from "@/utils/useAlert";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -29,6 +33,8 @@ export default function Replies({ post }: { post: TThread }) {
   const [extended, setExtended] = useState(false);
   const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
+  const { data: replyData, isLoading: replyIsLoading } =
+    useFetch<Array<TComments>>(`/comment/list/post/${post._id}`);
 
   async function handleCommandSubmit(e: any) {
     e.preventDefault();
@@ -59,11 +65,10 @@ export default function Replies({ post }: { post: TThread }) {
   }
 
   useEffect(() => {
-    GetCommentAPI(post).then((res) => {
-      if (res.data.length === 0) return;
-      setComments(res.data);
-    });
-  }, [post]);
+    if (replyData?.length! > 0) {
+      setComments(replyData);
+    }
+  }, [replyData, replyIsLoading]);
 
   return (
     <div
@@ -117,8 +122,11 @@ export default function Replies({ post }: { post: TThread }) {
                 first={true}
               />
               :
-              (!extended && comments.length === 0) &&
-              <p className="mx-auto font-medium text-[1rem] my-auto">No comments</p>
+              (!extended && comments.length === 0 && !replyIsLoading) ?
+                <p className="mx-auto font-medium text-[1rem] my-auto">No comments</p>
+                :
+                (!extended && replyIsLoading) &&
+                <p className="mx-auto font-medium text-[1rem] my-auto">Loading...</p>
           }
         </div>
         <form
