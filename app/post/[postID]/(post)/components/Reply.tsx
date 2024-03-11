@@ -12,12 +12,14 @@ export default function Reply({
   content,
   createdAt,
   overflow,
+  first,
 }: {
   customId: any;
   avatar: any;
   content: any;
   createdAt: any;
   overflow: boolean;
+  first?: boolean;
 }) {
   const route = useRouter();
 
@@ -49,7 +51,13 @@ export default function Reply({
         <div className="info flex gap-2 items-center">
           <div
             className={"font-semibold text-[12px] " + styles.name}
-            onClick={() => route.push(`/@${customId}`)}
+            onClick={
+              () => {
+                if (!first) {
+                  route.push(`/@${customId}`);
+                }
+              }
+            }
           >
             @{customId}
           </div>
@@ -59,14 +67,18 @@ export default function Reply({
         </div>
         <p
           className={
-            "text-md-dark-green font-extralight text-[12px] " +
+            "text-md-dark-green font-extralight text-[12px] break-words " +
             (overflow ? "w-[65dvw] truncate " : " ") + styles.content
           }
         >
           <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-            <button key={key} onClick={() => {
-              JumpOut(decoratedHref);
-            }}>
+            <button className={" break-words "} key={key} onClick={
+              () => {
+                if (!first) {
+                  JumpOut(decoratedHref);
+                }
+              }
+            }>
               {decoratedText}
             </button>
           )}>{content}</Linkify>
