@@ -60,6 +60,7 @@ export default function Replies({ post }: { post: TThread }) {
 
   useEffect(() => {
     GetCommentAPI(post).then((res) => {
+      if (res.data.length === 0) return;
       setComments(res.data);
     });
   }, [post]);
