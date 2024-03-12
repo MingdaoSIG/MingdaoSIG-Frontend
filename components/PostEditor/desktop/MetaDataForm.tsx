@@ -103,8 +103,9 @@ export default function MetaDataForm({
             type="file"
             className={styles.input}
             onChange={(e) =>
-              handleFileChange ? handleFileChange(e) : () => {}
+              handleFileChange ? handleFileChange(e) : () => { }
             }
+            disabled={data?.cover ? true : false}
           />
           {/* <label className={styles.inputLabel}>Hashtag:</label>
           <input name="hashtag" type="text" className={styles.input} disabled /> */}
