@@ -50,7 +50,7 @@ export default function Reply({
       <div className={styles.content}>
         <div className="info flex gap-2 items-center">
           <div
-            className={"font-semibold text-[12px] " + styles.name}
+            className={"font-semibold text-[12px] " + ((!first) && styles.name)}
             onClick={
               () => {
                 if (!first) {
@@ -58,6 +58,7 @@ export default function Reply({
                 }
               }
             }
+            id="customId"
           >
             @{customId}
           </div>
