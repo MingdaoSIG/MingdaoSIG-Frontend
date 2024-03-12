@@ -53,7 +53,7 @@ export default function Replies({ post }: { post: TThread }) {
   }
 
   async function handleCloseExtended(e: any) {
-    if (!(e.target instanceof HTMLInputElement || e.target.id === "send")) {
+    if (!(e.target instanceof HTMLInputElement || e.target.id === "send" || e.target.id === "customId")) {
       setExtended(false);
     }
   }
