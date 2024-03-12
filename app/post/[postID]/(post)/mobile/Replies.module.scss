@@ -1,5 +1,20 @@
 @import "@/app/styles/variables.scss";
 
+.wrapper {
+  --padding: 0.5rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  width: 100%;
+
+  padding: var(--padding);
+
+  position: absolute;
+  bottom: calc(-1 * ($mobile-border-margin + $mobile-replies-min-height));
+  transition: 0.5s;
+
+  z-index: 999;
+}
+
 .replies {
   --padding: 0.5rem;
   background-color: $panel-background-color;
@@ -25,8 +40,7 @@
 }
 
 .repliesWrapper {
-  overflow-y: auto;
-  height: 100%;
+  overflow: hidden;
   border-radius: calc($border-radius - var(--padding));
 }
 
@@ -36,19 +50,23 @@
 
 .title {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.2rem;
+  height: 1.5rem;
 }
 
 .firstReply {
-  margin-top: 1rem;
-  overflow-y: auto;
+  // overflow: hidden;
+  // margin-top: 1rem;
+  // overflow-y: auto;
+  overflow: hidden;
 }
 
 .replyList {
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 1rem;
-
+  margin-top: 0.5rem;
   transition: 0.3s;
+  height: calc(100% - 6rem);
 }

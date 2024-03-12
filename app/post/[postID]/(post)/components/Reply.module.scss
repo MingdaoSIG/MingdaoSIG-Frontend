@@ -1,8 +1,12 @@
 .reply {
+  width: 100%;
+  max-width: 100%;
   display: flex;
   align-items: flex-start;
   gap: 10px;
   cursor: default;
+  word-break: break-all;
+  text-align: left;
 
   img {
     margin-bottom: 0 !important;
@@ -20,13 +24,20 @@
   cursor: pointer;
 }
 
-.content{
+.content {
+  max-width: 100%;
   cursor: auto;
+  padding-right: 0.1rem;
+
+  p {
+    max-width: 100%;
+  }
 
   button {
     color: #0070f3;
     text-decoration: none;
     overflow-x: hidden;
+    text-align: left;
   }
 
   button:hover {
