@@ -43,8 +43,9 @@ export default function EditPostPage({
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setCurrentPostData(
-      (prev: TPostAPI | undefined) =>
-        ({
+      (
+        prev: TPostAPI | undefined) => (
+        {
           ...prev,
           [e.target.name]: e.target.value,
         } as TPostAPI)
@@ -134,9 +135,8 @@ export default function EditPostPage({
 
   if (
     isLoading ||
-    !oldPostData ||
     !userData ||
-    oldPostData?.user !== userData?._id
+    oldPostData.user !== userData?._id
   ) {
     return <div></div>;
   }
