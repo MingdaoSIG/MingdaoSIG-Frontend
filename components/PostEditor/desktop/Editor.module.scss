@@ -6,7 +6,7 @@ $editor-background: white;
   height: 65dvh;
   padding: 0.25rem 0;
   background-color: $editor-background;
-  border-radius: 30px;
+  border-radius: $border-radius;
   overflow: hidden;
   animation: 1s ease-out 0s 1 fadeIn;
 }
@@ -17,9 +17,9 @@ $editor-background: white;
 }
 
 .editor>div>div:nth-child(1) {
-  padding: 0 15px;
+  padding: 0 1rem;
 }
 
 .editor>div>div:nth-child(6) {
-  padding: 0 15px;
+  padding: 0 1rem;
 }

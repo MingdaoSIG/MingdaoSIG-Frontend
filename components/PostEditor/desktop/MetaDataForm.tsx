@@ -62,62 +62,79 @@ export default function MetaDataForm({
     return (
       <>
         <div className={styles.meta}>
-          <label className={styles.inputLabel}>Title:</label>
-          <input
-            type="text"
-            name="title"
-            className={styles.input}
-            value={data?.title}
-            onChange={(e) => handleFormEventFunction(e)}
-          />
-
-          <label className={styles.inputLabel}>SIGs:</label>
-          <select
-            name="sig"
-            className={styles.input}
-            value={data?.sig}
-            onChange={(e) => {
-              handleFormEventFunction(e);
-            }}
-          >
-            <option value="">請選擇 SIG</option>
-            {sigs?.map((sig) => {
-              if (sig._id === "652d60b842cdf6a660c2b778") return;
-              return (
-                <option value={sig._id} key={sig._id}>
-                  {sig.name}
-                </option>
-              );
-            })}
-          </select>
-          <label className={styles.inputLabel}>Cover:</label>
-          <label
-            htmlFor="file"
-            className={styles.upload}
-            style={{ cursor: data?.cover && "not-allowed" }}
-          >
-            {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
-          </label>
-          <input
-            id="file"
-            type="file"
-            className={styles.input}
-            onChange={(e) =>
-              handleFileChange ? handleFileChange(e) : () => { }
-            }
-            disabled={data?.cover ? true : false}
-          />
-          {/* <label className={styles.inputLabel}>Hashtag:</label>
-          <input name="hashtag" type="text" className={styles.input} disabled /> */}
-
-          <img
-            src={data?.cover!}
-            alt="cover"
-            hidden={data?.cover ? false : true}
+          <div>
+            <label className={styles.inputLabel}>Title:</label>
+            <input
+              type="text"
+              name="title"
+              className={styles.input}
+              value={data?.title}
+              onChange={(e) => handleFormEventFunction(e)}
+            />
+          </div>
+          <div>
+            <label className={styles.inputLabel}>SIGs:</label>
+            <div
+              className={styles.inputSelect}
+            >
+              <select
+                name="sig"
+                value={data?.sig}
+                onChange={(e) => {
+                  handleFormEventFunction(e);
+                }}
+              >
+                <option value="">請選擇 SIG</option>
+                {sigs?.map((sig) => {
+                  if (sig._id === "652d60b842cdf6a660c2b778") return;
+                  return (
+                    <option value={sig._id} key={sig._id}>
+                      {sig.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className={styles.inputLabel}>Cover:</label>
+            <label
+              htmlFor="file"
+              className={styles.upload}
+              style={{ cursor: data?.cover && "not-allowed" }}
+            >
+              {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
+            </label>
+            <input
+              id="file"
+              type="file"
+              className={styles.input}
+              onChange={(e) =>
+                handleFileChange ? handleFileChange(e) : () => { }
+              }
+              disabled={data?.cover ? true : false}
+            />
+          </div>
+          <div
             className={styles.cover}
-            style={{ objectFit: "cover" }}
-            sizes="100%"
-          />
+            style={{ backgroundImage: `url(${data?.cover})` }}
+          >
+            {/* <Image
+              className={styles.cover}
+              src={data?.cover!}
+              width={0}
+              height={0}
+              sizes="100vw"
+              alt="cover"
+            /> */}
+            {/* <img
+              src={data?.cover!}
+              alt="cover"
+              hidden={data?.cover ? false : true}
+              className={styles.cover}
+            // sizes="100%"
+            /> */}
+          </div>
         </div>
         <Buttons
           discardFunction={discardFunction}

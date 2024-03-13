@@ -138,7 +138,7 @@ $h2TitleHeight: 1.8rem;
   height: 1.3rem;
   overflow: hidden;
   border-radius: 0.3rem;
-  margin-left: 5px;
+  margin-left: 0.3rem;
 
 
   &::after {
@@ -176,9 +176,9 @@ $h2TitleHeight: 1.8rem;
   width: 5rem;
   height: 5rem;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: 0.7rem;
   background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
-  padding: 24px 6px;
+  padding: 1.5rem 0.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -202,13 +202,13 @@ $h2TitleHeight: 1.8rem;
   }
   
   p {
-    width: 88px;
+    width: 5.5rem;
     color: #fff;
     text-align: center;
-    font-size: 16px;
+    font-size: 1rem;
     font-style: normal;
     line-height: 164.523%;
-    letter-spacing: 3.76px;
+    letter-spacing: 0.2rem;
     text-align: center;
     position: relative;
   }
