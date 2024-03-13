@@ -51,17 +51,32 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
             <p className={style.date}>
               {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
             </p>
-            <span className={style.date}>•</span>
-            <p>
-              {threadData.likes} likes
-            </p>
-            <span>•</span>
-            <p>
-              {threadData.comments} replies
-            </p>
+            <div className={style.likes}>
+              <Image
+                src="/icons/likes.svg"
+                alt="likes"
+                width={16}
+                height={16}
+                className="my-auto"
+              />
+              <p>
+                {threadData.likes}
+              </p>
+            </div>
+            <div className={style.comments}>
+              <Image
+                src="/icons/comments.svg"
+                alt="comments"
+                width={16}
+                height={16}
+                className="my-auto"
+              />
+              <p>
+                {threadData.comments}
+              </p>
+            </div>
           </div>
         </div>
-
         <div className={style.title_bar}>
           <h1 className={style.previewTitle}>
             {threadData.sig === announcementSigId && "🔔 公告 - "}
