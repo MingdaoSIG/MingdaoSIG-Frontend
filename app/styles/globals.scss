@@ -13,6 +13,27 @@ $bg-color-to: #5193E0;
   outline: none;
 }
 
+@media (orientation: landscape) and (max-height: 640px) {
+  .noTurnBack {
+    display: none;
+  }
+
+  .turnBack {
+    width: 100dvw;
+    height: 100dvh;
+    background: rgb(255, 217, 103);
+    background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
+    display: flex;
+
+    .text {
+      margin: auto;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: black;
+    }
+  }
+}
+
 body {
   max-width: 100dvw;
   max-height: 100dvh;

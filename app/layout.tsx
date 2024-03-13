@@ -19,8 +19,6 @@ export default function RootLayout({
   title: string;
   children: React.ReactNode;
 }) {
-
-
   return (
     <>
       <Script
@@ -30,11 +28,16 @@ export default function RootLayout({
       ></Script>
       <html lang="en">
         <body>
-          <Providers>
-            <Device>
-              {children}
-            </Device>
-          </Providers>
+          <div className="noTurnBack">
+            <Providers>
+              <Device>
+                {children}
+              </Device>
+            </Providers>
+          </div>
+          <div className="turnBack">
+            <h1 className="text"> Please rotate your device to portrait mode</h1>
+          </div>
         </body>
       </html>
     </>
@@ -53,7 +56,8 @@ export const metadata: Metadata = {
   publisher: "Mingdao High School",
   viewport: {
     width: "device-width",
-    initialScale: 1
+    initialScale: 1,
+    userScalable: false,
   },
   icons: [{ rel: "icon", url: "https://sig.mingdao.edu.tw/favicon.ico" }, { rel: "apple-touch-icon", url: "https://sig.mingdao.edu.tw/favicon.ico" }],
   openGraph: {
