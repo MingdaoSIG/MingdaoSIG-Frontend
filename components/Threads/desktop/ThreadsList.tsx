@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
 
 // Styles
@@ -18,23 +18,11 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
 
-// API
-import { getPostCommentAPI } from "@/app/(home)/apis/getPostComment";
-
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: TThread }) => {
-  const [comments, setComments] = useState<any>([]);
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
-
-  useEffect(() => {
-    getPostCommentAPI(threadData).then((res) => {
-      if (res) {
-        setComments(res.data);
-      }
-    });
-  }, [threadData]);
 
   return (
     <Link
@@ -69,7 +57,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
             </p>
             <span>•</span>
             <p>
-              {comments.length} replies
+              {threadData.comments} replies
             </p>
           </div>
         </div>

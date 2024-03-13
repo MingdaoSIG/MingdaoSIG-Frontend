@@ -1,11 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import React, {
   Fragment,
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import {
   FetchNextPageOptions,
@@ -27,22 +25,12 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import { getPostCommentAPI } from "@/app/(home)/apis/getPostComment";
 
 const announcementSigId = "652d60b842cdf6a660c2b778";
 
 const Thread = ({ threadData }: { threadData: TThread }) => {
-  const [comments, setComments] = useState<any>([]);
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
-
-  useEffect(() => {
-    getPostCommentAPI(threadData).then((res) => {
-      if (res) {
-        setComments(res.data);
-      }
-    });
-  }, [threadData]);
 
   return (
     <Link
@@ -62,7 +50,6 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
                 : "flex",
           }}
         >
-          {" "}
           <div className={style.user_sig}>
             <p className={style.user}>{user?.name}</p>
             <span>•</span>
@@ -79,7 +66,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
             <span className={style.date}>•</span>
             <p>{threadData.likes} likes</p>
             <span>•</span>
-            <p>{comments.length} replies</p>
+            <p>{threadData.comments} replies</p>
           </div>
         </div>
 
@@ -171,7 +158,7 @@ export const InfinityThreadsList = ({
           })}
         </Fragment>
       ))}
-      {data && isFetchingNextPage && <ThreadSkeleton />}
+      {isFetchingNextPage && <ThreadSkeleton />}
     </div>
   ) : (
     <div className={style.noPost}>

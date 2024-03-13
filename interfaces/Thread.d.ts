@@ -8,6 +8,7 @@ export type TThread =  {
   hashtag?: string[];
   like?: string[];
   likes?: number;
+  comments?: number;
   priority?: number;
   pinned?: boolean;
   removed?: boolean;
