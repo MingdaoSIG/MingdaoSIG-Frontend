@@ -74,7 +74,7 @@ export async function editPostAPI(
       sig: sig,
       hashtag: hashtag,
       content: content,
-      cover: sigDefaultCover[sig],
+      cover: cover || sigDefaultCover[sig],
     }),
   });
   return await res.json();
