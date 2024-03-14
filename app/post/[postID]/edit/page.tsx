@@ -24,6 +24,9 @@ import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
+// Modules
+import { imageUpload } from "@/modules/imageUploadAPI";
+
 export default function EditPostPage({
   params,
 }: {
@@ -36,9 +39,9 @@ export default function EditPostPage({
   const [oldPostData, setOldPostData] = useState<TThread>({} as TThread);
   const [currentPostData, setCurrentPostData] = useState<TPostAPI>({
     title: oldPostData.title,
-    sig: "",
+    sig: oldPostData.sig,
     content: oldPostData.content,
-    cover: "",
+    cover: oldPostData.cover,
   });
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
@@ -72,21 +75,29 @@ export default function EditPostPage({
           route.push("/");
         } else {
           setOldPostData(res.data);
-          setCurrentPostData({
-            title: res.data.title,
-            sig: res.data.sig,
-            content: res.data.content,
-            cover: res.data.cover,
-          });
         }
       })();
     }
   }, [currentPostData.content, oldPostData.content, params, route, userData]);
 
   useEffect(() => {
-    if (oldPostData.content === currentPostData.content) {
+    if (!currentPostData.title || !currentPostData.content || !currentPostData.sig || !currentPostData.cover) {
+      setCurrentPostData((prev: TPostAPI) => (
+        {
+          ...prev,
+          title: oldPostData.title,
+          sig: oldPostData.sig,
+          content: oldPostData.content,
+          cover: oldPostData.cover,
+        } as TPostAPI)
+      );
+    }
+  }, [currentPostData.content, currentPostData.cover, currentPostData.sig, currentPostData.title, oldPostData.content, oldPostData.cover, oldPostData.sig, oldPostData.title]);
+
+  useEffect(() => {
+    if (oldPostData.content === currentPostData.content && oldPostData.title === currentPostData.title && oldPostData.sig === currentPostData.sig && oldPostData.cover === currentPostData.cover) {
       setEditButtonDisable(true);
-    } else if (currentPostData.content === "") {
+    } else if (currentPostData.content === "" || currentPostData.title === "" || currentPostData.sig === "") {
       setEditButtonDisable(true);
     } else {
       setEditButtonDisable(false);
@@ -133,6 +144,57 @@ export default function EditPostPage({
     });
   }
 
+  async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const validImageTypes = [
+      "image/webp",
+      "image/jpeg",
+      "image/png",
+      "image/tiff",
+    ];
+
+    if (!e.target.files) return;
+
+    const file = e.target.files[0];
+    if (!validImageTypes.includes(file.type)) {
+      Swal.fire(
+        "File type not supported",
+        "You can only upload  png,  jpg,  webp, tiff",
+        "error"
+      );
+      return;
+    }
+
+    if (file.size > 5 * 1000 * 1000) {
+      Swal.fire(
+        "File too large",
+        "You can only upload files under 5MB",
+        "error"
+      );
+      return;
+    }
+
+    try {
+      const imageUploadAPIResponse = await imageUpload(file, token);
+      const imageUploadResponseJson = await imageUploadAPIResponse.json();
+      setCurrentPostData((prev: TPostAPI) => (
+        {
+          ...prev,
+          cover:
+            `${process.env.NEXT_PUBLIC_API_URL}/image/` +
+            imageUploadResponseJson.id,
+        } as TPostAPI)
+      );
+    } catch (error) {
+      console.error("error: ", error);
+      Swal.fire(
+        "Error",
+        "Something went wrong. Please try again later",
+        "error"
+      );
+      return;
+    }
+  }
+
   if (
     isLoading ||
     !userData ||
@@ -161,6 +223,7 @@ export default function EditPostPage({
       postFunction={sendEdit}
       postButtonDisable={editButtonDisable}
       handleFormEventFunction={handleFormChange}
+      handleFileChange={handleFileChange}
       isEdit
     />
   );

@@ -101,7 +101,7 @@ export default function MetaDataForm({
             <label
               htmlFor="file"
               className={styles.upload}
-              style={{ cursor: data?.cover && "not-allowed" }}
+            // style={{ cursor: data?.cover && "not-allowed" }}
             >
               {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
             </label>
@@ -112,7 +112,7 @@ export default function MetaDataForm({
               onChange={(e) =>
                 handleFileChange ? handleFileChange(e) : () => { }
               }
-              disabled={data?.cover ? true : false}
+            // disabled={data?.cover ? true : false}
             />
           </div>
           <div
