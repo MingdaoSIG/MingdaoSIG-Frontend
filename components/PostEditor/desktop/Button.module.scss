@@ -11,11 +11,11 @@ $button-post-text: #5fcdf5;
 .buttons {
   height: $button-block-height;
   border-radius: $button-block-height;
-  margin-top: 0.75rem;
+  margin-top: $gap;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: $gap;
 }
 
 .button {
