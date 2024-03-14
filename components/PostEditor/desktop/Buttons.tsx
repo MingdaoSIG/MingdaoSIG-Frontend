@@ -21,7 +21,10 @@ export default function Buttons({
         onClick={(e) => discardFunction(e)}
       >
         {isEdit ? (
-          <>UNDO</>
+          <>
+            <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
+            UNDO
+          </>
         ) : (
           <>
             <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />

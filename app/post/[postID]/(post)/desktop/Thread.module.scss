@@ -1,6 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .thread {
+  height: 100%;
   animation: 1s ease-out 0s 1 fadeIn;
 }
 
@@ -8,11 +9,9 @@
   background: $panel-background-color !important;
   border-radius: $border-radius;
 
-  margin-top: 20px;
+  margin-top: $gap;
   padding: 1rem;
-  min-height: calc(65dvh - 80px) !important;
-  max-height: calc(65dvh - 80px) !important;
-  height: calc(65dvh - 80px) !important;
+  height: calc(100% - 3.8rem - $gap) !important;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -26,8 +25,8 @@
 
 .threadTitle {
   background: $panel-background-color;
-  border-radius: 20px;
-  height: 60px;
+  border-radius: $border-radius;
+  height: 3.8rem;
 
   padding-left: 1rem;
   padding-right: 1rem;
@@ -40,15 +39,13 @@
   h1 {
     width: 100%;
     color: #003f47;
-    font-size: 35px;
+    font-size: 2.1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: normal;
+    line-height: 2.1rem;
     white-space: nowrap;
-    overflow: auto;
-
-    //overflow: hidden;
-    // text-overflow: ellipsis;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   h1::-webkit-scrollbar {
@@ -75,7 +72,7 @@
 
 .author {
   display: flex;
-  gap: 10px;
+  gap: 0.6rem;
 }
 
 .name {
@@ -96,12 +93,11 @@
 .time {
   color: #006180;
   font-family: Inria Sans;
-  font-size: 12px;
+  font-size: 0.8rem;
   font-style: normal;
   font-weight: 300;
   line-height: normal;
-  letter-spacing: 0.6px;
-  margin-left: 2px;
+  letter-spacing: 0.04rem;
 }
 
 .content {
@@ -111,14 +107,14 @@
 }
 
 .customThread {
-  height: calc(65dvh - 80px) !important;
+  height: 100% !important;
   width: 95dvw !important;
   margin: auto;
-  margin-top: 20px;
+  margin-top: $gap;
 }
 
 .customTitle {
-  height: 60px;
+  height: 3.8rem;
   width: 95dvw;
   margin: auto;
 }

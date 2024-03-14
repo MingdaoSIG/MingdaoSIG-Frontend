@@ -4,11 +4,11 @@
   width: 90dvw;
   height: 65dvh;
   max-height: 65dvh;
-  border-radius: 30px;
+  border-radius: 1.8rem;
   margin: auto;
 
   display: grid;
-  grid-gap: 20px;
+  grid-gap: 1.2rem;
   grid-template-columns: repeat(10, 1fr);
   grid-auto-rows: 1fr;
 
@@ -41,7 +41,7 @@
 
 .second {
   // background: $panel-background-color;
-  // border-radius: 30px;
+  // border-radius: 1.8rem;
 
   // max-height: 65dvh;
   height: 100%;
