@@ -21,7 +21,7 @@ export const useAllPost = (query: PostQuery) => {
     queryKey: ["allPost", query],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`${API_URL}/post/list?` + new URLSearchParams({
-        skip: String(Number(pageParam) * query.pageSize),
+        skip: String((Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) * query.pageSize),
         limit: String(query.pageSize),
         sort: (query.sort) ? String(query.sort) : "latest",
       }), {
