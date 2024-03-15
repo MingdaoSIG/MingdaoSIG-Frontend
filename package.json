@@ -1,6 +1,6 @@
 {
   "name": "mdsig-frontend",
-  "version": "2.13.13",
+  "version": "2.13.14",
   "private": true,
   "scripts": {
     "dev": "next dev",
