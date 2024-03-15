@@ -131,7 +131,7 @@ const Thread = ({ post }: { post: TThread }) => {
   if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
       <>
-        <div className="py-[1rem]">
+        <div className="py-[1rem] max-h-[60dvh]">
           <div className={style.threadTitle + " " + style.customTitle}>
             <h1 className="my-auto">{post.title}</h1>
           </div>
