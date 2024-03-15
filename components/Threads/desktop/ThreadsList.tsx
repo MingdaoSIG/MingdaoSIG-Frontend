@@ -145,6 +145,7 @@ export const InfinityThreadsList = ({
   announcementData?: any
 }) => {
   const postList = useRef(null);
+  console.log(data, fetchNextPage, isFetchingNextPage);
 
   const onScroll = useCallback(() => {
     if (postList.current) {
