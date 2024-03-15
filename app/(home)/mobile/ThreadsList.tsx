@@ -12,7 +12,7 @@ import SigList from "./SigList";
 import styles from "./Threads.module.scss";
 
 // Interfaces
-import { useAllPost } from "@/utils/usePost";
+import { useAllPost, useSigPost } from "@/utils/usePost";
 import SwitchButton from "./ButtonTools";
 
 const ThreadsList = () => {
@@ -24,6 +24,7 @@ const ThreadsList = () => {
     pageSize,
     sort: dataType,
   });
+  const { data: announcementData } = useSigPost("652d60b842cdf6a660c2b778", { pageSize: 1, sort: "latest" });
 
   async function switchListType(index: number) {
     if (index === 0) {
@@ -48,6 +49,7 @@ const ThreadsList = () => {
           height="auto"
           fetchNextPage={fetchNextPage}
           isFetchingNextPage={isFetchingNextPage}
+          announcementData={announcementData}
         />
       )}
     </div>
