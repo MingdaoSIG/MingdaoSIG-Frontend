@@ -36,7 +36,7 @@ export default function RootLayout({
             </Providers>
           </div>
           <div className="turnBack">
-            <h1 className="text"> Please rotate your device to portrait mode</h1>
+            <h1 className="text">Please rotate your device or maximize the window</h1>
           </div>
         </body>
       </html>
