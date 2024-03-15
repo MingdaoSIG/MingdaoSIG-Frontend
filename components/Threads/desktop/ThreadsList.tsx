@@ -128,6 +128,7 @@ export const InfinityThreadsList = ({
   isFetchingNextPage: boolean,
 }) => {
   const postList = useRef(null);
+  console.log(data, fetchNextPage, isFetchingNextPage);
 
   const onScroll = useCallback(() => {
     if (postList.current) {
