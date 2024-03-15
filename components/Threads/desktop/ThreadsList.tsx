@@ -17,19 +17,19 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+import { announcementSigId, announcementStayTime } from "../configs/announcement";
 
-const announcementSigId = "652d60b842cdf6a660c2b778";
-
-const Thread = ({ threadData }: { threadData: TThread }) => {
+export const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
+  const isAnnouncement = sig._id === announcementSigId;
 
   return (
     <Link
       href={`/post/${threadData._id}`}
       className={style.thread + "  cursor-pointer select-none "}
       style={{
-        backgroundColor: threadData.pinned ? "white" : "",
+        backgroundColor: isAnnouncement ? "white" : "",
       }}
     >
       <div className={style.preview}>
@@ -37,7 +37,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           className={style.info}
           style={{
             display:
-              !user || !sig || sig?._id === "652d60b842cdf6a660c2b778"
+              (!user || isAnnouncement)
                 ? "none"
                 : "flex",
           }}
@@ -45,7 +45,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           <div className={style.user_sig}>
             <p className={style.user}>{user?.name}</p>
             <span>•</span>
-            <p style={{ color: sigDefaultColors[sig?._id!] }}>{sig?.name}</p>
+            <p style={{ color: sigDefaultColors[sig._id!] }}>{sig.name}</p>
           </div>
           <div className={style.statist}>
             <p className={style.date}>
@@ -79,9 +79,9 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
         </div>
         <div className={style.title_bar}>
           <h1 className={style.previewTitle}>
-            {threadData.sig === announcementSigId && "🔔 公告 - "}
+            {isAnnouncement && "🔔 公告 - "}
             {threadData.title}
-            {threadData.pinned && " • 已置頂"}
+            {/* {threadData.pinned && " • 已置頂"} */}
           </h1>
         </div>
 
@@ -89,7 +89,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           className={style.previewContent}
           style={{
             WebkitLineClamp:
-              sig?._id === "652d60b842cdf6a660c2b778" ? "4" : "2",
+              isAnnouncement ? "4" : "2",
           }}
         >
           {markdownToPlainText(threadData.content)}
@@ -98,7 +98,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
       <div
         className={style.cover}
         style={{
-          display: threadData.pinned ? "none" : "",
+          display: isAnnouncement ? "none" : "",
         }}
       >
         <Image
@@ -136,11 +136,13 @@ export const InfinityThreadsList = ({
   height,
   fetchNextPage,
   isFetchingNextPage,
+  announcementData,
 }: {
   data: any,
   height?: string,
   fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
   isFetchingNextPage: boolean,
+  announcementData?: any
 }) => {
   const postList = useRef(null);
 
@@ -166,14 +168,30 @@ export const InfinityThreadsList = ({
       };
     }
   }, [onScroll]);
-
   return data && data.pages[0].length >= 1 ? (
     <Fragment>
       <div className={style.threads} style={{ height }} ref={postList}>
+        {
+          (announcementData && announcementData.pages[0].length >= 1) && (
+            announcementData.pages.map((page: TThread[], index: number) => {
+              const currentDate = new Date().getTime();
+              const postDate = new Date(page[0].createdAt!).getTime();
+              const diffDays = Math.floor((currentDate - postDate) / (1000 * 60 * 60 * 24));
+
+              if (diffDays < announcementStayTime) {
+                return <Thread threadData={page[0]} key={index} />;
+              }
+            })
+          )
+        }
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
-              return <Thread threadData={item} key={index} />;
+              const sig = item.sig as Sig;
+              const isAnnouncement = sig._id === announcementSigId;
+              if (!isAnnouncement) {
+                return <Thread threadData={item} key={index} />;
+              }
             })}
           </Fragment>
         ))}

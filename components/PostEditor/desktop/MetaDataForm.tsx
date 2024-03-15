@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 
 // Components
 import Buttons from "./Buttons";
@@ -16,6 +15,15 @@ import { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 // Modules
 import sigAPI from "@/modules/sigAPI";
+
+// Utils
+import { useUserAccount } from "@/utils/useUserAccount";
+
+// Types
+import { Sig } from "@/interfaces/Sig";
+
+// Config
+import { announcementSigId } from "../config/announcement";
 
 interface Props {
   discardFunction: Function;
@@ -37,13 +45,27 @@ export default function MetaDataForm({
   isEdit,
 }: Props) {
   const { status } = useSession();
+  const { userData } = useUserAccount();
 
   const [sigs, setSigs] = useState<any[]>([]);
+  const [announcementSigData, setAnnouncementSigData] = useState<Sig>();
+
   useEffect(() => {
     (async () => {
       try {
         const response = await sigAPI.getSigList();
         setSigs(response);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await sigAPI.getSigData(announcementSigId);
+        setAnnouncementSigData(response);
       } catch (error: any) {
         console.error(error.message);
       }
@@ -86,13 +108,17 @@ export default function MetaDataForm({
               >
                 <option value="">請選擇 SIG</option>
                 {sigs?.map((sig) => {
-                  if (sig._id === "652d60b842cdf6a660c2b778") return;
                   return (
                     <option value={sig._id} key={sig._id}>
                       {sig.name}
                     </option>
                   );
                 })}
+                {
+                  (userData && announcementSigData && announcementSigData?.moderator?.includes(userData._id!)) && (
+                    <option value="652d60b842cdf6a660c2b778">公告</option>
+                  )
+                }
               </select>
             </div>
           </div>
