@@ -145,6 +145,7 @@ export const InfinityThreadsList = ({
   announcementData?: any
 }) => {
   const postList = useRef(null);
+ 
 
   const onScroll = useCallback(() => {
     if (postList.current) {
