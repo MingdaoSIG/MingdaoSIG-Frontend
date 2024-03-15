@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 // Layout
 import SplitBlock from "@/app/(Layout)/splitBlock";
@@ -17,6 +16,7 @@ import { TThread } from "@/interfaces/Thread";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+
 
 import { NotFound } from "@/components/NotFound";
 
@@ -67,7 +67,9 @@ const Post = ({ params }: { params: { postID: string } }) => {
       />
     );
   } else if (post?.sig === "652d60b842cdf6a660c2b778") {
-    return <ThreadDesktop post={post!} />;
+    return (
+      <ThreadDesktop post={post!} />
+    );
   } else {
     return isMobile ? (
       <>
