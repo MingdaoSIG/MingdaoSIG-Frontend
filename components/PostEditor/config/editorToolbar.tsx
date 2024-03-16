@@ -28,7 +28,8 @@ export const toolbars: ToolbarNames[] = [
   "-",
   "pageFullscreen",
   // "fullscreen",
+  "preview",
   "htmlPreview",
-  "catalog",
+  // "catalog",
   // "github"
 ];
