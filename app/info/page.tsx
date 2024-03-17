@@ -10,5 +10,5 @@ import Desktop from "./(Info)/desktop";
 export default function Info() {
   const isMobile = useIsMobile();
 
-  return isMobile ? <Mobile /> : <Desktop />
+  return isMobile ? <Mobile /> : <Desktop />;
 }
