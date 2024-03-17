@@ -38,9 +38,9 @@ const ToolBar = () => {
       clickable: !isLoading && isLogin
     },
     {
-      name: "hash",
-      route: "/hashtag",
-      icon: "/icons/hash.svg",
+      name: "info",
+      route: "/info",
+      icon: "/icons/info.svg",
       clickable: !isLoading && true
     },
   ];
@@ -97,7 +97,7 @@ function pathToSelected(path: string) {
   const homeRegex = /^\/$/gm;
   const userRegex = /^\/@(?!$)(?=.{1,25}$)[a-z0-9_]+(\.[a-z0-9_]+)*$/gm;
   const newRegex = /^\/new$/gm;
-  const hashRegex = /^\/hashtag$/gm;
+  const infoRegex = /^\/info$/gm;
 
   if (homeRegex.test(path)) {
     return 0;
@@ -105,7 +105,7 @@ function pathToSelected(path: string) {
     return 1;
   } else if (newRegex.test(path)) {
     return 2;
-  } else if (hashRegex.test(path)) {
+  } else if (infoRegex.test(path)) {
     return 3;
   }
 
