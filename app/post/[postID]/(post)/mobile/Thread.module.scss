@@ -16,6 +16,10 @@
   flex-direction: column;
 }
 
+.threadAnnouncement {
+  margin: calc($mobile-border-margin + $mobile-headerbar-height) $mobile-border-margin calc($mobile-border-margin + $mobile-toolbar-height + $mobile-border-margin ) $mobile-border-margin;
+}
+
 .threadTitle {
   width: 100%;
 
