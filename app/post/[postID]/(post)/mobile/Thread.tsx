@@ -18,7 +18,7 @@ import { TThread } from "@/interfaces/Thread";
 // Utils
 import { useUserAccount } from "@/utils/useUserAccount";
 
-const Thread = ({ post }: { post: TThread }) => {
+const Thread = ({ post, isAnnouncement }: { post: TThread, isAnnouncement?: boolean }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
   const [like, setLike] = useState<any>(false);
   const router = useRouter();
@@ -83,6 +83,22 @@ const Thread = ({ post }: { post: TThread }) => {
       post.like?.includes(userData?._id!) ? setLike(true) : setLike(false);
     }
   }, [isLogin, post.like, userData?._id]);
+
+  if (isAnnouncement) {
+    return (
+      <div className={styles.thread + " " + styles.threadAnnouncement}>
+        <div className={styles.threadTitle}>
+          <h1>{post.title}</h1>
+        </div>
+        <MdPreview
+          modelValue={post.content}
+          className={styles.threadContent}
+          previewTheme="github"
+        />
+      </div>
+
+    );
+  }
 
   return (
     <div className={styles.thread}>
