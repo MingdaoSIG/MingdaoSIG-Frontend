@@ -67,7 +67,11 @@ const Post = ({ params }: { params: { postID: string } }) => {
       />
     );
   } else if (post?.sig === "652d60b842cdf6a660c2b778") {
-    return (
+    return isMobile ? (
+      <>
+        <ThreadMobile post={post!} isAnnouncement />
+      </>
+    ) : (
       <ThreadDesktop post={post!} />
     );
   } else {
