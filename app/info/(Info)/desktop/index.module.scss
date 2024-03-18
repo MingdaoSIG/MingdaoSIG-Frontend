@@ -1,24 +1,14 @@
 @import "@/app/styles/variables.scss";
 
-.mobileView {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: start;
-  width: 100dvw;
-  height: calc(100% - 3.8rem - $gap) !important;
-  position: relative;
-  overflow-y: auto;
-}
-
 .wrapper {
-  padding-top: 1rem;
-  height: calc(100% - 3.5rem);
+  padding-top: 1.2rem;
+  height: calc(100% - 6.5rem);
 }
 
 .title {
   background: $panel-background-color;
   border-radius: $border-radius;
-  height: 3rem;
+  height: 3.8rem;
 
   padding-left: 1rem;
   padding-right: 1rem;
@@ -34,10 +24,10 @@
   h1 {
     width: 100%;
     color: #003f47;
-    font-size: 1.75rem;
+    font-size: 2.1rem;
     font-style: normal;
     font-weight: 500;
-    line-height: 1.75rem;
+    line-height: 2.1rem;
     white-space: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
@@ -53,7 +43,7 @@
   background: $panel-background-color !important;
   border-radius: $border-radius;
 
-  margin-top: 0.5em;
+  margin-top: 1.2em;
   margin-left: auto;
   margin-right: auto;
   padding: 1rem;

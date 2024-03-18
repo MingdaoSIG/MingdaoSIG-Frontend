@@ -3,7 +3,7 @@ import styles from "./index.module.scss";
 
 export default function Desktop() {
   return (
-    <div className={styles.mobileView}>
+    <div>
       <div className={styles.wrapper}>
         <div className={styles.title}>
           <h1>MDSIG 平台資訊</h1>
