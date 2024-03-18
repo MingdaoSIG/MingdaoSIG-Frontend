@@ -1,0 +1,72 @@
+@import "@/app/styles/variables.scss";
+
+.mobileView {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: calc(100% - 3.8rem - $gap) !important;
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper {
+  padding-top: 1rem;
+  height: calc(100% - 3.5rem);
+}
+
+.title {
+  background: $panel-background-color;
+  border-radius: $border-radius;
+  height: 3rem;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  width: 95dvw !important;
+  margin-left: auto;
+  margin-right: auto;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  h1 {
+    width: 100%;
+    color: #003f47;
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.75rem;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  h1::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+.content {
+  background: $panel-background-color !important;
+  border-radius: $border-radius;
+
+  margin-top: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  height: 100% !important;
+  width: 95dvw !important;
+}
+
+.content>div {
+  padding: 0 !important;
+  padding-right: 1rem !important;
+}
