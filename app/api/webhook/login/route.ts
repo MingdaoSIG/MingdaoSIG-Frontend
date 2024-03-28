@@ -60,11 +60,6 @@ export async function POST(req : NextRequest) {
             "value": "\u200b",
             "inline": true
           },
-          {
-            "name": "Login IP",
-            "value": req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || req.ip,
-            "inline": false
-          },
         ],
         "timestamp": new Date().toISOString(),
         "footer": {
