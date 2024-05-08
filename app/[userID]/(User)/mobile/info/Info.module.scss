@@ -10,44 +10,49 @@ $badge-height: 1.3rem;
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 125%;
-  max-height: 35dvh;
-  border-radius: $border-radius;
+  height: 50dvh;
+  // border-radius: $border-radius;
   overflow: hidden;
-  margin-bottom: 1rem;
 }
 
-.banner {
-  position: relative;
-  flex-grow: 1;
-  background-position: center;
-  background-size: cover;
+// .banner {
+//   position: relative;
+//   flex-grow: 1;
+//   background-position: center;
+//   background-size: cover;
+//   background-image: url("/images/banner.svg");
+//   z-index: 1;
+// }
 
-  z-index: 1;
-}
+// .avatarWrapper {
+//   position: absolute;
+//   bottom: calc(-1 * $avatar-height / 2);
+//   padding-left: calc($margin - $avatar-border);
+//   padding-right: $margin;
+//   width: 100%;
+//   user-select: none;
 
-.avatarWrapper {
-  position: absolute;
-  bottom: calc(-1 * $avatar-height / 2);
-  padding-left: calc($margin - $avatar-border);
-  padding-right: $margin;
-  width: 100%;
-  user-select: none;
+//   display: flex;
+//   align-items: flex-end;
+//   flex-direction: row;
+//   justify-content: space-between;
+// }
 
-  display: flex;
-  align-items: flex-end;
-  flex-direction: row;
-  justify-content: space-between;
-}
+// .avatar {
+//   border-radius: 9999px;
+//   border: solid $avatar-border white;
+//   background: white;
+//   width: $avatar-height;
+//   aspect-ratio: 1/1;
+//   line-height: calc($avatar-height - 1rem);
+//   text-align: center;
+// }
 
 .avatar {
+  margin-right: 0.5rem;
   border-radius: 9999px;
-  border: solid $avatar-border white;
-  background: white;
-  width: $avatar-height;
-  aspect-ratio: 1/1;
-  line-height: calc($avatar-height - 1rem);
-  text-align: center;
+  border-color: #5fcdf5;
+  border-width: 0;
 }
 
 .badgeWrapper {
@@ -59,6 +64,7 @@ $badge-height: 1.3rem;
 
   background-color: rgb(200 240 255 / 55%);
   border-radius: 0.3rem;
+  margin: auto 0 auto 0;
 }
 
 .badge {
@@ -68,9 +74,9 @@ $badge-height: 1.3rem;
 }
 
 .contentWrapper {
-  height: auto;
+  height: 30dvh;
   position: relative;
-  padding: calc($avatar-height / 1.8) $margin $margin $margin;
+  padding: $margin $margin $margin $margin;
 
   display: flex;
   flex-direction: column;

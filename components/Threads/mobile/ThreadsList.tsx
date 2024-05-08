@@ -103,7 +103,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           className={style.previewContent}
           style={{
             WebkitLineClamp:
-              isAnnouncement ? "4" : "2",
+              isAnnouncement ? "3" : "1",
           }}
         >
           {markdownToPlainText(threadData.content)}

@@ -13,7 +13,7 @@ $bg-color-to: #5193E0;
   outline: none;
 }
 
-@media (orientation: landscape) and (max-height: 640px) {
+@media (orientation: landscape) and (max-height: 550px) {
   .noTurnBack {
     display: none;
   }

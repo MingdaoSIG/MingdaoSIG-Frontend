@@ -50,19 +50,21 @@ export default function ProfileMobile({
   }, []);
   return (
     <div className={styles.mobileProfile}>
-      {isLoading ? (
-        <ThreadsListSkeleton repeat={3} height="auto" />
-      ) : dataType === "user" ? (
-        <UserInfinityThreadList id={data?._id!} />
-      ) : (
-        <SIGInfinityThreadList id={data?._id!} />
-      )}
       <Info
         user={data}
         isLoading={isLoading}
         dataType={dataType}
         setInfo={setData}
       />
+      <div className="h-[85dvh] overflow-y-hidden">
+        {isLoading ? (
+          <ThreadsListSkeleton repeat={3} height="auto" />
+        ) : dataType === "user" ? (
+          <UserInfinityThreadList id={data?._id!} />
+        ) : (
+          <SIGInfinityThreadList id={data?._id!} />
+        )}
+      </div>
     </div>
   );
 }
