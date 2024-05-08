@@ -6,6 +6,8 @@ import {
   ThreadsListSkeleton,
 } from "@/components/Threads/desktop/ThreadsList";
 
+import Image from "next/image";
+
 // Styles
 import styles from "./Threads.module.scss";
 
@@ -24,13 +26,18 @@ const ThreadsList = () => {
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />
       ) : (
-        <InfinityThreadsList
-          data={data}
-          height="65dvh"
-          fetchNextPage={fetchNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          announcementData={announcementData}
-        />
+        <>
+          <div className="h-[25dvh] w-[100%] rounded-full">
+            <img src={"/images/sig_banner-04.svg"} alt="banner" className="h-full w-auto" />
+          </div>
+          <InfinityThreadsList
+            data={data}
+            height="50dvh"
+            fetchNextPage={fetchNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            announcementData={announcementData}
+          />
+        </>
       )}
     </div>
   );
