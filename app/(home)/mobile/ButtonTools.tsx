@@ -8,21 +8,21 @@ type Props = {
 const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
-    "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
+    "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
   );
   const [rightStyle, setRightStyle] = useState(
-    "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
+    "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
   );
 
   return (
     <div className="flex flex-row justify-between items-center h-[4rem]">
       <div
         className={
-          "flex bg-white bg-opacity-50 rounded-full relative select-none w-[12rem] my-3"
+          "flex bg-white bg-opacity-50 rounded-full relative select-none w-[10rem] my-3"
         }
       >
         <div
-          className={`transition-all duration-500 w-[6rem] h-[3rem] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
+          className={`transition-all duration-500 w-[5rem] h-[2.5rem] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
         ></div>
         <button
           className={leftStyle}
@@ -30,10 +30,10 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             setButtonStyle("left-0");
             switchCallback(1);
             setLeftStyle(
-              "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
+              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
             );
             setRightStyle(
-              "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
+              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
             );
           }}
         >
@@ -42,13 +42,13 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
         <button
           className={rightStyle}
           onClick={() => {
-            setButtonStyle("left-[6rem]");
+            setButtonStyle("left-[5rem]");
             switchCallback(0);
             setLeftStyle(
-              "w-[6rem] text-center duration-500 relative text-md-dark-green h-[3rem]"
+              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
             );
             setRightStyle(
-              "w-[6rem] text-center duration-500 relative text-white h-[3rem]"
+              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
             );
           }}
         >
@@ -56,7 +56,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
         </button>
       </div>
       <button
-        className="bg-white bg-opacity-50 rounded-full py-2 px-5 text-md-dark-green h-[3rem]"
+        className="bg-white bg-opacity-50 rounded-full py-2 px-5 text-md-dark-green h-[2.5rem]"
         onClick={() => sigListCallback(true)}
       >
         SIGs
