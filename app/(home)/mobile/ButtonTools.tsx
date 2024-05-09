@@ -15,7 +15,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
   );
 
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-row justify-between items-center h-[4rem]">
       <div
         className={
           "flex bg-white bg-opacity-50 rounded-full relative select-none w-[12rem] my-3"

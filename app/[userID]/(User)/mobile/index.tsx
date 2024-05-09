@@ -81,7 +81,7 @@ function UserInfinityThreadList({ id }: { id: string }) {
   ) : (
     <InfinityThreadsList
       data={data}
-      height="52dvh"
+      height="40dvh"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />
@@ -100,7 +100,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   ) : (
     <InfinityThreadsList
       data={data}
-      height="52dvh"
+      height="40dvh"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />

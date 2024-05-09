@@ -1,10 +1,9 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
-  --thread-height: 6.5rem;
   position: relative;
   width: 100%;
-  // border-radius: $border-radius;
+  border-radius: $mobile-border-radius;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -24,7 +23,7 @@
 
 .thread {
   background: $panel-background-color;
-  // border-radius: $border-radius;
+  border-radius: $mobile-border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
 }

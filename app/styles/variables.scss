@@ -14,11 +14,12 @@ $gray-text: #354242;
 $info-code-font-size: 2.5rem;
 $info-title-font-size: 3rem;
 
-$mobile-headerbar-height: 8dvh;
-$mobile-toolbar-height: 8dvh;
+$mobile-headerbar-height: 4rem;
+$mobile-toolbar-height: 4rem;
 $mobile-border-margin: 0.5rem;
 $mobile-replies-min-height: 6.5rem;
 $mobile-toolbar-color: rgba(255, 255, 255);
+$mobile-border-radius: 0.5rem;
 
 @keyframes fadeIn {
   0% {
