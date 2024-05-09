@@ -1,10 +1,10 @@
 @import "@/app/styles/variables.scss";
 
-$margin: 1rem;
-$content-padding: 1rem;
+$margin: 0.5rem;
+$content-padding: 0.75rem;
 $avatar-height: 5rem;
 $avatar-border: 0.3rem;
-$badge-height: 1.3rem;
+$badge-height: 1rem;
 
 .info {
   position: relative;
@@ -62,7 +62,7 @@ $badge-height: 1.3rem;
   display: flex;
   gap: $badgeWrapper-padding;
 
-  background-color: rgb(200 240 255 / 55%);
+  background-color: rgb(200 240 255 / 100%);
   border-radius: 0.3rem;
   margin: auto 0 auto 0;
 }
@@ -109,12 +109,12 @@ $badge-height: 1.3rem;
 .name {
   width: auto;
   font-weight: bold;
-  font-size: 1.5rem;
-  line-height: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1.25rem;
 
   >p {
     color: #006180;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 400;
   }
 
@@ -158,6 +158,7 @@ $badge-height: 1.3rem;
   font-size: small;
   width: auto;
   flex: initial;
+  font-size: 0.75rem;
 }
 
 .descriptionEditButton {
@@ -170,12 +171,12 @@ $badge-height: 1.3rem;
 .description {
   height: 100%;
   color: rgba(0, 0, 0, 0.75);
-  font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
   resize: none;
   border-radius: 0.3rem;
+  font-size: 0.75rem;
 
   button {
     color: #0070f3;

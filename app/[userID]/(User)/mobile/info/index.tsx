@@ -184,8 +184,8 @@ export default function Info({
                 accountData?.avatar ??
                 "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
               }
-              width={50}
-              height={50}
+              width={40}
+              height={40}
               alt="Avatar"
               className={styles.avatar}
             />
