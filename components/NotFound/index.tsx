@@ -2,6 +2,9 @@ import styles from "./NotFound.module.scss";
 import Link from "next/link";
 import Image from "next/image";
 
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
+
 export function NotFound({
   code,
   content,
@@ -29,6 +32,8 @@ export function NotFound({
     href?: string;
   };
 }) {
+  const isMobile = useIsMobile();
+
   const defaultCode = {
     show: true,
     message: "404"
@@ -57,7 +62,48 @@ export function NotFound({
   };
   button = { ...defaultButton, ...button };
 
-  return (
+  return isMobile ? (
+    <div className={styles.mobileNotFound}>
+      {
+        image.show &&
+        image.src &&
+        image.height &&
+        image.width &&
+        image.alt && (
+          <Image
+            src={image.src}
+            width={image.width}
+            height={image.height}
+            alt={image.alt}
+            className={styles.image}
+          />
+        )
+      }
+      <div>
+        {
+          code.show &&
+          code.message && (
+            <h2>{code.message}</h2>
+          )
+        }
+        {
+          content.show &&
+          content.message && (
+            <h1>{content.message}</h1>
+          )
+        }
+      </div>
+      {
+        button.show &&
+        button.href &&
+        button.message && (
+          <Link href={button.href} className={styles.mobileBackToHome}>
+            {button.message}
+          </Link>
+        )
+      }
+    </div>
+  ) : (
     <div className={styles.notFound}>
       {
         image.show &&

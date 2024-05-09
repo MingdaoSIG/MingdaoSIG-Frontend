@@ -28,6 +28,42 @@
   }
 }
 
+.mobileNotFound {
+  margin-top: 8rem;
+  margin-bottom: 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+
+  animation: 1s ease-out 0s 1 fadeIn;
+
+  >div {
+    text-align: center;
+
+    >h2 {
+      font-size: 3rem;
+      line-height: 4rem;
+    }
+
+    >h1 {
+      font-size: 2rem;
+      line-height: 2rem;
+    }
+  }
+}
+
+.mobileBackToHome {
+  color: white;
+  font-size: medium;
+  background-color: rgb(0, 145, 189);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  user-select: none;
+}
+
+
 .backToHome {
   color: white;
   font-size: large;
