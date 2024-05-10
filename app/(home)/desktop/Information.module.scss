@@ -1,6 +1,5 @@
 @import "@/app/styles/variables.scss";
 
-$linksHeight: 1.5rem;
 $h2TitleHeight: 1.8rem;
 
 .information {
@@ -24,7 +23,7 @@ $h2TitleHeight: 1.8rem;
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  height: calc(100% - $linksHeight);
+  height: calc(100%);
 }
 
 .likePostWrapper {
@@ -122,20 +121,4 @@ $h2TitleHeight: 1.8rem;
   text-decoration: underline;
   cursor: pointer;
   color: #fff;
-}
-
-.links {
-  position: absolute;
-  bottom: calc($padding * 0.5);
-  left: $padding;
-  right: $padding;
-  line-height: $linksHeight;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  color: #646464;
-
-  :hover {
-    text-decoration: underline;
-  }
 }

@@ -127,7 +127,6 @@ export default function MetaDataForm({
             <label
               htmlFor="file"
               className={styles.upload}
-            // style={{ cursor: data?.cover && "not-allowed" }}
             >
               {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
             </label>
@@ -138,28 +137,12 @@ export default function MetaDataForm({
               onChange={(e) =>
                 handleFileChange ? handleFileChange(e) : () => { }
               }
-            // disabled={data?.cover ? true : false}
             />
           </div>
           <div
             className={styles.cover}
             style={{ backgroundImage: `url(${data?.cover})` }}
           >
-            {/* <Image
-              className={styles.cover}
-              src={data?.cover!}
-              width={0}
-              height={0}
-              sizes="100vw"
-              alt="cover"
-            /> */}
-            {/* <img
-              src={data?.cover!}
-              alt="cover"
-              hidden={data?.cover ? false : true}
-              className={styles.cover}
-            // sizes="100%"
-            /> */}
           </div>
         </div>
         <Buttons
