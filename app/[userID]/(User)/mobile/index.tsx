@@ -58,7 +58,7 @@ export default function ProfileMobile({
       />
       <div className="overflow-y-hidden mx-[0.5rem]">
         {isLoading ? (
-          <ThreadsListSkeleton repeat={3} height="calc(100dvh - 24rem)" />
+          <ThreadsListSkeleton repeat={3} height="calc(100dvh - 21rem)" />
         ) : dataType === "user" ? (
           <UserInfinityThreadList id={data?._id!} />
         ) : (
@@ -77,11 +77,11 @@ function UserInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={1} height="calc(100dvh - 24rem)" />
+    <ThreadsListSkeleton repeat={1} height="calc(100dvh - 21rem)" />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="calc(100dvh - 24rem)"
+      height="calc(100dvh - 21rem)"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />
@@ -96,11 +96,11 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={10} height="calc(100dvh - 24rem)" />
+    <ThreadsListSkeleton repeat={10} height="calc(100dvh - 21rem)" />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="calc(100dvh - 24rem)"
+      height="calc(100dvh - 21rem)"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />
