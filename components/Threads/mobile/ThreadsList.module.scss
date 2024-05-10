@@ -3,7 +3,7 @@
 .threads {
   position: relative;
   width: 100%;
-  border-radius: $mobile-border-radius;
+  border-radius: $mobile-border-radius $mobile-border-radius 0 0;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
