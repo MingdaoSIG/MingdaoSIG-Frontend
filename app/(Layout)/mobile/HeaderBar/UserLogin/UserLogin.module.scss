@@ -21,9 +21,9 @@
 
 .loginUserPanelWrapper {
   aspect-ratio: 2.2 / 1;
-  height: calc($mobile-headerbar-height - 0.7rem);
+  height: 2.5rem;
   border-radius: 9999px;
-  padding: 0.1rem;
+  padding: 0.15rem;
   cursor: pointer;
   background-image: linear-gradient(to right, #6FA8FF, #003F47);
 }
@@ -39,7 +39,7 @@
   align-items: center;
 
   >p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #004C64;
     font-weight: 500;
   }
