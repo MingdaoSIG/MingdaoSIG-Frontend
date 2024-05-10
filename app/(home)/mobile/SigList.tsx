@@ -43,19 +43,21 @@ const Information = ({ sigListToggle }: { sigListToggle: Function }) => {
   return (
     <div className={style.popup}>
       <div className={style.outer} onClick={() => sigListToggle(false)}></div>
-      <div className={style.sigs}>
-        {sigs.map((item: any) => {
-          if (item._id !== "652d60b842cdf6a660c2b778") {
-            return (
-              <SIG
-                _id={item._id}
-                name={item.name}
-                customId={item.customId}
-                key={item._id}
-              />
-            );
-          }
-        })}
+      <div className={style.overflow}>
+        <div className={style.sigs}>
+          {sigs.map((item: any) => {
+            if (item._id !== "652d60b842cdf6a660c2b778") {
+              return (
+                <SIG
+                  _id={item._id}
+                  name={item.name}
+                  customId={item.customId}
+                  key={item._id}
+                />
+              );
+            }
+          })}
+        </div>
       </div>
     </div>
   );

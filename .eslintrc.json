@@ -9,7 +9,11 @@
     "sourceType": "module"
   },
   "rules": {
-    "semi": ["error", "always"],
+    "@next/next/no-img-element": "off",
+    "semi": [
+      "error",
+      "always"
+    ],
     "indent": [
       "warn",
       2,
@@ -17,9 +21,18 @@
         "SwitchCase": 1
       }
     ],
-    "quotes": ["error", "double"],
-    "brace-style": ["error", "1tbs"],
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "brace-style": [
+      "error",
+      "1tbs"
+    ],
     "no-unused-vars": "off"
   },
-  "extends": ["eslint:recommended", "next"]
+  "extends": [
+    "eslint:recommended",
+    "next"
+  ]
 }

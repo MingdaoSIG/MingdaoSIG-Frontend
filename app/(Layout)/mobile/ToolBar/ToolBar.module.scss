@@ -5,7 +5,6 @@
   width: 100%;
   position: fixed;
   bottom: 0;
-  margin: 0 auto;
   background-color: white;
   user-select: none;
 
@@ -16,43 +15,31 @@
 
 .iconWrapper {
   position: relative;
-  height: calc($mobile-toolbar-height - 45%);
+  height: 100%;
   width: calc(100% - 2rem);
   display: flex;
 }
 
-.icon {
-  flex: 1 1 0%;
+.iconBackground {
   border-radius: 9999px;
-  cursor: pointer;
+  flex: 1 1 0%;
   position: relative;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  cursor: pointer;
+}
 
+.icon {
+  border-radius: 9999px;
+  width: 5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-
   transition-property: opacity;
   transition-duration: 0.5s;
-
   z-index: 1;
-}
-
-.iconCursor {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border-radius: 9999px;
-}
-
-.selected {
-  position: absolute;
-  height: 100%;
-  width: 25%;
-  background-color: rgba(148, 163, 184, 0.3);
-  border-radius: 9999px;
-
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 0.3s;
+  margin: auto;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
 }

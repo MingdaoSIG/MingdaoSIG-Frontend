@@ -1,53 +1,24 @@
 @import "@/app/styles/variables.scss";
 
-$margin: 1rem;
-$content-padding: 1rem;
+$margin: 0.5rem;
+$content-padding: 0.5rem;
 $avatar-height: 5rem;
-$avatar-border: 0.3rem;
-$badge-height: 1.3rem;
+$badge-height: 1rem;
 
 .info {
+  padding: $content-padding;
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 125%;
-  max-height: 35dvh;
   border-radius: $border-radius;
   overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.banner {
-  position: relative;
-  flex-grow: 1;
-  background-position: center;
-  background-size: cover;
-
-  z-index: 1;
-}
-
-.avatarWrapper {
-  position: absolute;
-  bottom: calc(-1 * $avatar-height / 2);
-  padding-left: calc($margin - $avatar-border);
-  padding-right: $margin;
-  width: 100%;
-  user-select: none;
-
-  display: flex;
-  align-items: flex-end;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .avatar {
+  margin-right: 0.5rem;
   border-radius: 9999px;
-  border: solid $avatar-border white;
-  background: white;
-  width: $avatar-height;
-  aspect-ratio: 1/1;
-  line-height: calc($avatar-height - 1rem);
-  text-align: center;
+  border-color: #5fcdf5;
+  border-width: 0;
 }
 
 .badgeWrapper {
@@ -57,8 +28,9 @@ $badge-height: 1.3rem;
   display: flex;
   gap: $badgeWrapper-padding;
 
-  background-color: rgb(200 240 255 / 55%);
+  background-color: rgb(200 240 255 / 100%);
   border-radius: 0.3rem;
+  margin: auto 0 auto 0;
 }
 
 .badge {
@@ -68,13 +40,13 @@ $badge-height: 1.3rem;
 }
 
 .contentWrapper {
-  height: auto;
+  height: 12rem;
   position: relative;
-  padding: calc($avatar-height / 1.8) $margin $margin $margin;
+  padding: $margin $margin $margin $margin;
 
   display: flex;
   flex-direction: column;
-
+  border-radius: calc($border-radius - 0.5rem);
   background-color: white;
 }
 
@@ -103,12 +75,12 @@ $badge-height: 1.3rem;
 .name {
   width: auto;
   font-weight: bold;
-  font-size: 1.5rem;
-  line-height: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1.25rem;
 
   >p {
     color: #006180;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 400;
   }
 
@@ -121,7 +93,7 @@ $badge-height: 1.3rem;
 
 .joinBtn {
   width: auto;
-  height: 3rem;
+  height: 2rem;
   display: flex;
   flex: initial;
   align-items: center;
@@ -152,6 +124,7 @@ $badge-height: 1.3rem;
   font-size: small;
   width: auto;
   flex: initial;
+  font-size: 0.75rem;
 }
 
 .descriptionEditButton {
@@ -162,14 +135,14 @@ $badge-height: 1.3rem;
 }
 
 .description {
-  height: 100%;
+  height: 5rem;
   color: rgba(0, 0, 0, 0.75);
-  font-size: medium;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
   resize: none;
   border-radius: 0.3rem;
+  font-size: 0.75rem;
 
   button {
     color: #0070f3;

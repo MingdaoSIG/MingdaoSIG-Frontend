@@ -26,33 +26,46 @@ $h2TitleHeight: 1.8rem;
   left: 0;
 }
 
-.sigs {
+.overflow {
   background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
-  width: 85dvw;
-  height: 60dvh;
-  padding: 1rem;
+  width: 17rem;
+  height: 25rem;
+  overflow-y: hidden;
+  border-radius: 1rem;
+}
+
+.sigs {
+  width: 17rem;
+  height: 25rem;
+  padding: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-
-  .sigtop {
-    display: flex;
-    gap: 1.8rem;
-    overflow-y: auto;
-  }
-
   justify-content: center;
-  border-radius: 1rem;
 
-  overflow-y: auto;
+  overflow-y: scroll;
   position: relative;
 }
 
+.sigs::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sigs::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: $scrollbar-track-color;
+}
+
+.sigs::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: $scrollbar-thumb-color;
+}
+
 .sig {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   flex-shrink: 0;
   border-radius: 0.7rem;
   background: linear-gradient(84deg, #6fa8ff 0.71%, #30b4ac 100%);
@@ -64,8 +77,8 @@ $h2TitleHeight: 1.8rem;
 
   p {
     color: #fff;
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-style: normal;
-    line-height: 1.2rem;
+    line-height: 0.75rem;
   }
 }
