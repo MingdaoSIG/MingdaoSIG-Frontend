@@ -40,7 +40,7 @@
 }
 
 .content {
-  background: $panel-background-color !important;
+  background: $panel-background-color;
   border-radius: $border-radius;
 
   margin-top: 1.2em;
@@ -52,11 +52,51 @@
   flex-direction: column;
   align-items: stretch;
 
-  height: 100% !important;
-  width: 95dvw !important;
-}
+  height: 100%;
+  width: 95dvw;
 
-.content>div {
-  padding: 0 !important;
-  padding-right: 1rem !important;
+  &>p {
+    color: #003f47;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    h1 {
+      width: 100%;
+      color: #003f47;
+      font-size: 1.25rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 1.25rem;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .links {
+      margin-bottom: 0.25rem;
+    }
+
+    .links2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    a {
+      color: #0070f3;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+  }
+
+  &>p::-webkit-scrollbar {
+    width: 0.25rem;
+  }
 }
