@@ -1,52 +1,18 @@
 @import "@/app/styles/variables.scss";
 
 $margin: 0.5rem;
-$content-padding: 0.75rem;
+$content-padding: 0.5rem;
 $avatar-height: 5rem;
-$avatar-border: 0.3rem;
 $badge-height: 1rem;
 
 .info {
+  padding: $content-padding;
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 50dvh;
-  // border-radius: $border-radius;
+  border-radius: $border-radius;
   overflow: hidden;
 }
-
-// .banner {
-//   position: relative;
-//   flex-grow: 1;
-//   background-position: center;
-//   background-size: cover;
-//   background-image: url("/images/banner.svg");
-//   z-index: 1;
-// }
-
-// .avatarWrapper {
-//   position: absolute;
-//   bottom: calc(-1 * $avatar-height / 2);
-//   padding-left: calc($margin - $avatar-border);
-//   padding-right: $margin;
-//   width: 100%;
-//   user-select: none;
-
-//   display: flex;
-//   align-items: flex-end;
-//   flex-direction: row;
-//   justify-content: space-between;
-// }
-
-// .avatar {
-//   border-radius: 9999px;
-//   border: solid $avatar-border white;
-//   background: white;
-//   width: $avatar-height;
-//   aspect-ratio: 1/1;
-//   line-height: calc($avatar-height - 1rem);
-//   text-align: center;
-// }
 
 .avatar {
   margin-right: 0.5rem;
@@ -74,13 +40,13 @@ $badge-height: 1rem;
 }
 
 .contentWrapper {
-  height: 30dvh;
+  height: 12rem;
   position: relative;
   padding: $margin $margin $margin $margin;
 
   display: flex;
   flex-direction: column;
-
+  border-radius: calc($border-radius - 0.5rem);
   background-color: white;
 }
 
@@ -169,7 +135,7 @@ $badge-height: 1rem;
 }
 
 .description {
-  height: 100%;
+  height: 5rem;
   color: rgba(0, 0, 0, 0.75);
   overflow-y: auto;
   padding-right: 0.25rem;

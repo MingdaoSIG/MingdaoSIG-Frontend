@@ -6,7 +6,7 @@
   border-radius: $mobile-border-radius $mobile-border-radius 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  // gap: 0.25rem;
   overflow-y: auto;
   scrollbar-width: none;
 
@@ -26,6 +26,7 @@
   border-radius: $mobile-border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
+  margin-bottom: 0.5rem;
 }
 
 .preview {

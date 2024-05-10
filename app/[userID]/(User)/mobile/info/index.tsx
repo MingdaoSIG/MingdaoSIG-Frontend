@@ -159,23 +159,6 @@ export default function Info({
 
   return (
     <div className={styles.info}>
-      {/* <div
-        className={styles.banner}
-      >
-        <div className={styles.avatarWrapper}>
-          <Image
-            src={
-              accountData?.avatar ??
-              "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
-            }
-            width={100}
-            height={100}
-            alt="Avatar"
-            className={styles.avatar}
-          />
-          {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
-        </div>
-      </div> */}
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
           <div className={styles.nameWrapper}>
