@@ -1,39 +1,10 @@
 import Image from "next/image";
-// import { useLocalStorage } from "usehooks-ts";
-// import { useEffect } from "react";
 import Swal from "sweetalert2";
-// import { useRouter } from "next/navigation";
 import styles from "./UserLogin.module.scss";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 export default function UserLogin() {
   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
-  // const [confirmed_1, setConfirmed_1] = useLocalStorage("confirmed_1", false);
-  // const route = useRouter();
-
-  // useEffect(() => {
-  //   if (isLogin) {
-  //     const userData = JSON.parse(localStorage.getItem("user") || "{}");
-  //     if (userData?.badge && userData?.badge.includes("10.21_user")) {
-  //       if (! confirmed_1) {
-  //         Swal.fire({
-  //           title: "Thanks for coming to school anniversary 😁",
-  //           text: "Checkout your awesome badge!",
-  //           icon: "info",
-  //           confirmButtonText: "Bring me there!",
-  //           showCancelButton: true,
-  //           cancelButtonText: "Do not show again",
-  //         }).then((result) => {
-  //           if (result.isConfirmed) {
-  //             route.push(`/@${userData.customId}`);
-  //           }
-  //           setConfirmed_1(true);
-  //         });
-  //       }
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [confirmed_1, isLogin]);
 
   if (isLoading) {
     return (

@@ -40,13 +40,10 @@
 }
 
 .second {
-  // background: $panel-background-color;
-  // border-radius: 1.8rem;
-
-  // max-height: 65dvh;
   height: 100%;
   grid-column: span 3;
   overflow-y: hidden;
+
   @media screen and (max-width: 1280px) {
     grid-column: span 4;
   }

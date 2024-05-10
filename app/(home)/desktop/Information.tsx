@@ -19,19 +19,6 @@ import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// const Hashtag = (child: any) => {
-//   return (
-//     <div className="my-2 flex">
-//       <h2 className="text-md-dark-green text-lg font-medium cursor-pointer hover:underline  hover:decoration-1 transition  duration-300 ease-out  ">
-//         #{child.name}
-//       </h2>
-//       <p className="text-[#A6A6A6] text-xs ml-auto text-right my-auto">
-//         23 post
-//       </p>
-//     </div>
-//   );
-// };
-
 const SIG = (child: any) => {
   return (
     <Link className={style.sig} href={`/@${child.customId}`}>

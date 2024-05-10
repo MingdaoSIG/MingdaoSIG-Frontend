@@ -28,16 +28,11 @@ export default function RootLayout({
       ></Script>
       <html lang="en">
         <body>
-          <div className="noTurnBack">
-            <Providers>
-              <Device>
-                {children}
-              </Device>
-            </Providers>
-          </div>
-          <div className="turnBack">
-            <h1 className="text">Please rotate your device or maximize the window</h1>
-          </div>
+          <Providers>
+            <Device>
+              {children}
+            </Device>
+          </Providers>
         </body>
       </html>
     </>
