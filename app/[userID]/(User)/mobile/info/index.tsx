@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import Linkify from "react-linkify";
 import ReactDOMServer from "react-dom/server";
 
 // Styles
@@ -158,27 +159,19 @@ export default function Info({
 
   return (
     <div className={styles.info}>
-      <div
-        className={styles.banner}
-        style={{ backgroundImage: "url(/images/banner.svg)" }}
-      >
-        <div className={styles.avatarWrapper}>
-          <Image
-            src={
-              accountData?.avatar ??
-              "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
-            }
-            width={100}
-            height={100}
-            alt="Avatar"
-            className={styles.avatar}
-          />
-          {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
-        </div>
-      </div>
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
           <div className={styles.nameWrapper}>
+            <Image
+              src={
+                accountData?.avatar ??
+                "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
+              }
+              width={40}
+              height={40}
+              alt="Avatar"
+              className={styles.avatar}
+            />
             <div className={styles.name}>
               <h1>{accountData?.name}</h1>
               <p>
@@ -188,9 +181,9 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {dataType === "sig" &&
-              accountData?._id !== "652d60b842cdf6a660c2b778" && 
+              accountData?._id !== "652d60b842cdf6a660c2b778" &&
               [
-              // ID of announcement SIG
+                // ID of announcement SIG
                 <button
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
@@ -207,9 +200,27 @@ export default function Info({
                     : joinRequest === "accepted"
                       ? "Joined"
                       : "Join SIG"}
-                </button>,
+                </button>
               ]
             }
+            {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
+          </div>
+          <hr className={styles.contentHR} />
+          <div className={styles.descriptionTitleWrapper}>
+            <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
+          </div>
+          <div className={styles.description}>
+            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+              <button key={key} onClick={() => {
+                JumpOut(decoratedHref);
+              }}>
+                {decoratedText}
+              </button>
+            )}>
+              {accountData?.description?.split("\n").map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </Linkify>
           </div>
         </div>
       </div>

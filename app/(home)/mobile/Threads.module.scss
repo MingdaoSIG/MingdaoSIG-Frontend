@@ -12,7 +12,7 @@
   width: 100dvw;
   height: 100%;
 
-  padding: calc($mobile-headerbar-height + $mobile-border-margin) $mobile-border-margin calc($mobile-toolbar-height + $mobile-border-margin) $mobile-border-margin;
+  padding: $mobile-headerbar-height $mobile-border-margin $mobile-toolbar-height $mobile-border-margin;
 
   position: relative;
   overflow-y: auto;

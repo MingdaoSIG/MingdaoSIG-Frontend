@@ -12,7 +12,7 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(
+  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | number>(
     pathToSelected(path)
   );
 
@@ -52,39 +52,36 @@ const ToolBar = () => {
       <div className={styles.iconWrapper}>
         {menu.map((item, index) => {
           return (
-            <div key={index} className={styles.icon}>
-              <div
-                style={{
-                  cursor: item.clickable ? "pointer" : "not-allowed",
-                }}
-                className={styles.iconCursor}
-              />
-              <Link
-                href={item.route}
-                style={{
-                  opacity: item.clickable ? 1 : 0.5,
-                  pointerEvents: item.clickable ? "auto" : "none",
-                }}
+            <div 
+              key={index} 
+              className={styles.iconBackground} 
+            >
+              <div 
                 className={styles.icon}
-                onClick={() => setSelected(index)}
+                style={{
+                  backgroundColor: (selected === (index)) ? "rgba(148, 163, 184, 0.3)" : "rgba(255, 255, 255, 1)"
+                }}
               >
-                <Image
-                  src={item.icon}
-                  height={28}
-                  width={28}
-                  alt={item.name}
-                ></Image>
-              </Link>
+                <Link
+                  href={item.route}
+                  style={{
+                    opacity: item.clickable ? 1 : 0.5,
+                    pointerEvents: item.clickable ? "auto" : "none",
+                  }}
+                  className={styles.icon}
+                  onClick={() => setSelected(index)}
+                >
+                  <Image
+                    src={item.icon}
+                    height={25}
+                    width={25}
+                    alt={item.name}
+                  ></Image>
+                </Link>
+              </div>
             </div>
           );
         })}
-        <div
-          style={{
-            display: selected === -1 ? "none" : "block",
-            left: `${(selected / 4) * 100}%`,
-          }}
-          className={styles.selected}
-        />
       </div>
     </div>
   );

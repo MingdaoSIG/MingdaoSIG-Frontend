@@ -2,12 +2,13 @@
 
 .mobileProfile {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   justify-content: start;
   width: 100dvw;
-  height: 100%;
+  height: 100dvh;
 
-  padding: calc($mobile-headerbar-height + $mobile-border-margin) $mobile-border-margin calc($mobile-toolbar-height + $mobile-border-margin) $mobile-border-margin;
+  padding-top: $mobile-headerbar-height;
+  padding-bottom: $mobile-toolbar-height;
 
   position: relative;
   overflow-y: auto;
