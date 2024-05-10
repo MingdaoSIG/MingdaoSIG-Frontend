@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 // Styles
 import style from "./Information.module.scss";
-import { homePageLinks } from "../configs/linksList";
 
 // APIs Request Function
 import { useTopPost } from "@/utils/usePost";
@@ -84,7 +83,7 @@ const Information = () => {
             </div>
 
             <div className={style.sigs}>
-              <h2>SIGs - {sigs.length}</h2>
+              <h2>SIGs - {sigs.length - 1}</h2>
               <div className={style.sigTop}>
                 {sigs.map((item: any) => {
                   if (item._id !== "652d60b842cdf6a660c2b778") {
@@ -100,18 +99,6 @@ const Information = () => {
                 })}
               </div>
             </div>
-          </div>
-          <div className={style.links}>
-            {homePageLinks.map(({ href, text }, index, array) => {
-              return (
-                <Fragment key={index}>
-                  <Link href={href} target="_blank" key={index}>
-                    {text}
-                  </Link>
-                  {index === array.length - 1 ? "" : "•"}
-                </Fragment>
-              );
-            })}
           </div>
         </div>
       </div>
