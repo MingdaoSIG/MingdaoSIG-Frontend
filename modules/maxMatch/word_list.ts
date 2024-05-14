@@ -22,7 +22,9 @@ const word_list = new Set([
   "直播",
   "科學教育",
   "遊憩運動",
-  "電機物理"
+  "電機物理",
+  "開發",
+  "公告"
 ]);
 
 export default word_list;
