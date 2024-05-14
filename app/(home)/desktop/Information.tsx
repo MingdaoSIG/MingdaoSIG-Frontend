@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 // Styles
 import style from "./Information.module.scss";
-import { homePageLinks } from "../configs/linksList";
 
 // APIs Request Function
 import { useTopPost } from "@/utils/usePost";
@@ -18,19 +17,6 @@ import maxMatch from "@/modules/maxMatch";
 import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// const Hashtag = (child: any) => {
-//   return (
-//     <div className="my-2 flex">
-//       <h2 className="text-md-dark-green text-lg font-medium cursor-pointer hover:underline  hover:decoration-1 transition  duration-300 ease-out  ">
-//         #{child.name}
-//       </h2>
-//       <p className="text-[#A6A6A6] text-xs ml-auto text-right my-auto">
-//         23 post
-//       </p>
-//     </div>
-//   );
-// };
 
 const SIG = (child: any) => {
   return (
@@ -97,7 +83,7 @@ const Information = () => {
             </div>
 
             <div className={style.sigs}>
-              <h2>SIGs - {sigs.length}</h2>
+              <h2>SIGs - {sigs.length - 1}</h2>
               <div className={style.sigTop}>
                 {sigs.map((item: any) => {
                   if (item._id !== "652d60b842cdf6a660c2b778") {
@@ -113,18 +99,6 @@ const Information = () => {
                 })}
               </div>
             </div>
-          </div>
-          <div className={style.links}>
-            {homePageLinks.map(({ href, text }, index, array) => {
-              return (
-                <Fragment key={index}>
-                  <Link href={href} target="_blank" key={index}>
-                    {text}
-                  </Link>
-                  {index === array.length - 1 ? "" : "•"}
-                </Fragment>
-              );
-            })}
           </div>
         </div>
       </div>

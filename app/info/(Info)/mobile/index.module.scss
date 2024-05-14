@@ -1,0 +1,112 @@
+@import "@/app/styles/variables.scss";
+
+.mobileView {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: 100dvh;
+  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper {
+  padding-top: 0.5rem;
+}
+
+.title {
+  background: $panel-background-color;
+  border-radius: $mobile-border-radius;
+  height: 3rem;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  h1 {
+    width: 100%;
+    color: #003f47;
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.75rem;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  h1::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.content {
+  background: $panel-background-color;
+  border-radius: $mobile-border-radius;
+
+  margin-top: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  height: calc(100dvh - 12.5rem);
+  width: 100%;
+
+  &>p {
+    color: #003f47;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    h1 {
+      width: 100%;
+      color: #003f47;
+      font-size: 1.25rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 1.25rem;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .links {
+      margin-bottom: 0.25rem;
+    }
+
+    .links2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    a {
+      color: #0070f3;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+  }
+
+  &>p::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+}
