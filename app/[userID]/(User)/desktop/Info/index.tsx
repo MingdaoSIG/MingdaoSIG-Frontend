@@ -200,7 +200,7 @@ export default function Info({
         <div className={styles.avatarWrapper}>
           <Image
             src={
-              accountData?.avatar ?? "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
+              accountData?.avatar ?? process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"
             }
             width={100}
             height={100}

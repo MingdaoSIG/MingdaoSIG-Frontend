@@ -32,7 +32,7 @@ export default function UserLogin() {
         onClick={() => confirmLogout(logout)}
       >
         <Image
-          src={userData && userData.avatar || "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"}
+          src={userData && userData.avatar || process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"}
           width={50}
           height={50}
           alt="Avatar"

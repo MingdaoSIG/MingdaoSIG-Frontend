@@ -165,7 +165,7 @@ export default function Info({
             <Image
               src={
                 accountData?.avatar ??
-                "https://sig-api.lazco.dev/image/653299930b891d1f6b5b4458"
+                process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"
               }
               width={40}
               height={40}
