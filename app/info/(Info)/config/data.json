@@ -1,0 +1,59 @@
+[
+  {
+    "name": "常用連結",
+    "children": [
+      {
+        "name": "Rule",
+        "url": "/post/652cabdb45c0be8f82c54d9a"
+      },
+      {
+        "name": "About",
+        "url": "/post/65325fce0b891d1f6b5b3131"
+      },
+      {
+        "name": "Markdown Tourist",
+        "url": "/post/652cabdb45c0be8f82c54d9a"
+      }
+
+    ]
+  },
+  {
+    "name": "聯絡我們",
+    "children": [
+      {
+        "name": "Email",
+        "url": "mailto:mdsig20@ms.mingdao.edui.tw"
+      },
+      {
+        "name": "Instagram",
+        "url": "https://www.instagram.com/mdsig.dev/"
+      },
+      {
+        "name": "Join Dev",
+        "url": "https://forms.gle/ADMk67dcTURxjn979"
+      }
+    ]
+  },
+  {
+    "name": "回報錯誤",
+    "children": [
+      {
+        "name": "MDSIG 2.0 Report",
+        "url": "https://forms.gle/QJbcdvTvfcFkNJ1PA"
+      }
+    ]
+  },
+  {
+    "name": "小小彩蛋",
+    "children": [
+      {
+        "name": "Banner",
+        "url": "/images/banner.png"
+      },
+      {
+        "name": "Dynamic Banner",
+        "url": "/videos/sig.mp4"
+      }
+    ]
+  }
+]
