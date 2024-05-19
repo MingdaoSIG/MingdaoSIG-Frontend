@@ -19,7 +19,7 @@ const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
 
   const [dataType, setDataType] = useState("latest");
-  const pageSize = 10;
+  const pageSize = 15;
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useAllPost({
     pageSize,
     sort: dataType,

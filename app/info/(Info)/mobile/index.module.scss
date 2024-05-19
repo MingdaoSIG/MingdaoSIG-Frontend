@@ -63,7 +63,7 @@
   height: calc(100dvh - 12.5rem);
   width: 100%;
 
-  &>p {
+  &>div {
     color: #003f47;
     font-size: 1rem;
     font-style: normal;
@@ -106,7 +106,7 @@
     }
   }
 
-  &>p::-webkit-scrollbar {
+  &>div::-webkit-scrollbar {
     width: 0.25rem;
   }
 }
