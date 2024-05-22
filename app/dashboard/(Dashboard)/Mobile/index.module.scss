@@ -1,0 +1,16 @@
+@import "@/app/styles/variables.scss";
+
+.mobileView {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: 100dvh;
+  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper {
+  padding-top: 0.5rem;
+}

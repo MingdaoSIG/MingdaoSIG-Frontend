@@ -1,0 +1,48 @@
+@import "@/app/styles/variables.scss";
+
+.wrapper {
+  padding-top: 1.2rem;
+  height: calc(100% - 6.5rem);
+  max-width: 60rem;
+  width: 90dvw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.statics {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  gap: auto;
+}
+
+.staticsItem {
+  flex: 1;
+  text-align: center;
+  display: flex;
+}
+
+.itemWrapper {
+  width: 12rem;
+  height: 6rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemFlex {
+  margin: auto;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: $dark-text;
+  }
+
+  p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $gray-text;
+  }
+}
