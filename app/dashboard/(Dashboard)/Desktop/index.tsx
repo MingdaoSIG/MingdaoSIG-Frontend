@@ -12,31 +12,31 @@ export default function Desktop() {
   const [postUserCount, setPostUserCount] = useState(0);
   const [validPostCount, setValidPostCount] = useState(0);
 
-  console.log(new Date().toISOString());
+  const date = new Date().toISOString();
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${new Date().toISOString()}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`)
       .then((res) => res.json())
       .then((data) => {
-        setUserCount(data.date.content);
+        setUserCount(data.data.content);
       });
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${new Date().toISOString()}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`)
       .then((res) => res.json())
       .then((data) => {
-        setLikeCount(data.date.content);
+        setLikeCount(data.data.content);
       });
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/posted?date=${new Date().toISOString()}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user/posted?date=${date}`)
       .then((res) => res.json())
       .then((data) => {
-        setPostUserCount(data.date.content);
+        setPostUserCount(data.data.content);
       });
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${new Date().toISOString()}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`)
       .then((res) => res.json())
       .then((data) => {
-        setValidPostCount(data.date.content);
+        setValidPostCount(data.data.content);
       });
   });
 
