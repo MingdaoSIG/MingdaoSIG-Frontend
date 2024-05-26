@@ -47,7 +47,7 @@ export default function Desktop() {
         });
     }
 
-  }, []);
+  }, [date, likeCount, postUserCount, userCount, validPostCount]);
 
 
   return (
