@@ -291,27 +291,33 @@ function BadgeList({ userData }: { userData: User | null }) {
   if (userData && chosenBadge && chosenBadge.length > 0) {
     return (
       <div className={styles.badgeWrapper}>
-        {chosenBadge.sort().map((badge) => (
-          <Fragment key={badge}>
-            <Image
-              src={badgeList[badge].icon}
-              height={24}
-              width={24}
-              alt={badgeList[badge].name}
-              className={styles.badge}
-              data-tooltip-id={badgeList[badge].name}
-              data-tooltip-content={badgeList[badge].content}
-              data-tooltip-place="top"
-            />
-            <Tooltip
-              id={badgeList[badge].name}
-              style={{
-                padding: "0.2rem 0.4rem",
-                backgroundColor: "rgb(50, 50, 50)"
-              }}
-            />
-          </Fragment>
-        ))}
+        {chosenBadge.sort().map((badge) => {
+          if (badgeList[badge] === undefined) {
+            return <Fragment key={badge} />;
+          } else {
+            return (
+              <Fragment key={badge}>
+                <Image
+                  src={badgeList[badge].icon}
+                  height={24}
+                  width={24}
+                  alt={badgeList[badge].name}
+                  className={styles.badge}
+                  data-tooltip-id={badgeList[badge].name}
+                  data-tooltip-content={badgeList[badge].content}
+                  data-tooltip-place="top"
+                />
+                <Tooltip
+                  id={badgeList[badge].name}
+                  style={{
+                    padding: "0.2rem 0.4rem",
+                    backgroundColor: "rgb(50, 50, 50)"
+                  }}
+                />
+              </Fragment>
+            );
+          }
+        })}
       </div>
     );
   } else {
