@@ -47,7 +47,7 @@ export default function Mobile() {
         });
     }
 
-  }, [date, likeCount, postUserCount, userCount, validPostCount]);
+  }, []);
 
   return (
     <div className={styles.mobileView}>
