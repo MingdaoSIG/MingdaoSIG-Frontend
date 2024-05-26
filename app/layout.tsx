@@ -1,5 +1,6 @@
 // Third-Party Package
 import React from "react";
+import type { Viewport } from "next";
 
 // Providers
 import { Providers } from "./providers";
@@ -46,14 +47,8 @@ export const metadata: Metadata = {
   applicationName: "MDSIG 2.0",
   authors: [{ name: "OnCloud, HACO, Lazp, Meru" }],
   keywords: ["MDSIG", "SIG", "MD", "Mingdao", "2.0", "MDSIG 2.0"],
-  themeColor: "#FFFFFF",
   creator: "MDSIG Developer Team",
   publisher: "Mingdao High School",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    userScalable: false,
-  },
   icons: [{ rel: "icon", url: "https://sig.mingdao.edu.tw/favicon.ico" }, { rel: "apple-touch-icon", url: "https://sig.mingdao.edu.tw/favicon.ico" }],
   openGraph: {
     type: "website",
@@ -73,4 +68,12 @@ export const metadata: Metadata = {
   other: {
     "twitter:url": "https://sig.mingdao.edu.tw"
   }
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#FFFFFF",
 };
