@@ -21,6 +21,9 @@ import {
   ReadJoinSigAPI,
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
 
+// Config
+import { badgeList } from "@/app/[userID]/(User)/config/badge";
+
 export default function Info({
   user: accountData,
   isLoading,
@@ -227,19 +230,6 @@ export default function Info({
     </div>
   );
 }
-
-const badgeList = {
-  developer: {
-    name: "developer",
-    icon: "/badges/developer.svg",
-    content: "Developer",
-  },
-  "10.21_user": {
-    name: "10.21_user",
-    icon: "/badges/10.21_user.svg",
-    content: "10/21 Event Participant",
-  },
-};
 
 function BadgeList({ userData }: { userData: User | null }) {
   const chosenBadge = userData?.badge;
