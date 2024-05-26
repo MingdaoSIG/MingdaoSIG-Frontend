@@ -15,30 +15,39 @@ export default function Mobile() {
   const date = new Date().toISOString();
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUserCount(data.data.content);
-      });
+    if (userCount === 0) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setUserCount(data.data.content);
+        });
+    }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setLikeCount(data.data.content);
-      });
+    if (likeCount === 0) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setLikeCount(data.data.content);
+        });
+    }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user/posted?date=${date}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPostUserCount(data.data.content);
-      });
+    if (postUserCount === 0) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user/posted?date=${date}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setPostUserCount(data.data.content);
+        });
+    }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setValidPostCount(data.data.content);
-      });
-  });
+    if (validPostCount === 0) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setValidPostCount(data.data.content);
+        });
+    }
+
+  }, [date, likeCount, postUserCount, userCount, validPostCount]);
 
   return (
     <div className={styles.mobileView}>
