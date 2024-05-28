@@ -8,7 +8,7 @@ export async function POST(req : NextRequest) {
     avatar_url: "https://cdn.discordapp.com/attachments/1222932958667870279/1222933028259496080/sig2_pfp__1.png",
     embeds: [
       {
-        "title":`${data.get("name")} ${(req.url.includes("localhost") || req.url.includes("-dev")) ? "(Development)" : ""}`,
+        "title":`${data.get("name")} ${(req.url.includes("localhost")) ? "(Development)" : ""}${req.url.includes("-dev") ? "(Development)" : ""}`,
         "description": data.get("description"),
         "color": parseInt("0x34e718"),
         "thumbnail": {
