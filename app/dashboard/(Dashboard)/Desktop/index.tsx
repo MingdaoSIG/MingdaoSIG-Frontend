@@ -8,36 +8,26 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import "chart.js/auto";
 
+// Configs
+import { sigDefaultColors, sigDefaultBorderColors } from "@/app/dashboard/(Dashboard)/config/sigDefaultColors";
+
 
 const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
   ssr: false,
 });
 
-const data = {
-  labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-  datasets: [
-    {
-      label: "各 SIG 發文數量",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+
     },
-  ],
+    title: {
+      display: true,
+      text: "各 SIG 發文數量"
+    },
+  },
 };
 
 export default function Desktop() {
@@ -46,7 +36,53 @@ export default function Desktop() {
   const [postUserCount, setPostUserCount] = useState(0);
   const [validPostCount, setValidPostCount] = useState(0);
 
+  // Sig Posts Count
+  const [sigPostCount, setSigPostCount] = useState<any>([]);
+  const [sigPostCountLabel, setSigPostCountLabel] = useState<any>([]);
+  const [sigPostCountData, setSigPostCountData] = useState<any>([]);
+  const [sigPostCountColor, setSigPostCountColor] = useState<any>([]);
+  const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<any>([]);
+
+  const [sigPostCountFinalData, setSigPostCountFinalData] = useState({
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: [],
+      borderColor: [],
+      borderWidth: 1,
+    }]
+  } as any);
+
   const date = new Date().toISOString();
+
+  useEffect(() => {
+    if (sigPostCount.length === 0) return;
+    sigPostCount.forEach((sig: any) => {
+      setSigPostCountLabel((prev: any) => [...prev, sig.name]);
+      setSigPostCountData((prev: any) => [...prev, sig.count]);
+      setSigPostCountColor((prev: any) => [...prev, sigDefaultColors[sig.name]]);
+      setSigPostCountBorderColor((prev: any) => [...prev, sigDefaultBorderColors[sig.name]]);
+    });
+
+    setSigPostCountFinalData({
+      labels: sigPostCountLabel,
+      datasets: [{
+        data: sigPostCountData,
+        backgroundColor: sigPostCountColor,
+        borderColor: sigPostCountBorderColor,
+        borderWidth: 1,
+      }]
+    });
+  }, [sigPostCount]);
+
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post/sig?date=${date}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSigPostCount(data.data.content);
+      });
+  }, []);
 
   useEffect(() => {
     if (userCount === 0) {
@@ -122,7 +158,7 @@ export default function Desktop() {
           </div>
         </div>
         <div className={styles.sigChart}>
-          <Bar data={data} />
+          <Bar data={sigPostCountFinalData} options={options} />
         </div>
       </div>
     </div >
