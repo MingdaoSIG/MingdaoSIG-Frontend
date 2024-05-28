@@ -63,7 +63,10 @@ export default function Desktop() {
       setSigPostCountColor((prev: any) => [...prev, sigDefaultColors[sig.name]]);
       setSigPostCountBorderColor((prev: any) => [...prev, sigDefaultBorderColors[sig.name]]);
     });
+  }, [sigPostCount]);
 
+  useEffect(() => {
+    if (sigPostCountFinalData.labels.length !== 0) return;
     setSigPostCountFinalData({
       labels: sigPostCountLabel,
       datasets: [{
@@ -73,8 +76,7 @@ export default function Desktop() {
         borderWidth: 1,
       }]
     });
-  }, [sigPostCount]);
-
+  }, [sigPostCountBorderColor, sigPostCountColor, sigPostCountData, sigPostCountFinalData.labels, sigPostCountLabel]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post/sig?date=${date}`)
@@ -158,7 +160,7 @@ export default function Desktop() {
           </div>
         </div>
         <div className={styles.sigChart}>
-          <Bar data={sigPostCountFinalData} options={options} />
+          <Bar className={styles.chartBar} data={sigPostCountFinalData} options={options} />
         </div>
       </div>
     </div >
