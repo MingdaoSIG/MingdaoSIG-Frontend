@@ -50,10 +50,10 @@ export default function NewPostPage() {
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
       (prev: TPostAPI | undefined) =>
-      ({
-        ...prev,
-        [e.target.name]: e.target.value,
-      } as TPostAPI)
+        ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        } as TPostAPI)
     );
   }
 
@@ -62,10 +62,10 @@ export default function NewPostPage() {
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
-        ({
-          ...prev,
-          content: storedContent,
-        } as TPostAPI)
+          ({
+            ...prev,
+            content: storedContent,
+          } as TPostAPI)
       );
     }
   }, []);
