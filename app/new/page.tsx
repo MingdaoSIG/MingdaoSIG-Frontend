@@ -50,10 +50,10 @@ export default function NewPostPage() {
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
       (prev: TPostAPI | undefined) =>
-        ({
-          ...prev,
-          [e.target.name]: e.target.value,
-        } as TPostAPI)
+      ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      } as TPostAPI)
     );
   }
 
@@ -62,10 +62,10 @@ export default function NewPostPage() {
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
-          ({
-            ...prev,
-            content: storedContent,
-          } as TPostAPI)
+        ({
+          ...prev,
+          content: storedContent,
+        } as TPostAPI)
       );
     }
   }, []);
@@ -156,13 +156,10 @@ export default function NewPostPage() {
       const imageUploadAPIResponse = await imageUpload(file, token);
       const imageUploadResponseJson = await imageUploadAPIResponse.json();
       setPostData(
-        (prev: TPostAPI) =>
-          ({
-            ...prev,
-            cover:
-              `${process.env.NEXT_PUBLIC_API_URL}/image/` +
-              imageUploadResponseJson.id,
-          } as TPostAPI)
+        (prev: TPostAPI) => ({
+          ...prev,
+          cover: imageUploadResponseJson.id,
+        } as TPostAPI)
       );
     } catch (error) {
       console.error("error: ", error);

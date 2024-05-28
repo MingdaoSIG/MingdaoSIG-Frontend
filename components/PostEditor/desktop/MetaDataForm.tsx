@@ -141,7 +141,7 @@ export default function MetaDataForm({
           </div>
           <div
             className={styles.cover}
-            style={{ backgroundImage: `url(${data?.cover})` }}
+            style={{ backgroundImage: (data?.cover.includes("http")) ? `url(${data?.cover})` : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data?.cover})` }}
           >
           </div>
         </div>

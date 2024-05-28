@@ -102,7 +102,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
         }}
       >
         <Image
-          src={threadData.cover}
+          src={(threadData.cover.includes("http")) ? threadData.cover : `${process.env.NEXT_PUBLIC_API_URL!}/image/${threadData.cover}`}
           alt="cover image"
           style={{ objectFit: "cover" }}
           priority
@@ -145,7 +145,7 @@ export const InfinityThreadsList = ({
   announcementData?: any
 }) => {
   const postList = useRef(null);
- 
+
 
   const onScroll = useCallback(() => {
     if (postList.current) {
