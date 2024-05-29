@@ -3,12 +3,22 @@ import styles from "./index.module.scss";
 
 // Modules
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
 
 // data
 import data from "../config/data.json";
 
 export default function Desktop() {
+  const [ping, setPing] = useState<any>({});
+
+  useEffect(() => {
+    fetch("/ping")
+      .then((res) => res.json())
+      .then((data) => {
+        setPing(data);
+      });
+  }, []);
+
   return (
     <div>
       <div className={styles.wrapper}>
@@ -37,6 +47,12 @@ export default function Desktop() {
               })
             }
             <h1 className={styles.links2}>運行狀態</h1>
+            <p>前端版本號：{ping?.Frontend?.currentVersion}</p>
+            <p>後端版本號：{ping?.Backend?.currentVersion}</p>
+            <br />
+            <p>前端運行時間：{ping?.Frontend?.uptime}</p>
+            <p>後端運行時間：{ping?.Backend?.uptime}</p>
+            <br />
             <p>訪問<Link href={"https://sig-uptime.lazco.dev/status/main"} target="_blank">狀態頁面</Link>獲取更多詳細信息</p>
             <p className={styles.endText}><Link href={"https://sig.mingdao.edu.tw/ping"} target="_blank">前端</Link></p>
             <img src="https://sig-uptime.lazco.dev/api/badge/15/uptime?labelPrefix=前端+&style=for-the-badge" alt="frontend-status" className={styles.statusImg} />
