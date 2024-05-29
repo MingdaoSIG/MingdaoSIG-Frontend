@@ -36,7 +36,7 @@ export default function Desktop() {
                       item.children.map((child, childIndex) => {
                         return (
                           <Fragment key={childIndex}>
-                            <Link href={child.url} target="_blank">{child.name}</Link>
+                            <Link href={child.url} target={(child.url.includes("http")) ? "_blank" : "_self"}>{child.name}</Link>
                             <br />
                           </Fragment>
                         );

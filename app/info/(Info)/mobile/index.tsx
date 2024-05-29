@@ -36,7 +36,7 @@ export default function Mobile() {
                       item.children.map((child, childIndex) => {
                         return (
                           <Fragment key={childIndex}>
-                            <Link href={child.url} target="_blank" key={childIndex}>{child.name}</Link>
+                            <Link href={child.url} target={(child.url.includes("http")) ? "_blank" : "_self"} key={childIndex}>{child.name}</Link>
                             <br />
                           </Fragment>
                         );
