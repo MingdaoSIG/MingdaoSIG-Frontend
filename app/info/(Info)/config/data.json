@@ -44,6 +44,15 @@
     ]
   },
   {
+    "name": "統計資料",
+    "children": [
+      {
+        "name": "Dashboard",
+        "url": "/dashboard"
+      }
+    ]
+  },
+  {
     "name": "小小彩蛋",
     "children": [
       {
