@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 // Styles
@@ -16,7 +17,7 @@ const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
   ssr: false,
 });
 
-const options = {
+const sigPostBarOption = {
   responsive: true,
   plugins: {
     legend: {
@@ -26,6 +27,20 @@ const options = {
     title: {
       display: true,
       text: "各 SIG 發文數量"
+    },
+  },
+};
+
+const sigUserBarOption = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+
+    },
+    title: {
+      display: true,
+      text: "各 SIG 人員數量"
     },
   },
 };
@@ -43,7 +58,25 @@ export default function Desktop() {
   const [sigPostCountColor, setSigPostCountColor] = useState<any>([]);
   const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<any>([]);
 
+  // Sig User Count
+  const [sigUserCount, setSigUserCount] = useState<any>([]);
+  const [sigUserCountLabel, setSigUserCountLabel] = useState<any>([]);
+  const [sigUserCountData, setSigUserCountData] = useState<any>([]);
+  const [sigUserCountColor, setSigUserCountColor] = useState<any>([]);
+  const [sigUserCountBorderColor, setSigUserCountBorderColor] = useState<any>([]);
+
+
   const [sigPostCountFinalData, setSigPostCountFinalData] = useState({
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: [],
+      borderColor: [],
+      borderWidth: 1,
+    }]
+  } as any);
+
+  const [sigUserCountFinalData, setSigUserCountFinalData] = useState({
     labels: [],
     datasets: [{
       data: [],
@@ -55,6 +88,7 @@ export default function Desktop() {
 
   const date = new Date().toISOString();
 
+  // Sig Posts Count Start
   useEffect(() => {
     if (sigPostCount.length === 0) return;
     sigPostCount.forEach((sig: any) => {
@@ -85,6 +119,41 @@ export default function Desktop() {
         setSigPostCount(data.data.content);
       });
   }, []);
+  // Sig Posts Count End
+
+
+  // Sig Users Count Start
+  useEffect(() => {
+    if (sigUserCount.length === 0) return;
+    sigUserCount.forEach((sig: any) => {
+      setSigUserCountLabel((prev: any) => [...prev, sig.name]);
+      setSigUserCountData((prev: any) => [...prev, sig.count]);
+      setSigUserCountColor((prev: any) => [...prev, sigDefaultColors[sig.name]]);
+      setSigUserCountBorderColor((prev: any) => [...prev, sigDefaultBorderColors[sig.name]]);
+    });
+  }, [sigUserCount]);
+
+  useEffect(() => {
+    if (sigUserCountFinalData.labels.length !== 0) return;
+    setSigUserCountFinalData({
+      labels: sigUserCountLabel,
+      datasets: [{
+        data: sigUserCountData,
+        backgroundColor: sigUserCountColor,
+        borderColor: sigUserCountBorderColor,
+        borderWidth: 1,
+      }]
+    });
+  }, [sigUserCountBorderColor, sigUserCountColor, sigUserCountData, sigUserCountFinalData.labels, sigUserCountLabel]);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user/sig?date=${date}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSigUserCount(data.data.content);
+      });
+  }, []);
+  // Sig Users Count End
 
   useEffect(() => {
     if (userCount === 0) {
@@ -160,7 +229,10 @@ export default function Desktop() {
           </div>
         </div>
         <div className={styles.sigChart}>
-          <Bar className={styles.chartBar} data={sigPostCountFinalData} options={options} />
+          <div className={styles.chartScroll}>
+            <Bar className={styles.chartBar} data={sigPostCountFinalData} options={sigPostBarOption} />
+            <Bar className={styles.chartBar} data={sigUserCountFinalData} options={sigUserBarOption} />
+          </div>
         </div>
       </div>
     </div >

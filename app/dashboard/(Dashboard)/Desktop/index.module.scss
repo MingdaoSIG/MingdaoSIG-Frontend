@@ -53,6 +53,18 @@
   border-radius: $border-radius;
   padding: 0.5rem;
   margin-top: 1.2rem;
+  overflow-y: auto;
+}
+
+.chartScroll {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    border-radius: 9999px;
+  }
 }
 
 .chartBar {
