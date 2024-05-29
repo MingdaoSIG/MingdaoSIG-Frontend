@@ -26,7 +26,7 @@ export async function GET() {
         "main": mainVersion <= packageJSON.version,
         "development": developmentVersion <= packageJSON.version
       },
-    },
+    },  
     "Backend": {
       "status": apiData.service.replace("up", "Online") || "Offline",
       "uptime": apiData.uptime || "N/A",

@@ -231,6 +231,8 @@ export default function Desktop() {
         <div className={styles.sigChart}>
           <div className={styles.chartScroll}>
             <Bar className={styles.chartBar} data={sigPostCountFinalData} options={sigPostBarOption} />
+            <br />
+            <br />
             <Bar className={styles.chartBar} data={sigUserCountFinalData} options={sigUserBarOption} />
           </div>
         </div>
