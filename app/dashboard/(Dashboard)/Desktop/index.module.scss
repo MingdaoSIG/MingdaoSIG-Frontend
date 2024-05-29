@@ -58,7 +58,7 @@
 
 .chartScroll {
   height: 100%;
-  overflow-y: auto;
+  overflow: auto;
   padding-right: 0.5rem;
 
   &::-webkit-scrollbar {
@@ -68,5 +68,6 @@
 }
 
 .chartBar {
-  width: 100% !important;
+  height: auto !important;
+  width: auto !important;
 }
