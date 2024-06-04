@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 const emoji: { [key: string]: string } = {
   "developer": "<:developer:1222933983164235876>",
   "10.21_user": "<:1021user:1222933998913851442>",
+  "bug_hunter": "<:bughunter:1245079303000031282>",
 };
 
 const handler = NextAuth({
@@ -44,7 +45,7 @@ const handler = NextAuth({
           data.append("identity", response.data.identity);
           data.append("email", response.data.email);
           data.append("code", response.data.code);
-          data.append("class", response.data.class);
+          data.append("class", response.data.class || "No Class");
 
           if (badges.length > 0) {
 
@@ -55,7 +56,7 @@ const handler = NextAuth({
 
           }
 
-          data.append("badge", badgeData);
+          data.append("badge", badgeData || "No Badge");
 
           axios(`${process.env.NEXTAUTH_URL}/api/webhook/login`, {
             method: "POST",
@@ -77,7 +78,6 @@ const handler = NextAuth({
       const _session: any = session;
       const _token: any = token;
       _session.accessToken = _token.accessToken;
-      //console.log(_session);
       return _session;
     },
   },

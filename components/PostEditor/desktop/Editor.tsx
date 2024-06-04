@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 // Styles
 import styles from "./Editor.module.scss";
 
@@ -54,7 +52,7 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     );
 
     if (responseImage[0] !== undefined) {
-      callback(responseImage.map((item: any) => `${API_URL}/image/` + item?.id));
+      callback(responseImage.map((item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id));
     }
   };
 

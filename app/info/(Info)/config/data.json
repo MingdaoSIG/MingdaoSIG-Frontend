@@ -12,7 +12,7 @@
       },
       {
         "name": "Markdown Tourist",
-        "url": "/post/652cabdb45c0be8f82c54d9a"
+        "url": "/post/652e4591d04b679afdff697e"
       }
 
     ]
@@ -40,6 +40,15 @@
       {
         "name": "MDSIG 2.0 Report",
         "url": "https://forms.gle/QJbcdvTvfcFkNJ1PA"
+      }
+    ]
+  },
+  {
+    "name": "統計資料",
+    "children": [
+      {
+        "name": "Dashboard",
+        "url": "/dashboard"
       }
     ]
   },

@@ -1,0 +1,73 @@
+@import "@/app/styles/variables.scss";
+
+.wrapper {
+  padding-top: 1.2rem;
+  max-height: 65dvh;
+  height: 65dvh;
+  max-width: 60rem;
+  width: 90dvw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.statics {
+  display: flex;
+  justify-content: space-between;
+}
+
+.staticsItem {
+  text-align: center;
+  display: flex;
+}
+
+.itemWrapper {
+  width: 12rem;
+  height: 6rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemFlex {
+  margin: auto;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: $dark-text;
+  }
+
+  p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $gray-text;
+  }
+}
+
+.sigChart {
+  height: calc(65dvh - 7.2rem);
+  width: 90dvw;
+  max-width: 60rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  padding: 0.5rem;
+  margin-top: 1.2rem;
+  overflow-y: auto;
+}
+
+.chartScroll {
+  height: 100%;
+  overflow: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    border-radius: 9999px;
+  }
+}
+
+.chartBar {
+  height: auto !important;
+  width: auto !important;
+}

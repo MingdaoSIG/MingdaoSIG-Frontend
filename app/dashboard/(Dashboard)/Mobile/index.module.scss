@@ -1,0 +1,79 @@
+@import "@/app/styles/variables.scss";
+
+.mobileView {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: 100dvh;
+  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper {
+  padding-top: 0.5rem;
+  width: 100%;
+}
+
+.statics {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.staticsItem {
+  text-align: center;
+  display: flex;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.itemWrapper {
+  width: 100%;
+  height: 5rem;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemFlex {
+  margin: auto;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: $dark-text;
+  }
+
+  p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $gray-text;
+  }
+}
+
+.sigChart {
+  height: calc(100dvh - 20.2rem);
+  width: 100%;
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+  overflow-y: auto;
+}
+
+.chartScroll {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 0.4rem;
+    border-radius: 9999px;
+  }
+}
+
+.chartBar {
+  width: 100% !important;
+}

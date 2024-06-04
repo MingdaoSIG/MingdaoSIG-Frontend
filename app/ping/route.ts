@@ -12,7 +12,6 @@ export async function GET() {
 
   const apiResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ping`);
   const apiData = apiResponse.data;
-  console.log(apiData);
 
   const data: any = {
     "Frontend": {
@@ -27,7 +26,7 @@ export async function GET() {
         "main": mainVersion <= packageJSON.version,
         "development": developmentVersion <= packageJSON.version
       },
-    },
+    },  
     "Backend": {
       "status": apiData.service.replace("up", "Online") || "Offline",
       "uptime": apiData.uptime || "N/A",

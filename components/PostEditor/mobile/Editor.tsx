@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 // Styles
 import styles from "./Editor.module.scss";
 
@@ -34,14 +32,11 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
           return await res.json();
         } catch (error) {
           console.error("error: ", error);
-          return "fuck you";
+          return "Error uploading image";
         }
       })
     );
-
-    console.log(responseImage);
-
-    callback(responseImage.map((item: any) => `${API_URL}/image/` + item?.id));
+    callback(responseImage.map((item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id));
   };
 
   const handleEditorChange = (newContent: string) => {
