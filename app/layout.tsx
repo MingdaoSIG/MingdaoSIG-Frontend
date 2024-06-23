@@ -1,6 +1,7 @@
 // Third-Party Package
 import React from "react";
 import type { Viewport } from "next";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 // Providers
 import { Providers } from "./providers";
@@ -28,6 +29,7 @@ export default function RootLayout({
         data-website-id="e034897b-bce7-4a20-b5e8-4c98ef67e30d"
       ></Script>
       <html lang="en">
+        <GoogleTagManager gtmId="GTM-NGM7R8S8" />
         <body>
           <Providers>
             <Device>
