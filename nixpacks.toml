@@ -1,0 +1,10 @@
+providers = ["node"]
+
+[phases.install]
+cmds = ["corepack enable", "corepack prepare pnpm@9.5.0 --activate", "pnpm install"]
+
+[phases.build]
+cmd = "pnpm build"
+
+[start]
+cmd = "pnpm start"
