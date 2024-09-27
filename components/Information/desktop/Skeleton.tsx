@@ -30,7 +30,7 @@ export const InformationSkeleton = () => {
       <div className={skeleton.information}>
         <div className={skeleton.wrapper}>
           <div className={skeleton.likedPosts}>
-            <h2>Top 5 Posts</h2>
+            <h2>Top 3 Posts</h2>
             <div className={skeleton.likePostWrapper}>
               {topPost.map((sig, index) => {
                 return (<TopPost key={index} />);

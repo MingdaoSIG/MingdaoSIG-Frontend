@@ -4,6 +4,7 @@ $logoBG: rgba(0, 190, 245, 35%);
   height: 3.7rem;
   width: 85dvw;
   margin: 2rem auto;
+  margin-bottom: 0;
 
   display: flex;
   flex-direction: row;
@@ -13,7 +14,7 @@ $logoBG: rgba(0, 190, 245, 35%);
   cursor: default;
   user-select: none;
 
-  & > img {
+  &>img {
     margin: auto 0;
     cursor: pointer;
   }
