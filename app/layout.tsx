@@ -10,7 +10,6 @@ import { Providers } from "./providers";
 import "@/app/styles/globals.scss";
 
 // Utils
-import Script from "next/script";
 import { Metadata } from "next";
 import { Device } from "./device";
 
