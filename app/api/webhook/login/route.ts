@@ -2,12 +2,9 @@ import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 function isDev(req: NextRequest) {
-  let dev = false;
-  if (!req.url.includes("sig.mingdao.edu.tw")) {
-    dev = true;
-  }
+  const urlObj = new URL(req.url);
 
-  return dev;
+  return urlObj.hostname !== "sig.mingdao.edu.tw";
 }
 
 export async function POST(req: NextRequest) {
