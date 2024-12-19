@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const content = {
     username: "MDSIG Login",
     avatar_url:
-      "https://cdn.discordapp.com/attachments/1222932958667870279/1222933028259496080/sig2_pfp__1.png",
+      "https://sig.mingdao.edu.tw/images/sig2pfp.png",
     embeds: [
       {
         title: `${data.get("name")} ${req.url.includes("localhost") ? "(Development)" : ""}${req.url.includes("dev") ? "(Development)" : ""}`,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         footer: {
           text: "MDSIG 2.0 Login System",
           icon_url:
-            "https://cdn.discordapp.com/attachments/1222932958667870279/1222933028259496080/sig2_pfp__1.png?ex=66180422&is=66058f22&hm=a0229ab4733f6a2c4d2db217500663987351acdee83ff724afcfddc84e61fc45&",
+            "https://sig.mingdao.edu.tw/images/sig2pfp.png",
         },
       },
     ],
