@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import axios from "axios";
 import GoogleProvider from "next-auth/providers/google";
+import { profile } from "console";
+import Swal from "sweetalert2";
 
 const emoji: { [key: string]: string } = {
   developer: "<:developer:1222933983164235876>",
@@ -17,7 +19,9 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ account }) {
+    async signIn({ account, profile }) {
+      if (!profile?.email?.endsWith("@ms.mingdao.edu.tw"))
+        return "/?error=not_md";
       if (account) {
         const urlencoded = new URLSearchParams();
         urlencoded.append("googleToken", String(account.access_token));
@@ -62,6 +66,7 @@ const handler = NextAuth({
           });
         }
       }
+
       return true;
     },
     async jwt({ token, account }) {

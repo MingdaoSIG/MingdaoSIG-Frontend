@@ -1,15 +1,20 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
+function isDev(req: NextRequest) {
+  const urlObj = new URL(req.url);
+
+  return urlObj.hostname !== "sig.mingdao.edu.tw";
+}
+
 export async function POST(req: NextRequest) {
   const data = await req.formData();
   const content = {
     username: "MDSIG Login",
-    avatar_url:
-      "https://sig.mingdao.edu.tw/images/sig2pfp.png",
+    avatar_url: "https://sig.mingdao.edu.tw/images/sig2pfp.png",
     embeds: [
       {
-        title: `${data.get("name")} ${req.url.includes("localhost") ? "(Development)" : ""}${req.url.includes("dev") ? "(Development)" : ""}`,
+        title: `${data.get("name")} ${isDev(req) ? "(Development)" : ""}`,
         description: data.get("description"),
         color: parseInt("0x34e718"),
         thumbnail: {
@@ -65,8 +70,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
         footer: {
           text: "MDSIG 2.0 Login System",
-          icon_url:
-            "https://sig.mingdao.edu.tw/images/sig2pfp.png",
+          icon_url: "https://sig.mingdao.edu.tw/images/sig2pfp.png",
         },
       },
     ],
