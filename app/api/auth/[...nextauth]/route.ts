@@ -20,7 +20,8 @@ const handler = NextAuth({
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      if (!profile?.email?.endsWith("@mingdao.edu.tw")) return "/?error=not_md";
+      if (!profile?.email?.endsWith("@ms.mingdao.edu.tw"))
+        return "/?error=not_md";
       if (account) {
         const urlencoded = new URLSearchParams();
         urlencoded.append("googleToken", String(account.access_token));
