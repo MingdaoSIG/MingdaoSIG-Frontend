@@ -2,8 +2,8 @@
 
 .wrapper {
   padding-top: 1.2rem;
-  max-height: 65dvh;
-  height: 65dvh;
+  max-height: 70dvh;
+  height: 70dvh;
   max-width: 60rem;
   width: 90dvw;
   margin-left: auto;
@@ -46,7 +46,7 @@
 }
 
 .sigChart {
-  height: calc(65dvh - 7.2rem);
+  height: calc(70dvh - 7.2rem);
   width: 90dvw;
   max-width: 60rem;
   background-color: $panel-background-color;
@@ -69,5 +69,5 @@
 
 .chartBar {
   height: auto !important;
-  width: auto !important;
+  width: 100% !important;
 }

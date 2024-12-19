@@ -2,13 +2,14 @@
 
 .app {
   width: 90dvw;
-  height: 65dvh;
-  max-height: 65dvh;
+  height: 70dvh;
+  // max-height: 70dvh;
   border-radius: 1.8rem;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
 
   display: grid;
-  grid-gap: 1.2rem;
+  grid-gap: 1rem;
   grid-template-columns: repeat(10, 1fr);
   grid-auto-rows: 1fr;
 
@@ -21,7 +22,8 @@
   background-color: transparent;
   grid-column: span 7;
   max-width: 90dvw;
-  max-height: 65dvh;
+  // max-height: 70dvh;
+  height: 100%;
   border-radius: $border-radius;
 
   overflow-y: auto;

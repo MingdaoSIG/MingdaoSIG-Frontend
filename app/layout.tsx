@@ -10,7 +10,6 @@ import { Providers } from "./providers";
 import "@/app/styles/globals.scss";
 
 // Utils
-import Script from "next/script";
 import { Metadata } from "next";
 import { Device } from "./device";
 
@@ -23,11 +22,6 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <Script
-        async
-        src="https://sig-analytics.lazco.dev/script.js"
-        data-website-id="e034897b-bce7-4a20-b5e8-4c98ef67e30d"
-      ></Script>
       <html lang="en">
         <GoogleTagManager gtmId="GTM-NGM7R8S8" />
         <body>

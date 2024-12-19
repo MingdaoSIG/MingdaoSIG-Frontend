@@ -3,9 +3,9 @@ import axios from "axios";
 import GoogleProvider from "next-auth/providers/google";
 
 const emoji: { [key: string]: string } = {
-  "developer": "<:developer:1222933983164235876>",
+  developer: "<:developer:1222933983164235876>",
   "10.21_user": "<:1021user:1222933998913851442>",
-  "bug_hunter": "<:bughunter:1245079303000031282>",
+  bug_hunter: "<:bughunter:1245079303000031282>",
 };
 
 const handler = NextAuth({
@@ -47,20 +47,18 @@ const handler = NextAuth({
           data.append("code", response.data.code);
           data.append("class", response.data.class || "No Class");
 
-          if (badges.length > 0) {
-
+          if (response.data.badge.length > 0) {
             badges[0]?.split(",").forEach((badge: string) => {
               badgeData += emoji[badge];
               badgeData += " ";
             });
-
           }
 
-          data.append("badge", badgeData || "No Badge");
+          data.append("badge", badgeData !== "" ? badgeData : "No Badge");
 
-          axios(`${process.env.NEXTAUTH_URL}/api/webhook/login`, {
+          fetch(`${process.env.NEXTAUTH_URL}/api/webhook/login`, {
             method: "POST",
-            data: data,
+            body: data,
           });
         }
       }
@@ -68,7 +66,7 @@ const handler = NextAuth({
     },
     async jwt({ token, account }) {
       const _token = token;
-      if (account) {  
+      if (account) {
         _token.accessToken = account?.access_token;
       }
 
