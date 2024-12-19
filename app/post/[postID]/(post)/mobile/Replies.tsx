@@ -67,7 +67,7 @@ export default function Replies({ post }: { post: TThread }) {
 
   return (
     <div
-      className={styles.wrapper + (extended ? " h-[65dvh] !bg-white" : " h-[6.5rem]")}
+      className={styles.wrapper + (extended ? " h-[70dvh] !bg-white" : " h-[6.5rem]")}
       onClick={() => {
         if (!extended) setExtended(true);
       }}>

@@ -1,7 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
-  --thread-height: 12rem;
+  --thread-height: 10rem;
   position: relative;
   width: 100%;
   border-radius: $border-radius;
@@ -35,7 +35,7 @@
 
 .preview {
   position: relative;
-  padding: 2rem;
+  padding: 1.5rem;
   box-sizing: border-box;
   height: var(--thread-height);
   overflow: hidden;

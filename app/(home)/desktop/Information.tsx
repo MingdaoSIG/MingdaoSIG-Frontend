@@ -56,7 +56,7 @@ const Information = () => {
     })();
   }, []);
 
-  const pageSize = 5;
+  const pageSize = 3;
   const { data, isLoading } = useTopPost({ pageSize });
 
   if (isLoading) {
@@ -67,7 +67,7 @@ const Information = () => {
         <div className={style.information}>
           <div className={style.wrapper}>
             <div className={style.likedPosts}>
-              <h2>Top 5 Posts</h2>
+              <h2>Top 3 Posts</h2>
               <div className={style.likePostWrapper}>
                 {data?.pages[0].map((item: TThread) => {
                   return (
