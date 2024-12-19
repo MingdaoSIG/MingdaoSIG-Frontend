@@ -19,6 +19,16 @@ import markdownToPlainText from "@/modules/markdownToPlainText";
 import { sigDefaultColors } from "../configs/sigDefaultColors";
 import { announcementSigId, announcementStayTime } from "../configs/announcement";
 
+
+// Fix Cover URLs
+function fixCoverUrl(cover: string) {
+  if (cover.includes("http")) {
+    return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover.split("image/")[1]}`;
+  } else {
+    return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
+  }
+}
+
 export const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
   const sig = threadData.sig as Sig;
@@ -102,7 +112,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
         }}
       >
         <Image
-          src={(threadData.cover.includes("http")) ? threadData.cover : `${process.env.NEXT_PUBLIC_API_URL!}/image/${threadData.cover}`}
+          src={fixCoverUrl(threadData.cover!)}
           alt="cover image"
           style={{ objectFit: "cover" }}
           priority
