@@ -12,6 +12,7 @@ import useIsMobile from "@/utils/useIsMobile";
 // Module 
 import Swal from "sweetalert2";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const isMobile = useIsMobile();
@@ -19,30 +20,32 @@ export default function Home() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
-  if (error === "not_md") {
-    Swal.fire({
-      title: "登入失敗",
-      text: "您使用的帳號並非明道中學的老師或學生！",
-      icon: "error",
-      confirmButtonText: "Sure",
-      allowEscapeKey: false,
-      allowOutsideClick: false,
-      customClass: {
-        container: "select-none",
-      },
-      focusConfirm: false,
-      background: "#fff url(/images/trees.png)",
-      backdrop: `
-        rgba(0,0,123,0.4)
-        url("/images/nyan-cat.gif")
-        left top
-        no-repeat
-      `,
-      preConfirm: () => {
-        router.push("/");
-      }
-    });
-  }
+  useEffect(() => {
+    if (error === "not_md") {
+      Swal.fire({
+        title: "Login Fail",
+        text: "You should use your Mingdao email to login!",
+        icon: "error",
+        confirmButtonText: "Sure",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        customClass: {
+          container: "select-none",
+        },
+        focusConfirm: false,
+        background: "#fff url(/images/trees.png)",
+        backdrop: `
+          rgba(0,0,123,0.4)
+          url("/images/nyan-cat.gif")
+          left top
+          no-repeat
+        `,
+        preConfirm: () => {
+          router.push("/");
+        }
+      });
+    }
+  }, [error, router]);
 
   if (isMobile) {
     return <ThreadsListMobile />;
