@@ -6,11 +6,11 @@ $avatar-height: 5rem;
 $badge-height: 1rem;
 
 .info {
-  padding: $content-padding;
+  padding: 0 0 $content-padding 0;
+
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: $border-radius;
   overflow: hidden;
 }
 
@@ -29,7 +29,6 @@ $badge-height: 1rem;
   gap: $badgeWrapper-padding;
 
   background-color: rgb(200 240 255 / 100%);
-  border-radius: 0.3rem;
   margin: auto 0 auto 0;
 }
 
@@ -40,13 +39,12 @@ $badge-height: 1rem;
 }
 
 .contentWrapper {
-  height: 12rem;
+  max-height: 24rem;
   position: relative;
   padding: $margin $margin $margin $margin;
 
   display: flex;
   flex-direction: column;
-  border-radius: calc($border-radius - 0.5rem);
   background-color: white;
 }
 
@@ -142,7 +140,7 @@ $badge-height: 1rem;
   cursor: auto;
   resize: none;
   border-radius: 0.3rem;
-  font-size: 0.75rem;
+  font-size: 1rem;
 
   button {
     color: #0070f3;

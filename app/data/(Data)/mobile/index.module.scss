@@ -1,0 +1,194 @@
+@import "@/app/styles/variables.scss";
+
+.mobileView {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: start;
+  width: 100dvw;
+  height: 100dvh;
+  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper {
+  padding-top: 0.5rem;
+}
+
+.title {
+  background: $panel-background-color;
+  border-radius: $mobile-border-radius;
+  height: 3rem;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+
+  h1 {
+    width: 100%;
+    color: #003f47;
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.75rem;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  h1::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.content {
+  background: $panel-background-color;
+  border-radius: $mobile-border-radius;
+
+  margin-top: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  text-align: center;
+
+  height: calc(100dvh - 12.5rem);
+  width: 100%;
+
+  &>div {
+    color: #003f47;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    h1 {
+      width: 100%;
+      color: #003f47;
+      font-size: 1.5rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 1.5rem;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .links {
+      margin-bottom: 0.25rem;
+    }
+
+    .links2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    a {
+      color: #0070f3;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  &>div::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+}
+
+.endText {
+  margin-top: 0.5rem;
+}
+
+.statusImg {
+  margin-top: 0.1rem
+}
+
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: start;
+  margin-bottom: 2rem;
+  // width: 100%;
+  // height: 100%;
+
+  &>input {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: $mobile-border-radius;
+    border: 1px solid #003f47;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
+    color: #003f47;
+    background: $panel-background-color;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  &>button {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: $mobile-border-radius;
+    border: 1px solid #003f47;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.25rem;
+    color: #003f47;
+    width: 4rem;
+    background: $panel-background-color;
+  }
+}
+
+.sigDataWrapper {
+  background: $panel-background-color;
+  height: calc(100dvh - 25rem);
+  border-radius: $mobile-border-radius;
+  padding: $mobile-border-radius;
+  border: 1px solid #003f47;
+  overflow: hidden;
+
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+
+  &>div {
+    overflow: auto;
+    height: calc(100dvh - 26rem);
+    word-break: break-all;
+  }
+
+  &>div::-webkit-scrollbar {
+    width: 0.25rem;
+  }
+}
