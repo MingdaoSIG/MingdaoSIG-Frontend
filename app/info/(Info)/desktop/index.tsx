@@ -53,11 +53,13 @@ export default function Desktop() {
             <p>前端運行時間：{timeEn2Zh(ping?.Frontend?.uptime)}</p>
             <p>後端運行時間：{timeEn2Zh(ping?.Backend?.uptime)}</p>
             <br />
-            <p>訪問<Link href={"https://sig-uptime.lazco.dev/status/main"} target="_blank">狀態頁面</Link>獲取更多詳細信息</p>
+            <p>訪問<Link href={"https://status.sig.school/"} target="_blank">狀態頁面</Link>獲取更多詳細信息</p>
             <p className={styles.endText}><Link href={"https://sig.mingdao.edu.tw/ping"} target="_blank">前端</Link></p>
-            <img src="https://sig-uptime.lazco.dev/api/badge/15/uptime?labelPrefix=前端+&style=for-the-badge" alt="frontend-status" className={styles.statusImg} />
+            <img src="https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge" alt="frontend-status" className={styles.statusImg} />
             <p className={styles.endText}><Link href={"https://sig-api.mingdao.edu.tw/ping"} target="_blank">後端</Link></p>
-            <img src="https://sig-uptime.lazco.dev/api/badge/5/uptime?labelPrefix=後端+&style=for-the-badge" alt="backend-status" className={styles.statusImg} />
+            <img src="https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge" alt="backend-status" className={styles.statusImg} />
+            <p className={styles.endText}>資料庫</p>
+            <img src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge" alt="backend-status" className={styles.statusImg} />
           </div>
         </div>
       </div>
