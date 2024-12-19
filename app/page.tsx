@@ -24,7 +24,7 @@ export default function Home() {
       title: "登入失敗",
       text: "您使用的帳號並非明道中學的老師或學生！",
       icon: "error",
-      confirmButtonText: "確認",
+      confirmButtonText: "Sure",
       allowEscapeKey: false,
       allowOutsideClick: false,
       customClass: {
