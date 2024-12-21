@@ -1,0 +1,82 @@
+@import "@/app/styles/variables.scss";
+
+$button-font-size: 1.125rem;
+$button-font-weight: 700;
+$button-post-background: #fff;
+$button-post-text: #5fcdf5;
+
+.wrapper {
+  height: 70dvh;
+  width: 90dvw;
+  margin-left: auto;
+  margin-right: auto;
+  gap: 3rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.searchWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.searchTitle {
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+.searchBar {
+  margin-top: 0.5rem;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  background-color: $panel-background-color;
+  border-radius: $border-radius;
+}
+
+.searchForm {
+  padding: 2rem;
+}
+
+.inputLabel {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.inputSelect {
+  height: 2rem;
+  border-radius: 2rem;
+  background-color: white;
+  padding-right: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  margin-top: 0.5em;
+
+  >select {
+    padding-left: 0.5rem;
+    width: 100%;
+    height: 100%;
+    line-height: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    border-width: 0;
+    background-color: white;
+
+    display: flex;
+    align-items: center;
+  }
+}
+
+.searchButton {
+  width: 100%;
+  background-color: $button-post-background;
+  color: $button-post-text;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+  margin-top: 1rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-radius: 9999px;
+
+}
