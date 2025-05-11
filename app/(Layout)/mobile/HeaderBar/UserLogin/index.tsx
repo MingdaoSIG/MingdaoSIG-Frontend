@@ -27,17 +27,29 @@ export default function UserLogin() {
     );
   } else {
     return (
-      <div
-        className={styles.userPanel}
-        onClick={() => confirmLogout(logout)}
-      >
-        <Image
-          src={userData && userData.avatar || process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"}
-          width={50}
-          height={50}
-          alt="Avatar"
-          className={styles.avatar}
-        />
+      <div className="flex items-center justify-center">
+        {userData && userData.permission === 2 && (
+          <div
+            className={styles.loginUserPanelWrapper + " mr-2"}
+            onClick={() => window.open("/admin", "_self")}
+          >
+            <div className={styles.loginUserPanel}>
+              <p>管理平台</p>
+            </div>
+          </div>
+        )}
+        <div
+          className={styles.userPanel}
+          onClick={() => confirmLogout(logout)}
+        >
+          <Image
+            src={userData && userData.avatar || process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"}
+            width={50}
+            height={50}
+            alt="Avatar"
+            className={styles.avatar}
+          />
+        </div>
       </div>
     );
   }

@@ -39,7 +39,7 @@ export const CustomCode = {
   4110: "Error reading join request from db",
   4111: "Error writing join request to db",
 
-  5000: "Unknown error"
+  5000: "Unknown error",
 } as const;
 
 export const CustomStatus = {
@@ -69,6 +69,10 @@ export const CustomStatus = {
   ALREADY_APPLIED: 4029,
   NOT_A_MEMBER: 4030,
   ALREADY_CONFIRMED: 4031,
+  ALREADY_LEADER: 4032,
+  ALREADY_MODERATOR: 4033,
+  NOT_LEADER: 4034,
+  NOT_MODERATOR: 4035,
 
   ERROR_READING_USER_FROM_DB: 4100,
   ERROR_WRITING_USER_TO_DB: 4101,
@@ -83,5 +87,5 @@ export const CustomStatus = {
   ERROR_READING_JOIN_REQUEST_FROM_DB: 4110,
   ERROR_WRITING_JOIN_REQUEST_TO_DB: 4111,
 
-  UNKNOWN_ERROR: 5000
+  UNKNOWN_ERROR: 5000,
 } as const;
