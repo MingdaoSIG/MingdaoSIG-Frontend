@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
 import { useEffect, useState } from "react";
 
-export default function AdminPage() {
+export default function ManageAdvisorChooseSIG() {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();

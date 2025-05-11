@@ -5,10 +5,10 @@ import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 
-export default function AdminPage({ params }: { params: { sigID: string } }) {
+export default function ManageSIGAdvisor({ params }: { params: { sigID: string } }) {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();
@@ -16,9 +16,50 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
   const [sigData, setSigData] = useState<any>({});
   const [advisors, setAdvisors] = useState<any[]>([]);
 
+  const fetchAdvisors = useCallback(async () => {
+    try {
+      const response = await sigAPI.getSigData(params.sigID);
+      setSigData(response);
+
+      if (response.moderator && response.moderator.length > 0) {
+        setAdvisors([]);
+
+        const addedAdvisorIds = new Set();
+
+        await Promise.all(
+          response.moderator.map(async (advisorId: string) => {
+            try {
+              if (addedAdvisorIds.has(advisorId)) {
+                return;
+              }
+
+              const res = await sigAPI.getUserData(advisorId);
+
+              if (res) {
+                addedAdvisorIds.add(advisorId);
+                setAdvisors(prev => {
+                  const isDuplicate = prev.some(advisor => advisor._id === res._id);
+
+                  if (!isDuplicate) {
+                    return [...prev, res];
+                  }
+                  return prev;
+                });
+              }
+            } catch (error) {
+              console.error(`Error fetching data for advisor ${advisorId}:`, error);
+            }
+          })
+        );
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  }, [params.sigID]);
+
   function addAdvisor() {
     Swal.fire({
-      title: "新增 Leader",
+      title: "新增指導老師",
       input: "text",
       inputLabel: "請輸入要新增的指導老師電子郵件",
       inputPlaceholder: "例如: atwang@ms.mingdao.edu.tw",
@@ -54,7 +95,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
         if (res.status === 200) {
           Swal.fire({
             title: "新增成功!",
-            text: `成功新增指導老師!`,
+            text: "成功新增指導老師!",
             icon: "success",
             confirmButtonText: "確定",
             confirmButtonColor: "#5fcdf5",
@@ -64,6 +105,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
               confirmButton: "focus:outline-none"
             }
           });
+          fetchAdvisors();
         } else if (data.status === 4033) {
           Swal.fire({
             title: "新增失敗!",
@@ -126,47 +168,8 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await sigAPI.getSigData(params.sigID);
-        setSigData(response);
-
-        if (response.moderator && response.moderator.length > 0) {
-          setAdvisors([]);
-
-          const addedAdvisorIds = new Set();
-
-          await Promise.all(
-            response.moderator.map(async (advisorId: string) => {
-              try {
-                if (addedAdvisorIds.has(advisorId)) {
-                  return;
-                }
-
-                const res = await sigAPI.getUserData(advisorId);
-
-                if (res) {
-                  addedAdvisorIds.add(advisorId);
-                  setAdvisors(prev => {
-                    const isDuplicate = prev.some(advisor => advisor._id === res._id);
-
-                    if (!isDuplicate) {
-                      return [...prev, res];
-                    }
-                    return prev;
-                  });
-                }
-              } catch (error) {
-                console.error(`Error fetching data for advisor ${advisorId}:`, error);
-              }
-            })
-          );
-        }
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
-  }, [params.sigID]);
+    fetchAdvisors();
+  }, [fetchAdvisors]);
 
   if (userAccount.isLoading === true) {
     return (<div></div>);

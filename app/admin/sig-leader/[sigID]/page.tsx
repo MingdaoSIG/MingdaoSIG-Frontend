@@ -5,10 +5,10 @@ import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 
-export default function AdminPage({ params }: { params: { sigID: string } }) {
+export default function ManageSIGLeader({ params }: { params: { sigID: string } }) {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();
@@ -16,8 +16,8 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
   const [sigData, setSigData] = useState<any>({});
   const [leaders, setLeaders] = useState<any[]>([]);
 
-  // 將獲取 leaders 邏輯抽離到單獨的函數中，以便在新增後重新調用
-  const fetchLeaders = async () => {
+  // 使用 useCallback 包裝 fetchLeaders 函數，以確保它的引用在渲染間保持穩定
+  const fetchLeaders = useCallback(async () => {
     try {
       const response = await sigAPI.getSigData(params.sigID);
       setSigData(response);
@@ -56,7 +56,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
     } catch (error: any) {
       console.error(error.message);
     }
-  };
+  }, [params.sigID]); // 只有當 sigID 改變時才重新創建函數
 
   function addLeader() {
     Swal.fire({
@@ -96,7 +96,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
         if (res.status === 200) {
           Swal.fire({
             title: "新增成功!",
-            text: `成功新增 Leader!`,
+            text: "成功新增 Leader!",
             icon: "success",
             confirmButtonText: "確定",
             confirmButtonColor: "#5fcdf5",
@@ -106,7 +106,6 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
               confirmButton: "focus:outline-none"
             }
           });
-          // 新增成功後重新獲取 Leaders 列表
           fetchLeaders();
         } else if (data.status === 4032) {
           Swal.fire({
@@ -165,16 +164,19 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         console.log(leaderId);
-        // 如果要實現刪除後也刷新列表，可以在這裡添加 API 呼叫和刷新邏輯
-        // 刪除成功後調用 fetchLeaders();
       }
     });
   }
 
+  // 移除多餘的 useEffect，因為下面的 useEffect 已經包含了對 fetchLeaders 的調用
+  // useEffect(() => {
+  //   fetchLeaders();
+  // }, [params.sigID]);
+
+  // 這個 useEffect 依賴於 fetchLeaders，當 fetchLeaders 或 params.sigID 改變時都會執行
   useEffect(() => {
-    // 初始化時獲取數據
     fetchLeaders();
-  }, [params.sigID]);
+  }, [fetchLeaders]);
 
   if (userAccount.isLoading === true) {
     return (<div></div>);
