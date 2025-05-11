@@ -1,12 +1,6 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-function isDev(req: NextRequest) {
-  const urlObj = new URL(req.url);
-
-  return urlObj.hostname !== "sig.mingdao.edu.tw";
-}
-
 export async function POST(req: NextRequest) {
   const data = await req.formData();
   const content = {
@@ -14,7 +8,7 @@ export async function POST(req: NextRequest) {
     avatar_url: "https://sig.mingdao.edu.tw/images/sig2pfp.png",
     embeds: [
       {
-        title: `${data.get("name")} ${isDev(req) ? "(Development)" : ""}`,
+        title: `${data.get("name")}`,
         description: data.get("description"),
         color: parseInt("0x34e718"),
         thumbnail: {

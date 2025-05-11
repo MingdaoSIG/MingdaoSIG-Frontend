@@ -17,7 +17,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
   const [advisors, setAdvisors] = useState<any[]>([]);
 
   function addAdvisor() {
-    const mail = Swal.fire({
+    Swal.fire({
       title: "新增 Leader",
       input: "text",
       inputLabel: "請輸入要新增的指導老師電子郵件",
@@ -39,8 +39,71 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const mail = result.value;
-        console.log(mail);
+        const code = result.value;
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/moderator`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${userAccount.token}`,
+          },
+          body: JSON.stringify({
+            code: code,
+          }),
+        });
+        const data = await res.json();
+        if (res.status === 200) {
+          Swal.fire({
+            title: "新增成功!",
+            text: `成功新增指導老師!`,
+            icon: "success",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        } else if (data.status === 4033) {
+          Swal.fire({
+            title: "新增失敗!",
+            text: "該電子郵件已經是指導老師!",
+            icon: "error",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        } else if (data.status === 4017) {
+          Swal.fire({
+            title: "新增失敗!",
+            text: "該電子郵件尚未註冊 SIG 帳號!",
+            icon: "error",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "新增失敗!",
+            text: "請聯絡開發者！",
+            icon: "error",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        }
       }
     });
   }
