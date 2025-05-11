@@ -16,6 +16,48 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
   const [sigData, setSigData] = useState<any>({});
   const [leaders, setLeaders] = useState<any[]>([]);
 
+  // 將獲取 leaders 邏輯抽離到單獨的函數中，以便在新增後重新調用
+  const fetchLeaders = async () => {
+    try {
+      const response = await sigAPI.getSigData(params.sigID);
+      setSigData(response);
+
+      if (response.leader && response.leader.length > 0) {
+        setLeaders([]);
+
+        const addedLeaderIds = new Set();
+
+        await Promise.all(
+          response.leader.map(async (leaderId: string) => {
+            try {
+              if (addedLeaderIds.has(leaderId)) {
+                return;
+              }
+
+              const res = await sigAPI.getUserData(leaderId);
+
+              if (res) {
+                addedLeaderIds.add(leaderId);
+                setLeaders(prev => {
+                  const isDuplicate = prev.some(leader => leader._id === res._id);
+
+                  if (!isDuplicate) {
+                    return [...prev, res];
+                  }
+                  return prev;
+                });
+              }
+            } catch (error) {
+              console.error(`Error fetching data for leader ${leaderId}:`, error);
+            }
+          })
+        );
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
   function addLeader() {
     Swal.fire({
       title: "新增 Leader",
@@ -64,6 +106,8 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
               confirmButton: "focus:outline-none"
             }
           });
+          // 新增成功後重新獲取 Leaders 列表
+          fetchLeaders();
         } else if (data.status === 4032) {
           Swal.fire({
             title: "新增失敗!",
@@ -120,53 +164,16 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
       cancelButtonText: "取消"
     }).then(async (result) => {
       if (result.isConfirmed) {
-
         console.log(leaderId);
+        // 如果要實現刪除後也刷新列表，可以在這裡添加 API 呼叫和刷新邏輯
+        // 刪除成功後調用 fetchLeaders();
       }
     });
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await sigAPI.getSigData(params.sigID);
-        setSigData(response);
-
-        if (response.leader && response.leader.length > 0) {
-          setLeaders([]);
-
-          const addedLeaderIds = new Set();
-
-          await Promise.all(
-            response.leader.map(async (leaderId: string) => {
-              try {
-                if (addedLeaderIds.has(leaderId)) {
-                  return;
-                }
-
-                const res = await sigAPI.getUserData(leaderId);
-
-                if (res) {
-                  addedLeaderIds.add(leaderId);
-                  setLeaders(prev => {
-                    const isDuplicate = prev.some(leader => leader._id === res._id);
-
-                    if (!isDuplicate) {
-                      return [...prev, res];
-                    }
-                    return prev;
-                  });
-                }
-              } catch (error) {
-                console.error(`Error fetching data for leader ${leaderId}:`, error);
-              }
-            })
-          );
-        }
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
+    // 初始化時獲取數據
+    fetchLeaders();
   }, [params.sigID]);
 
   if (userAccount.isLoading === true) {
@@ -311,7 +318,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
             </table>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }
