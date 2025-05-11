@@ -163,17 +163,50 @@ export default function ManageSIGLeader({ params }: { params: { sigID: string } 
       cancelButtonText: "取消"
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log(leaderId);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/leader`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${userAccount.token}`,
+          },
+          body: JSON.stringify({
+            leaderId: leaderId,
+          }),
+        });
+        const data = await res.json();
+        console.log(data);
+        if (res.status === 200) {
+          Swal.fire({
+            title: "刪除成功!",
+            text: "成功刪除 Leader!",
+            icon: "success",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+          fetchLeaders();
+        } else {
+          Swal.fire({
+            title: "刪除失敗!",
+            text: "請聯絡開發者！",
+            icon: "error",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        }
       }
     });
   }
 
-  // 移除多餘的 useEffect，因為下面的 useEffect 已經包含了對 fetchLeaders 的調用
-  // useEffect(() => {
-  //   fetchLeaders();
-  // }, [params.sigID]);
-
-  // 這個 useEffect 依賴於 fetchLeaders，當 fetchLeaders 或 params.sigID 改變時都會執行
   useEffect(() => {
     fetchLeaders();
   }, [fetchLeaders]);

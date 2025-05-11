@@ -162,7 +162,46 @@ export default function ManageSIGAdvisor({ params }: { params: { sigID: string }
       cancelButtonText: "取消"
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log(advisorId);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/moderator`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${userAccount.token}`,
+          },
+          body: JSON.stringify({
+            moderatorId: advisorId,
+          }),
+        });
+        const data = await res.json();
+        console.log(data);
+        if (res.status === 200) {
+          Swal.fire({
+            title: "刪除成功!",
+            text: "成功刪除指導老師!",
+            icon: "success",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+          fetchAdvisors();
+        } else {
+          Swal.fire({
+            title: "刪除失敗!",
+            text: "請聯絡開發者！",
+            icon: "error",
+            confirmButtonText: "確定",
+            confirmButtonColor: "#5fcdf5",
+            customClass: {
+              title: "text-lg font-bold",
+              popup: "rounded-lg",
+              confirmButton: "focus:outline-none"
+            }
+          });
+        }
       }
     });
   }
