@@ -18,47 +18,48 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
 
   function addLeader() {
     const code = Swal.fire({
-      title: '新增 Leader',
-      input: 'text',
-      inputLabel: '請輸入要新增的 Leader 學號',
-      inputPlaceholder: '例如: 11S001',
+      title: "新增 Leader",
+      input: "text",
+      inputLabel: "請輸入要新增的 Leader 學號",
+      inputPlaceholder: "例如: 11S001",
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
-          return '請輸入學號!';
+          return "請輸入學號!";
         }
       },
-      confirmButtonText: '新增',
-      cancelButtonText: '取消',
-      confirmButtonColor: '#5fcdf5',
+      confirmButtonText: "新增",
+      cancelButtonText: "取消",
+      confirmButtonColor: "#5fcdf5",
       customClass: {
-        title: 'text-lg font-bold',
-        popup: 'rounded-lg',
-        confirmButton: 'focus:outline-none',
-        cancelButton: 'focus:outline-none'
+        title: "text-lg font-bold",
+        popup: "rounded-lg",
+        confirmButton: "focus:outline-none",
+        cancelButton: "focus:outline-none"
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
         const code = result.value;
         console.log(code);
       }
-    })
+    });
   }
 
   function deleteLeader(leaderId: string) {
     Swal.fire({
-      title: '確定要刪除這位 Leader 嗎?',
+      title: "確定要刪除這位 Leader 嗎?",
       text: "刪除後就必須重新新增，請謹慎操作!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '刪除',
-      cancelButtonText: '取消'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "刪除",
+      cancelButtonText: "取消"
     }).then(async (result) => {
       if (result.isConfirmed) {
+        console.log(leaderId);
       }
-    })
+    });
   }
 
   useEffect(() => {
@@ -148,7 +149,7 @@ export default function AdminPage({ params }: { params: { sigID: string } }) {
                 return (
                   <div
                     key={`${leader._id}-${index}`}
-                    className={`p-4 ${index !== 0 ? 'border-t border-black text-left grid grid-cols-10 gap-2' : 'text-left grid grid-cols-10 gap-2'}`}
+                    className={`p-4 ${index !== 0 ? "border-t border-black text-left grid grid-cols-10 gap-2" : "text-left grid grid-cols-10 gap-2"}`}
                   >
                     <div className="col-span-8 flex flex-col">
                       <div className="grid grid-cols-5 gap-2 mb-1">

@@ -66,3 +66,29 @@
     font-weight: 500;
   }
 }
+
+.adminUserPanelWrapper {
+  aspect-ratio: 2.2 / 1;
+  height: 3.5rem;
+  border-radius: 9999px;
+  padding: 0.15rem;
+  cursor: pointer;
+  background-image: linear-gradient(to right, #6FA8FF, #003F47);
+}
+
+.adminUserPanel {
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  >p {
+    font-size: 1.25rem;
+    color: #004C64;
+    font-weight: 500;
+  }
+}
