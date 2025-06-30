@@ -16,8 +16,31 @@ export function useUserAccount() {
   useEffect(() => {
     (async () => {
       const userLocalStorage = localStorage.getItem("user");
+      const sessionLocalStorage = localStorage.getItem("session");
 
-      if (OAuth === "loading" || !userLocalStorage) setIsLoading(true);
+      console.log("OAuth status:", OAuth);
+      if (sessionLocalStorage) {
+        try {
+          const { token, data } = await platformLoginWithSession(
+            sessionLocalStorage
+          );
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(data));
+          setToken(token);
+          setUserData(data);
+          setIsLogin(true);
+          setIsLoading(false);
+          return;
+        } catch (error) {
+          console.error(error);
+          setIsLogin(false);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      if (OAuth === "loading" || (!userLocalStorage && !sessionLocalStorage))
+        setIsLoading(true);
 
       if (OAuth === "authenticated") {
         try {
@@ -55,6 +78,12 @@ export function useUserAccount() {
   }, []);
 
   const logout = useCallback(() => {
+    localStorage.removeItem("session");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUserData(null);
+    setIsLogin(false);
     signOut();
   }, []);
 
@@ -75,7 +104,34 @@ async function platformLogin(accessToken: string) {
       })
     ).json();
 
-    if (response.status !== 2000) throw new Error("Failed to login to platform");
+    if (response.status !== 2000)
+      throw new Error("Failed to login to platform");
+
+    return {
+      token: response.authorization.toString().split(" ")[1],
+      data: response.data,
+    };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+async function platformLoginWithSession(session: string) {
+  try {
+    const urlencoded = new URLSearchParams();
+    urlencoded.append("session", session);
+    const response = await (
+      await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: urlencoded,
+      })
+    ).json();
+
+    if (response.status !== 2000)
+      throw new Error("Failed to login to platform");
 
     return {
       token: response.authorization.toString().split(" ")[1],

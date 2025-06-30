@@ -19,6 +19,7 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
+  const session = searchParams.get("session");
 
   useEffect(() => {
     if (error === "not_md") {
@@ -46,6 +47,13 @@ export default function Home() {
       });
     }
   }, [error, router]);
+
+  useEffect(() => {
+    if (session) {
+      localStorage.setItem("session", session);
+      router.push("/");
+    }
+  }, [session, router]);
 
   if (isMobile) {
     return <ThreadsListMobile />;
