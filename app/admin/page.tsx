@@ -37,8 +37,8 @@ export default function AdminPage() {
           <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-advisor")}>
             SIG 指導老師管理
           </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" disabled onClick={() => router.push("/admin/post")}>
-            貼文管理（開發中）
+          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/post")}>
+            貼文管理
           </button>
         </div>
       </div>
@@ -56,8 +56,8 @@ export default function AdminPage() {
           <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-advisor")}>
             SIG 指導老師管理
           </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" disabled onClick={() => router.push("/admin/post")}>
-            貼文管理（開發中）
+          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/post")}>
+            貼文管理
           </button>
         </div>
       </div>
