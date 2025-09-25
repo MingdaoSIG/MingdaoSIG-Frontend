@@ -25,6 +25,7 @@ export const CustomCode = {
   4029: "Already applied",
   4030: "Not a member",
   4031: "Already confirmed",
+  4032: "Invalid time range",
 
   4100: "Error reading user from db",
   4101: "Error writing user to db",

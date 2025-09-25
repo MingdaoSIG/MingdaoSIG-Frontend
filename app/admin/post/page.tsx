@@ -115,38 +115,44 @@ export default function ManagePost() {
       <div className="flex flex-col items-center justify-start h-full">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">貼文管理</h1>
         <div className="w-full max-w-4xl overflow-x-auto shadow-lg rounded-lg">
-          <table className="min-w-full bg-white rounded-lg overflow-hidden">
-            <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-              <tr>
-                <th className="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">
-                  貼文名稱
-                </th>
-                <th className="px-8 py-4 text-center text-sm font-semibold uppercase tracking-wider">
-                  操作
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {postList.map((post, index) => (
-                <tr
-                  key={post.id}
-                  className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-blue-50 transition-colors duration-200`}
-                >
-                  <td className="px-8 py-4 text-sm font-medium text-gray-900">
-                    {post.title}
-                  </td>
-                  <td className="px-8 py-4 text-center">
-                    <button
-                      onClick={() => router.push(`/admin/post/${post.id}`)}
-                      className="inline-flex items-center px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      管理貼文
-                    </button>
-                  </td>
+          <div className="shadow-lg rounded-lg h-full overflow-hidden">
+            <table className="min-w-full bg-white rounded-lg">
+              <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white sticky top-0 z-10">
+                <tr className="text-center flex">
+                  <th className="py-4 text-center text-sm font-semibold uppercase tracking-wider w-10/12">
+                    貼文名稱
+                  </th>
+                  <th className="py-4 text-center text-sm font-semibold uppercase tracking-wider w-2/12">
+                    操作
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+            </table>
+            <div className="overflow-y-auto max-h-[62dvh] remove-scrollbar w-full">
+              <table className="min-w-full bg-white">
+                <tbody className="divide-y divide-gray-200">
+                  {postList.map((post, index) => (
+                    <tr
+                      key={post._id}
+                      className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-blue-50 transition-colors duration-200 flex text-center items-center`}
+                    >
+                      <td className="py-2 text-sm font-medium text-gray-900 w-10/12 text-center">
+                        {post.title}
+                      </td>
+                      <td className="py-2 text-center w-2/12">
+                        <button
+                          onClick={() => router.push(`/admin/post/${post._id}`)}
+                          className="inline-flex px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                          管理貼文
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
         {postList.length === 0 && (
           <div className="mt-8 text-center text-gray-500">

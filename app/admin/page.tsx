@@ -4,6 +4,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
+import { menuConfig } from "./(admin)/config";
 
 export default function AdminPage() {
   const isMobile = useIsMobile();
@@ -31,15 +32,23 @@ export default function AdminPage() {
         <p className="text-lg bg-red-200 rounded-lg p-4 mb-4 font-bold">請注意您目前是管理員身份登入系統，<br />這意味著您的操作都會直接或間接影響整個平台的運作，<br />請謹慎操作。</p>
         <p className="text-xl mb-4">請選擇您要管理的項目:</p>
         <div className="flex flex-col space-y-4">
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-leader")}>
-            SIG Leader 管理
-          </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-advisor")}>
-            SIG 指導老師管理
-          </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/post")}>
-            貼文管理
-          </button>
+          {
+            menuConfig.map((item) => {
+              return (
+                <button
+                  key={item.link}
+                  className={`bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed ${item.disable ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => {
+                    if (!item.disable) {
+                      router.push(item.link);
+                    }
+                  }}
+                  disabled={item.disable}
+                >
+                  {item.name}
+                </button>
+              );
+            })}
         </div>
       </div>
     </div >
@@ -50,15 +59,24 @@ export default function AdminPage() {
         <p className="text-lg bg-red-200 rounded-lg p-4 mb-4 font-bold">請注意您目前是管理員身份登入系統，<br />這意味著您的操作都會直接或間接影響整個平台的運作，<br />請謹慎操作。</p>
         <p className="text-xl mb-4">請選擇您要管理的項目:</p>
         <div className="flex flex-col space-y-4">
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-leader")}>
-            SIG Leader 管理
-          </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/sig-advisor")}>
-            SIG 指導老師管理
-          </button>
-          <button className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed" onClick={() => router.push("/admin/post")}>
-            貼文管理
-          </button>
+          {
+            menuConfig.map((item) => {
+              return (
+                <button
+                  key={item.link}
+                  className={`bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed ${item.disable ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => {
+                    if (!item.disable) {
+                      router.push(item.link);
+                    }
+                  }}
+                  disabled={item.disable}
+                >
+                  {item.name}{item.disable ? " (開發中)" : ""}
+                </button>
+              );
+            })
+          }
         </div>
       </div>
     </div>
