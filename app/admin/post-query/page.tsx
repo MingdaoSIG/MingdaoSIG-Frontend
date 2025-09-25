@@ -200,7 +200,7 @@ export default function Page() {
                   <tbody className="divide-y divide-gray-200">
                     {(results.length === 0 && !loading) ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                        <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
                           暫無資料
                         </td>
                       </tr>
