@@ -361,10 +361,3 @@ export default function Page() {
 }
 
 /* --- helpers --- */
-
-function csvEscape(s: string) {
-  if (s.includes(",") || s.includes("\"") || s.includes("\n")) {
-    return `"${s.replace(/"/g, "\"\"")}"`;
-  }
-  return s;
-}
