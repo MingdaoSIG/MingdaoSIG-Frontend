@@ -60,3 +60,7 @@ body {
   border-radius: 5px;
   background: $scrollbar-thumb-color;
 }
+
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
