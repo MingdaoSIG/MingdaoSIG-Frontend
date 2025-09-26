@@ -79,7 +79,7 @@ export default function NewPost({
               >
                 <span className="flex items-center">
                   <span>#{tag}</span>
-                  <span className="ml-2">x</span>
+                  <span className="ml-2">X</span>
                 </span>
               </button>
             ))}
