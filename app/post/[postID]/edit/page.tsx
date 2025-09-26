@@ -42,6 +42,7 @@ export default function EditPostPage({
     sig: oldPostData.sig,
     content: oldPostData.content,
     cover: oldPostData.cover,
+    hashtag: oldPostData.hashtag,
   });
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
@@ -89,13 +90,14 @@ export default function EditPostPage({
           sig: oldPostData.sig,
           content: oldPostData.content,
           cover: oldPostData.cover,
+          hashtag: oldPostData.hashtag,
         } as TPostAPI)
       );
     }
-  }, [currentPostData.content, currentPostData.cover, currentPostData.sig, currentPostData.title, oldPostData.content, oldPostData.cover, oldPostData.sig, oldPostData.title]);
+  }, [currentPostData.content, currentPostData.cover, currentPostData.sig, currentPostData.title, oldPostData.content, oldPostData.cover, oldPostData.hashtag, oldPostData.sig, oldPostData.title]);
 
   useEffect(() => {
-    if (oldPostData.content === currentPostData.content && oldPostData.title === currentPostData.title && oldPostData.sig === currentPostData.sig && oldPostData.cover === currentPostData.cover) {
+    if (oldPostData.content === currentPostData.content && oldPostData.title === currentPostData.title && oldPostData.sig === currentPostData.sig && oldPostData.cover === currentPostData.cover && oldPostData.hashtag?.toString() === currentPostData.hashtag?.toString()) {
       setEditButtonDisable(true);
     } else if (currentPostData.content === "" || currentPostData.title === "" || currentPostData.sig === "") {
       setEditButtonDisable(true);
@@ -110,6 +112,7 @@ export default function EditPostPage({
       sig: oldPostData.sig,
       content: oldPostData.content,
       cover: oldPostData.cover,
+      hashtag: oldPostData.hashtag,
     });
   }
 

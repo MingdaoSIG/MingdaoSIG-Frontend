@@ -44,6 +44,7 @@ export default function NewPostPage() {
     sig: "",
     content: markdownGuide,
     cover: "",
+    hashtag: [],
   });
 
   // Adjust form data function
@@ -119,6 +120,7 @@ export default function NewPostPage() {
       sig: "",
       content: markdownGuide,
       cover: "",
+      hashtag: [],
     });
     localStorage.removeItem("editorContent");
   }
