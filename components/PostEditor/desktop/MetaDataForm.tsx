@@ -11,7 +11,7 @@ import Buttons from "./Buttons";
 import styles from "./MetaDataForm.module.scss";
 
 // Types
-import { TPostAPI } from "@/components/PostEditor/types/postAPI";
+import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 // Modules
 import sigAPI from "@/modules/sigAPI";
@@ -20,7 +20,7 @@ import sigAPI from "@/modules/sigAPI";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 // Types
-import { Sig } from "@/interfaces/Sig";
+import type { Sig } from "@/interfaces/Sig";
 
 // Config
 import { announcementSigId } from "../config/announcement";
@@ -96,9 +96,7 @@ export default function MetaDataForm({
           </div>
           <div>
             <label className={styles.inputLabel}>SIGs:</label>
-            <div
-              className={styles.inputSelect}
-            >
+            <div className={styles.inputSelect}>
               <select
                 name="sig"
                 value={data?.sig}
@@ -114,20 +112,17 @@ export default function MetaDataForm({
                     </option>
                   );
                 })}
-                {
-                  (userData && announcementSigData && announcementSigData?.moderator?.includes(userData._id!)) && (
+                {userData &&
+                  announcementSigData &&
+                  announcementSigData?.moderator?.includes(userData._id!) && (
                     <option value="652d60b842cdf6a660c2b778">公告</option>
-                  )
-                }
+                  )}
               </select>
             </div>
           </div>
           <div>
             <label className={styles.inputLabel}>Cover:</label>
-            <label
-              htmlFor="file"
-              className={styles.upload}
-            >
+            <label htmlFor="file" className={styles.upload}>
               {data?.cover !== "" ? "File uploaded" : "No file uploaded"}
             </label>
             <input
@@ -135,15 +130,18 @@ export default function MetaDataForm({
               type="file"
               className={styles.input}
               onChange={(e) =>
-                handleFileChange ? handleFileChange(e) : () => { }
+                handleFileChange ? handleFileChange(e) : () => {}
               }
             />
           </div>
           <div
             className={styles.cover}
-            style={{ backgroundImage: (data?.cover.includes("http")) ? `url(${data?.cover})` : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data?.cover})` }}
-          >
-          </div>
+            style={{
+              backgroundImage: data?.cover.includes("http")
+                ? `url(${data?.cover})`
+                : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data?.cover})`,
+            }}
+          ></div>
         </div>
         <Buttons
           discardFunction={discardFunction}

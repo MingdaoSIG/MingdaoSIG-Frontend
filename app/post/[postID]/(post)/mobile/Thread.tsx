@@ -13,12 +13,18 @@ import Replies from "./Replies";
 import styles from "./Thread.module.scss";
 
 // Interfaces
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // Utils
 import { useUserAccount } from "@/utils/useUserAccount";
 
-const Thread = ({ post, isAnnouncement }: { post: TThread, isAnnouncement?: boolean }) => {
+const Thread = ({
+  post,
+  isAnnouncement,
+}: {
+  post: TThread;
+  isAnnouncement?: boolean;
+}) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
   const [like, setLike] = useState<any>(false);
   const router = useRouter();
@@ -55,7 +61,7 @@ const Thread = ({ post, isAnnouncement }: { post: TThread, isAnnouncement?: bool
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -71,7 +77,7 @@ const Thread = ({ post, isAnnouncement }: { post: TThread, isAnnouncement?: bool
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -96,7 +102,6 @@ const Thread = ({ post, isAnnouncement }: { post: TThread, isAnnouncement?: bool
           previewTheme="github"
         />
       </div>
-
     );
   }
 

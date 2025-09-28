@@ -34,9 +34,7 @@ export type BodyInit =
   | URLSearchParams
   | ReadableStream<Uint8Array>
   | string;
-export type BufferSource =
-  | ArrayBufferView
-  | ArrayBuffer;
+export type BufferSource = ArrayBufferView | ArrayBuffer;
 
 export type RequestCache =
   | "default"
@@ -46,15 +44,9 @@ export type RequestCache =
   | "force-cache"
   | "only-if-cached";
 
-export type RequestCredentials =
-  | "omit"
-  | "same-origin"
-  | "include";
+export type RequestCredentials = "omit" | "same-origin" | "include";
 
-export type HeaderInit =
-  | Headers
-  | string[][]
-  | Record<string, string>;
+export type HeaderInit = Headers | string[][] | Record<string, string>;
 
 export type Method =
   | "GET"
@@ -68,16 +60,9 @@ export type Method =
   | "LINK"
   | "UNLINK";
 
-export type RequestMode =
-  | "navigate"
-  | "same-origin"
-  | "no-cors"
-  | "cors";
+export type RequestMode = "navigate" | "same-origin" | "no-cors" | "cors";
 
-export type RequestRedirect =
-  | "error"
-  | "follow"
-  | "manual";
+export type RequestRedirect = "error" | "follow" | "manual";
 
 export type ReferrerPolicy =
   | ""

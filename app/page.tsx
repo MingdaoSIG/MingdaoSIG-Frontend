@@ -9,7 +9,7 @@ import Information from "./(home)/desktop/Information";
 import ThreadsListMobile from "./(home)/mobile/ThreadsList";
 import useIsMobile from "@/utils/useIsMobile";
 
-// Module 
+// Module
 import Swal from "sweetalert2";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -43,7 +43,7 @@ export default function Home() {
         `,
         preConfirm: () => {
           router.push("/");
-        }
+        },
       });
     }
   }, [error, router]);

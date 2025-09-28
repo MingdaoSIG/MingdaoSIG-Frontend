@@ -39,7 +39,7 @@ const handler = NextAuth({
         if (response.status === 2000) {
           let badgeData: string = "";
           const data = new FormData();
-          const badges = Array<String>(String(response.data.badge));
+          const badges = Array<string>(String(response.data.badge));
 
           data.append("name", response.data.name);
           data.append("id", response.data._id);

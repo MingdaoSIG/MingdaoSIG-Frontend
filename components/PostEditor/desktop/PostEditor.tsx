@@ -1,4 +1,4 @@
-import { Suspense, Dispatch, SetStateAction } from "react";
+import { Suspense, type Dispatch, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
@@ -10,7 +10,7 @@ import SplitBlock from "@/app/(Layout)/splitBlock";
 import MetaDataForm from "./MetaDataForm";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;
@@ -68,21 +68,22 @@ export default function NewPost({
         <div className="w-full mb-2 h-10 bg-white flex items-center px-2 py-2 rounded-full">
           {/* 顯示現有標籤的區域 */}
           <div className="flex gap-1 overflow-x-auto remove-scrollbar rounded-full flex-1">
-            {hashtag && hashtag.map((tag, index) => (
-              <button
-                key={`${tag}-${index}`}
-                className="bg-[#5FCDF5] text-white text-sm h-full font-medium px-2.5 py-0.5 rounded-full flex items-center justify-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleRemoveTag(tag);
-                }}
-              >
-                <span className="flex items-center">
-                  <span>#{tag}</span>
-                  <span className="ml-2">X</span>
-                </span>
-              </button>
-            ))}
+            {hashtag &&
+              hashtag.map((tag, index) => (
+                <button
+                  key={`${tag}-${index}`}
+                  className="bg-[#5FCDF5] text-white text-sm h-full font-medium px-2.5 py-0.5 rounded-full flex items-center justify-center"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleRemoveTag(tag);
+                  }}
+                >
+                  <span className="flex items-center">
+                    <span>#{tag}</span>
+                    <span className="ml-2">X</span>
+                  </span>
+                </button>
+              ))}
           </div>
 
           {/* 輸入區域 */}
@@ -97,7 +98,9 @@ export default function NewPost({
               className="bg-[#5fcdfd] text-white text-sm font-medium rounded-full px-3 py-1 whitespace-nowrap"
               onClick={(e) => {
                 e.preventDefault();
-                const input = (e.target as HTMLElement).closest("form")?.querySelector("input");
+                const input = (e.target as HTMLElement)
+                  .closest("form")
+                  ?.querySelector("input");
                 if (input) {
                   handleAddTag(input.value.trim().replace("#", ""));
                   input.value = "";
@@ -119,6 +122,6 @@ export default function NewPost({
         handleFileChange={handleFileChange}
         isEdit={isEdit}
       />
-    </SplitBlock >
+    </SplitBlock>
   );
 }

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 
@@ -9,7 +9,7 @@ import styles from "./Editor.module.scss";
 // import { IImageUpload } from "@/interfaces/Image.interface";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import type { TPostAPI } from "../types/postAPI";
 
 // Configs
 import { toolbars } from "../config/editorToolbar";
@@ -34,16 +34,23 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
           console.error("error: ", error);
           return "Error uploading image";
         }
-      })
+      }),
     );
-    callback(responseImage.map((item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id));
+    callback(
+      responseImage.map(
+        (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id,
+      ),
+    );
   };
 
   const handleEditorChange = (newContent: string) => {
-    setPostData((prev: TPostAPI) => ({
-      ...prev,
-      content: newContent,
-    } as TPostAPI));
+    setPostData(
+      (prev: TPostAPI) =>
+        ({
+          ...prev,
+          content: newContent,
+        }) as TPostAPI,
+    );
     localStorage.setItem("editorContent", newContent);
   };
 

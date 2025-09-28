@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-import { User } from "@/interfaces/User";
+import type { User } from "@/interfaces/User";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -21,9 +21,8 @@ export function useUserAccount() {
       console.log("OAuth status:", OAuth);
       if (sessionLocalStorage) {
         try {
-          const { token, data } = await platformLoginWithSession(
-            sessionLocalStorage
-          );
+          const { token, data } =
+            await platformLoginWithSession(sessionLocalStorage);
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
           setToken(token);

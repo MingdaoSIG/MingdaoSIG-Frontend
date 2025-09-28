@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
 
 // styles
@@ -9,7 +9,7 @@ import MetaDataForm from "./MetaDataForm";
 import Button from "./Buttons";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;

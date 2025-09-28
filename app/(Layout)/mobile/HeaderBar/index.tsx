@@ -10,9 +10,9 @@ const HeaderBar = () => {
 
   return (
     <div className={styles.nav}>
-      <img 
+      <img
         src="/images/logo_mobile_v2.svg"
-        alt="Logo" 
+        alt="Logo"
         className={styles.logo}
         onClick={() => router.push("/")}
       />

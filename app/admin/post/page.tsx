@@ -26,7 +26,7 @@ export default function ManagePost() {
   }, []);
 
   if (userAccount.isLoading === true) {
-    return (<div></div>);
+    return <div></div>;
   }
 
   if (userAccount.isLogin === false && userAccount.isLoading === false) {

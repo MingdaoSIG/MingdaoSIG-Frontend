@@ -1,9 +1,13 @@
-import { LimitedRequestInit, PaginationQuery, ParsedPaginationQuery } from "@/interfaces/Request";
+import type {
+  LimitedRequestInit,
+  PaginationQuery,
+  ParsedPaginationQuery,
+} from "@/interfaces/Request";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 const baseUrlMap = {
-  "default": API_BASE_URL,
-  "dev": "http://localhost:3001"
+  default: API_BASE_URL,
+  dev: "http://localhost:3001",
 };
 
 async function get(
@@ -13,29 +17,27 @@ async function get(
     token?: string;
     requestQuery?: PaginationQuery;
     requestOption?: LimitedRequestInit;
-  }
+  },
 ) {
-  let baseUrl = baseUrlMap[baseUrlType];
+  const baseUrl = baseUrlMap[baseUrlType];
 
   let parsedQuery: ParsedPaginationQuery | "" = "";
   if (option?.requestQuery) {
     parsedQuery = {
       skip: String(option.requestQuery.skip),
-      limit: String(option.requestQuery.limit)
+      limit: String(option.requestQuery.limit),
     };
   }
 
   const response = await (
-    await fetch(
-      baseUrl + path + new URLSearchParams(parsedQuery),
-      {
-        ...option?.requestOption,
-        method: "GET",
-        headers: {
-          "Authorization": option?.token ? `Bearer ${option.token}` : "",
-          "Content-Type": "application/json",
-        }
-      })
+    await fetch(baseUrl + path + new URLSearchParams(parsedQuery), {
+      ...option?.requestOption,
+      method: "GET",
+      headers: {
+        Authorization: option?.token ? `Bearer ${option.token}` : "",
+        "Content-Type": "application/json",
+      },
+    })
   ).json();
 
   if (response.status !== 2000) throw new Error(response.status);
@@ -52,30 +54,28 @@ async function post(
     token?: string;
     requestQuery?: PaginationQuery;
     requestOptions?: LimitedRequestInit;
-  }
+  },
 ) {
-  let baseUrl = baseUrlMap[baseUrlType];
+  const baseUrl = baseUrlMap[baseUrlType];
 
   let parsedQuery: ParsedPaginationQuery | "" = "";
   if (option?.requestQuery) {
     parsedQuery = {
       skip: String(option.requestQuery.skip),
-      limit: String(option.requestQuery.limit)
+      limit: String(option.requestQuery.limit),
     };
   }
 
   const response = await (
-    await fetch(
-      baseUrl + path + new URLSearchParams(parsedQuery),
-      {
-        ...option?.requestOptions,
-        method: "POST",
-        headers: {
-          "Authorization": option?.token ? `Bearer ${option.token}` : "",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      })
+    await fetch(baseUrl + path + new URLSearchParams(parsedQuery), {
+      ...option?.requestOptions,
+      method: "POST",
+      headers: {
+        Authorization: option?.token ? `Bearer ${option.token}` : "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
   ).json();
 
   if (response.status !== 2000) throw new Error(response.status);
@@ -86,6 +86,6 @@ async function post(
 
 const request = {
   get,
-  post
+  post,
 };
 export default request;

@@ -26,7 +26,10 @@ export default function Reply({
   function JumpOut(url: any) {
     Swal.fire({
       title: "<strong>HOLD UP</strong>",
-      html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
+      html:
+        "<p>This link will take you to <br/><strong>" +
+        url +
+        "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yep",
@@ -50,14 +53,12 @@ export default function Reply({
       <div className={styles.content}>
         <div className="info flex gap-2 items-center">
           <div
-            className={"font-semibold text-[12px] " + ((!first) && styles.name)}
-            onClick={
-              () => {
-                if (!first) {
-                  route.push(`/@${customId}`);
-                }
+            className={"font-semibold text-[12px] " + (!first && styles.name)}
+            onClick={() => {
+              if (!first) {
+                route.push(`/@${customId}`);
               }
-            }
+            }}
             id="customId"
           >
             @{customId}
@@ -69,20 +70,27 @@ export default function Reply({
         <p
           className={
             "text-md-dark-green font-extralight text-[12px] break-words " +
-            (overflow ? "w-[65dvw] truncate " : " ") + styles.content
+            (overflow ? "w-[65dvw] truncate " : " ") +
+            styles.content
           }
         >
-          <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-            <button className={" break-words "} key={key} onClick={
-              () => {
-                if (!first) {
-                  JumpOut(decoratedHref);
-                }
-              }
-            }>
-              {decoratedText}
-            </button>
-          )}>{content}</Linkify>
+          <Linkify
+            componentDecorator={(decoratedHref, decoratedText, key) => (
+              <button
+                className={" break-words "}
+                key={key}
+                onClick={() => {
+                  if (!first) {
+                    JumpOut(decoratedHref);
+                  }
+                }}
+              >
+                {decoratedText}
+              </button>
+            )}
+          >
+            {content}
+          </Linkify>
         </p>
       </div>
     </div>

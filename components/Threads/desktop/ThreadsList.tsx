@@ -1,24 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment, useCallback, useEffect, useRef } from "react";
-import { FetchNextPageOptions, InfiniteQueryObserverResult, InfiniteData } from "@tanstack/react-query";
+import type {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+  InfiniteData,
+} from "@tanstack/react-query";
 
 // Styles
 import style from "./ThreadsList.module.scss";
 import skeleton from "./Skeleton.module.scss";
 
 // Interfaces, Types
-import { TThread } from "@/interfaces/Thread";
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
+import type { TThread } from "@/interfaces/Thread";
+import type { User } from "@/interfaces/User";
+import type { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import { announcementSigId, announcementStayTime } from "../configs/announcement";
-
+import {
+  announcementSigId,
+  announcementStayTime,
+} from "../configs/announcement";
 
 // Fix Cover URLs
 function fixCoverUrl(cover: string) {
@@ -46,10 +52,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
         <div
           className={style.info}
           style={{
-            display:
-              (!user || isAnnouncement)
-                ? "none"
-                : "flex",
+            display: !user || isAnnouncement ? "none" : "flex",
           }}
         >
           <div className={style.user_sig}>
@@ -59,7 +62,11 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           </div>
           <div className={style.statist}>
             <p className={style.date}>
-              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
+              {
+                new Date(threadData.createdAt!)
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
             </p>
             <div className={style.likes}>
               <Image
@@ -69,9 +76,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
                 height={16}
                 className="my-auto"
               />
-              <p>
-                {threadData.likes}
-              </p>
+              <p>{threadData.likes}</p>
             </div>
             <div className={style.comments}>
               <Image
@@ -81,9 +86,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
                 height={16}
                 className="my-auto"
               />
-              <p>
-                {threadData.comments}
-              </p>
+              <p>{threadData.comments}</p>
             </div>
           </div>
         </div>
@@ -98,8 +101,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
         <p
           className={style.previewContent}
           style={{
-            WebkitLineClamp:
-              isAnnouncement ? "4" : "2",
+            WebkitLineClamp: isAnnouncement ? "4" : "2",
           }}
         >
           {markdownToPlainText(threadData.content)}
@@ -148,14 +150,17 @@ export const InfinityThreadsList = ({
   isFetchingNextPage,
   announcementData,
 }: {
-  data: any,
-  height?: string,
-  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>>,
-  isFetchingNextPage: boolean,
-  announcementData?: any
+  data: any;
+  height?: string;
+  fetchNextPage: (
+    options?: FetchNextPageOptions | undefined,
+  ) => Promise<
+    InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
+  >;
+  isFetchingNextPage: boolean;
+  announcementData?: any;
 }) => {
   const postList = useRef(null);
-
 
   const onScroll = useCallback(() => {
     if (postList.current) {
@@ -182,19 +187,19 @@ export const InfinityThreadsList = ({
   return data && data.pages[0].length >= 1 ? (
     <Fragment>
       <div className={style.threads} style={{ height }} ref={postList}>
-        {
-          (announcementData && announcementData.pages[0].length >= 1) && (
-            announcementData.pages.map((page: TThread[], index: number) => {
-              const currentDate = new Date().getTime();
-              const postDate = new Date(page[0].createdAt!).getTime();
-              const diffDays = Math.floor((currentDate - postDate) / (1000 * 60 * 60 * 24));
+        {announcementData &&
+          announcementData.pages[0].length >= 1 &&
+          announcementData.pages.map((page: TThread[], index: number) => {
+            const currentDate = new Date().getTime();
+            const postDate = new Date(page[0].createdAt!).getTime();
+            const diffDays = Math.floor(
+              (currentDate - postDate) / (1000 * 60 * 60 * 24),
+            );
 
-              if (diffDays < announcementStayTime) {
-                return <Thread threadData={page[0]} key={index} />;
-              }
-            })
-          )
-        }
+            if (diffDays < announcementStayTime) {
+              return <Thread threadData={page[0]} key={index} />;
+            }
+          })}
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
@@ -206,9 +211,7 @@ export const InfinityThreadsList = ({
             })}
           </Fragment>
         ))}
-        {isFetchingNextPage && (
-          <ThreadSkeleton />
-        )}
+        {isFetchingNextPage && <ThreadSkeleton />}
       </div>
     </Fragment>
   ) : (
@@ -218,10 +221,18 @@ export const InfinityThreadsList = ({
   );
 };
 
-export const ThreadsListSkeleton = ({ repeat, height }: { repeat: number, height?: string }) => {
+export const ThreadsListSkeleton = ({
+  repeat,
+  height,
+}: {
+  repeat: number;
+  height?: string;
+}) => {
   return (
     <div className={style.threads} style={{ height }}>
-      {[...Array(repeat)].map((_, index) => <ThreadSkeleton key={index} />)}
+      {[...Array(repeat)].map((_, index) => (
+        <ThreadSkeleton key={index} />
+      ))}
     </div>
   );
 };

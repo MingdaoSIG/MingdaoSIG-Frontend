@@ -24,7 +24,7 @@ const word_list = new Set([
   "遊憩運動",
   "電機物理",
   "開發者",
-  "公告"
+  "公告",
 ]);
 
 export default word_list;

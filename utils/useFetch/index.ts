@@ -16,7 +16,7 @@ interface State<T> {
 export function useFetch<T>(
   url: string,
   // eslint-disable-next-line no-undef
-  options?: RequestInit
+  options?: RequestInit,
 ): State<T> {
   const [state, setState] = useState<State<T>>({
     data: undefined,
@@ -29,7 +29,7 @@ export function useFetch<T>(
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}${url}`,
-          options
+          options,
         );
         if (!res.ok) {
           throw new Error(res.statusText);

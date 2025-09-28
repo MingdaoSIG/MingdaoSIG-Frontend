@@ -1,4 +1,4 @@
-import { TPostAPI } from "@/components/PostEditor/types/postAPI";
+import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 const sigDefaultCover: { [key: string]: string } = {
   "651799ebfa1d45d97b139864": "653296b40b891d1f6b5b4412", // 資安
@@ -40,7 +40,7 @@ export async function getPostAPI(postId: string) {
 export async function editPostAPI(
   { title, sig, hashtag, content, cover }: TPostAPI,
   postId: string,
-  token: string
+  token: string,
 ) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${postId}`, {
     method: "POST",
