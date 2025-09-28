@@ -41,7 +41,6 @@ export default function ReadableTime(milliseconds: number): {
   hour = hour % 24;
   month = Math.floor(day / 30);
   day = day % 30;
-  // eslint-disable-next-line prefer-const
   year = Math.floor(month / 12);
   month = month % 12;
 

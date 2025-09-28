@@ -43,7 +43,6 @@ export default function UserPage({ params }: { params: { userID: string } }) {
 
       return setIsLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isLoading && dataType === null) {

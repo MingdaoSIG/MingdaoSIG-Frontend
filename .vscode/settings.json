@@ -21,10 +21,4 @@
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
   },
-  "[javascript]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  }
 }
