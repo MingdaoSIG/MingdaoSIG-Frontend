@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import styles from "./NewPost.module.scss";
 
 // Components
-import SplitBlock from "@/app/(Layout)/splitBlock";
+import SplitBlock from "@/app/(Layout)/splitBlockNew";
 import MetaDataForm from "./MetaDataForm";
 
 // Types
 import type { TPostAPI } from "../types/postAPI";
+import TitleSigForm from "./TitleSigForm";
 
 interface Props {
   data: TPostAPI;
@@ -65,52 +66,7 @@ export default function NewPost({
   return (
     <SplitBlock>
       <Suspense fallback={null}>
-        <div className="w-full mb-2 h-10 bg-white flex items-center px-2 py-2 rounded-full">
-          {/* 顯示現有標籤的區域 */}
-          <div className="flex gap-1 overflow-x-auto remove-scrollbar rounded-full flex-1">
-            {hashtag &&
-              hashtag.map((tag, index) => (
-                <button
-                  key={`${tag}-${index}`}
-                  className="bg-[#5FCDF5] text-white text-sm h-full font-medium px-2.5 py-0.5 rounded-full flex items-center justify-center"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleRemoveTag(tag);
-                  }}
-                >
-                  <span className="flex items-center">
-                    <span>#{tag}</span>
-                    <span className="ml-2">X</span>
-                  </span>
-                </button>
-              ))}
-          </div>
-
-          {/* 輸入區域 */}
-          <form className="flex items-center flex-initial ml-2 w-[15rem] border-l-black/50 border-l">
-            <input
-              className="py-1 flex-1 px-2 outline-none w-[5rem]"
-              placeholder="Add a tag"
-              maxLength={20}
-              minLength={1}
-            />
-            <button
-              className="bg-[#5fcdfd] text-white text-sm font-medium rounded-full px-3 py-1 whitespace-nowrap"
-              onClick={(e) => {
-                e.preventDefault();
-                const input = (e.target as HTMLElement)
-                  .closest("form")
-                  ?.querySelector("input");
-                if (input) {
-                  handleAddTag(input.value.trim().replace("#", ""));
-                  input.value = "";
-                }
-              }}
-            >
-              Add Tag
-            </button>
-          </form>
-        </div>
+        <TitleSigForm setPostData={setPostData} data={data} handleFormEventFunction={handleFormEventFunction} />
         <Editor setPostData={setPostData} data={data} token={token} />
       </Suspense>
       <MetaDataForm
