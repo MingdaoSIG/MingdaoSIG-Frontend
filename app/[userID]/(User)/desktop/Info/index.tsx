@@ -1,6 +1,12 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { type Dispatch, Fragment, type SetStateAction, useEffect, useState } from "react";
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
@@ -246,7 +252,8 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {dataType === "sig" &&
-              accountData?._id !== "652d60b842cdf6a660c2b778" && [ // ID of announcement SIG
+              accountData?._id !== "652d60b842cdf6a660c2b778" && [
+                // ID of announcement SIG
                 <button
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}

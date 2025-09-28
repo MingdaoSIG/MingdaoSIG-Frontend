@@ -12,7 +12,11 @@ interface Props {
   handleFormEventFunction: Function;
 }
 
-export default function TitleSigForm({ data, setPostData, handleFormEventFunction }: Props) {
+export default function TitleSigForm({
+  data,
+  setPostData,
+  handleFormEventFunction,
+}: Props) {
   const { status } = useSession();
   const { userData } = useUserAccount();
 
@@ -64,7 +68,8 @@ export default function TitleSigForm({ data, setPostData, handleFormEventFunctio
               </option>
             );
           })}
-          {status === "authenticated" && userData &&
+          {status === "authenticated" &&
+            userData &&
             announcementSigData &&
             announcementSigData?.moderator?.includes(userData._id!) && (
               <option value="652d60b842cdf6a660c2b778">公告</option>
@@ -72,5 +77,5 @@ export default function TitleSigForm({ data, setPostData, handleFormEventFunctio
         </select>
       </div>
     </div>
-  )
+  );
 }

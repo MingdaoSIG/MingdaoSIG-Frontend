@@ -1,6 +1,12 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { type Dispatch, Fragment, type SetStateAction, useEffect, useState } from "react";
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import Swal from "sweetalert2";
 import Linkify from "react-linkify";
 import ReactDOMServer from "react-dom/server";

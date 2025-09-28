@@ -66,7 +66,11 @@ export default function NewPost({
   return (
     <SplitBlock>
       <Suspense fallback={null}>
-        <TitleSigForm setPostData={setPostData} data={data} handleFormEventFunction={handleFormEventFunction} />
+        <TitleSigForm
+          setPostData={setPostData}
+          data={data}
+          handleFormEventFunction={handleFormEventFunction}
+        />
         <Editor setPostData={setPostData} data={data} token={token} />
       </Suspense>
       <MetaDataForm
