@@ -8,13 +8,11 @@ import { useSession } from "next-auth/react";
 
 interface Props {
   data: TPostAPI;
-  setPostData: Dispatch<SetStateAction<TPostAPI>>;
   handleFormEventFunction: Function;
 }
 
 export default function TitleSigForm({
   data,
-  setPostData,
   handleFormEventFunction,
 }: Props) {
   const { status } = useSession();
@@ -48,10 +46,14 @@ export default function TitleSigForm({
   return (
     <div className="w-full mb-2 h-10 flex items-center">
       <input
+        type="text"
+        name="title"
         className="h-full flex-1 rounded-l-full pl-5 pr-3 mr-2"
+        value={data?.title}
         placeholder="請輸入標題"
+        onChange={(e) => handleFormEventFunction(e)}
       />
-      <div className="h-full w-44 rounded-r-full bg-white text-left items-center justify-center">
+      <div className="h-full w-[10.5rem] rounded-r-full bg-white text-left items-center justify-center">
         <select
           name="sig"
           value={data?.sig}

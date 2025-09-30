@@ -1,4 +1,3 @@
-import styles from "./Button.module.scss";
 import Image from "next/image";
 
 interface Props {
@@ -15,25 +14,24 @@ export default function Buttons({
   isEdit,
 }: Props) {
   return (
-    <div className={styles.buttons}>
+    <div className="h-12 grid grid-cols-2 gap-4 mt-4">
       <button
-        className={styles.buttonDiscard}
+        className="flex flex-row justify-center items-center text-center rounded-full gap-1 bg-[#dc0032] text-white text-lg font-bold hover:bg-[#b8002a] transition-colors"
         onClick={(e) => discardFunction(e)}
       >
-        {isEdit ? (
-          <>
-            <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
-            UNDO
-          </>
-        ) : (
-          <>
-            <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
-            DISCARD
-          </>
-        )}
+        <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
+        {isEdit ? "UNDO" : "DISCARD"}
       </button>
+
       <button
-        className={styles.buttonPost}
+        className={`
+          flex flex-row justify-center items-center text-center rounded-full gap-1 text-lg font-bold
+          transition-colors
+          ${postButtonDisable
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-white text-[#5fcdf5] hover:bg-gray-50'
+          }
+        `}
         onClick={async () => await postFunction()}
         disabled={postButtonDisable}
       >

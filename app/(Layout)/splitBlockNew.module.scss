@@ -20,7 +20,7 @@
 
 .mainview {
   background-color: transparent;
-  grid-column: span 9;
+  grid-column: span 8;
   max-width: 90dvw;
   // max-height: 70dvh;
   height: 100%;
@@ -33,24 +33,24 @@
   }
 
   @media screen and (max-width: 1280px) {
-    grid-column: span 9;
+    grid-column: span 8;
   }
 
   @media screen and (max-width: 800px) {
-    grid-column: span 9;
+    grid-column: span 8;
   }
 }
 
 .second {
   height: 100%;
-  grid-column: span 3;
+  grid-column: span 4;
   overflow-y: hidden;
 
   @media screen and (max-width: 1280px) {
-    grid-column: span 3;
+    grid-column: span 4;
   }
 
   @media screen and (max-width: 800px) {
-    grid-column: span 3;
+    grid-column: span 4;
   }
 }

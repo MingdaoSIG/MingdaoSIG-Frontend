@@ -67,7 +67,6 @@ export default function NewPost({
     <SplitBlock>
       <Suspense fallback={null}>
         <TitleSigForm
-          setPostData={setPostData}
           data={data}
           handleFormEventFunction={handleFormEventFunction}
         />
