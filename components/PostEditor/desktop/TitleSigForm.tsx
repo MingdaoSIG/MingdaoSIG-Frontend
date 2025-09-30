@@ -48,7 +48,7 @@ export default function TitleSigForm({
       <input
         type="text"
         name="title"
-        className="h-full flex-1 rounded-l-full pl-5 pr-3 mr-2"
+        className="h-full flex-1 rounded-l-full pl-5 pr-3 border-r border-gray-300"
         value={data?.title}
         placeholder="請輸入標題"
         onChange={(e) => handleFormEventFunction(e)}
