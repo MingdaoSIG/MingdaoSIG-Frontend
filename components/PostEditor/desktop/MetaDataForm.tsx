@@ -165,64 +165,14 @@ export default function MetaDataForm({
       <div className="flex flex-col h-full">
         {/* Main Content - 佔據剩餘空間 */}
         <div className="bg-white rounded-2xl p-4 flex flex-col gap-4 flex-1 overflow-auto">
-
-          {/* Hashtag Section */}
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold text-gray-700 text-lg">
-              Hashtag
-            </label>
-
-            {/* Tags Display */}
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm"
-                  >
-                    #{tag}
-                    <button
-                      onClick={() => handleRemoveTag(tag)}
-                      className="hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
-                      type="button"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Tag Input */}
-            <div className="flex gap-2">
-              <input
-                minLength={2}
-                maxLength={20}
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={handleTagInputKeyPress}
-                placeholder="新增標籤..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 text-sm"
-              />
-              <button
-                onClick={handleAddTag}
-                className="px-4 py-2 bg-[#5FCDF5] text-white rounded-lg hover:bg-[#4ab8e0] transition-colors font-medium text-sm whitespace-nowrap"
-                type="button"
-              >
-                新增
-              </button>
-            </div>
-          </div>
-
           {/* Cover Section */}
-          <div className="flex flex-col flex-1 min-h-0">
+          <div className="flex flex-col flex-1 min-h-0 max-h-[10rem]">
             <label className="font-semibold text-gray-700 text-lg mb-2">
               Cover
             </label>
 
             {data?.cover && data.cover !== "" ? (
-              <div className="flex flex-col flex-1 relative group min-h-0">
+              <div className="flex flex-col flex-1 relative group min-h-[10.5rem]">
                 <label
                   htmlFor="file"
                   className="flex-1 bg-cover bg-center bg-no-repeat rounded-lg h-full cursor-pointer relative overflow-hidden"
@@ -290,6 +240,54 @@ export default function MetaDataForm({
               className="hidden"
               onChange={handleInputChange}
             />
+          </div>
+          {/* Hashtag Section */}
+          <div className="flex flex-col gap-2 mt-10">
+            <label className="font-semibold text-gray-700 text-lg">
+              Hashtag
+            </label>
+
+            {/* Tag Input */}
+            <div className="flex gap-2">
+              <input
+                minLength={2}
+                maxLength={20}
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyPress={handleTagInputKeyPress}
+                placeholder="新增標籤..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 text-sm"
+              />
+              <button
+                onClick={handleAddTag}
+                className="px-4 py-2 bg-[#5FCDF5] text-white rounded-lg hover:bg-[#4ab8e0] transition-colors font-medium text-sm whitespace-nowrap !hover:cursor-pointer !cursor-pointer"
+                type="button"
+              >
+                ADD
+              </button>
+            </div>
+
+            {/* Tags Display */}
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm"
+                  >
+                    #{tag}
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
