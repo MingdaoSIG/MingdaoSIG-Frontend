@@ -51,11 +51,11 @@ export default function TitleSigForm({
         className="h-full flex-1 rounded-l-full pl-5 pr-3 mr-2"
         placeholder="請輸入標題"
       />
-      <div className="h-full w-44 rounded-r-full bg-white text-center items-center justify-center">
+      <div className="h-full w-44 rounded-r-full bg-white text-left items-center justify-center">
         <select
           name="sig"
           value={data?.sig}
-          className="h-full text-center rounded-r-full px-1"
+          className="h-full text-left rounded-r-full px-1"
           onChange={(e) => {
             handleFormEventFunction(e);
           }}
