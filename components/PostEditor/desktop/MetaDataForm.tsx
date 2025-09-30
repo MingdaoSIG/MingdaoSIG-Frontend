@@ -242,14 +242,15 @@ export default function MetaDataForm({
             />
           </div>
           {/* Hashtag Section */}
-          <div className="flex flex-col gap-2 mt-10">
-            <label className="font-semibold text-gray-700 text-lg">
+          <div className="flex flex-col gap-2 mt-12">
+            <label className="font-semibold text-gray-700 text-lg" htmlFor="tagInput">
               Hashtag
             </label>
 
             {/* Tag Input */}
             <div className="flex gap-2">
               <input
+                id="tagInput"
                 minLength={2}
                 maxLength={20}
                 type="text"
@@ -270,22 +271,24 @@ export default function MetaDataForm({
 
             {/* Tags Display */}
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm"
-                  >
-                    #{tag}
-                    <button
-                      onClick={() => handleRemoveTag(tag)}
-                      className="hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
-                      type="button"
+              <div className="max-h-[12rem] small-scrollbar flex overflow-auto">
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm h-[1.5rem]"
                     >
-                      ×
-                    </button>
-                  </span>
-                ))}
+                      #{tag}
+                      <button
+                        onClick={() => handleRemoveTag(tag)}
+                        className="hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
+                        type="button"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
