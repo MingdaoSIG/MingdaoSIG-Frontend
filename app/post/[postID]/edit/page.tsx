@@ -237,6 +237,7 @@ export default function EditPostPage({
       postFunction={sendEdit}
       postButtonDisable={editButtonDisable}
       handleFormEventFunction={handleFormChange}
+      handleFileChange={handleFileChange}
       isEdit
     ></PostEditorMobile>
   ) : (

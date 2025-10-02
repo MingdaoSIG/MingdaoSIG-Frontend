@@ -11,9 +11,6 @@ import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 // Mobile Components
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 
-// Styles
-import styles from "./page.module.scss";
-
 // Types
 import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 
@@ -39,6 +36,7 @@ export default function NewPostPage() {
   const isMobile = useIsMobile();
   // Form data states
   const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [data, setPostData] = useState<TPostAPI>({
     title: "",
     sig: "",
@@ -47,7 +45,6 @@ export default function NewPostPage() {
     hashtag: [],
   });
 
-  // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
       (prev: TPostAPI | undefined) =>
@@ -56,18 +53,22 @@ export default function NewPostPage() {
           [e.target.name]: e.target.value,
         }) as TPostAPI,
     );
-    localStorage.setItem("postData", JSON.stringify(data));
   }
 
   useEffect(() => {
+    if (!isInitialized) return; // 初始化前不執行
+
     if (data.title !== "" || data.sig !== "" || data.hashtag?.length !== 0) {
       localStorage.setItem("postData", JSON.stringify(data));
+    } else {
+      localStorage.removeItem("postData");
     }
-  }, [data]);
+  }, [data, isInitialized]);
 
   useEffect(() => {
     const storedContent = localStorage?.getItem("editorContent");
     const storedData = localStorage?.getItem("postData");
+
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
@@ -86,6 +87,8 @@ export default function NewPostPage() {
           }) as TPostAPI,
       );
     }
+
+    setIsInitialized(true); // 標記初始化完成
   }, []);
 
   async function NewPostAPI() {
@@ -152,7 +155,7 @@ export default function NewPostPage() {
       "image/tiff",
     ];
 
-    if (!e.target.files) return;
+    if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
@@ -196,9 +199,10 @@ export default function NewPostPage() {
 
   if (status === "loading") {
     return (
-      <div className={styles.loading}>
-        <h1> Loading...</h1>
-      </div>
+      // <div className={styles.loading}>
+      //   <h1> Loading...</h1>
+      // </div>
+      <></>
     );
   }
 
@@ -211,7 +215,8 @@ export default function NewPostPage() {
       discardFunction={discard}
       postFunction={NewPostAPI}
       postButtonDisable={postButtonDisable}
-    ></PostEditorMobile>
+      handleFileChange={handleFileChange}
+    />
   ) : (
     <PostEditorDesktop
       data={data}
@@ -222,6 +227,6 @@ export default function NewPostPage() {
       handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
       handleFileChange={handleFileChange}
-    ></PostEditorDesktop>
+    />
   );
 }

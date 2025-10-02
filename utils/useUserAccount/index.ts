@@ -18,11 +18,12 @@ export function useUserAccount() {
       const userLocalStorage = localStorage.getItem("user");
       const sessionLocalStorage = localStorage.getItem("session");
 
-      console.log("OAuth status:", OAuth);
+      // console.log("OAuth status:", OAuth);
       if (sessionLocalStorage) {
         try {
-          const { token, data } =
-            await platformLoginWithSession(sessionLocalStorage);
+          const { token, data } = await platformLoginWithSession(
+            sessionLocalStorage
+          );
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
           setToken(token);

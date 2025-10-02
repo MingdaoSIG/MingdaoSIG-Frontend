@@ -1,12 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
-import { MdEditor } from "md-editor-rt";
+import { MdEditor, MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
-
-// Styles
-import styles from "./Editor.module.scss";
-
-// Interfaces
-// import { IImageUpload } from "@/interfaces/Image.interface";
 
 // Types
 import type { TPostAPI } from "../types/postAPI";
@@ -56,16 +50,33 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
   };
 
   return (
-    <div className={styles.editor}>
-      <MdEditor
-        modelValue={data?.content || ""}
-        onChange={handleEditorChange}
-        toolbars={toolbars}
-        onUploadImg={onUploadImg}
-        language="en-US"
-        previewTheme="github"
-        preview={false}
-      />
+    <div className="w-full space-y-2">
+      {/* 編輯器區域 */}
+      <div className="h-[20rem] w-full bg-white overflow-hidden mx-auto py-1 border border-gray-300 rounded-md editor-wrapper">
+        <MdEditor
+          modelValue={data?.content || ""}
+          onChange={handleEditorChange}
+          toolbars={toolbars}
+          onUploadImg={onUploadImg}
+          language="en-US"
+          previewTheme="github"
+          preview={false}
+        />
+      </div>
+
+      {/* 預覽區域 */}
+      <div className="w-full bg-white border border-gray-300 rounded-md p-1 h-[19rem]">
+        <div className="prose max-w-none">
+          {data?.content ? (
+            <MdPreview
+              modelValue={data.content}
+              previewTheme="github"
+            />
+          ) : (
+            <p className="text-gray-400">預覽內容將顯示在這裡...</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
