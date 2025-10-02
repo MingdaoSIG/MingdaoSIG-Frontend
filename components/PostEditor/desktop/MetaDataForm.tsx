@@ -10,18 +10,6 @@ import Buttons from "./Buttons";
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
-// Modules
-import sigAPI from "@/modules/sigAPI";
-import Image from "next/image";
-
-// Utils
-import { useUserAccount } from "@/utils/useUserAccount";
-
-// Types
-import type { Sig } from "@/interfaces/Sig";
-
-// Config
-import { announcementSigId } from "../config/announcement";
 
 interface Props {
   discardFunction: Function;
@@ -43,35 +31,9 @@ export default function MetaDataForm({
   isEdit,
 }: Props) {
   const { status } = useSession();
-  const { userData } = useUserAccount();
-
-  const [sigs, setSigs] = useState<any[]>([]);
-  const [announcementSigData, setAnnouncementSigData] = useState<Sig>();
   const [isDragging, setIsDragging] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await sigAPI.getSigList();
-        setSigs(response);
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await sigAPI.getSigData(announcementSigId);
-        setAnnouncementSigData(response);
-      } catch (error: any) {
-        console.error(error.message);
-      }
-    })();
-  }, []);
 
   // 從 data 初始化 tags
   useEffect(() => {

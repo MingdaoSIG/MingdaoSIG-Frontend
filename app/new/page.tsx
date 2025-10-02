@@ -11,9 +11,6 @@ import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 // Mobile Components
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 
-// Styles
-import styles from "./page.module.scss";
-
 // Types
 import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 
@@ -218,7 +215,8 @@ export default function NewPostPage() {
       discardFunction={discard}
       postFunction={NewPostAPI}
       postButtonDisable={postButtonDisable}
-    ></PostEditorMobile>
+      handleFileChange={handleFileChange}
+    />
   ) : (
     <PostEditorDesktop
       data={data}
@@ -229,6 +227,6 @@ export default function NewPostPage() {
       handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
       handleFileChange={handleFileChange}
-    ></PostEditorDesktop>
+    />
   );
 }
