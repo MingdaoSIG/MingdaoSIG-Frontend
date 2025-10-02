@@ -207,9 +207,9 @@ export default function NewPostMobile({
                   onClick={handleFileInputClick}
                   className="block bg-cover bg-center bg-no-repeat rounded-lg min-h-[12rem] cursor-pointer relative overflow-hidden"
                   style={{
-                    backgroundImage: data.cover.includes("http")
+                    backgroundImage: (data.cover.includes("http")
                       ? `url(${data.cover})`
-                      : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`,
+                      : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`).replace(".lazco.dev", ".mingdao.edu.tw"),
                   }}
                 >
                   <div className="absolute inset-0 bg-black/0 active:bg-black/20 transition-all duration-200 flex items-center justify-center">
