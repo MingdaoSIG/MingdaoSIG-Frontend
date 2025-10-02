@@ -39,6 +39,7 @@ export default function NewPostPage() {
   const isMobile = useIsMobile();
   // Form data states
   const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [data, setPostData] = useState<TPostAPI>({
     title: "",
     sig: "",
@@ -47,7 +48,6 @@ export default function NewPostPage() {
     hashtag: [],
   });
 
-  // Adjust form data function
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setPostData(
       (prev: TPostAPI | undefined) =>
@@ -56,18 +56,22 @@ export default function NewPostPage() {
           [e.target.name]: e.target.value,
         }) as TPostAPI,
     );
-    localStorage.setItem("postData", JSON.stringify(data));
   }
 
   useEffect(() => {
+    if (!isInitialized) return; // 初始化前不執行
+
     if (data.title !== "" || data.sig !== "" || data.hashtag?.length !== 0) {
       localStorage.setItem("postData", JSON.stringify(data));
+    } else {
+      localStorage.removeItem("postData");
     }
-  }, [data]);
+  }, [data, isInitialized]);
 
   useEffect(() => {
     const storedContent = localStorage?.getItem("editorContent");
     const storedData = localStorage?.getItem("postData");
+
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
@@ -86,6 +90,8 @@ export default function NewPostPage() {
           }) as TPostAPI,
       );
     }
+
+    setIsInitialized(true); // 標記初始化完成
   }, []);
 
   async function NewPostAPI() {
@@ -114,8 +120,6 @@ export default function NewPostPage() {
           setPostButtonDisable(false);
           localStorage.removeItem("editorContent");
           localStorage.removeItem("postData");
-          localStorage.removeItem("editorContent");
-          localStorage.removeItem("postData");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
@@ -142,8 +146,6 @@ export default function NewPostPage() {
       cover: "",
       hashtag: [],
     });
-    localStorage.removeItem("editorContent");
-    localStorage.removeItem("postData");
     localStorage.removeItem("editorContent");
     localStorage.removeItem("postData");
   }
