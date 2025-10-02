@@ -202,9 +202,10 @@ export default function NewPostPage() {
 
   if (status === "loading") {
     return (
-      <div className={styles.loading}>
-        <h1> Loading...</h1>
-      </div>
+      // <div className={styles.loading}>
+      //   <h1> Loading...</h1>
+      // </div>
+      <></>
     );
   }
 

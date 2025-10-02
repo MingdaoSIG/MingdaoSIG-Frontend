@@ -1,4 +1,3 @@
-import styles from "./Button.module.scss";
 import Image from "next/image";
 
 interface Props {
@@ -15,9 +14,9 @@ export default function Buttons({
   isEdit,
 }: Props) {
   return (
-    <div className={styles.buttons}>
+    <div className="h-auto w-full rounded-[3rem] mx-auto grid grid-cols-2 gap-2">
       <button
-        className={styles.buttonDiscard}
+        className="flex flex-row justify-center items-center text-center rounded-lg gap-1 bg-[#dc0032] text-white text-base font-bold py-1.5"
         onClick={(e) => discardFunction(e)}
       >
         {isEdit ? (
@@ -33,7 +32,7 @@ export default function Buttons({
         )}
       </button>
       <button
-        className={styles.buttonPost}
+        className="flex flex-row justify-center items-center text-center rounded-lg gap-1 bg-white text-[#5fcdf5] text-base font-bold disabled:opacity-50 disabled:cursor-not-allowed border border-[#5fcdf5] py-1.5"
         onClick={async () => await postFunction()}
         disabled={postButtonDisable}
       >
