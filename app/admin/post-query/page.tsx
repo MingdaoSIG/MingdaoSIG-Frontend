@@ -229,17 +229,17 @@ export default function Page() {
                           >
                             <td className="py-4 text-sm font-medium text-gray-900 text-center w-3/12">
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {r._id}{" "}
+                                {r._id}
                               </span>
                             </td>
                             <td className="py-4 text-sm text-gray-900 text-center w-6/12 truncate">
-                              {r.title}{" "}
+                              {r.title}
                             </td>
                             <td className="py-4 text-sm text-gray-900 text-center w-1/12">
                               {r.userName}{" "}
                             </td>
                             <td className="py-4 text-sm text-gray-500 text-center w-2/12">
-                              {formatDateTime(r.createdAt)}{" "}
+                              {formatDateTime(r.createdAt)}
                             </td>
                           </tr>
                         );
@@ -363,7 +363,7 @@ export default function Page() {
                               clipRule="evenodd"
                             />
                           </svg>
-                          <span className="font-medium">{r.userName}</span>
+                          <span className="font-medium">{r.userName}{" "}</span>
                         </div>
                         <div className="flex items-center">
                           <svg
