@@ -48,21 +48,6 @@ export default function NewPost({
     }
   }, [data]);
 
-  function handleAddTag(tag: string) {
-    if (tag === "" || tag.length > 20) return;
-    if (!hashtag.includes(tag)) {
-      const newTags = [...hashtag, tag];
-      setHashtag(newTags);
-      setPostData((prev) => ({ ...prev, hashtag: newTags }));
-    }
-  }
-
-  function handleRemoveTag(tag: string) {
-    const newTags = hashtag.filter((t) => t !== tag);
-    setHashtag(newTags);
-    setPostData((prev) => ({ ...prev, hashtag: newTags }));
-  }
-
   return (
     <SplitBlock>
       <Suspense fallback={null}>

@@ -52,6 +52,7 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
         }) as TPostAPI,
     );
     localStorage.setItem("editorContent", newContent);
+    localStorage.setItem("postData", JSON.stringify(data));
   };
 
   return (
