@@ -131,7 +131,7 @@ export default function NewPostMobile({
 
   return (
     <div className="pt-[4.5rem] px-2 pb-[4.5rem] h-[100dvh] overflow-x-hidden">
-      <div className="bg-white h-full rounded-lg p-4 overflow-hidden">
+      <div className="bg-white h-full rounded-lg p-4 pr-2 overflow-hidden">
         <div className="flex flex-col items-center overflow-y-auto small-scrollbar h-full pr-2 overflow-x-hidden">
           <div className="w-full max-w-full">
             <MetaDataForm
