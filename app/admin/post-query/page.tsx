@@ -48,10 +48,10 @@ export default function Page() {
   const formatDateTime = (iso?: string) =>
     iso
       ? new Date(iso).toLocaleDateString("zh-TW", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
       : "";
 
   const fetchPosts = async () => {
@@ -187,7 +187,7 @@ export default function Page() {
             )}
           </div>
 
-          <div className="rounded-lg h-full overflow-hidden mt-4">
+          <div className="rounded-lg overflow-hidden mt-4 h-[45dvh]">
             <table className="min-w-full bg-white rounded-lg">
               <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white sticky top-0 z-10">
                 <tr className="text-center flex">
@@ -229,17 +229,17 @@ export default function Page() {
                           >
                             <td className="py-4 text-sm font-medium text-gray-900 text-center w-3/12">
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {r._id}
+                                {r._id}{" "}
                               </span>
                             </td>
                             <td className="py-4 text-sm text-gray-900 text-center w-6/12 truncate">
-                              {r.title}
+                              {r.title}{" "}
                             </td>
                             <td className="py-4 text-sm text-gray-900 text-center w-1/12">
-                              {r.userName}
+                              {r.userName}{" "}
                             </td>
                             <td className="py-4 text-sm text-gray-500 text-center w-2/12">
-                              {formatDateTime(r.createdAt)}
+                              {formatDateTime(r.createdAt)}{" "}
                             </td>
                           </tr>
                         );
