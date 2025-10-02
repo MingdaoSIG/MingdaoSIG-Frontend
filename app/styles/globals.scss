@@ -64,3 +64,13 @@ body {
 .remove-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.small-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  margin-left: 2px;
+}
+
+.small-scrollbar::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: $scrollbar-track-color;
+}

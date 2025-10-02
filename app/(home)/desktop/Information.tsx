@@ -8,7 +8,7 @@ import style from "./Information.module.scss";
 
 // APIs Request Function
 import { useTopPost } from "@/utils/usePost";
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // Modules
 import maxMatch from "@/modules/maxMatch";

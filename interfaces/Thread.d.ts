@@ -1,4 +1,4 @@
-export type TThread =  {
+export type TThread = {
   _id?: string;
   sig: string;
   title: string;
@@ -15,4 +15,4 @@ export type TThread =  {
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
-}
+};

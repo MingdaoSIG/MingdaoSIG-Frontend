@@ -18,7 +18,7 @@ function useLocalStorage(key: string, initialValue: string) {
         console.error("Error setting value in localStorage:", error);
       }
     },
-    [storedValue]
+    [storedValue],
   );
 
   const getItem = useCallback((itemKey: string) => {

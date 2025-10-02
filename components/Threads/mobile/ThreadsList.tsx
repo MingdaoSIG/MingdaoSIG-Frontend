@@ -1,12 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
-import {
+import React, { Fragment, useCallback, useEffect, useRef } from "react";
+import type {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
   InfiniteData,
@@ -17,16 +12,19 @@ import style from "./ThreadsList.module.scss";
 import skeleton from "./Skeleton.module.scss";
 
 // Interfaces, Types
-import { TThread } from "@/interfaces/Thread";
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
+import type { TThread } from "@/interfaces/Thread";
+import type { User } from "@/interfaces/User";
+import type { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
 
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import { announcementSigId, announcementStayTime } from "../configs/announcement";
+import {
+  announcementSigId,
+  announcementStayTime,
+} from "../configs/announcement";
 
 const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
@@ -45,10 +43,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
         <div
           className={style.info}
           style={{
-            display:
-              !user || isAnnouncement
-                ? "none"
-                : "flex",
+            display: !user || isAnnouncement ? "none" : "flex",
           }}
         >
           <div className={style.user_sig}>
@@ -72,9 +67,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
                 height={16}
                 className="my-auto"
               />
-              <p>
-                {threadData.likes}
-              </p>
+              <p>{threadData.likes}</p>
             </div>
             <div className={style.comments}>
               <Image
@@ -84,9 +77,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
                 height={16}
                 className="my-auto"
               />
-              <p>
-                {threadData.comments}
-              </p>
+              <p>{threadData.comments}</p>
             </div>
           </div>
         </div>
@@ -102,8 +93,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
         <p
           className={style.previewContent}
           style={{
-            WebkitLineClamp:
-              isAnnouncement ? "3" : "1",
+            WebkitLineClamp: isAnnouncement ? "3" : "1",
           }}
         >
           {markdownToPlainText(threadData.content)}
@@ -140,12 +130,12 @@ export const InfinityThreadsList = ({
   data: any;
   height?: string;
   fetchNextPage: (
-    options?: FetchNextPageOptions | undefined
+    options?: FetchNextPageOptions | undefined,
   ) => Promise<
     InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
   >;
   isFetchingNextPage: boolean;
-  announcementData?: any
+  announcementData?: any;
 }) => {
   const postList = useRef(null);
 
@@ -174,19 +164,19 @@ export const InfinityThreadsList = ({
 
   return data && data.pages[0].length >= 1 ? (
     <div className={style.threads} style={{ height }} ref={postList}>
-      {
-        (announcementData && announcementData.pages[0].length >= 1) && (
-          announcementData.pages.map((page: TThread[], index: number) => {
-            const currentDate = new Date().getTime();
-            const postDate = new Date(page[0].createdAt!).getTime();
-            const diffDays = Math.floor((currentDate - postDate) / (1000 * 60 * 60 * 24));
+      {announcementData &&
+        announcementData.pages[0].length >= 1 &&
+        announcementData.pages.map((page: TThread[], index: number) => {
+          const currentDate = new Date().getTime();
+          const postDate = new Date(page[0].createdAt!).getTime();
+          const diffDays = Math.floor(
+            (currentDate - postDate) / (1000 * 60 * 60 * 24),
+          );
 
-            if (diffDays < announcementStayTime) {
-              return <Thread threadData={page[0]} key={index} />;
-            }
-          })
-        )
-      }
+          if (diffDays < announcementStayTime) {
+            return <Thread threadData={page[0]} key={index} />;
+          }
+        })}
       {data.pages.map((page: TThread[], index: number) => (
         <Fragment key={index}>
           {page.map((item, index) => {

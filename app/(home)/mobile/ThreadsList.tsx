@@ -24,7 +24,10 @@ const ThreadsList = () => {
     pageSize,
     sort: dataType,
   });
-  const { data: announcementData } = useSigPost("652d60b842cdf6a660c2b778", { pageSize: 1, sort: "latest" });
+  const { data: announcementData } = useSigPost("652d60b842cdf6a660c2b778", {
+    pageSize: 1,
+    sort: "latest",
+  });
 
   async function switchListType(index: number) {
     if (index === 0) {

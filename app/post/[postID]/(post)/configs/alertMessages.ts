@@ -1,4 +1,4 @@
-import { TAlertMessageConfigs } from "../types/alertMessageConfigs";
+import type { TAlertMessageConfigs } from "../types/alertMessageConfigs";
 
 export const alertMessageConfigs: TAlertMessageConfigs = {
   noComment: {

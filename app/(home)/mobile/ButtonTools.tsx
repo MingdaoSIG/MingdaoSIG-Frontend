@@ -8,10 +8,10 @@ type Props = {
 const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
-    "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
+    "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
   );
   const [rightStyle, setRightStyle] = useState(
-    "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
+    "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
   );
 
   return (
@@ -30,10 +30,10 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             setButtonStyle("left-0");
             switchCallback(1);
             setLeftStyle(
-              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
+              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
             );
             setRightStyle(
-              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
+              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
             );
           }}
         >
@@ -45,10 +45,10 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             setButtonStyle("left-[5rem]");
             switchCallback(0);
             setLeftStyle(
-              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]"
+              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
             );
             setRightStyle(
-              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]"
+              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
             );
           }}
         >

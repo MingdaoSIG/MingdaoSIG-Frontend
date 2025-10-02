@@ -1,6 +1,12 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import Linkify from "react-linkify";
 import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
@@ -9,15 +15,18 @@ import ReactDOMServer from "react-dom/server";
 import styles from "./Info.module.scss";
 
 // Interfaces
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
+import type { User } from "@/interfaces/User";
+import type { Sig } from "@/interfaces/Sig";
 
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
 
 // APIs
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
-import { JoinSigAPI, ReadJoinSigAPI } from "@/app/[userID]/(User)/apis/JoinSigAPI";
+import {
+  JoinSigAPI,
+  ReadJoinSigAPI,
+} from "@/app/[userID]/(User)/apis/JoinSigAPI";
 
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
@@ -26,12 +35,12 @@ export default function Info({
   user: accountData,
   isLoading,
   dataType,
-  setInfo
+  setInfo,
 }: {
   user: User | Sig | null;
   isLoading: boolean;
-  dataType: String | null;
-  setInfo: Dispatch<SetStateAction<any>>
+  dataType: string | null;
+  setInfo: Dispatch<SetStateAction<any>>;
 }) {
   const { userData, token } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
@@ -51,7 +60,10 @@ export default function Info({
   function JumpOut(url: any) {
     Swal.fire({
       title: "<strong>HOLD UP</strong>",
-      html: "<p>This link will take you to <br/><strong>" + url + "</strong><br/>Are you sure you want to go there?</p>",
+      html:
+        "<p>This link will take you to <br/><strong>" +
+        url +
+        "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yep",
@@ -76,10 +88,17 @@ export default function Info({
         cancelButtonText: "Cancel",
       }).then(async (res) => {
         if (res.isConfirmed) {
-          const response = await postUser({ description: newDescription }, token!);
+          const response = await postUser(
+            { description: newDescription },
+            token!,
+          );
           setInfo((prev: any) => ({ ...prev, description: newDescription }));
           if (response.status !== 2000) {
-            Swal.fire("Error", "Something went wrong. Please try again later", "error");
+            Swal.fire(
+              "Error",
+              "Something went wrong. Please try again later",
+              "error",
+            );
           } else {
             Swal.fire("Success", "Successfully changed description", "success");
             setIsInput(false);
@@ -133,17 +152,19 @@ export default function Info({
         id="whichTopic"
         className={"swal2-textarea " + styles.JoinSIGFormInput}
         style={{ height: "5rem" }}
-        placeholder="I am interest in ..." />
-    </Fragment>
+        placeholder="I am interest in ..."
+      />
+    </Fragment>,
   ];
 
   function JoinSIGhandle() {
-    if (!token) return Swal.fire({
-      title: "Please login first",
-      text: "You must login to join a SIG",
-      icon: "warning",
-      confirmButtonText: "Confirm",
-    });
+    if (!token)
+      return Swal.fire({
+        title: "Please login first",
+        text: "You must login to join a SIG",
+        icon: "warning",
+        confirmButtonText: "Confirm",
+      });
 
     let aboutYou: HTMLTextAreaElement;
     let whyJoin: HTMLTextAreaElement;
@@ -163,7 +184,8 @@ export default function Info({
         whichTopic = popup.querySelector("#whichTopic") as HTMLTextAreaElement;
         aboutYou.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
         whyJoin.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
-        whichTopic.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
+        whichTopic.onkeyup = (e: any) =>
+          e.key === "Enter" && Swal.clickConfirm();
       },
       preConfirm: async () => {
         const aboutRes = aboutYou.value;
@@ -173,7 +195,10 @@ export default function Info({
           Swal.showValidationMessage("Please fill up the following questions");
         }
 
-        const res = await JoinSigAPI({ sig: accountData?._id!, q1: aboutRes, q2: joinRes, q3: topicRes }, token!);
+        const res = await JoinSigAPI(
+          { sig: accountData?._id!, q1: aboutRes, q2: joinRes, q3: topicRes },
+          token!,
+        );
 
         if (res.status === 2000) {
           Swal.fire({
@@ -203,87 +228,99 @@ export default function Info({
         <div className={styles.avatarWrapper}>
           <Image
             src={
-              accountData?.avatar ?? process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"
+              accountData?.avatar ??
+              process.env.NEXT_PUBLIC_API_URL +
+                "/image/653299930b891d1f6b5b4458"
             }
             width={100}
             height={100}
             alt="Avatar"
             className={styles.avatar}
           />
-          {accountData?.badge ? (
-            <BadgeList userData={accountData} />
-          ) : (
-            <></>
-          )}
+          {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
         </div>
       </div>
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
           <div className={styles.nameWrapper}>
             <div className={styles.name}>
-              <h1>
-                {accountData?.name}
-              </h1>
+              <h1>{accountData?.name}</h1>
               <p>
                 {accountData && "@"}
                 {accountData?.customId}
               </p>
             </div>
             <div className={styles.space}></div>
-            {
-              (dataType === "sig" && accountData?._id !== "652d60b842cdf6a660c2b778") // ID of announcement SIG
-              &&
-              [
+            {dataType === "sig" &&
+              accountData?._id !== "652d60b842cdf6a660c2b778" && [
+                // ID of announcement SIG
                 <button
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
-                  disabled={joinRequest === "pending" || joinRequest === "accepted" || isLoading || joinRequest === ""}
+                  disabled={
+                    joinRequest === "pending" ||
+                    joinRequest === "accepted" ||
+                    isLoading ||
+                    joinRequest === ""
+                  }
                 >
-                  {joinRequest === "pending" ? "Pending" : (joinRequest === "accepted" ? "Joined" : "Join SIG")}
-                </button>
-              ]
-            }
+                  {joinRequest === "pending"
+                    ? "Pending"
+                    : joinRequest === "accepted"
+                      ? "Joined"
+                      : "Join SIG"}
+                </button>,
+              ]}
           </div>
           <hr className={styles.contentHR} />
           <div className={styles.descriptionTitleWrapper}>
             <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
-            {
-              (userData && (userData.customId === accountData?.customId)) &&
-              <button className={styles.descriptionEditButton} onClick={EditDescriptionButtonHandle}>
-                <Image src={"/icons/edit.svg"} width={"20"} height={20} alt={"Edit"} />
+            {userData && userData.customId === accountData?.customId && (
+              <button
+                className={styles.descriptionEditButton}
+                onClick={EditDescriptionButtonHandle}
+              >
+                <Image
+                  src={"/icons/edit.svg"}
+                  width={"20"}
+                  height={20}
+                  alt={"Edit"}
+                />
               </button>
-            }
+            )}
           </div>
-          {
-            (isInput) ?
-              (
-                <textarea className={styles.description} onChange={OnEditDescription} defaultValue={accountData?.description} />
-              )
-              :
-              (
-                <div className={styles.description}>
-                  <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-                    <button key={key} onClick={() => {
+          {isInput ? (
+            <textarea
+              className={styles.description}
+              onChange={OnEditDescription}
+              defaultValue={accountData?.description}
+            />
+          ) : (
+            <div className={styles.description}>
+              <Linkify
+                componentDecorator={(decoratedHref, decoratedText, key) => (
+                  <button
+                    key={key}
+                    onClick={() => {
                       JumpOut(decoratedHref);
-                    }}>
-                      {decoratedText}
-                    </button>
-                  )}>
-                    {accountData?.description?.split("\n").map((line, index) => (
-                      <p key={index}>{line}</p>
-                    ))}
-                  </Linkify>
-                </div>
-              )
-          }
+                    }}
+                  >
+                    {decoratedText}
+                  </button>
+                )}
+              >
+                {accountData?.description?.split("\n").map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))}
+              </Linkify>
+            </div>
+          )}
         </div>
       </div>
-    </div >
+    </div>
   );
 }
-
-
 
 function BadgeList({ userData }: { userData: User | null }) {
   const chosenBadge = userData?.badge;
@@ -311,7 +348,7 @@ function BadgeList({ userData }: { userData: User | null }) {
                   id={badgeList[badge].name}
                   style={{
                     padding: "0.2rem 0.4rem",
-                    backgroundColor: "rgb(50, 50, 50)"
+                    backgroundColor: "rgb(50, 50, 50)",
                   }}
                 />
               </Fragment>

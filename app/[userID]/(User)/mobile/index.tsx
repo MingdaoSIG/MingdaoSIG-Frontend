@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
 
 // Interfaces
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
+import type { User } from "@/interfaces/User";
+import type { Sig } from "@/interfaces/Sig";
 
 // Styles
 import styles from "./mobile.module.scss";
@@ -46,7 +46,6 @@ export default function ProfileMobile({
 
       return setIsLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className={styles.mobileProfile}>
@@ -73,7 +72,7 @@ function UserInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useUserPost(
     id,
-    { pageSize }
+    { pageSize },
   );
 
   return isLoading ? (
@@ -92,7 +91,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useSigPost(
     id,
-    { pageSize }
+    { pageSize },
   );
 
   return isLoading ? (

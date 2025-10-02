@@ -13,7 +13,7 @@ import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors"
 import style from "./Thread.module.scss";
 
 // Interfaces
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
@@ -37,8 +37,6 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const [sig, setSig] = useState<any>(null);
   const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
-
-
 
   const route = useRouter();
 
@@ -172,7 +170,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-        // disabled
+          // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

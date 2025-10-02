@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 export async function getSigListAPI(
-  setSIGs?: Dispatch<SetStateAction<unknown[]>>
+  setSIGs?: Dispatch<SetStateAction<unknown[]>>,
 ) {
   try {
     const res = await (

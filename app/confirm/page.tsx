@@ -43,33 +43,31 @@ export default function Confirm() {
       </>
     );
   } else {
-    return (
-      confirmStatus === 0 ? (
-        <>
-          <Success message={`Successfully ${acceptMessage}`} />
-          <BackToHome />
-        </>
-      ) : (
-        confirmStatus === 1 ? (
-          <>
-            <Success message="Already Confirmed" />
-            <BackToHome />
-          </>
-        ) : (
-          <>
-            <Failed message="Please try again later" />
-            <BackToHome />
-          </>
-        )
-      )
+    return confirmStatus === 0 ? (
+      <>
+        <Success message={`Successfully ${acceptMessage}`} />
+        <BackToHome />
+      </>
+    ) : confirmStatus === 1 ? (
+      <>
+        <Success message="Already Confirmed" />
+        <BackToHome />
+      </>
+    ) : (
+      <>
+        <Failed message="Please try again later" />
+        <BackToHome />
+      </>
     );
   }
 }
 
 async function sendConfirmRequest(confirmUrl: URL) {
-  const response = await (await fetch(confirmUrl, {
-    method: "GET",
-  })).json();
+  const response = await (
+    await fetch(confirmUrl, {
+      method: "GET",
+    })
+  ).json();
 
   if (response.status === CustomStatus.OK) {
     return 0;
@@ -85,7 +83,8 @@ function isValidConfirmId(uuid: string | null) {
     return false;
   }
 
-  const uuidV4Regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
+  const uuidV4Regex =
+    /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
   return uuidV4Regex.test(uuid);
 }
 

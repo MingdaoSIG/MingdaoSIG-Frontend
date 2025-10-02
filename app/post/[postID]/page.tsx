@@ -12,11 +12,10 @@ import ThreadInfo from "./(post)/desktop/ThreadInfo";
 import ThreadMobile from "./(post)/mobile/Thread";
 
 // Interfaces
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
-
 
 import { NotFound } from "@/components/NotFound";
 
@@ -59,10 +58,10 @@ const Post = ({ params }: { params: { postID: string } }) => {
     return (
       <NotFound
         content={{
-          message: "Post Not Found"
+          message: "Post Not Found",
         }}
         image={{
-          show: false
+          show: false,
         }}
       />
     );

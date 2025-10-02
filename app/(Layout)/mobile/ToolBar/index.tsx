@@ -13,7 +13,7 @@ const ToolBar = () => {
 
   const path = usePathname();
   const [selected, setSelected] = useState<0 | 1 | 2 | 3 | number>(
-    pathToSelected(path)
+    pathToSelected(path),
   );
 
   useEffect(() => {
@@ -52,14 +52,14 @@ const ToolBar = () => {
       <div className={styles.iconWrapper}>
         {menu.map((item, index) => {
           return (
-            <div 
-              key={index} 
-              className={styles.iconBackground} 
-            >
-              <div 
+            <div key={index} className={styles.iconBackground}>
+              <div
                 className={styles.icon}
                 style={{
-                  backgroundColor: (selected === (index)) ? "rgba(148, 163, 184, 0.3)" : "rgba(255, 255, 255, 1)"
+                  backgroundColor:
+                    selected === index
+                      ? "rgba(148, 163, 184, 0.3)"
+                      : "rgba(255, 255, 255, 1)",
                 }}
               >
                 <Link

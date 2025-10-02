@@ -5,8 +5,6 @@ import styles from "./index.module.scss";
 import Link from "next/link";
 import { Fragment, useState, useEffect } from "react";
 
-
-
 export default function Mobile() {
   const [sigData, setSigData] = useState<any>({});
 
@@ -45,29 +43,27 @@ export default function Mobile() {
               <button>查詢</button>
             </form>
             <div>
-              {(sigData === 0) && (
-                <h1>Data not found.</h1>
-              )}
-              {
-                (sigData && (sigData !== 0)) ? (
-                  <div className={styles.sigDataWrapper}>
-                    <div>
-                      <h1>{sigData.name}</h1>
-                      <p>ID: {sigData._id}</p>
-                      <p>Custom ID: {sigData.customId}</p>
-                      <p>Description: {sigData.description}</p>
-                      <p>Avatar: {sigData.avatar}</p>
-                      <p>Moderator: {sigData.moderator}</p>
-                      <p>Leader: {sigData.leader}</p>
-                    </div>
+              {sigData === 0 && <h1>Data not found.</h1>}
+              {sigData && sigData !== 0 ? (
+                <div className={styles.sigDataWrapper}>
+                  <div>
+                    <h1>{sigData.name}</h1>
+                    <p>ID: {sigData._id}</p>
+                    <p>Custom ID: {sigData.customId}</p>
+                    <p>Description: {sigData.description}</p>
+                    <p>Avatar: {sigData.avatar}</p>
+                    <p>Moderator: {sigData.moderator}</p>
+                    <p>Leader: {sigData.leader}</p>
                   </div>
-                ) : ""
-              }
+                </div>
+              ) : (
+                ""
+              )}
             </div>
             {/* <h1>使用者資料查詢</h1> */}
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

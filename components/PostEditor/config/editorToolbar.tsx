@@ -1,4 +1,4 @@
-import { ToolbarNames } from "md-editor-rt";
+import type { ToolbarNames } from "md-editor-rt";
 
 export const toolbars: ToolbarNames[] = [
   "bold",

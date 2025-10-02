@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -11,7 +11,7 @@ import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 
 // Types
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // APIs Request Function
 import {
@@ -22,7 +22,7 @@ import {
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { TPostAPI } from "@/components/PostEditor/types/postAPI";
+import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
@@ -42,16 +42,16 @@ export default function EditPostPage({
     sig: oldPostData.sig,
     content: oldPostData.content,
     cover: oldPostData.cover,
+    hashtag: oldPostData.hashtag,
   });
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setCurrentPostData(
-      (
-        prev: TPostAPI | undefined) => (
-        {
+      (prev: TPostAPI | undefined) =>
+        ({
           ...prev,
           [e.target.name]: e.target.value,
-        } as TPostAPI)
+        }) as TPostAPI,
     );
   }
 
@@ -81,23 +81,50 @@ export default function EditPostPage({
   }, [currentPostData.content, oldPostData.content, params, route, userData]);
 
   useEffect(() => {
-    if (!currentPostData.title || !currentPostData.content || !currentPostData.sig || !currentPostData.cover) {
-      setCurrentPostData((prev: TPostAPI) => (
-        {
-          ...prev,
-          title: oldPostData.title,
-          sig: oldPostData.sig,
-          content: oldPostData.content,
-          cover: oldPostData.cover,
-        } as TPostAPI)
+    if (
+      !currentPostData.title ||
+      !currentPostData.content ||
+      !currentPostData.sig ||
+      !currentPostData.cover
+    ) {
+      setCurrentPostData(
+        (prev: TPostAPI) =>
+          ({
+            ...prev,
+            title: oldPostData.title,
+            sig: oldPostData.sig,
+            content: oldPostData.content,
+            cover: oldPostData.cover,
+            hashtag: oldPostData.hashtag,
+          }) as TPostAPI,
       );
     }
-  }, [currentPostData.content, currentPostData.cover, currentPostData.sig, currentPostData.title, oldPostData.content, oldPostData.cover, oldPostData.sig, oldPostData.title]);
+  }, [
+    currentPostData.content,
+    currentPostData.cover,
+    currentPostData.sig,
+    currentPostData.title,
+    oldPostData.content,
+    oldPostData.cover,
+    oldPostData.hashtag,
+    oldPostData.sig,
+    oldPostData.title,
+  ]);
 
   useEffect(() => {
-    if (oldPostData.content === currentPostData.content && oldPostData.title === currentPostData.title && oldPostData.sig === currentPostData.sig && oldPostData.cover === currentPostData.cover) {
+    if (
+      oldPostData.content === currentPostData.content &&
+      oldPostData.title === currentPostData.title &&
+      oldPostData.sig === currentPostData.sig &&
+      oldPostData.cover === currentPostData.cover &&
+      oldPostData.hashtag?.toString() === currentPostData.hashtag?.toString()
+    ) {
       setEditButtonDisable(true);
-    } else if (currentPostData.content === "" || currentPostData.title === "" || currentPostData.sig === "") {
+    } else if (
+      currentPostData.content === "" ||
+      currentPostData.title === "" ||
+      currentPostData.sig === ""
+    ) {
       setEditButtonDisable(true);
     } else {
       setEditButtonDisable(false);
@@ -110,6 +137,7 @@ export default function EditPostPage({
       sig: oldPostData.sig,
       content: oldPostData.content,
       cover: oldPostData.cover,
+      hashtag: oldPostData.hashtag,
     });
   }
 
@@ -159,7 +187,7 @@ export default function EditPostPage({
       Swal.fire(
         "File type not supported",
         "You can only upload  png,  jpg,  webp, tiff",
-        "error"
+        "error",
       );
       return;
     }
@@ -168,7 +196,7 @@ export default function EditPostPage({
       Swal.fire(
         "File too large",
         "You can only upload files under 5MB",
-        "error"
+        "error",
       );
       return;
     }
@@ -176,30 +204,27 @@ export default function EditPostPage({
     try {
       const imageUploadAPIResponse = await imageUpload(file, token);
       const imageUploadResponseJson = await imageUploadAPIResponse.json();
-      setCurrentPostData((prev: TPostAPI) => (
-        {
-          ...prev,
-          cover:
-            `${process.env.NEXT_PUBLIC_API_URL}/image/` +
-            imageUploadResponseJson.id,
-        } as TPostAPI)
+      setCurrentPostData(
+        (prev: TPostAPI) =>
+          ({
+            ...prev,
+            cover:
+              `${process.env.NEXT_PUBLIC_API_URL}/image/` +
+              imageUploadResponseJson.id,
+          }) as TPostAPI,
       );
     } catch (error) {
       console.error("error: ", error);
       Swal.fire(
         "Error",
         "Something went wrong. Please try again later",
-        "error"
+        "error",
       );
       return;
     }
   }
 
-  if (
-    isLoading ||
-    !userData ||
-    oldPostData.user !== userData?._id
-  ) {
+  if (isLoading || !userData || oldPostData.user !== userData?._id) {
     return <div></div>;
   }
 

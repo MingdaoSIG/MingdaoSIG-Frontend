@@ -1,9 +1,8 @@
-
 "use client";
 
 import style from "./Thread.module.scss";
 
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 import { MdPreview } from "md-editor-rt";
 
 import "md-editor-rt/lib/preview.css";
@@ -74,16 +73,13 @@ const Thread = ({ post }: { post: TThread }) => {
 
   async function DeletePost() {
     try {
-      await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -91,32 +87,26 @@ const Thread = ({ post }: { post: TThread }) => {
 
   async function PostLike() {
     try {
-      await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
     } catch (error) {
       console.log(error);
     }
   }
   async function DeleteLike() {
     try {
-      await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
     } catch (error) {
       console.log(error);
     }
@@ -148,26 +138,34 @@ const Thread = ({ post }: { post: TThread }) => {
       <div className={style.thread}>
         <div className={style.threadTitle + " flex relative"}>
           <h1>{post.title}</h1>
-          {
-            (isLogin && post.user === userData?._id) &&
+          {isLogin && post.user === userData?._id && (
             <div
               key="edit"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
               onClick={onEdit}
             >
-              <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
+              <Image
+                src="/icons/edit.svg"
+                width={32}
+                height={32}
+                alt="delete"
+              />
             </div>
-          }
-          {
-            (isLogin && post.user === userData?._id) &&
+          )}
+          {isLogin && post.user === userData?._id && (
             <div
               key="delete"
               className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
               onClick={onDelete}
             >
-              <Image src="/icons/delete.svg" width={32} height={32} alt="delete" />
+              <Image
+                src="/icons/delete.svg"
+                width={32}
+                height={32}
+                alt="delete"
+              />
             </div>
-          }
+          )}
           <div
             className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
             onClick={onLike}

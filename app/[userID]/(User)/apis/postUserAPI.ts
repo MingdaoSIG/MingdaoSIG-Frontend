@@ -1,10 +1,7 @@
 // Types
-import { TPostUserAPI } from "@/app/[userID]/(User)/types/postUserAPI";
+import type { TPostUserAPI } from "@/app/[userID]/(User)/types/postUserAPI";
 
-export async function postUser(
-  { description }: TPostUserAPI,
-  token: string
-) {
+export async function postUser({ description }: TPostUserAPI, token: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
     method: "POST",
     headers: {

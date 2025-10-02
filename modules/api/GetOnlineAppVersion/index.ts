@@ -1,7 +1,5 @@
 import axios from "axios";
 
-
-
 export default async function GetOnlineAppVersion() {
   try {
     const mainVersion = await getMainVersion();
@@ -9,7 +7,7 @@ export default async function GetOnlineAppVersion() {
 
     return {
       mainVersion,
-      developmentVersion
+      developmentVersion,
     };
   } catch (error: any) {
     throw new Error(error.message);
@@ -17,17 +15,15 @@ export default async function GetOnlineAppVersion() {
 }
 
 async function getMainVersion() {
-  const API_URL = "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/main/package.json";
+  const API_URL =
+    "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/main/package.json";
 
-  const response = await axios.get(
-    API_URL,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3.raw",
-        Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
-      }
-    }
-  );
+  const response = await axios.get(API_URL, {
+    headers: {
+      Accept: "application/vnd.github.v3.raw",
+      Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+    },
+  });
 
   const responseObj = response.data;
   const version = responseObj?.version;
@@ -37,17 +33,15 @@ async function getMainVersion() {
 }
 
 async function getDevelopmentVersion() {
-  const API_URL = "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/development/package.json";
+  const API_URL =
+    "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/development/package.json";
 
-  const response = await axios.get(
-    API_URL,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3.raw",
-        Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`
-      }
-    }
-  );
+  const response = await axios.get(API_URL, {
+    headers: {
+      Accept: "application/vnd.github.v3.raw",
+      Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+    },
+  });
 
   const responseObj = response.data;
   const version = responseObj?.version;

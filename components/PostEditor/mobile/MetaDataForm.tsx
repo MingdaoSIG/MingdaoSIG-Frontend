@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import styles from "./MetaDataForm.module.scss";
 
 // Types
-import { TPostAPI } from "../types/postAPI";
+import type { TPostAPI } from "../types/postAPI";
 
 // Modules
 import sigAPI from "@/modules/sigAPI";

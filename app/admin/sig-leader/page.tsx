@@ -26,7 +26,7 @@ export default function ManageLeaderChooseSIG() {
   }, []);
 
   if (userAccount.isLoading === true) {
-    return (<div></div>);
+    return <div></div>;
   }
 
   if (userAccount.isLogin === false && userAccount.isLoading === false) {
@@ -55,17 +55,18 @@ export default function ManageLeaderChooseSIG() {
           </button>
         </div>
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-6">SIG  Leader管理</h1>
+          <h1 className="text-3xl font-bold mb-6">SIG Leader管理</h1>
           <p className="text-xl mb-4">請選擇您要管理的 SIG:</p>
           <div className="grid grid-cols-2 gap-4">
-            {sigList.map(sig => {
+            {sigList.map((sig) => {
               if (sig._id !== "663b09e19aa7c3d74577a786") {
                 return (
                   <button
                     key={sig._id}
                     id={sig._id}
                     className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed"
-                    onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}>
+                    onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}
+                  >
                     {sig.name}
                   </button>
                 );
@@ -90,14 +91,15 @@ export default function ManageLeaderChooseSIG() {
         <h1 className="text-3xl font-bold mb-4">SIG Leader 管理</h1>
         <p className="text-xl mb-4">請選擇您要管理的 SIG:</p>
         <div className="grid grid-cols-3 gap-4">
-          {sigList.map(sig => {
+          {sigList.map((sig) => {
             if (sig._id !== "663b09e19aa7c3d74577a786") {
               return (
                 <button
                   key={sig._id}
                   id={sig._id}
                   className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed"
-                  onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}>
+                  onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}
+                >
                   {sig.name}
                 </button>
               );

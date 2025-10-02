@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 
@@ -6,7 +6,7 @@ import "md-editor-rt/lib/style.css";
 import styles from "./Editor.module.scss";
 
 // Interfaces
-import { TPostAPI } from "../types/postAPI";
+import type { TPostAPI } from "../types/postAPI";
 
 // Configs
 import { toolbars } from "../config/editorToolbar";
@@ -28,15 +28,28 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     if (!files.length) return;
     const responseImage = await Promise.all(
       files.map(async (file: any) => {
-        const validImageTypes = ["image/webp", "image/jpeg", "image/png", "image/tiff"];
+        const validImageTypes = [
+          "image/webp",
+          "image/jpeg",
+          "image/png",
+          "image/tiff",
+        ];
 
         if (!validImageTypes.includes(file.type)) {
-          Swal.fire("File type not supported", "You can only upload  png,  jpg,  webp, tiff", "error");
+          Swal.fire(
+            "File type not supported",
+            "You can only upload  png,  jpg,  webp, tiff",
+            "error",
+          );
           return;
         }
 
         if (file.size > 5 * 1000 * 1000) {
-          Swal.fire("File too large", "You can only upload files under 5MB", "error");
+          Swal.fire(
+            "File too large",
+            "You can only upload files under 5MB",
+            "error",
+          );
           return;
         }
 
@@ -45,22 +58,33 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
           return await res.json();
         } catch (error) {
           console.error("error: ", error);
-          Swal.fire("Error", "Something went wrong. Please try again later", "error");
+          Swal.fire(
+            "Error",
+            "Something went wrong. Please try again later",
+            "error",
+          );
           return;
         }
-      })
+      }),
     );
 
     if (responseImage[0] !== undefined) {
-      callback(responseImage.map((item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id));
+      callback(
+        responseImage.map(
+          (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id,
+        ),
+      );
     }
   };
 
   const handleEditorChange = (newContent: string) => {
-    setPostData((prev: TPostAPI) => ({
-      ...prev,
-      content: newContent,
-    } as TPostAPI));
+    setPostData(
+      (prev: TPostAPI) =>
+        ({
+          ...prev,
+          content: newContent,
+        }) as TPostAPI,
+    );
     localStorage.setItem("editorContent", newContent);
   };
 

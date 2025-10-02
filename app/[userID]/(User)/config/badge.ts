@@ -1,17 +1,17 @@
 export const badgeList = {
-  "developer": {
+  developer: {
     name: "developer",
     icon: "/badges/developer.svg",
-    content: "Developer"
+    content: "Developer",
   },
   "10.21_user": {
     name: "10.21_user",
     icon: "/badges/10.21_user.svg",
-    content: "10/21 Event Participant"
+    content: "10/21 Event Participant",
   },
-  "bug_hunter": {
+  bug_hunter: {
     name: "bug_hunter",
     icon: "/badges/bug_hunter.svg",
-    content: "Bug Hunter"
-  }
+    content: "Bug Hunter",
+  },
 };

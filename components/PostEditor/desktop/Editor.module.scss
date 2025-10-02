@@ -3,7 +3,7 @@
 $editor-background: white;
 
 .editor {
-  height: 70dvh;
+  height: calc(70dvh - 3rem);
   padding: 0.25rem 0;
   background-color: $editor-background;
   border-radius: $border-radius;

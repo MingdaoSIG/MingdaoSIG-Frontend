@@ -1,6 +1,12 @@
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import Swal from "sweetalert2";
 import Linkify from "react-linkify";
 import ReactDOMServer from "react-dom/server";
@@ -9,8 +15,8 @@ import ReactDOMServer from "react-dom/server";
 import styles from "./Info.module.scss";
 
 // Interfaces
-import { User } from "@/interfaces/User";
-import { Sig } from "@/interfaces/Sig";
+import type { User } from "@/interfaces/User";
+import type { Sig } from "@/interfaces/Sig";
 
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -32,7 +38,7 @@ export default function Info({
 }: {
   user: User | Sig | null;
   isLoading: boolean;
-  dataType: String | null;
+  dataType: string | null;
   setInfo: Dispatch<SetStateAction<any>>;
 }) {
   const { userData, token } = useUserAccount();
@@ -138,7 +144,7 @@ export default function Info({
 
         const res = await JoinSigAPI(
           { sig: accountData?._id!, q1: aboutRes, q2: joinRes, q3: topicRes },
-          token!
+          token!,
         );
 
         if (res.status === 2000) {
@@ -168,7 +174,8 @@ export default function Info({
             <Image
               src={
                 accountData?.avatar ??
-                process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"
+                process.env.NEXT_PUBLIC_API_URL +
+                  "/image/653299930b891d1f6b5b4458"
               }
               width={40}
               height={40}
@@ -184,8 +191,7 @@ export default function Info({
             </div>
             <div className={styles.space}></div>
             {dataType === "sig" &&
-              accountData?._id !== "652d60b842cdf6a660c2b778" &&
-              [
+              accountData?._id !== "652d60b842cdf6a660c2b778" && [
                 // ID of announcement SIG
                 <button
                   className={styles.joinBtn}
@@ -203,9 +209,8 @@ export default function Info({
                     : joinRequest === "accepted"
                       ? "Joined"
                       : "Join SIG"}
-                </button>
-              ]
-            }
+                </button>,
+              ]}
             {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
           </div>
           <hr className={styles.contentHR} />
@@ -213,13 +218,18 @@ export default function Info({
             <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
           </div>
           <div className={styles.description}>
-            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
-              <button key={key} onClick={() => {
-                JumpOut(decoratedHref);
-              }}>
-                {decoratedText}
-              </button>
-            )}>
+            <Linkify
+              componentDecorator={(decoratedHref, decoratedText, key) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    JumpOut(decoratedHref);
+                  }}
+                >
+                  {decoratedText}
+                </button>
+              )}
+            >
               {accountData?.description?.split("\n").map((line, index) => (
                 <p key={index}>{line}</p>
               ))}

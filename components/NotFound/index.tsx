@@ -9,7 +9,7 @@ export function NotFound({
   code,
   content,
   image,
-  button
+  button,
 }: {
   code?: {
     show?: boolean;
@@ -36,13 +36,13 @@ export function NotFound({
 
   const defaultCode = {
     show: true,
-    message: "404"
+    message: "404",
   };
   code = { ...defaultCode, ...code };
 
   const defaultContent = {
     show: true,
-    message: "Page Not Found"
+    message: "Page Not Found",
   };
   content = { ...defaultContent, ...content };
 
@@ -51,98 +51,58 @@ export function NotFound({
     src: "/images/404.svg",
     width: 189,
     height: 200,
-    alt: "404"
+    alt: "404",
   };
   image = { ...defaultImage, ...image };
 
   const defaultButton = {
     show: true,
     message: "Bact To Home",
-    href: "/"
+    href: "/",
   };
   button = { ...defaultButton, ...button };
 
   return isMobile ? (
     <div className={styles.mobileNotFound}>
-      {
-        image.show &&
-        image.src &&
-        image.height &&
-        image.width &&
-        image.alt && (
-          <Image
-            src={image.src}
-            width={image.width}
-            height={image.height}
-            alt={image.alt}
-            className={styles.image}
-          />
-        )
-      }
+      {image.show && image.src && image.height && image.width && image.alt && (
+        <Image
+          src={image.src}
+          width={image.width}
+          height={image.height}
+          alt={image.alt}
+          className={styles.image}
+        />
+      )}
       <div>
-        {
-          code.show &&
-          code.message && (
-            <h2>{code.message}</h2>
-          )
-        }
-        {
-          content.show &&
-          content.message && (
-            <h1>{content.message}</h1>
-          )
-        }
+        {code.show && code.message && <h2>{code.message}</h2>}
+        {content.show && content.message && <h1>{content.message}</h1>}
       </div>
-      {
-        button.show &&
-        button.href &&
-        button.message && (
-          <Link href={button.href} className={styles.mobileBackToHome}>
-            {button.message}
-          </Link>
-        )
-      }
+      {button.show && button.href && button.message && (
+        <Link href={button.href} className={styles.mobileBackToHome}>
+          {button.message}
+        </Link>
+      )}
     </div>
   ) : (
     <div className={styles.notFound}>
-      {
-        image.show &&
-        image.src &&
-        image.height &&
-        image.width &&
-        image.alt && (
-          <Image
-            src={image.src}
-            width={image.width}
-            height={image.height}
-            alt={image.alt}
-            className={styles.image}
-          />
-        )
-      }
+      {image.show && image.src && image.height && image.width && image.alt && (
+        <Image
+          src={image.src}
+          width={image.width}
+          height={image.height}
+          alt={image.alt}
+          className={styles.image}
+        />
+      )}
       <div>
-        {
-          code.show &&
-          code.message && (
-            <h2>{code.message}</h2>
-          )
-        }
-        {
-          content.show &&
-          content.message && (
-            <h1>{content.message}</h1>
-          )
-        }
+        {code.show && code.message && <h2>{code.message}</h2>}
+        {content.show && content.message && <h1>{content.message}</h1>}
       </div>
-      {
-        button.show &&
-        button.href &&
-        button.message && (
-          <Link href={button.href} className={styles.backToHome}>
-            {button.message}
-          </Link>
-        )
-      }
+      {button.show && button.href && button.message && (
+        <Link href={button.href} className={styles.backToHome}>
+          {button.message}
+        </Link>
+      )}
     </div>
   );
 }

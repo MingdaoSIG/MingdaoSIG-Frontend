@@ -12,7 +12,9 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(pathToSelected(path));
+  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(
+    pathToSelected(path),
+  );
 
   useEffect(() => {
     setSelected(pathToSelected(path));
@@ -23,25 +25,25 @@ const ToolBar = () => {
       name: "home",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      clickable: !isLoading && true
+      clickable: !isLoading && true,
     },
     {
       name: "user",
       route: userData ? `/@${userData.customId}` : "/",
       icon: "/icons/bx-user.svg",
-      clickable: !isLoading && isLogin
+      clickable: !isLoading && isLogin,
     },
     {
       name: "new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: !isLoading && isLogin
+      clickable: !isLoading && isLogin,
     },
     {
       name: "info",
       route: "/info",
       icon: "/icons/info.svg",
-      clickable: !isLoading && true
+      clickable: !isLoading && true,
     },
   ];
 
@@ -50,13 +52,10 @@ const ToolBar = () => {
       <div className={styles.iconWrapper}>
         {menu.map((item, index) => {
           return (
-            <div
-              key={index}
-              className={styles.icon}
-            >
+            <div key={index} className={styles.icon}>
               <div
                 style={{
-                  cursor: item.clickable ? "pointer" : "not-allowed"
+                  cursor: item.clickable ? "pointer" : "not-allowed",
                 }}
                 className={styles.iconCursor}
               />
@@ -64,7 +63,7 @@ const ToolBar = () => {
                 href={item.route}
                 style={{
                   opacity: item.clickable ? 1 : 0.5,
-                  pointerEvents: item.clickable ? "auto" : "none"
+                  pointerEvents: item.clickable ? "auto" : "none",
                 }}
                 className={styles.icon}
                 onClick={() => setSelected(index)}
@@ -82,7 +81,7 @@ const ToolBar = () => {
         <div
           style={{
             display: selected === -1 ? "none" : "block",
-            left: `${selected / 4 * 100}%`
+            left: `${(selected / 4) * 100}%`,
           }}
           className={styles.selected}
         />

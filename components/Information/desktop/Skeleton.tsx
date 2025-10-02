@@ -15,7 +15,7 @@ const TopPost = (child: any) => {
 
 const SIG = (child: any) => {
   return (
-    <div className={skeleton.sig} >
+    <div className={skeleton.sig}>
       <p></p>
     </div>
   );
@@ -33,16 +33,18 @@ export const InformationSkeleton = () => {
             <h2>Top 3 Posts</h2>
             <div className={skeleton.likePostWrapper}>
               {topPost.map((sig, index) => {
-                return (<TopPost key={index} />);
+                return <TopPost key={index} />;
               })}
             </div>
           </div>
 
           <div className={skeleton.sigs}>
-            <h2 className={skeleton.sigTitle}>SIGs - <p className={skeleton.sigCount}> </p></h2>
+            <h2 className={skeleton.sigTitle}>
+              SIGs - <p className={skeleton.sigCount}> </p>
+            </h2>
             <div className={skeleton.sigTop}>
               {sigCount.map((sig, index) => {
-                return (<SIG key={index} />);
+                return <SIG key={index} />;
               })}
             </div>
           </div>

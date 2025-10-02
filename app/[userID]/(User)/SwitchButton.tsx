@@ -9,10 +9,10 @@ const SwitchButton = ({
 }) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
-    "py-4 w-[100px] text-center duration-500 relative text-white"
+    "py-4 w-[100px] text-center duration-500 relative text-white",
   );
   const [rightStyle, setRightStyle] = useState(
-    "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+    "py-4 w-[100px] text-center duration-500 relative text-md-dark-green",
   );
 
   return (
@@ -31,10 +31,10 @@ const SwitchButton = ({
           setButtonStyle("left-0");
           callback(0);
           setLeftStyle(
-            "py-4 w-[100px] text-center duration-500 relative text-white"
+            "py-4 w-[100px] text-center duration-500 relative text-white",
           );
           setRightStyle(
-            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green",
           );
         }}
       >
@@ -46,10 +46,10 @@ const SwitchButton = ({
           setButtonStyle("left-[100px]");
           callback(1);
           setLeftStyle(
-            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green"
+            "py-4 w-[100px] text-center duration-500 relative text-md-dark-green",
           );
           setRightStyle(
-            "py-4 w-[100px] text-center duration-500 relative text-white"
+            "py-4 w-[100px] text-center duration-500 relative text-white",
           );
         }}
       >

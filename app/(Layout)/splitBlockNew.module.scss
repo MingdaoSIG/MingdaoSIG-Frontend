@@ -1,0 +1,56 @@
+@import "@/app/styles/variables.scss";
+
+.app {
+  width: 90dvw;
+  height: 70dvh;
+  // max-height: 70dvh;
+  border-radius: 1.8rem;
+  margin-left: auto;
+  margin-right: auto;
+
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 1fr;
+
+  @media screen and (max-width: 1280px) {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.mainview {
+  background-color: transparent;
+  grid-column: span 8;
+  max-width: 90dvw;
+  // max-height: 70dvh;
+  height: 100%;
+  border-radius: $border-radius;
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 1280px) {
+    grid-column: span 8;
+  }
+
+  @media screen and (max-width: 800px) {
+    grid-column: span 8;
+  }
+}
+
+.second {
+  height: 100%;
+  grid-column: span 4;
+  overflow-y: hidden;
+
+  @media screen and (max-width: 1280px) {
+    grid-column: span 4;
+  }
+
+  @media screen and (max-width: 800px) {
+    grid-column: span 4;
+  }
+}

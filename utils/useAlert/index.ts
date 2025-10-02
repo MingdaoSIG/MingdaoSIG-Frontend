@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Swal, { SweetAlertOptions } from "sweetalert2";
+import Swal, { type SweetAlertOptions } from "sweetalert2";
 
 const useAlert = () => {
   const [isLoading, setIsLoading] = useState(false);

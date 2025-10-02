@@ -6,7 +6,7 @@ import Reply from "../components/Reply";
 import styles from "./Replies.module.scss";
 
 // Interfaces
-import { TThread } from "@/interfaces/Thread";
+import type { TThread } from "@/interfaces/Thread";
 
 // API Request Function
 import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
@@ -53,7 +53,13 @@ export default function Replies({ post }: { post: TThread }) {
   }
 
   async function handleCloseExtended(e: any) {
-    if (!(e.target instanceof HTMLInputElement || e.target.id === "send" || e.target.id === "customId")) {
+    if (
+      !(
+        e.target instanceof HTMLInputElement ||
+        e.target.id === "send" ||
+        e.target.id === "customId"
+      )
+    ) {
       setExtended(false);
     }
   }
@@ -67,10 +73,13 @@ export default function Replies({ post }: { post: TThread }) {
 
   return (
     <div
-      className={styles.wrapper + (extended ? " h-[70dvh] !bg-white" : " h-[6.5rem]")}
+      className={
+        styles.wrapper + (extended ? " h-[70dvh] !bg-white" : " h-[6.5rem]")
+      }
       onClick={() => {
         if (!extended) setExtended(true);
-      }}>
+      }}
+    >
       <div
         className={styles.repliesWrapper + (extended ? " h-full" : " h-auto")}
         onClick={(e: any) => {
@@ -102,38 +111,46 @@ export default function Replies({ post }: { post: TThread }) {
               );
             }
           })}
-          {
-            (comments.length > 0 && !extended) ?
-              <Reply
-                customId={comments[0].user.customId}
-                avatar={comments[0].user.avatar}
-                content={comments[0].content}
-                createdAt={
-                  new Date(comments[0].createdAt || "")
-                    .toLocaleString("zh-TW")
-                    .split(" ")[0]
-                }
-                overflow={false}
-                first={true}
-              />
-              :
-              (!extended && comments.length === 0) &&
-              <p className="mx-auto font-medium text-[1rem] my-auto">No comments</p>
-          }
+          {comments.length > 0 && !extended ? (
+            <Reply
+              customId={comments[0].user.customId}
+              avatar={comments[0].user.avatar}
+              content={comments[0].content}
+              createdAt={
+                new Date(comments[0].createdAt || "")
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
+              overflow={false}
+              first={true}
+            />
+          ) : (
+            !extended &&
+            comments.length === 0 && (
+              <p className="mx-auto font-medium text-[1rem] my-auto">
+                No comments
+              </p>
+            )
+          )}
         </div>
         <form
-          className={"h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5 " + (extended ? "" : "hidden")}
+          className={
+            "h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5 " +
+            (extended ? "" : "hidden")
+          }
           onSubmit={handleCommandSubmit}
         >
           <input
             className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1 disabled:cursor-not-allowed"
             placeholder="Reply..."
             onChange={(e) => {
-              e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
+              e.target.value.length > 0
+                ? setTypeText(true)
+                : setTypeText(false);
               setTypeComments(e.target.value);
             }}
             value={typeComments}
-          // disabled
+            // disabled
           />
           <button className="h-full w-[40px] flex-none">
             <Image

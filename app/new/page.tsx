@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -15,7 +15,7 @@ import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 import styles from "./page.module.scss";
 
 // Types
-import { TPostAPI } from "../../components/PostEditor/types/postAPI";
+import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
@@ -44,6 +44,7 @@ export default function NewPostPage() {
     sig: "",
     content: markdownGuide,
     cover: "",
+    hashtag: [],
   });
 
   // Adjust form data function
@@ -53,7 +54,7 @@ export default function NewPostPage() {
         ({
           ...prev,
           [e.target.name]: e.target.value,
-        } as TPostAPI)
+        }) as TPostAPI,
     );
   }
 
@@ -65,7 +66,7 @@ export default function NewPostPage() {
           ({
             ...prev,
             content: storedContent,
-          } as TPostAPI)
+          }) as TPostAPI,
       );
     }
   }, []);
@@ -77,11 +78,11 @@ export default function NewPostPage() {
 
     if (data?.title === "")
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
-        setPostButtonDisable(false)
+        setPostButtonDisable(false),
       );
     if (!data.sig) {
       return Swal.fire(alertMessageConfigs.sigError).then(() =>
-        setPostButtonDisable(false)
+        setPostButtonDisable(false),
       );
     }
 
@@ -99,7 +100,7 @@ export default function NewPostPage() {
         });
       } else if (res.status === 4001) {
         Swal.fire(alertMessageConfigs.PermissionError).then(() =>
-          setPostButtonDisable(false)
+          setPostButtonDisable(false),
         );
       } else {
         setPostButtonDisable(false);
@@ -107,7 +108,7 @@ export default function NewPostPage() {
       }
     } catch (error) {
       Swal.fire(alertMessageConfigs.OthersError).then(() =>
-        setPostButtonDisable(false)
+        setPostButtonDisable(false),
       );
     }
   }
@@ -119,6 +120,7 @@ export default function NewPostPage() {
       sig: "",
       content: markdownGuide,
       cover: "",
+      hashtag: [],
     });
     localStorage.removeItem("editorContent");
   }
@@ -138,7 +140,7 @@ export default function NewPostPage() {
       Swal.fire(
         "File type not supported",
         "You can only upload  png,  jpg,  webp, tiff",
-        "error"
+        "error",
       );
       return;
     }
@@ -147,7 +149,7 @@ export default function NewPostPage() {
       Swal.fire(
         "File too large",
         "You can only upload files under 5MB",
-        "error"
+        "error",
       );
       return;
     }
@@ -156,17 +158,18 @@ export default function NewPostPage() {
       const imageUploadAPIResponse = await imageUpload(file, token);
       const imageUploadResponseJson = await imageUploadAPIResponse.json();
       setPostData(
-        (prev: TPostAPI) => ({
-          ...prev,
-          cover: imageUploadResponseJson.id,
-        } as TPostAPI)
+        (prev: TPostAPI) =>
+          ({
+            ...prev,
+            cover: imageUploadResponseJson.id,
+          }) as TPostAPI,
       );
     } catch (error) {
       console.error("error: ", error);
       Swal.fire(
         "Error",
         "Something went wrong. Please try again later",
-        "error"
+        "error",
       );
       return;
     }

@@ -16,10 +16,7 @@ export default function UserLogin() {
     );
   } else if (!isLogin) {
     return (
-      <div
-        className={styles.loginUserPanelWrapper}
-        onClick={() => login()}
-      >
+      <div className={styles.loginUserPanelWrapper} onClick={() => login()}>
         <div className={styles.loginUserPanel}>
           <p>Login</p>
         </div>
@@ -38,28 +35,24 @@ export default function UserLogin() {
             </div>
           </div>
         )}
-        <div
-          className={styles.userPanel}
-          onClick={() => confirmLogout(logout)}
-        >
+        <div className={styles.userPanel} onClick={() => confirmLogout(logout)}>
           <Image
-            src={userData && userData.avatar || process.env.NEXT_PUBLIC_API_URL + "/image/653299930b891d1f6b5b4458"}
+            src={
+              (userData && userData.avatar) ||
+              process.env.NEXT_PUBLIC_API_URL +
+                "/image/653299930b891d1f6b5b4458"
+            }
             width={50}
             height={50}
             alt="Avatar"
             className={styles.avatar}
           />
           <div className={styles.user}>
-            <p className={styles.name}>
-              {userData && userData.name}
-            </p>
-            <p className={styles.email}>
-              {userData && userData.email}
-            </p>
+            <p className={styles.name}>{userData && userData.name}</p>
+            <p className={styles.email}>{userData && userData.email}</p>
           </div>
         </div>
       </div>
-
     );
   }
 }
