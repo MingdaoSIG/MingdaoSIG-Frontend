@@ -56,16 +56,33 @@ export default function NewPostPage() {
           [e.target.name]: e.target.value,
         }) as TPostAPI,
     );
+    localStorage.setItem("postData", JSON.stringify(data));
   }
 
   useEffect(() => {
+    if (data.title !== "" || data.sig !== "" || data.hashtag?.length !== 0) {
+      localStorage.setItem("postData", JSON.stringify(data));
+    }
+  }, [data]);
+
+  useEffect(() => {
     const storedContent = localStorage?.getItem("editorContent");
+    const storedData = localStorage?.getItem("postData");
     if (storedContent) {
       setPostData(
         (prev: TPostAPI | undefined) =>
           ({
             ...prev,
             content: storedContent,
+          }) as TPostAPI,
+      );
+    }
+    if (storedData) {
+      setPostData(
+        (prev: TPostAPI | undefined) =>
+          ({
+            ...prev,
+            ...JSON.parse(storedData),
           }) as TPostAPI,
       );
     }
@@ -96,6 +113,7 @@ export default function NewPostPage() {
         return Swal.fire(alertMessageConfigs.Success).then(() => {
           setPostButtonDisable(false);
           localStorage.removeItem("editorContent");
+          localStorage.removeItem("postData");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
@@ -123,6 +141,7 @@ export default function NewPostPage() {
       hashtag: [],
     });
     localStorage.removeItem("editorContent");
+    localStorage.removeItem("postData");
   }
 
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
