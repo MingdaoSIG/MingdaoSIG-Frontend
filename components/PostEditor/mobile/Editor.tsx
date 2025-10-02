@@ -65,19 +65,20 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
       </div>
 
       {/* 預覽區域 */}
-      <div className="w-full bg-white border border-gray-300 rounded-md p-1 h-[19rem]">
-        <div className="prose max-w-none">
+      <div className="w-full bg-white border border-gray-300 rounded-md p-1 max-h-[20rem] overflow-hidden">
+        <div className="prose max-w-none overflow-hidden h-[19rem]">
           {data?.content ? (
             <MdPreview
               modelValue={data.content}
               previewTheme="github"
+              className="prose max-w-none overflow-auto max-h-[19rem]"
             />
           ) : (
             <p className="text-gray-400">預覽內容將顯示在這裡...</p>
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
