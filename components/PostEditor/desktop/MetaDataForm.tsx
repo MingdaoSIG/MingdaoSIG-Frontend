@@ -99,7 +99,7 @@ export default function MetaDataForm({
       return;
     }
 
-    console.log("File input changed:", e.target.files);
+    // console.log("File input changed:", e.target.files);
     if (handleFileChange) {
       handleFileChange(e);
     }
@@ -220,10 +220,9 @@ export default function MetaDataForm({
               className={`
                 flex-1 border-2 border-dashed rounded-lg cursor-pointer transition-all
                 flex flex-col justify-center items-center gap-2 p-8
-                ${
-                  isDragging
-                    ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
-                    : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
+                ${isDragging
+                  ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
+                  : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
                 }
               `}
               onDragOver={handleDragOver}

@@ -175,7 +175,7 @@ export default function NewPostMobile({
 
             {/* Tags Display */}
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg max-w-full">
+              <div className="flex flex-wrap gap-2 p-3 bg-gray-100 rounded-lg max-w-full">
                 {tags.map((tag) => (
                   <span
                     key={tag}
@@ -201,22 +201,27 @@ export default function NewPostMobile({
           <hr className="border-gray-200 h-px w-full mb-3" />
           <div className="w-full max-w-full">
             {data?.cover ? (
-              <div className="relative max-w-full">
+              <div className="relative max-w-full min-h-[12rem]">
                 <label
                   htmlFor="file"
                   onClick={handleFileInputClick}
-                  className="block cursor-pointer active:opacity-90 transition-opacity"
+                  className="block bg-cover bg-center bg-no-repeat rounded-lg min-h-[12rem] cursor-pointer relative overflow-hidden"
+                  style={{
+                    backgroundImage: data.cover.includes("http")
+                      ? `url(${data.cover})`
+                      : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`,
+                  }}
                 >
-                  <img
-                    src={data.cover}
-                    alt="Cover"
-                    className="w-full max-w-full max-h-64 object-cover rounded-lg"
-                  />
+                  <div className="absolute inset-0 bg-black/0 active:bg-black/20 transition-all duration-200 flex items-center justify-center">
+                    <span className="text-white opacity-0 active:opacity-100 transition-opacity duration-200 font-medium">
+                      點擊更換圖片
+                    </span>
+                  </div>
                 </label>
 
                 <button
                   onClick={handleRemoveCover}
-                  className="absolute top-2 right-2 w-9 h-9 bg-red-500 active:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 active:scale-90"
+                  className="absolute top-2 right-2 w-9 h-9 bg-red-500 active:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 active:scale-90 z-10"
                   title="移除封面"
                 >
                   <svg

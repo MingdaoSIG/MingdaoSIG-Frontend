@@ -155,7 +155,7 @@ export default function NewPostPage() {
       "image/tiff",
     ];
 
-    if (!e.target.files) return;
+    if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
