@@ -114,6 +114,8 @@ export default function NewPostPage() {
           setPostButtonDisable(false);
           localStorage.removeItem("editorContent");
           localStorage.removeItem("postData");
+          localStorage.removeItem("editorContent");
+          localStorage.removeItem("postData");
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
@@ -140,6 +142,8 @@ export default function NewPostPage() {
       cover: "",
       hashtag: [],
     });
+    localStorage.removeItem("editorContent");
+    localStorage.removeItem("postData");
     localStorage.removeItem("editorContent");
     localStorage.removeItem("postData");
   }
