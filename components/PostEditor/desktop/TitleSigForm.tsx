@@ -11,10 +11,7 @@ interface Props {
   handleFormEventFunction: Function;
 }
 
-export default function TitleSigForm({
-  data,
-  handleFormEventFunction,
-}: Props) {
+export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
   const { status } = useSession();
   const { userData } = useUserAccount();
 

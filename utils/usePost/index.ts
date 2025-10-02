@@ -23,14 +23,14 @@ export const useAllPost = (query: PostQuery) => {
           new URLSearchParams({
             skip: String(
               (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize
+                query.pageSize,
             ),
             limit: String(query.pageSize),
             sort: query.sort ? String(query.sort) : "latest",
           }),
         {
           method: "GET",
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -58,14 +58,14 @@ export const useUserPost = (userId: string, query: PostQuery) => {
           new URLSearchParams({
             skip: String(
               (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize
+                query.pageSize,
             ),
             limit: String(query.pageSize),
             sort: query.sort ? String(query.sort) : "latest",
           }),
         {
           method: "GET",
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -93,14 +93,14 @@ export const useSigPost = (sigId: string, query: PostQuery) => {
           new URLSearchParams({
             skip: String(
               (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize
+                query.pageSize,
             ),
             limit: String(query.pageSize),
             sort: query.sort ? String(query.sort) : "latest",
           }),
         {
           method: "GET",
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -127,7 +127,7 @@ export const useTopPost = (query: PostQuery) => {
         `${API_URL}/post/list?skip=0&limit=${String(Number(query.pageSize))}`,
         {
           method: "GET",
-        }
+        },
       );
       const responseData = await response.json();
       return responseData.data as TThread[];

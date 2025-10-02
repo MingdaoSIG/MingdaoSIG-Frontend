@@ -24,7 +24,7 @@ export function useFetch<T>(url: string, options?: RequestInit): State<T> {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}${url}`,
-          options
+          options,
         );
         if (!res.ok) {
           throw new Error(res.statusText);

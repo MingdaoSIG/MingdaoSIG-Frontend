@@ -122,8 +122,8 @@ export default function MetaDataForm({
     if (e.dataTransfer.files && e.dataTransfer.files[0] && handleFileChange) {
       const mockEvent = {
         target: {
-          files: e.dataTransfer.files
-        }
+          files: e.dataTransfer.files,
+        },
       } as any;
       handleFileChange(mockEvent);
     }
@@ -157,12 +157,12 @@ export default function MetaDataForm({
     e.stopPropagation();
 
     if (handleFormEventFunction) {
-      handleFormEventFunction({ target: { name: 'cover', value: '' } });
+      handleFormEventFunction({ target: { name: "cover", value: "" } });
     }
 
-    const fileInput = document.getElementById('file') as HTMLInputElement;
+    const fileInput = document.getElementById("file") as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
   };
 
@@ -175,23 +175,25 @@ export default function MetaDataForm({
 
       // 更新父組件的 data
       if (handleFormEventFunction) {
-        handleFormEventFunction({ target: { name: 'hashtag', value: newTags } });
+        handleFormEventFunction({
+          target: { name: "hashtag", value: newTags },
+        });
       }
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    const newTags = tags.filter(tag => tag !== tagToRemove);
+    const newTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(newTags);
 
     // 更新父組件的 data
     if (handleFormEventFunction) {
-      handleFormEventFunction({ target: { name: 'hashtag', value: newTags } });
+      handleFormEventFunction({ target: { name: "hashtag", value: newTags } });
     }
   };
 
   const handleTagInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAddTag();
     }
@@ -256,9 +258,10 @@ export default function MetaDataForm({
               className={`
                 flex-1 border-2 border-dashed rounded-lg cursor-pointer transition-all
                 flex flex-col justify-center items-center gap-2 p-8
-                ${isDragging
-                  ? 'border-[#4ab8e0] bg-blue-100 scale-[0.98]'
-                  : 'border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]'
+                ${
+                  isDragging
+                    ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
+                    : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
                 }
               `}
               onDragOver={handleDragOver}
@@ -286,7 +289,10 @@ export default function MetaDataForm({
 
         {/* Hashtag Section */}
         <div className="flex flex-col gap-2 mt-12">
-          <label className="font-semibold text-gray-700 text-lg" htmlFor="tagInput">
+          <label
+            className="font-semibold text-gray-700 text-lg"
+            htmlFor="tagInput"
+          >
             Hashtag
           </label>
 
