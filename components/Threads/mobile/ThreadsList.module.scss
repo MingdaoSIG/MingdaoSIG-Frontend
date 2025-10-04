@@ -6,11 +6,10 @@
   border-radius: $mobile-border-radius $mobile-border-radius 0 0;
   display: flex;
   flex-direction: column;
-  // gap: 0.25rem;
   overflow-y: auto;
   scrollbar-width: none;
 
-  >p {
+  > p {
     width: 100%;
     text-align: center;
     padding-bottom: 0.5rem;
@@ -22,6 +21,7 @@
 }
 
 .thread {
+  --thread-height: 8rem;
   background: $panel-background-color;
   border-radius: $mobile-border-radius;
   max-height: var(--thread-height);
@@ -58,6 +58,31 @@
   overflow: hidden;
   color: black;
   font-size: 0.75rem;
+  line-height: 1.2;
+  min-height: calc(0.75rem * 1.2 * 1);
+  margin-bottom: 0.5rem;
+}
+
+.hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.hashtag {
+  padding: 0.2rem 0.5rem;
+  background: rgba(95, 205, 245, 1);
+  color: #ffffff;
+  border-radius: 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #4ab8e0;
+  }
 }
 
 .cover {
@@ -93,7 +118,7 @@
       opacity: 60%;
     }
 
-    &>span {
+    & > span {
       padding: 0 0.1rem;
     }
   }
@@ -107,7 +132,7 @@
     justify-content: flex-end;
     flex: content;
 
-    &>span {
+    & > span {
       padding: 0 0.1rem;
     }
 
@@ -128,12 +153,11 @@
 .noPost {
   height: 100%;
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
-  >h1 {
+  > h1 {
     font-size: $info-title-font-size;
   }
 }

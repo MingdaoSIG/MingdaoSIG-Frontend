@@ -1,14 +1,12 @@
 @import "@/app/styles/variables.scss";
 
 .thread {
-  --thread-height: 12rem;
+  --thread-height: 8rem;
   background: $panel-background-color;
-  border-radius: $border-radius;
+  border-radius: $mobile-border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  margin-bottom: 0.5rem;
 
   animation-name: breath;
   animation-duration: 0.8s;
@@ -20,7 +18,6 @@
     from {
       background-color: rgba(255, 255, 255, 0.5);
     }
-
     to {
       background-color: rgba(255, 255, 255, 0.2);
     }
@@ -29,7 +26,7 @@
 
 .preview {
   position: relative;
-  padding: 2rem;
+  padding: 1rem;
   box-sizing: border-box;
   height: var(--thread-height);
   width: 100%;
@@ -37,16 +34,15 @@
 }
 
 .info {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   width: auto;
   display: flex;
   flex-direction: initial;
-
   margin-bottom: 0.3rem;
 
   .user {
     width: 3rem;
-
+    height: 0.75rem;
     position: relative;
     background-color: $skeleton-background-color;
     overflow: hidden;
@@ -69,13 +65,13 @@
     }
   }
 
-  >span {
+  > span {
     padding: 0 0.1rem;
   }
 
   .sig {
-    width: 5rem;
-
+    width: 4rem;
+    height: 0.75rem;
     position: relative;
     background-color: $skeleton-background-color;
     overflow: hidden;
@@ -106,15 +102,13 @@
 }
 
 .title {
-  width: 50%;
-
+  width: 60%;
+  height: 1rem;
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;
   border-radius: 0.3rem;
   margin-bottom: 0.5rem;
-  height: 1.75rem;
-  flex: 1;
 
   &::after {
     position: absolute;
@@ -134,8 +128,8 @@
 }
 
 .content {
-  height: 4rem;
-
+  height: 0.9rem;
+  margin-bottom: 0.5rem;
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;
@@ -158,13 +152,19 @@
   }
 }
 
-.cover {
-  min-width: 25%;
+.hashtags {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
 
+.hashtag {
+  width: 2.5rem;
+  height: 1.1rem;
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;
-  border-radius: $border-radius;
+  border-radius: 0.6rem;
 
   &::after {
     position: absolute;
