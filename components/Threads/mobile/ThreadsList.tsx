@@ -34,7 +34,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={style.thread + "  cursor-pointer select-none "}
+      className={style.thread + " cursor-pointer select-none"}
       style={{
         backgroundColor: isAnnouncement ? "white" : "",
       }}
@@ -53,11 +53,7 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           </div>
           <div className={style.statist}>
             <p className={style.date}>
-              {
-                new Date(threadData.createdAt!)
-                  .toLocaleString("zh-TW")
-                  .split(" ")[0]
-              }
+              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
             </p>
             <div className={style.likes}>
               <Image
@@ -86,7 +82,6 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           <h1 className={style.previewTitle}>
             {isAnnouncement && "🔔 公告 - "}
             {threadData.title}
-            {/* {threadData.pinned && " • 已置頂"} */}
           </h1>
         </div>
 
@@ -98,6 +93,16 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
         >
           {markdownToPlainText(threadData.content)}
         </p>
+
+        {threadData.hashtag && threadData.hashtag.length > 0 && !isAnnouncement && (
+          <div className={style.hashtags}>
+            {threadData.hashtag.slice(0, 3).map((tag, index) => (
+              <span key={index} className={style.hashtag}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </Link>
   );
@@ -114,8 +119,12 @@ const ThreadSkeleton = () => {
         </div>
         <div className={skeleton.title}></div>
         <p className={skeleton.content}></p>
+        <div className={skeleton.hashtags}>
+          <div className={skeleton.hashtag}></div>
+          <div className={skeleton.hashtag}></div>
+          <div className={skeleton.hashtag}></div>
+        </div>
       </div>
-      <div className={skeleton.cover}></div>
     </div>
   );
 };
