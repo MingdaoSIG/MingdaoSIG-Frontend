@@ -29,7 +29,7 @@
 
 .preview {
   position: relative;
-  padding: 2rem;
+  padding: 1.5rem;
   box-sizing: border-box;
   height: var(--thread-height);
   width: 100%;
@@ -41,12 +41,10 @@
   width: auto;
   display: flex;
   flex-direction: initial;
-
   margin-bottom: 0.3rem;
 
   .user {
     width: 3rem;
-
     position: relative;
     background-color: $skeleton-background-color;
     overflow: hidden;
@@ -69,13 +67,12 @@
     }
   }
 
-  >span {
+  > span {
     padding: 0 0.1rem;
   }
 
   .sig {
     width: 5rem;
-
     position: relative;
     background-color: $skeleton-background-color;
     overflow: hidden;
@@ -107,7 +104,6 @@
 
 .title {
   width: 50%;
-
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;
@@ -134,8 +130,8 @@
 }
 
 .content {
-  height: 4rem;
-
+  height: 3rem; // 改為兩行的高度 (對應 min-height: calc(1em * 1.5 * 2))
+  margin-bottom: 0.5rem;
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;
@@ -158,9 +154,40 @@
   }
 }
 
+// 新增 hashtag skeleton
+.hashtags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.hashtag {
+  width: 3rem;
+  height: 1.5rem;
+  position: relative;
+  background-color: $skeleton-background-color;
+  overflow: hidden;
+  border-radius: 0.75rem;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+        rgba(#fff, 0) 0,
+        rgba(#fff, 0.2) 20%,
+        rgba(#fff, 0.5) 60%,
+        rgba(#fff, 0));
+    animation: shimmer 2s infinite;
+    content: '';
+  }
+}
+
 .cover {
   min-width: 25%;
-
   position: relative;
   background-color: $skeleton-background-color;
   overflow: hidden;

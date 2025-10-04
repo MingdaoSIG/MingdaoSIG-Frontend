@@ -1,7 +1,7 @@
 @import "@/app/styles/variables.scss";
 
 .threads {
-  --thread-height: 10rem;
+  --thread-height: 12rem;
   position: relative;
   width: 100%;
   border-radius: $border-radius;
@@ -10,7 +10,7 @@
   gap: $gap;
   overflow-y: auto;
 
-  >p {
+  > p {
     width: 100%;
     text-align: center;
     padding-bottom: 0.5rem;
@@ -58,10 +58,36 @@
 
 .previewContent {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: black;
+  margin-bottom: 0.5rem;
+  line-height: 1.5; // 行高倍數
+  min-height: calc(1em * 1.5 * 2); // 1em * line-height * 行數
+}
+
+.hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.hashtag {
+  padding: 0.25rem 0.6rem;
+  background: rgba(95, 205, 245, 1);
+  color: #ffffff;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #5FCDF5;
+    color: white;
+  }
 }
 
 .cover {
@@ -101,7 +127,7 @@
       opacity: 60%;
     }
 
-    &>span {
+    & > span {
       padding: 0 0.1rem;
     }
   }
@@ -115,7 +141,7 @@
     justify-content: flex-end;
     flex: content;
 
-    &>span {
+    & > span {
       padding: 0 0.1rem;
     }
 
@@ -141,7 +167,7 @@
   align-items: center;
   justify-content: center;
 
-  >h1 {
+  > h1 {
     font-size: $info-title-font-size;
   }
 }
