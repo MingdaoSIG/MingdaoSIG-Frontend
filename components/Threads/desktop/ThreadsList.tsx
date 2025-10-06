@@ -26,13 +26,20 @@ import {
   announcementStayTime,
 } from "../configs/announcement";
 
-// Fix Cover URLs
 function fixCoverUrl(cover: string) {
-  if (cover.includes("http")) {
-    return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover.split("image/")[1]}`;
-  } else {
-    return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
+  if (cover.startsWith("http://") || cover.startsWith("https://")) {
+    if (cover.includes("lazco.dev")) {
+      const pathPart = cover.split("lazco.dev/")[1] || "";
+      return `${process.env.NEXT_PUBLIC_API_URL}/${pathPart}`;
+    }
+    return cover;
   }
+
+  if (cover.startsWith("/image/")) {
+    return `${process.env.NEXT_PUBLIC_API_URL}${cover}`;
+  }
+
+  return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
 }
 
 export const Thread = ({ threadData }: { threadData: TThread }) => {

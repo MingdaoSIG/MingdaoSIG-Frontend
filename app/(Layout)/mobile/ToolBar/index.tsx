@@ -37,7 +37,7 @@ const ToolBar = () => {
       name: "new",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: !isLoading && isLogin,
+      clickable: !isLoading && true,
     },
     {
       name: "info",
