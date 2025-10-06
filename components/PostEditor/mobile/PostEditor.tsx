@@ -249,7 +249,7 @@ export default function NewPostMobile({
                   點擊上傳圖片
                 </div>
                 <div className="text-gray-500 text-sm text-center">
-                  支援 JPG、PNG、GIF 格式
+                  支援 png、jpg、webp、tiff 格式
                 </div>
               </label>
             )}
