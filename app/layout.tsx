@@ -2,6 +2,7 @@
 import type React from "react";
 import type { Viewport } from "next";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { Geist } from 'next/font/google'
 
 // Providers
 import { Providers } from "./providers";
@@ -13,6 +14,10 @@ import "@/app/styles/globals.scss";
 import type { Metadata } from "next";
 import { Device } from "./device";
 
+const geist = Geist({
+  subsets: ['latin'],
+})
+
 export default function RootLayout({
   title,
   children,
@@ -22,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <html lang="en">
+      <html lang="en" className={geist.className}>
         <GoogleTagManager gtmId="GTM-NGM7R8S8" />
         <body>
           <Providers>
