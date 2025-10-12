@@ -5,17 +5,20 @@ import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
-import { Fragment, useEffect, useState, useCallback } from "react";
+import { Fragment, useEffect, useState, useCallback, use } from "react";
 import Swal from "sweetalert2";
 
 export default function ManageSIGLeader({
   params,
 }: {
-  params: { sigID: string };
+  params: Promise<{ sigID: string }>;
 }) {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();
+
+  // 使用 React.use() 解包 params
+  const { sigID } = use(params);
 
   const [sigData, setSigData] = useState<any>({});
   const [leaders, setLeaders] = useState<any[]>([]);
@@ -23,7 +26,7 @@ export default function ManageSIGLeader({
   // 使用 useCallback 包裝 fetchLeaders 函數，以確保它的引用在渲染間保持穩定
   const fetchLeaders = useCallback(async () => {
     try {
-      const response = await sigAPI.getSigData(params.sigID);
+      const response = await sigAPI.getSigData(sigID);
       setSigData(response);
 
       if (response.leader && response.leader.length > 0) {
@@ -65,7 +68,7 @@ export default function ManageSIGLeader({
     } catch (error: any) {
       console.error(error.message);
     }
-  }, [params.sigID]); // 只有當 sigID 改變時才重新創建函數
+  }, [sigID]); // 只有當 sigID 改變時才重新創建函數
 
   function addLeader() {
     Swal.fire({
@@ -92,7 +95,7 @@ export default function ManageSIGLeader({
       if (result.isConfirmed) {
         const code = result.value;
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/leader`,
+          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/leader`,
           {
             method: "POST",
             headers: {
@@ -176,7 +179,7 @@ export default function ManageSIGLeader({
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/leader`,
+          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/leader`,
           {
             method: "DELETE",
             headers: {
@@ -189,7 +192,7 @@ export default function ManageSIGLeader({
           },
         );
         const data = await res.json();
-        console.log(data);
+        // console.log(data);
         if (res.status === 200) {
           Swal.fire({
             title: "刪除成功!",

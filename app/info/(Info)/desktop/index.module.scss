@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .wrapper {
   padding-top: 1.2rem;
@@ -6,8 +6,8 @@
 }
 
 .title {
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   height: 3.8rem;
 
   padding-left: 1rem;
@@ -40,8 +40,8 @@
 }
 
 .content {
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
 
   margin-top: 1.2em;
   margin-left: auto;

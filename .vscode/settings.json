@@ -21,4 +21,5 @@
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
   },
+  "css.lint.unknownAtRules": "ignore",
 }

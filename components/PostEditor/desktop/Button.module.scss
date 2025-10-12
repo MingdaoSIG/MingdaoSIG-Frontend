@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 $button-block-height: 3rem;
 $button-font-size: 1.125rem;
@@ -11,11 +11,11 @@ $button-post-text: #5fcdf5;
 .buttons {
   height: $button-block-height;
   border-radius: $button-block-height;
-  margin-top: $gap;
+  margin-top: variables.$gap;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: $gap;
+  gap: variables.$gap;
 }
 
 .button {

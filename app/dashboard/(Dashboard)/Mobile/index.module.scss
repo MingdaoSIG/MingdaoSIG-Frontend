@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .mobileView {
   display: flex;
@@ -6,7 +6,7 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -33,8 +33,8 @@
 .itemWrapper {
   width: 100%;
   height: 5rem;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   display: flex;
   flex-direction: column;
 }
@@ -45,21 +45,21 @@
   h1 {
     font-size: 1rem;
     font-weight: bold;
-    color: $dark-text;
+    color: variables.$dark-text;
   }
 
   p {
     font-size: 1.5rem;
     font-weight: 600;
-    color: $gray-text;
+    color: variables.$gray-text;
   }
 }
 
 .sigChart {
   height: calc(100dvh - 20.2rem);
   width: 100%;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   overflow-y: auto;
 }
 

@@ -1,9 +1,9 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .thread {
   --thread-height: 12rem;
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
   display: flex;
@@ -46,7 +46,7 @@
   .user {
     width: 3rem;
     position: relative;
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     overflow: hidden;
     border-radius: 0.3rem;
 
@@ -74,7 +74,7 @@
   .sig {
     width: 5rem;
     position: relative;
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     overflow: hidden;
     border-radius: 0.3rem;
 
@@ -105,7 +105,7 @@
 .title {
   width: 50%;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.3rem;
   margin-bottom: 0.5rem;
@@ -133,7 +133,7 @@
   height: 3rem; // 改為兩行的高度 (對應 min-height: calc(1em * 1.5 * 2))
   margin-bottom: 0.5rem;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.3rem;
 
@@ -165,7 +165,7 @@
   width: 3rem;
   height: 1.5rem;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.75rem;
 
@@ -189,9 +189,9 @@
 .cover {
   min-width: 25%;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
 
   &::after {
     position: absolute;

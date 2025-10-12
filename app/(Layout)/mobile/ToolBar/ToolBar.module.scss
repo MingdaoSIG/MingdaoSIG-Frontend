@@ -1,7 +1,7 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .toolBarWrapper {
-  height: $mobile-toolbar-height;
+  height: variables.$mobile-toolbar-height;
   width: 100%;
   position: fixed;
   bottom: 0;

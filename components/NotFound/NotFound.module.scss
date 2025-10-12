@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .image {
   user-select: none;
@@ -17,13 +17,13 @@
     text-align: center;
 
     >h2 {
-      font-size: $info-code-font-size;
-      line-height: $info-code-font-size;
+      font-size: variables.$info-code-font-size;
+      line-height: variables.$info-code-font-size;
     }
 
     >h1 {
-      font-size: $info-title-font-size;
-      line-height: calc($info-title-font-size + 0.5rem);
+      font-size: variables.$info-title-font-size;
+      line-height: calc(variables.$info-title-font-size + 0.5rem);
     }
   }
 }

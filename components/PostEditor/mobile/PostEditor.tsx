@@ -67,7 +67,7 @@ export default function NewPostMobile({
       return;
     }
 
-    console.log("File input changed:", e.target.files);
+    // console.log("File input changed:", e.target.files);
     if (handleFileChange) {
       handleFileChange(e);
     }

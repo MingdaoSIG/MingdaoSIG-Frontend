@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .thread {
   position: absolute;
@@ -7,24 +7,24 @@
   bottom: 0;
   left: 0;
 
-  margin: calc($mobile-border-margin + $mobile-headerbar-height) $mobile-border-margin calc($mobile-border-margin + $mobile-toolbar-height + $mobile-border-margin + $mobile-replies-min-height) $mobile-border-margin;
+  margin: calc(variables.$mobile-border-margin + variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-border-margin + variables.$mobile-toolbar-height + variables.$mobile-border-margin + variables.$mobile-replies-min-height) variables.$mobile-border-margin;
 
   display: flex;
   flex-direction: column;
-  gap: $mobile-border-margin;
+  gap: variables.$mobile-border-margin;
   display: flex;
   flex-direction: column;
 }
 
 .threadAnnouncement {
-  margin: calc($mobile-border-margin + $mobile-headerbar-height) $mobile-border-margin calc($mobile-border-margin + $mobile-toolbar-height + $mobile-border-margin ) $mobile-border-margin;
+  margin: calc(variables.$mobile-border-margin + variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-border-margin + variables.$mobile-toolbar-height + variables.$mobile-border-margin ) variables.$mobile-border-margin;
 }
 
 .threadTitle {
   width: 100%;
 
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
 
   padding: 0.2rem 1rem;
 
@@ -35,7 +35,7 @@
 
   h1 {
     width: 100%;
-    color: $dark-text;
+    color: variables.$dark-text;
     font-size: 2.2rem;
     font-style: normal;
     font-weight: 500;
@@ -54,8 +54,8 @@
 
 .threadContent {
   flex-grow: 1;
-  background: $panel-background-color !important;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color !important;
+  border-radius: variables.$border-radius;
   padding: 1rem;
   overflow-y: auto;
   display: flex;

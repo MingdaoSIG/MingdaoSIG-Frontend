@@ -1,17 +1,17 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .thread {
-  height: 100%;
+  height: 100% !important;
   animation: 1s ease-out 0s 1 fadeIn;
 }
 
 .threadContent {
-  background: $panel-background-color !important;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color !important;
+  border-radius: variables.$border-radius;
 
-  margin-top: $gap;
+  margin-top: variables.$gap;
   padding: 1rem;
-  height: calc(100% - 3.8rem - $gap) !important;
+  max-height: calc(100% - 3.8rem - variables.$gap) !important;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -27,13 +27,15 @@
 }
 
 .threadContent>div {
+  overflow: auto !important;
+  height: 100% !important;
   padding: 0 !important;
   padding-right: 1rem !important;
 }
 
 .threadTitle {
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   height: 3.8rem;
 
   padding-left: 1rem;
@@ -63,10 +65,10 @@
 }
 
 .info {
-  background: $panel-background-color;
+  background: variables.$panel-background-color;
   height: 100%;
-  padding: $padding;
-  border-radius: $border-radius;
+  padding: variables.$padding;
+  border-radius: variables.$border-radius;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -118,7 +120,7 @@
   height: 100% !important;
   width: 95dvw !important;
   margin: auto;
-  margin-top: $gap;
+  margin-top: variables.$gap;
 }
 
 .customTitle {

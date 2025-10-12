@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .mobileView {
   display: flex;
@@ -6,7 +6,7 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -16,8 +16,8 @@
 }
 
 .title {
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
   height: 3rem;
 
   padding-left: 1rem;
@@ -47,8 +47,8 @@
 }
 
 .content {
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
 
   margin-top: 0.5em;
   margin-left: auto;

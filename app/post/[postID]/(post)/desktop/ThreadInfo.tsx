@@ -105,19 +105,20 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       <div className="flex justify-between items-center flex-initial relative h-[64px] mb-3">
         <div className={style.author + " select-none"}>
           <Image
-            src={user?.avatar}
+            src={user?.avatar || "/images/default-avatar.png"} // Make sure to add a default avatar image
             width={64}
             height={64}
             alt="Avatar"
             className="rounded-full w-[64px] h-[64px] flex-initial"
-          ></Image>
+          />
+
           <div className="flex flex-col items-start my-auto flex-initial w-auto">
             <div className="flex">
               <div
                 className={style.name + " flex"}
                 onClick={() => route.push(`/@${user?.customId}`)}
               >
-                {user?.name}
+                {user?.name || "Loading..."}
               </div>
               <p className={style.dot}>•</p>
               <div
@@ -125,7 +126,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
                 style={{ color: sigDefaultColors[sig?._id] }}
                 onClick={() => route.push(`/@${sig?.customId}`)}
               >
-                {sig?.name}
+                {sig?.name || "Loading..."}
               </div>
             </div>
             <div className={style.time}>
@@ -170,7 +171,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-          // disabled
+        // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

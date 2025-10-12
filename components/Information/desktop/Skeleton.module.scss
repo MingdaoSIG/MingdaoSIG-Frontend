@@ -1,14 +1,14 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 
 $linksHeight: 1.5rem;
 $h2TitleHeight: 1.8rem;
 
 .information {
-  padding: $padding;
-  background-color: $panel-background-color;
+  padding: variables.$padding;
+  background-color: variables.$panel-background-color;
   height: 100%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   overflow: hidden;
   position: relative;
 
@@ -59,7 +59,7 @@ $h2TitleHeight: 1.8rem;
   justify-content: space-between;
 
   >h3 {
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     border-radius: 0.3rem;
     height: 1rem;
     width: 80%;
@@ -91,7 +91,7 @@ $h2TitleHeight: 1.8rem;
   }
 
   >p {
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     border-radius: 0.3rem;
     height: 1rem;
     width: 10%;
@@ -132,7 +132,7 @@ $h2TitleHeight: 1.8rem;
 }
 
 .sigCount{
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   position: relative;
   width: 2rem;
   height: 1.3rem;
@@ -216,9 +216,9 @@ $h2TitleHeight: 1.8rem;
 
 .links {
   position: absolute;
-  bottom: calc($padding * 0.5);
-  left: $padding;
-  right: $padding;
+  bottom: calc(variables.$padding * 0.5);
+  left: variables.$padding;
+  right: variables.$padding;
   line-height: $linksHeight;
   display: flex;
   align-items: center;

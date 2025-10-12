@@ -5,24 +5,27 @@ import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
-import { Fragment, useEffect, useState, useCallback } from "react";
+import { Fragment, useEffect, useState, useCallback, use } from "react";
 import Swal from "sweetalert2";
 
 export default function ManageSIGAdvisor({
   params,
 }: {
-  params: { sigID: string };
+  params: Promise<{ sigID: string }>;
 }) {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();
+
+  // 使用 React.use() 解包 params
+  const { sigID } = use(params);
 
   const [sigData, setSigData] = useState<any>({});
   const [advisors, setAdvisors] = useState<any[]>([]);
 
   const fetchAdvisors = useCallback(async () => {
     try {
-      const response = await sigAPI.getSigData(params.sigID);
+      const response = await sigAPI.getSigData(sigID);
       setSigData(response);
 
       if (response.moderator && response.moderator.length > 0) {
@@ -64,7 +67,7 @@ export default function ManageSIGAdvisor({
     } catch (error: any) {
       console.error(error.message);
     }
-  }, [params.sigID]);
+  }, [sigID]);
 
   function addAdvisor() {
     Swal.fire({
@@ -91,7 +94,7 @@ export default function ManageSIGAdvisor({
       if (result.isConfirmed) {
         const code = result.value;
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/moderator`,
+          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/moderator`,
           {
             method: "POST",
             headers: {
@@ -175,7 +178,7 @@ export default function ManageSIGAdvisor({
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${params.sigID}/moderator`,
+          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/moderator`,
           {
             method: "DELETE",
             headers: {
@@ -188,7 +191,7 @@ export default function ManageSIGAdvisor({
           },
         );
         const data = await res.json();
-        console.log(data);
+        // console.log(data);
         if (res.status === 200) {
           Swal.fire({
             title: "刪除成功!",

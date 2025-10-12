@@ -1,15 +1,15 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .wrapper {
   --padding: 0.5rem;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   width: 100%;
 
   padding: var(--padding);
 
   position: absolute;
-  bottom: calc(-1 * ($mobile-border-margin + $mobile-replies-min-height));
+  bottom: calc(-1 * (variables.$mobile-border-margin + variables.$mobile-replies-min-height));
   transition: 0.5s;
 
   z-index: 999;
@@ -17,31 +17,31 @@
 
 .replies {
   --padding: 0.5rem;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   width: 100%;
 
   padding: var(--padding);
 
   position: absolute;
-  bottom: calc(-1 * ($mobile-border-margin + $mobile-replies-min-height));
+  bottom: calc(-1 * (variables.$mobile-border-margin + variables.$mobile-replies-min-height));
   transition: 0.5s;
 
   z-index: 999;
 
   h4 {
-    color: $dark-text;
+    color: variables.$dark-text;
     font-weight: 500;
   }
 
   p {
-    color: $gray-text;
+    color: variables.$gray-text;
   }
 }
 
 .repliesWrapper {
   overflow: hidden;
-  border-radius: calc($border-radius - var(--padding));
+  border-radius: calc(variables.$border-radius - var(--padding));
 }
 
 .replies::-webkit-scrollbar {

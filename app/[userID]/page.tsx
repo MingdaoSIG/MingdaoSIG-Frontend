@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 
 import SplitBlock from "../(Layout)/splitBlock";
@@ -20,12 +19,19 @@ import sigAPI from "@/modules/sigAPI";
 
 import ProfileMobile from "./(User)/mobile";
 
-export default function UserPage({ params }: { params: { userID: string } }) {
-  if (!decodeURIComponent(params.userID).startsWith("@")) {
+export default function UserPage({
+  params
+}: {
+  params: Promise<{ userID: string }>
+}) {
+  // Unwrap the params Promise using React.use()
+  const resolvedParams = use(params);
+
+  if (!decodeURIComponent(resolvedParams.userID).startsWith("@")) {
     notFound();
   }
 
-  const accountId = decodeURIComponent(params.userID);
+  const accountId = decodeURIComponent(resolvedParams.userID);
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +49,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
 
       return setIsLoading(false);
     })();
-  }, []);
+  }, [accountId]);
 
   if (!isLoading && dataType === null) {
     return (
@@ -59,7 +65,7 @@ export default function UserPage({ params }: { params: { userID: string } }) {
   }
 
   return isMobile ? (
-    <ProfileMobile params={params}></ProfileMobile>
+    <ProfileMobile params={resolvedParams} />
   ) : (
     <SplitBlock>
       {isLoading ? (

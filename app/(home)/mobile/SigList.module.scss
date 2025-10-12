@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 $linksHeight: 1.5rem;
 $h2TitleHeight: 1.8rem;
@@ -55,12 +55,12 @@ $h2TitleHeight: 1.8rem;
 
 .sigs::-webkit-scrollbar-track {
   border-radius: 5px;
-  background: $scrollbar-track-color;
+  background: variables.$scrollbar-track-color;
 }
 
 .sigs::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background: $scrollbar-thumb-color;
+  background: variables.$scrollbar-thumb-color;
 }
 
 .sig {

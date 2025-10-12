@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .app {
   width: 90dvw;
@@ -24,7 +24,7 @@
   max-width: 90dvw;
   // max-height: 70dvh;
   height: 100%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
 
   overflow-y: auto;
 
