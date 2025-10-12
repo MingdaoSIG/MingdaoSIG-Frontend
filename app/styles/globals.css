@@ -1,13 +1,14 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;200;300;400;500&display=swap");
+@theme {
+  /* 自定義顏色 */
+  --color-md-light-green: #009BB0;
+  --color-md-dark-green: #002024;
 
-@import "./variables.scss";
-
-$bg-color-from: #FFD967;
-$bg-color-to: #5193E0;
+  /* 自定義背景圖像 */
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-gradient-conic: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+}
 
 * {
   outline: none;
@@ -25,12 +26,10 @@ body {
 .wrap {
   position: absolute;
   top: 0;
-
   width: 100dvw;
   height: 100dvh;
   background: rgb(255, 217, 103);
   background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
-
   display: grid;
   grid-template-rows: 12% 74% 14%;
 }
@@ -38,12 +37,10 @@ body {
 .wrapMobile {
   position: absolute;
   top: 0;
-
   width: 100dvw;
   height: 100dvh;
   background: rgb(255, 217, 103);
   background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
-
 }
 
 ::-webkit-scrollbar {
@@ -53,12 +50,12 @@ body {
 
 ::-webkit-scrollbar-track {
   border-radius: 5px;
-  background: $scrollbar-track-color;
+  background: rgba(0, 76, 100, 0.29);
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background: $scrollbar-thumb-color;
+  background: #004c64;
 }
 
 .remove-scrollbar::-webkit-scrollbar {
@@ -72,18 +69,55 @@ body {
 
 .small-scrollbar::-webkit-scrollbar-track {
   border-radius: 5px;
-  background: $scrollbar-track-color;
+  background: rgba(0, 76, 100, 0.29);
 }
 
-.editor-wrapper > div {
+.editor-wrapper>div {
   border: none !important;
   height: 100%;
 }
 
-.editor-wrapper > div > div:nth-child(1) {
+.editor-wrapper>div>div:nth-child(1) {
   padding: 0 15px;
 }
 
-.editor-wrapper > div > div:nth-child(6) {
+.editor-wrapper>div>div:nth-child(6) {
   padding: 0 15px;
+}
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+
+  /* Custom animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  /* If you're using specific background colors from variables */
+  .panel-bg {
+    background-color: #ffffff;
+    /* Replace with your actual panel background color */
+  }
 }

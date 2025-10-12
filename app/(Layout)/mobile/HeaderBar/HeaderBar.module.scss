@@ -1,7 +1,7 @@
-@import "@/app/styles/variables.scss";
+@use "../../../../app/styles/variables.scss";
 
 .nav {
-  height: $mobile-headerbar-height;
+  height: variables.$mobile-headerbar-height;
   width: 100%;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
   position: fixed;
@@ -14,7 +14,7 @@
 
   user-select: none;
   backdrop-filter: blur(10px);
-  background-color: $panel-background-color;
+  background-color: variables.$panel-background-color;
   border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
 

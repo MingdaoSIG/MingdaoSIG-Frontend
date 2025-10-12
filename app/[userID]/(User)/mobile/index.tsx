@@ -20,11 +20,13 @@ import sigAPI from "@/modules/sigAPI";
 
 // Hooks
 import { useSigPost, useUserPost } from "@/utils/usePost";
+
 export default function ProfileMobile({
   params,
 }: {
   params: { userID: string };
 }) {
+  // Note: params is already resolved when passed from parent
   if (!decodeURIComponent(params.userID).startsWith("@")) {
     notFound();
   }
@@ -46,7 +48,8 @@ export default function ProfileMobile({
 
       return setIsLoading(false);
     })();
-  }, []);
+  }, [accountId]);
+
   return (
     <div className={styles.mobileProfile}>
       <Info

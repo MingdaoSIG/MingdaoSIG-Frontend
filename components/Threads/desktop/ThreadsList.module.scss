@@ -1,13 +1,13 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .threads {
   --thread-height: 12rem;
   position: relative;
   width: 100%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   display: flex;
   flex-direction: column;
-  gap: $gap;
+  gap: variables.$gap;
   overflow-y: auto;
 
   > p {
@@ -24,8 +24,8 @@
 }
 
 .thread {
-  background: $panel-background-color;
-  border-radius: $border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
   display: flex;
@@ -93,7 +93,7 @@
 .cover {
   position: relative;
   min-width: 25%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   overflow: hidden;
 
   @media screen and (max-width: 750px) {
@@ -168,6 +168,6 @@
   justify-content: center;
 
   > h1 {
-    font-size: $info-title-font-size;
+    font-size: variables.$info-title-font-size;
   }
 }

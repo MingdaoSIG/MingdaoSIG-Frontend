@@ -92,7 +92,7 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
   return (
     <div className={styles.editor}>
       <MdEditor
-        modelValue={data?.content || ""}
+        value={data?.content || ""}
         onChange={handleEditorChange}
         toolbars={toolbars}
         onUploadImg={onUploadImg}

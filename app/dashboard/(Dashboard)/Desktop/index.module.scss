@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .wrapper {
   padding-top: 1.2rem;
@@ -23,8 +23,8 @@
 .itemWrapper {
   width: 12rem;
   height: 6rem;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   display: flex;
   flex-direction: column;
 }
@@ -35,13 +35,13 @@
   h1 {
     font-size: 1rem;
     font-weight: bold;
-    color: $dark-text;
+    color: variables.$dark-text;
   }
 
   p {
     font-size: 1.5rem;
     font-weight: 600;
-    color: $gray-text;
+    color: variables.$gray-text;
   }
 }
 
@@ -49,8 +49,8 @@
   height: calc(70dvh - 7.2rem);
   width: 90dvw;
   max-width: 60rem;
-  background-color: $panel-background-color;
-  border-radius: $border-radius;
+  background-color: variables.$panel-background-color;
+  border-radius: variables.$border-radius;
   padding: 0.5rem;
   margin-top: 1.2rem;
   overflow-y: auto;

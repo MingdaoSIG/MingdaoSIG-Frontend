@@ -126,7 +126,8 @@ const Thread = ({ post }: { post: TThread }) => {
             <h1 className="my-auto">{post.title}</h1>
           </div>
           <MdPreview
-            modelValue={post.content}
+            language="en-US"
+            value={post.content}
             className={style.threadContent + " " + style.customThread}
             previewTheme="github"
           />
@@ -185,7 +186,7 @@ const Thread = ({ post }: { post: TThread }) => {
           </div>
         </div>
         <MdPreview
-          modelValue={post.content}
+          value={post.content}
           className={style.threadContent}
           previewTheme="github"
         />

@@ -45,7 +45,7 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
       <input
         type="text"
         name="title"
-        className="h-full flex-1 rounded-l-full pl-5 pr-3 border-r border-gray-300"
+        className="h-full flex-1 rounded-l-full pl-5 pr-3 border-r border-gray-300 bg-white"
         value={data?.title}
         placeholder="請輸入標題..."
         onChange={(e) => handleFormEventFunction(e)}

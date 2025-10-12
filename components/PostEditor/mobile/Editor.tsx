@@ -54,24 +54,24 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
       {/* 編輯器區域 */}
       <div className="h-[20rem] w-full bg-white overflow-hidden mx-auto py-1 border border-gray-300 rounded-md editor-wrapper">
         <MdEditor
-          modelValue={data?.content || ""}
+          value={data?.content || ""}
           onChange={handleEditorChange}
-          toolbars={toolbars}
           onUploadImg={onUploadImg}
           language="en-US"
           previewTheme="github"
           preview={false}
+          toolbars={toolbars}
         />
       </div>
 
       {/* 預覽區域 */}
       <div className="w-full bg-white border border-gray-300 rounded-md p-1 max-h-[20rem] overflow-hidden">
-        <div className="prose max-w-none overflow-hidden h-[19rem]">
+        <div className="max-w-none overflow-hidden h-[19rem]">
           {data?.content ? (
             <MdPreview
-              modelValue={data.content}
+              value={data.content}
               previewTheme="github"
-              className="prose max-w-none overflow-auto max-h-[19rem]"
+              className=" max-w-none !overflow-auto !max-h-[19rem] small-scrollbar"
             />
           ) : (
             <p className="text-gray-400">預覽內容將顯示在這裡...</p>

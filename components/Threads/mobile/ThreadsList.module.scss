@@ -1,9 +1,9 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .threads {
   position: relative;
   width: 100%;
-  border-radius: $mobile-border-radius $mobile-border-radius 0 0;
+  border-radius: variables.$mobile-border-radius variables.$mobile-border-radius 0 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -22,8 +22,8 @@
 
 .thread {
   --thread-height: 8rem;
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
   margin-bottom: 0.5rem;
@@ -88,7 +88,7 @@
 .cover {
   position: relative;
   min-width: 25%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   overflow: hidden;
 }
 
@@ -158,6 +158,6 @@
   justify-content: center;
 
   > h1 {
-    font-size: $info-title-font-size;
+    font-size: variables.$info-title-font-size;
   }
 }

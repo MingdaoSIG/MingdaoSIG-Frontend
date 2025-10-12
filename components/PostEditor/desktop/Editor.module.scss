@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 $editor-background: white;
 
@@ -6,7 +6,7 @@ $editor-background: white;
   height: calc(70dvh - 3rem);
   padding: 0.25rem 0;
   background-color: $editor-background;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   overflow: hidden;
   animation: 1s ease-out 0s 1 fadeIn;
 }

@@ -1,8 +1,8 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .userPanel {
   aspect-ratio: 1 / 1;
-  height: calc($mobile-headerbar-height - 0.7rem);
+  height: calc(variables.$mobile-headerbar-height - 0.7rem);
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.8);
   cursor: pointer;

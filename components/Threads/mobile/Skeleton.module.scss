@@ -1,9 +1,9 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .thread {
   --thread-height: 8rem;
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
   max-height: var(--thread-height);
   height: var(--thread-height);
   margin-bottom: 0.5rem;
@@ -44,7 +44,7 @@
     width: 3rem;
     height: 0.75rem;
     position: relative;
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     overflow: hidden;
     border-radius: 0.3rem;
 
@@ -73,7 +73,7 @@
     width: 4rem;
     height: 0.75rem;
     position: relative;
-    background-color: $skeleton-background-color;
+    background-color: variables.$skeleton-background-color;
     overflow: hidden;
     border-radius: 0.3rem;
 
@@ -105,7 +105,7 @@
   width: 60%;
   height: 1rem;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.3rem;
   margin-bottom: 0.5rem;
@@ -131,7 +131,7 @@
   height: 0.9rem;
   margin-bottom: 0.5rem;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.3rem;
 
@@ -162,7 +162,7 @@
   width: 2.5rem;
   height: 1.1rem;
   position: relative;
-  background-color: $skeleton-background-color;
+  background-color: variables.$skeleton-background-color;
   overflow: hidden;
   border-radius: 0.6rem;
 

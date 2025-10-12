@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .messagePage {
   font-size: 3rem;
@@ -12,7 +12,7 @@
   width: 100dvw;
   height: 100%;
 
-  padding: $mobile-headerbar-height $mobile-border-margin $mobile-toolbar-height $mobile-border-margin;
+  padding: variables.$mobile-headerbar-height variables.$mobile-border-margin variables.$mobile-toolbar-height variables.$mobile-border-margin;
 
   position: relative;
   overflow-y: auto;

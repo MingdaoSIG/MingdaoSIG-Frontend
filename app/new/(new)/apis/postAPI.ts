@@ -28,7 +28,7 @@ export async function postAPI(
   { title, sig, hashtag, content, cover }: TPostAPI,
   token: string,
 ) {
-  console.log("postAPI", { title, sig, hashtag, content, cover });
+  // console.log("postAPI", { title, sig, hashtag, content, cover });
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post`, {
     method: "POST",
     headers: {

@@ -1,9 +1,9 @@
+'use client';
+
 import { Suspense, type Dispatch, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-// Style
-import styles from "./NewPost.module.scss";
 
 // Components
 import SplitBlock from "@/app/(Layout)/splitBlockNew";
@@ -25,9 +25,8 @@ interface Props {
   isEdit?: boolean;
 }
 
-const Editor = dynamic(() => import("./Editor"), {
-  ssr: false,
-});
+const Editor = dynamic(() => import("./Editor"), { ssr: false });
+
 export default function NewPost({
   data,
   setPostData,

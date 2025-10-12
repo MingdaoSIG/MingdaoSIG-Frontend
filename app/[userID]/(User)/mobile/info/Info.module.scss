@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 $margin: 0.5rem;
 $content-padding: 0.5rem;
@@ -50,7 +50,7 @@ $badge-height: 1rem;
 
 .content {
   background-color: rgb(200 240 255 / 55%);
-  border-radius: calc($border-radius - 0.6rem);
+  border-radius: calc(variables.$border-radius - 0.6rem);
   height: 100%;
   display: flex;
   flex-direction: column;

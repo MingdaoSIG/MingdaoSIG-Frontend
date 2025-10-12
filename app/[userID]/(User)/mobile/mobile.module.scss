@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .mobileProfile {
   display: flex;
@@ -7,8 +7,8 @@
   width: 100dvw;
   height: 100dvh;
 
-  padding-top: $mobile-headerbar-height;
-  padding-bottom: $mobile-toolbar-height;
+  padding-top: variables.$mobile-headerbar-height;
+  padding-bottom: variables.$mobile-toolbar-height;
 
   position: relative;
   overflow-y: auto;

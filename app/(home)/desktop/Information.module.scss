@@ -1,12 +1,12 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 $h2TitleHeight: 1.8rem;
 
 .information {
-  padding: $padding;
-  background-color: $panel-background-color;
+  padding: variables.$padding;
+  background-color: variables.$panel-background-color;
   height: 100%;
-  border-radius: $border-radius;
+  border-radius: variables.$border-radius;
   overflow: hidden;
   position: relative;
 

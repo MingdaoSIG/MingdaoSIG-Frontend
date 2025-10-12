@@ -1,43 +1,43 @@
+// next.config.js
+// @ts-check
+
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
-const path = require("path");
 const nextConfig = {
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
   sassOptions: {
-    includePaths: [path.join(__dirname, "styles")],
+    includePaths: [path.join(__dirname, 'styles')],
   },
+
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: '**',
+        pathname: '/**',
       },
       {
-        protocol: "http",
-        hostname: "**",
+        protocol: 'http',
+        hostname: '**',
+        pathname: '/**',
       },
     ],
   },
+
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: '/:path*',
         headers: [
-          {
-            key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate",
-          },
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
         ],
       },
     ];
   },
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    if (!isServer) {
-      config.output.filename = "static/chunks/[name].js";
-      config.output.chunkFilename = "static/chunks/[name].js";
-    }
-    return config;
+
+  turbopack: {
+    resolveAlias: { '@': './src' },
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
   },
 };
 

@@ -97,7 +97,7 @@ const Thread = ({
           <h1>{post.title}</h1>
         </div>
         <MdPreview
-          modelValue={post.content}
+          value={post.content}
           className={styles.threadContent}
           previewTheme="github"
         />
@@ -134,7 +134,8 @@ const Thread = ({
         </div>
       </div>
       <MdPreview
-        modelValue={post.content}
+        value={post.content}
+        language="en-US"
         className={styles.threadContent}
         previewTheme="github"
       />

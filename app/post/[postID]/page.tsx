@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 // Layout
 import SplitBlock from "@/app/(Layout)/splitBlock";
@@ -8,7 +8,7 @@ import SplitBlock from "@/app/(Layout)/splitBlock";
 import ThreadDesktop from "@/app/post/[postID]/(post)/desktop/Thread";
 import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
-// Mobile-SIde Component
+// Mobile-Side Component
 import ThreadMobile from "./(post)/mobile/Thread";
 
 // Interfaces
@@ -21,10 +21,13 @@ import { NotFound } from "@/components/NotFound";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Post = ({ params }: { params: { postID: string } }) => {
+const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   const isMobile = useIsMobile();
 
-  const PostID = decodeURIComponent(params.postID);
+  // Unwrap the params Promise using React.use()
+  const unwrappedParams = use(params);
+  const PostID = decodeURIComponent(unwrappedParams.postID);
+
   const [post, setPost] = useState<TThread>();
   const [status, setStatus] = useState("loading");
 

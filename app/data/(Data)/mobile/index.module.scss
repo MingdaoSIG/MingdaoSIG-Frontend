@@ -1,4 +1,4 @@
-@import "@/app/styles/variables.scss";
+@use "@/app/styles/variables.scss";
 
 .mobileView {
   display: flex;
@@ -6,7 +6,7 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc($mobile-headerbar-height) $mobile-border-margin calc($mobile-toolbar-height) $mobile-border-margin;
+  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -16,8 +16,8 @@
 }
 
 .title {
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
   height: 3rem;
 
   padding-left: 1rem;
@@ -48,8 +48,8 @@
 }
 
 .content {
-  background: $panel-background-color;
-  border-radius: $mobile-border-radius;
+  background: variables.$panel-background-color;
+  border-radius: variables.$mobile-border-radius;
 
   margin-top: 0.5em;
   margin-left: auto;
@@ -138,14 +138,14 @@
     padding-right: 0.5rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-radius: $mobile-border-radius;
+    border-radius: variables.$mobile-border-radius;
     border: 1px solid #003f47;
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
     line-height: 1.25rem;
     color: #003f47;
-    background: $panel-background-color;
+    background: variables.$panel-background-color;
     font-family: Arial, Helvetica, sans-serif;
   }
 
@@ -158,7 +158,7 @@
     padding-right: 0.5rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-radius: $mobile-border-radius;
+    border-radius: variables.$mobile-border-radius;
     border: 1px solid #003f47;
     font-size: 1rem;
     font-style: normal;
@@ -166,15 +166,15 @@
     line-height: 1.25rem;
     color: #003f47;
     width: 4rem;
-    background: $panel-background-color;
+    background: variables.$panel-background-color;
   }
 }
 
 .sigDataWrapper {
-  background: $panel-background-color;
+  background: variables.$panel-background-color;
   height: calc(100dvh - 25rem);
-  border-radius: $mobile-border-radius;
-  padding: $mobile-border-radius;
+  border-radius: variables.$mobile-border-radius;
+  padding: variables.$mobile-border-radius;
   border: 1px solid #003f47;
   overflow: hidden;
   padding-right: 0.2rem;
