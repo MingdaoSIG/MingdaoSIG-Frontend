@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
-
 import type { User } from "@/interfaces/User";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -15,10 +14,9 @@ export function useUserAccount() {
 
   useEffect(() => {
     (async () => {
-      const userLocalStorage = localStorage.getItem("user");
       const sessionLocalStorage = localStorage.getItem("session");
 
-      // console.log("OAuth status:", OAuth);
+      // 優先使用 session 登入
       if (sessionLocalStorage) {
         try {
           const { token, data } = await platformLoginWithSession(
@@ -30,18 +28,22 @@ export function useUserAccount() {
           setUserData(data);
           setIsLogin(true);
           setIsLoading(false);
-          return;
+          return; // 成功登入後直接返回，不再檢查 OAuth
         } catch (error) {
-          console.error(error);
-          setIsLogin(false);
-          setIsLoading(false);
-          return;
+          console.error("Session login failed:", error);
+          // session 失效，清除 session 但不立即登出
+          localStorage.removeItem("session");
+          // 繼續檢查 OAuth
         }
       }
 
-      if (OAuth === "loading" || (!userLocalStorage && !sessionLocalStorage))
+      // 如果 OAuth 正在載入，等待
+      if (OAuth === "loading") {
         setIsLoading(true);
+        return;
+      }
 
+      // OAuth 登入成功
       if (OAuth === "authenticated") {
         try {
           const accessToken = (session as any)?.accessToken;
@@ -53,25 +55,39 @@ export function useUserAccount() {
           setIsLogin(true);
           setIsLoading(false);
         } catch (error) {
-          console.error(error);
+          console.error("OAuth login failed:", error);
           setIsLogin(false);
+          setIsLoading(false);
           signOut();
         }
-      } else if (OAuth !== "loading") {
-        setIsLogin(false);
+        return;
+      }
+
+      // ✅ 修復：只有在沒有 session 且 OAuth 未認證時才登出
+      // 而且不要在每次 OAuth 狀態變化時都重置狀態
+      if (!sessionLocalStorage && OAuth === "unauthenticated") {
+        // 只有在真正需要登出時才設置
+        if (isLogin) {
+          setIsLogin(false);
+        }
         setIsLoading(false);
       }
     })();
-  }, [OAuth, session]);
+  }, [OAuth, session]); // ⚠️ 移除 isLogin 依賴避免循環
 
+  // ✅ 修復：更安全的清除邏輯
   useEffect(() => {
-    if (!isLogin) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setToken(null);
-      setUserData(null);
+    if (!isLogin && !isLoading) {
+      // 只在確定登出時才清除
+      const sessionExists = localStorage.getItem("session");
+      if (!sessionExists) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setToken(null);
+        setUserData(null);
+      }
     }
-  }, [isLogin]);
+  }, [isLogin, isLoading]);
 
   const login = useCallback(() => {
     signIn("google");

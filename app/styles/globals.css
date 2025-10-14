@@ -4,6 +4,8 @@
   /* 自定義顏色 */
   --color-md-light-green: #009BB0;
   --color-md-dark-green: #002024;
+  --color-thread-bg: rgba(255, 255, 255, 0.6);
+  --color-hashtag-bg: #5FCDF5;
 
   /* 自定義背景圖像 */
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
@@ -43,6 +45,7 @@ body {
   background: linear-gradient(127deg, rgba(255, 217, 103, 1) 0%, rgb(205, 205, 205) 25%, rgba(116, 197, 233, 1) 50%, rgba(13, 154, 217, 1) 75%, rgba(81, 147, 224, 1) 100%);
 }
 
+/* Custom Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 10px;
   margin-left: 5px;
@@ -58,20 +61,21 @@ body {
   background: #004c64;
 }
 
-.remove-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.small-scrollbar::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 5px;
-  margin-left: 2px;
 }
 
-.small-scrollbar::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   border-radius: 5px;
   background: rgba(0, 76, 100, 0.29);
 }
 
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #004c64;
+}
+
+/* Editor specific styles */
 .editor-wrapper>div {
   border: none !important;
   height: 100%;
@@ -85,7 +89,7 @@ body {
   padding: 0 15px;
 }
 
-
+/* Animations */
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -96,28 +100,57 @@ body {
   }
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @layer utilities {
 
-  /* Custom animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* Scrollbar hide utility */
+  /* Scrollbar utilities */
   .scrollbar-hide::-webkit-scrollbar {
     width: 0;
     height: 0;
+    display: none;
   }
 
-  /* If you're using specific background colors from variables */
+  /* Scrollbar Firefox */
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Custom backdrop blur */
+  .backdrop-blur-custom {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Panel background */
   .panel-bg {
-    background-color: #ffffff;
-    /* Replace with your actual panel background color */
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
   }
 }

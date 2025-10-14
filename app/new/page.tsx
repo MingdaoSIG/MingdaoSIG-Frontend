@@ -1,31 +1,25 @@
 "use client";
 
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 // Desktop Components
 import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
-
 // Mobile Components
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
-
 // Types
 import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
-
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
 import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
-
 // APIs Request Function
 import { postAPI } from "./(new)/apis/postAPI";
-
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import assert from "assert";
 import { useUserAccount } from "@/utils/useUserAccount";
-
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
 
@@ -34,7 +28,10 @@ export default function NewPostPage() {
   const { token } = useUserAccount();
   const route = useRouter();
   const isMobile = useIsMobile();
-  // Form data states
+
+  // ✅ 使用 ref 追蹤是否已經初始化，避免重複清除
+  const hasLoadedFromStorage = useRef(false);
+
   const [postButtonDisable, setPostButtonDisable] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [data, setPostData] = useState<TPostAPI>({
@@ -55,41 +52,55 @@ export default function NewPostPage() {
     );
   }
 
+  // ✅ 修復：只在真正有內容變化時才保存
   useEffect(() => {
-    if (!isInitialized) return; // 初始化前不執行
+    if (!isInitialized || !hasLoadedFromStorage.current) return;
 
-    if (data.title !== "" || data.sig !== "" || data.hashtag?.length !== 0) {
+    const hasContent =
+      data.title !== "" ||
+      data.sig !== "" ||
+      (data.hashtag && data.hashtag.length > 0) ||
+      (data.content !== markdownGuide && data.content !== "");
+
+    if (hasContent) {
       localStorage.setItem("postData", JSON.stringify(data));
-    } else {
-      localStorage.removeItem("postData");
     }
+    // ⚠️ 不要在這裡刪除 postData，讓用戶手動 discard
   }, [data, isInitialized]);
 
+  // ✅ 修復：確保只在組件首次掛載時讀取一次
   useEffect(() => {
+    if (hasLoadedFromStorage.current) return;
+
     const storedContent = localStorage?.getItem("editorContent");
     const storedData = localStorage?.getItem("postData");
 
+    let loadedData: Partial<TPostAPI> = {};
+
     if (storedContent) {
-      setPostData(
-        (prev: TPostAPI | undefined) =>
-          ({
-            ...prev,
-            content: storedContent,
-          }) as TPostAPI,
-      );
-    }
-    if (storedData) {
-      setPostData(
-        (prev: TPostAPI | undefined) =>
-          ({
-            ...prev,
-            ...JSON.parse(storedData),
-          }) as TPostAPI,
-      );
+      loadedData.content = storedContent;
     }
 
-    setIsInitialized(true); // 標記初始化完成
-  }, []);
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        loadedData = { ...loadedData, ...parsed };
+      } catch (error) {
+        console.error("Failed to parse stored post data:", error);
+      }
+    }
+
+    // 如果有存儲的數據，則加載
+    if (Object.keys(loadedData).length > 0) {
+      setPostData(prev => ({
+        ...prev,
+        ...loadedData,
+      }));
+    }
+
+    hasLoadedFromStorage.current = true;
+    setIsInitialized(true);
+  }, []); // 空依賴，只執行一次
 
   async function NewPostAPI() {
     setPostButtonDisable(true);
@@ -107,16 +118,18 @@ export default function NewPostPage() {
     }
 
     try {
-      assert(data); // Check whether data was defined
-      assert(token !== ""); // Check whether token was loaded
+      assert(data);
+      assert(token !== "");
       const res = await postAPI(data, token!);
       console.debug(res);
 
       if (res.status === 2000) {
         return Swal.fire(alertMessageConfigs.Success).then(() => {
           setPostButtonDisable(false);
+          // ✅ 成功發布後才清除
           localStorage.removeItem("editorContent");
           localStorage.removeItem("postData");
+          hasLoadedFromStorage.current = false; // 重置標記
           route.push(`/post/${res.data._id}`);
         });
       } else if (res.status === 4001) {
@@ -136,15 +149,29 @@ export default function NewPostPage() {
 
   function discard(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    setPostData({
-      title: "",
-      sig: "",
-      content: markdownGuide,
-      cover: "",
-      hashtag: [],
+
+    Swal.fire({
+      title: "確定要放棄嗎？",
+      text: "所有未保存的內容將會丟失",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "確定放棄",
+      cancelButtonText: "取消",
+      confirmButtonColor: "#dc0032",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setPostData({
+          title: "",
+          sig: "",
+          content: markdownGuide,
+          cover: "",
+          hashtag: [],
+        });
+        localStorage.removeItem("editorContent");
+        localStorage.removeItem("postData");
+        hasLoadedFromStorage.current = false;
+      }
     });
-    localStorage.removeItem("editorContent");
-    localStorage.removeItem("postData");
   }
 
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -161,7 +188,7 @@ export default function NewPostPage() {
     if (!validImageTypes.includes(file.type)) {
       Swal.fire(
         "File type not supported",
-        "You can only upload  png,  jpg,  webp, tiff",
+        "You can only upload png, jpg, webp, tiff",
         "error",
       );
       return;
@@ -198,12 +225,7 @@ export default function NewPostPage() {
   }
 
   if (status === "loading") {
-    return (
-      // <div className={styles.loading}>
-      //   <h1> Loading...</h1>
-      // </div>
-      <></>
-    );
+    return <div className="h-full flex items-center justify-center"></div>;
   }
 
   return isMobile ? (
