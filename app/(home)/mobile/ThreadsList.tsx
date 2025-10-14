@@ -1,29 +1,27 @@
 "use client";
 import { useState } from "react";
 
-//Components
+// Components
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
 import SigList from "./SigList";
-
-// Styles
-import styles from "./Threads.module.scss";
+import SwitchButton from "./ButtonTools";
 
 // Interfaces
 import { useAllPost, useSigPost } from "@/utils/usePost";
-import SwitchButton from "./ButtonTools";
 
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
-
   const [dataType, setDataType] = useState("latest");
-  const pageSize = 15;
+  const pageSize = 10;
+
   const { data, fetchNextPage, isFetchingNextPage, isLoading } = useAllPost({
     pageSize,
     sort: dataType,
   });
+
   const { data: announcementData } = useSigPost("652d60b842cdf6a660c2b778", {
     pageSize: 1,
     sort: "latest",
@@ -38,12 +36,14 @@ const ThreadsList = () => {
   }
 
   return (
-    <div className={styles.threadWrap}>
-      {showList ? <SigList sigListToggle={setShowList} /> : <></>}
+    <div className="w-full h-auto pt-16 pb-16 px-2 sm:px-4 md:px-6 lg:px-8 max-w-7xl mx-auto relative overflow-y-auto scrollbar-hide">
+      {showList && <SigList sigListToggle={setShowList} />}
+
       <SwitchButton
         switchCallback={switchListType}
         sigListCallback={setShowList}
-      ></SwitchButton>
+      />
+
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />
       ) : (

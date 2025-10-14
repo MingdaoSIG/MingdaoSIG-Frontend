@@ -6,57 +6,41 @@ type Props = {
 };
 
 const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
-  const [buttonStyle, setButtonStyle] = useState("left-0");
-  const [leftStyle, setLeftStyle] = useState(
-    "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
-  );
-  const [rightStyle, setRightStyle] = useState(
-    "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
-  );
+  const [activeTab, setActiveTab] = useState<"latest" | "top">("latest");
 
   return (
-    <div className="flex flex-row justify-between items-center h-[4rem]">
-      <div
-        className={
-          "flex bg-white bg-opacity-50 rounded-full relative select-none w-[10rem] my-3"
-        }
-      >
+    <div className="flex flex-row justify-between items-center h-16 mb-2 md:mb-4">
+      {/* Toggle Button */}
+      <div className="flex bg-white/50 backdrop-blur-sm rounded-full relative select-none w-40">
         <div
-          className={`transition-all duration-500 w-[5rem] h-[2.5rem] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
-        ></div>
+          className={`absolute w-20 h-10 bg-md-dark-green rounded-full transition-all duration-500 ${activeTab === "latest" ? "left-0" : "left-20"
+            }`}
+        />
         <button
-          className={leftStyle}
+          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${activeTab === "latest" ? "text-white" : "text-md-dark-green"
+            }`}
           onClick={() => {
-            setButtonStyle("left-0");
+            setActiveTab("latest");
             switchCallback(1);
-            setLeftStyle(
-              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
-            );
-            setRightStyle(
-              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
-            );
           }}
         >
           Latest
         </button>
         <button
-          className={rightStyle}
+          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${activeTab === "top" ? "text-white" : "text-md-dark-green"
+            }`}
           onClick={() => {
-            setButtonStyle("left-[5rem]");
+            setActiveTab("top");
             switchCallback(0);
-            setLeftStyle(
-              "w-[5rem] text-center duration-500 relative text-md-dark-green h-[2.5rem]",
-            );
-            setRightStyle(
-              "w-[5rem] text-center duration-500 relative text-white h-[2.5rem]",
-            );
           }}
         >
           Top
         </button>
       </div>
+
+      {/* SIGs Button */}
       <button
-        className="bg-white bg-opacity-50 rounded-full py-2 px-5 text-md-dark-green h-[2.5rem]"
+        className="bg-white/50 backdrop-blur-sm rounded-full py-2 px-5 md:px-6 text-md-dark-green h-10 hover:bg-white/60 transition-colors text-sm md:text-base"
         onClick={() => sigListCallback(true)}
       >
         SIGs
