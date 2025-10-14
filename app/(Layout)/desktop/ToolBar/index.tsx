@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useUserAccount } from "@/utils/useUserAccount";
-import styles from "./ToolBar.module.scss";
 
 const ToolBar = () => {
   const { isLogin, userData, isLoading } = useUserAccount();
@@ -47,17 +46,27 @@ const ToolBar = () => {
     },
   ];
 
+  // 計算選中項目的 left 位置 (rem)
+  const getSelectedPosition = () => {
+    if (selected === -1) return "0rem";
+    // 23.5rem / 4 = 5.875rem per item
+    return `${selected * 5.875}rem`;
+  };
+
   return (
-    <div className={styles.toolBarWrapper}>
-      <div className={styles.iconWrapper}>
+    <div className="h-20 w-[25rem] mx-auto bg-white/50 border border-white/60 rounded-full select-none flex items-center justify-center">
+      <div className="relative h-14 w-[23.5rem] flex">
         {menu.map((item, index) => {
           return (
-            <div key={index} className={styles.icon}>
+            <div
+              key={index}
+              className="flex-1 rounded-full relative flex justify-center items-center z-10"
+            >
               <div
                 style={{
                   cursor: item.clickable ? "pointer" : "not-allowed",
                 }}
-                className={styles.iconCursor}
+                className="absolute inset-0 rounded-full"
               />
               <Link
                 href={item.route}
@@ -65,7 +74,7 @@ const ToolBar = () => {
                   opacity: item.clickable ? 1 : 0.5,
                   pointerEvents: item.clickable ? "auto" : "none",
                 }}
-                className={styles.icon}
+                className="rounded-full cursor-pointer relative flex justify-center items-center transition-opacity duration-500"
                 onClick={() => setSelected(index)}
               >
                 <Image
@@ -73,7 +82,7 @@ const ToolBar = () => {
                   height={32}
                   width={32}
                   alt={item.name}
-                ></Image>
+                />
               </Link>
             </div>
           );
@@ -81,9 +90,9 @@ const ToolBar = () => {
         <div
           style={{
             display: selected === -1 ? "none" : "block",
-            left: `${(selected / 4) * 100}%`,
+            left: getSelectedPosition(),
           }}
-          className={styles.selected}
+          className="absolute h-full w-[5.875rem] bg-slate-400/30 rounded-full transition-all duration-300 ease-in-out"
         />
       </div>
     </div>
