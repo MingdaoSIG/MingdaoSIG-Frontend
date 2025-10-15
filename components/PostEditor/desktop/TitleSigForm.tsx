@@ -41,7 +41,7 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
   }, []);
 
   return (
-    <div className="w-full mb-2 h-10 flex items-center">
+    <div className="w-full mb-2 h-10 flex items-center rounded-full">
       <input
         type="text"
         name="title"
