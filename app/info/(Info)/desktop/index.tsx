@@ -107,7 +107,7 @@ export default function Desktop() {
                 <img
                   src="https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge"
                   alt="frontend-status"
-                  className="h-auto w-full max-w-[15rem]" />
+                  className="h-auto w-full max-w-[13rem]" />
               </div>
 
               <div>
@@ -123,7 +123,7 @@ export default function Desktop() {
                 <img
                   src="https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge"
                   alt="backend-status"
-                  className="h-auto w-full  max-w-[15rem]" />
+                  className="h-auto w-full  max-w-[13rem]" />
               </div>
 
               <div>
@@ -131,7 +131,7 @@ export default function Desktop() {
                 <img
                   src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge"
                   alt="database-status"
-                  className="h-auto w-full max-w-[15rem]" />
+                  className="h-auto w-full max-w-[13rem]" />
               </div>
             </div>
           </div>
