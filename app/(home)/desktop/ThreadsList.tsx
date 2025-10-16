@@ -6,9 +6,6 @@ import {
   ThreadsListSkeleton,
 } from "@/components/Threads/desktop/ThreadsList";
 
-// Styles
-import styles from "./Threads.module.scss";
-
 // APIs Request Function
 import { useAllPost, useSigPost } from "@/utils/usePost";
 
@@ -23,7 +20,7 @@ const ThreadsList = () => {
   });
 
   return (
-    <div className={styles.threadWrap}>
+    <div className="w-full h-full flex flex-col overflow-hidden">
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />
       ) : (

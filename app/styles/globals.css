@@ -13,6 +13,11 @@
   --color-selected-bg: rgba(148, 163, 184, 0.3);
   --color-user-panel-bg: rgba(255, 255, 255, 0.8);
 
+  /* Panel 背景 */
+  --color-panel-bg: rgba(255, 255, 255, 0.6);
+  --color-scrollbar-thumb: #004c64;
+  --color-scrollbar-track: rgba(0, 76, 100, 0.29);
+
   /* 自定義背景圖像 */
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
   --background-image-gradient-conic: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
@@ -160,5 +165,6 @@ body {
   .panel-bg {
     background-color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 }
