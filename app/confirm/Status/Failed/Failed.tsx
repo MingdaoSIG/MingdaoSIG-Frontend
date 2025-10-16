@@ -1,16 +1,42 @@
-import styles from "./Failed.module.scss";
-
 export default function Failed({ message }: { message: string }) {
   return (
     <>
       <svg
-        className={styles.status_svg}
+        className="w-24 h-24 block"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 130.2 130.2"
       >
+        <style>{`
+          @keyframes dash {
+            0% {
+              stroke-dashoffset: 1000;
+            }
+            100% {
+              stroke-dashoffset: 0;
+            }
+          }
+          @keyframes dash-line {
+            0% {
+              stroke-dashoffset: 1000;
+            }
+            100% {
+              stroke-dashoffset: 0;
+            }
+          }
+          .status-circle-error {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 0;
+            animation: dash 0.9s ease-in-out;
+          }
+          .status-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash-line 0.9s 0.35s ease-in-out forwards;
+          }
+        `}</style>
         <circle
-          className={styles.status_path + " " + styles.circle}
+          className="status-circle-error"
           fill="none"
           stroke="#D06079"
           strokeWidth="6"
@@ -20,7 +46,7 @@ export default function Failed({ message }: { message: string }) {
           r="62.1"
         />
         <line
-          className={styles.path + " " + styles.line}
+          className="status-line"
           fill="none"
           stroke="#D06079"
           strokeWidth="6"
@@ -32,7 +58,7 @@ export default function Failed({ message }: { message: string }) {
           y2="92.3"
         />
         <line
-          className={styles.path + " " + styles.line}
+          className="status-line"
           fill="none"
           stroke="#D06079"
           strokeWidth="6"
@@ -44,7 +70,9 @@ export default function Failed({ message }: { message: string }) {
           y2="92.2"
         />
       </svg>
-      <h1 className={styles.status_text + " " + styles.error}>{message}</h1>
+      <h1 className="text-2xl text-center font-semibold" style={{ color: "#D06079" }}>
+        {message}
+      </h1>
     </>
   );
 }

@@ -2,17 +2,12 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
-import styles from "./page.module.scss";
-import { CustomStatus } from "@/modules/customStatusCode";
-
-// Desktop/Mobile UI
 import Failed from "./Status/Failed/Failed";
 import Success from "./Status/Success/Success";
 import BackToHome from "./Status/BackToHome/BackToHome";
+import { CustomStatus } from "@/modules/customStatusCode";
 
-// 定義類型
-type ConfirmStatus = 0 | 1 | 2; // 0: success, 1: already, 2: fail
+type ConfirmStatus = 0 | 1 | 2;
 
 interface ConfirmResponse {
   status: number;
@@ -29,9 +24,11 @@ export default function ConfirmPage() {
 
 function Fallback() {
   return (
-    <div className={styles.loaderContainer}>
-      <span className={styles.loader}></span>
-      <h1 className={styles.loader_text}>Confirming</h1>
+    <div className="h-full flex flex-col items-center justify-center gap-8">
+      <div className="relative w-16 h-16">
+        <div className="absolute inset-0 rounded-full border-4 border-gray-300 border-t-white animate-spin"></div>
+      </div>
+      <h1 className="text-5xl font-bold text-white">Confirming</h1>
     </div>
   );
 }
@@ -47,22 +44,18 @@ function ConfirmContent() {
   const [confirmStatus, setConfirmStatus] = useState<ConfirmStatus | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  // 驗證並建立 URL
   const confirmUrl =
     isValidConfirmId(confirmId) && isValidAccept(accept)
       ? `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`
       : null;
 
-  // 處理無效參數
   useEffect(() => {
     if (!isValidConfirmId(confirmId) || !isValidAccept(accept)) {
-      console.error("Invalid parameters:", { confirmId, accept });
       router.replace("/");
       return;
     }
   }, [confirmId, accept, router]);
 
-  // 發送確認請求
   useEffect(() => {
     if (!confirmUrl) return;
 
@@ -79,7 +72,7 @@ function ConfirmContent() {
         if (isMounted) {
           console.error("Confirm request failed:", error);
           setErrorMessage(error instanceof Error ? error.message : "Unknown error occurred");
-          setConfirmStatus(2); // fail
+          setConfirmStatus(2);
           setIsLoading(false);
         }
       }
@@ -87,7 +80,6 @@ function ConfirmContent() {
 
     confirmRequest();
 
-    // Cleanup function
     return () => {
       isMounted = false;
     };
@@ -95,13 +87,12 @@ function ConfirmContent() {
 
   if (isLoading) return <Fallback />;
 
-  // 如果狀態為 null，顯示錯誤
   if (confirmStatus === null) {
     return (
-      <>
+      <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
         <Failed message="Invalid request" />
         <BackToHome />
-      </>
+      </div>
     );
   }
 
@@ -110,24 +101,24 @@ function ConfirmContent() {
   switch (confirmStatus) {
     case 0:
       return (
-        <>
+        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
           <Success message={`Successfully ${acceptMessage}`} />
           <BackToHome />
-        </>
+        </div>
       );
     case 1:
       return (
-        <>
-          <Success message="Already Confirmed" />
+        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
+          <Success message="Already Reviewed" />
           <BackToHome />
-        </>
+        </div>
       );
     default:
       return (
-        <>
+        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
           <Failed message={errorMessage || "Please try again later"} />
           <BackToHome />
-        </>
+        </div>
       );
   }
 }
@@ -141,16 +132,16 @@ async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
     const data: ConfirmResponse = await response.json();
 
     if (data.status === CustomStatus.OK) return 0;
     if (data.status === CustomStatus.ALREADY_CONFIRMED) return 1;
 
-    return 2; // 其他任何狀態都視為失敗
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return 2;
   } catch (error) {
     console.error("Request failed:", error);
     throw error;
@@ -159,7 +150,6 @@ async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
 
 function isValidConfirmId(uuid: string | null): uuid is string {
   if (!uuid) return false;
-  // UUID v4 格式驗證
   const uuidV4Regex =
     /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
   return uuidV4Regex.test(uuid);
