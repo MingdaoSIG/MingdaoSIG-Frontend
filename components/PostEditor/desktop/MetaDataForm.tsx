@@ -35,7 +35,6 @@ export default function MetaDataForm({
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  // 從 data 初始化 tags
   useEffect(() => {
     if (data?.hashtag) {
       setTags(Array.isArray(data.hashtag) ? data.hashtag : []);
@@ -55,12 +54,7 @@ export default function MetaDataForm({
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    // 檢查登入狀態
-    if (status !== "authenticated") {
-      return;
-    }
-
+    if (status !== "authenticated") return;
     setIsDragging(true);
   };
 
@@ -75,7 +69,6 @@ export default function MetaDataForm({
     e.stopPropagation();
     setIsDragging(false);
 
-    // 檢查登入狀態
     if (status !== "authenticated") {
       showLoginAlert();
       return;
@@ -83,49 +76,36 @@ export default function MetaDataForm({
 
     if (e.dataTransfer.files && e.dataTransfer.files[0] && handleFileChange) {
       const mockEvent = {
-        target: {
-          files: e.dataTransfer.files,
-        },
+        target: { files: e.dataTransfer.files },
       } as any;
       handleFileChange(mockEvent);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 檢查登入狀態
     if (status !== "authenticated") {
       showLoginAlert();
-      e.target.value = ""; // 清空 input
+      e.target.value = "";
       return;
     }
-
-    // console.log("File input changed:", e.target.files);
-    if (handleFileChange) {
-      handleFileChange(e);
-    }
+    if (handleFileChange) handleFileChange(e);
   };
 
   const handleFileInputClick = (e: React.MouseEvent<HTMLLabelElement>) => {
-    // 檢查登入狀態
     if (status !== "authenticated") {
       e.preventDefault();
       showLoginAlert();
-      return;
     }
   };
 
   const handleRemoveCover = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (handleFormEventFunction) {
       handleFormEventFunction({ target: { name: "cover", value: "" } });
     }
-
     const fileInput = document.getElementById("file") as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = "";
-    }
+    if (fileInput) fileInput.value = "";
   };
 
   const handleAddTag = () => {
@@ -134,8 +114,6 @@ export default function MetaDataForm({
       const newTags = [...tags, trimmedTag];
       setTags(newTags);
       setTagInput("");
-
-      // 更新父組件的 data
       if (handleFormEventFunction) {
         handleFormEventFunction({
           target: { name: "hashtag", value: newTags },
@@ -147,8 +125,6 @@ export default function MetaDataForm({
   const handleRemoveTag = (tagToRemove: string) => {
     const newTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(newTags);
-
-    // 更新父組件的 data
     if (handleFormEventFunction) {
       handleFormEventFunction({ target: { name: "hashtag", value: newTags } });
     }
@@ -161,26 +137,24 @@ export default function MetaDataForm({
     }
   };
 
-  if (status === "loading") {
-    return <div></div>;
-  }
+  if (status === "loading") return <div></div>;
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Main Content - 佔據剩餘空間 */}
-      <div className="bg-white rounded-2xl p-4 flex flex-col gap-4 flex-1 overflow-auto">
+    <div className="flex flex-col h-full gap-1">
+      {/* 白色卡片 - 只有 Cover 和 Hashtag */}
+      <div className="flex-1 min-h-0 bg-white rounded-2xl p-4 overflow-y-auto scrollbar-hide">
         {/* Cover Section */}
-        <div className="flex flex-col flex-1 min-h-0 max-h-[10rem]">
-          <label className="font-semibold text-gray-700 text-lg mb-2">
+        <div className="mb-6">
+          <label className="font-semibold text-gray-700 text-lg mb-2 block">
             Cover
           </label>
 
           {data?.cover && data.cover !== "" ? (
-            <div className="flex flex-col flex-1 relative group min-h-[10.5rem]">
+            <div className="relative group h-40">
               <label
                 htmlFor="file"
                 onClick={handleFileInputClick}
-                className="flex-1 bg-cover bg-center bg-no-repeat rounded-lg h-full cursor-pointer relative overflow-hidden"
+                className="block w-full h-full bg-cover bg-center bg-no-repeat rounded-lg cursor-pointer relative overflow-hidden"
                 style={{
                   backgroundImage: (data.cover.includes("http")
                     ? `url(${data.cover})`
@@ -218,7 +192,7 @@ export default function MetaDataForm({
               htmlFor="file"
               onClick={handleFileInputClick}
               className={`
-                flex-1 border-2 border-dashed rounded-lg cursor-pointer transition-all
+                w-full h-40 border-2 border-dashed rounded-lg cursor-pointer transition-all
                 flex flex-col justify-center items-center gap-2 p-8
                 ${isDragging
                   ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
@@ -249,7 +223,7 @@ export default function MetaDataForm({
         </div>
 
         {/* Hashtag Section */}
-        <div className="flex flex-col gap-2 mt-12">
+        <div className="flex flex-col gap-2">
           <label
             className="font-semibold text-gray-700 text-lg"
             htmlFor="tagInput"
@@ -281,7 +255,7 @@ export default function MetaDataForm({
 
           {/* Tags Display */}
           {tags.length > 0 && (
-            <div className="max-h-[12rem] small-scrollbar flex overflow-auto">
+            <div className="max-h-48 overflow-y-auto">
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
                   <span
@@ -304,8 +278,8 @@ export default function MetaDataForm({
         </div>
       </div>
 
-      {/* Buttons - 固定在底部 */}
-      <div>
+      {/* 按鈕區域 - 獨立在下方 */}
+      <div className="flex-shrink-0">
         <Buttons
           discardFunction={discardFunction}
           postFunction={postFunction}
