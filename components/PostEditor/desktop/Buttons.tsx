@@ -27,10 +27,9 @@ export default function Buttons({
         className={`
           flex flex-row justify-center items-center text-center rounded-full gap-1 text-lg font-bold
           transition-colors
-          ${
-            postButtonDisable
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-white text-[#5fcdf5] hover:bg-gray-50"
+          ${postButtonDisable
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-white text-[#5fcdf5] hover:bg-gray-50"
           }
         `}
         onClick={async () => await postFunction()}
