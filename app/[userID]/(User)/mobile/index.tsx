@@ -60,7 +60,7 @@ export default function ProfileMobile({
       />
       <div className="overflow-y-hidden mx-[0.5rem]">
         {isLoading ? (
-          <ThreadsListSkeleton repeat={3} height="calc(100dvh - 21rem)" />
+          <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
         ) : dataType === "user" ? (
           <UserInfinityThreadList id={data?._id!} />
         ) : (
@@ -79,7 +79,7 @@ function UserInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={1} height="calc(100dvh - 21rem)" />
+    <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
   ) : (
     <InfinityThreadsList
       data={data}
@@ -98,7 +98,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={10} height="calc(100dvh - 21rem)" />
+    <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
   ) : (
     <InfinityThreadsList
       data={data}

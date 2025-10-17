@@ -44,7 +44,7 @@ function fixCoverUrl(cover: string) {
 
 export const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
-  const sig = threadData.sig as Sig;
+  const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
 
   return (
@@ -224,7 +224,7 @@ export const InfinityThreadsList = ({
         {data.pages.map((page: TThread[], index: number) => (
           <Fragment key={index}>
             {page.map((item, index) => {
-              const sig = item.sig as Sig;
+              const sig = item.sig as unknown as Sig;
               const isAnnouncement = sig._id === announcementSigId;
               if (!isAnnouncement) {
                 return <Thread threadData={item} key={index} />;

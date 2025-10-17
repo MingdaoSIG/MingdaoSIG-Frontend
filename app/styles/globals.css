@@ -13,6 +13,11 @@
   --color-selected-bg: rgba(148, 163, 184, 0.3);
   --color-user-panel-bg: rgba(255, 255, 255, 0.8);
 
+  /* Panel 背景 */
+  --color-panel-bg: rgba(255, 255, 255, 0.6);
+  --color-scrollbar-thumb: #004c64;
+  --color-scrollbar-track: rgba(0, 76, 100, 0.29);
+
   /* 自定義背景圖像 */
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
   --background-image-gradient-conic: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
@@ -69,19 +74,30 @@ body {
   background: #004c64;
 }
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #b7c8e6 transparent;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(0, 76, 100, 0.29);
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: #004c64;
+  background: #b7c8e6;
+  border-radius: 9999px;
 }
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9fb5dc;
+}
+
+
 
 /* Editor specific styles */
 .editor-wrapper>div {
@@ -160,5 +176,6 @@ body {
   .panel-bg {
     background-color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 }

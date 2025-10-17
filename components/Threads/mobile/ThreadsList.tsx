@@ -41,7 +41,7 @@ function fixCoverUrl(cover: string) {
 
 const Thread = ({ threadData, priority = false }: { threadData: TThread; priority?: boolean }) => {
   const user = threadData.user as User;
-  const sig = threadData.sig as Sig;
+  const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
 
   return (
@@ -260,7 +260,7 @@ export const InfinityThreadsList = ({
         {data.pages.map((page: TThread[], pageIndex: number) => (
           <Fragment key={pageIndex}>
             {page.map((item, itemIndex) => {
-              const sig = item.sig as Sig;
+              const sig = item.sig as unknown as Sig;
               const isAnnouncement = sig._id === announcementSigId;
               // Calculate global index for priority
               const globalIndex = pageIndex * page.length + itemIndex;
