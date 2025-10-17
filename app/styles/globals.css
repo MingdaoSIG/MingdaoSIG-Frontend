@@ -74,19 +74,30 @@ body {
   background: #004c64;
 }
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #b7c8e6 transparent;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(0, 76, 100, 0.29);
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: #004c64;
+  background: #b7c8e6;
+  border-radius: 9999px;
 }
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9fb5dc;
+}
+
+
 
 /* Editor specific styles */
 .editor-wrapper>div {
