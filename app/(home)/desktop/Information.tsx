@@ -22,7 +22,13 @@ type MinimalThread = Pick<TThread, "_id" | "title"> & { likes: number };
 
 function HeartIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      {...props}
+    >
       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
   );
@@ -30,7 +36,13 @@ function HeartIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function UsersIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      {...props}
+    >
       <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -40,7 +52,10 @@ function UsersIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 function SectionHeader({
-  icon, title, count, action,
+  icon,
+  title,
+  count,
+  action,
 }: {
   icon: "heart" | "users";
   title: string;
@@ -57,7 +72,9 @@ function SectionHeader({
         <h2 className="text-lg font-bold text-[#3c69b4] leading-[1.8rem]">
           {title}
           {typeof count !== "undefined" && (
-            <span className="ml-2 text-sm font-medium text-gray-400">{count}</span>
+            <span className="ml-2 text-sm font-medium text-gray-400">
+              {count}
+            </span>
           )}
         </h2>
       </div>
@@ -104,7 +121,12 @@ function SigCard({ sig }: { sig: Sig }) {
         }}
       >
         {maxMatch(sig.name).map((name, index) => (
-          <span key={index} className="break-words drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">{name}</span>
+          <span
+            key={index}
+            className="break-words drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]"
+          >
+            {name}
+          </span>
         ))}
       </div>
     </Link>
@@ -141,7 +163,8 @@ export default function Information() {
         const all = (json?.data ?? []) as Sig[];
         setSigs(all);
       } catch (err: any) {
-        if (err?.name !== "AbortError") setSigsError(err?.message || "Failed to load SIGs.");
+        if (err?.name !== "AbortError")
+          setSigsError(err?.message || "Failed to load SIGs.");
       } finally {
         setSigsLoading(false);
       }
@@ -152,7 +175,11 @@ export default function Information() {
 
   // Top posts
   const pageSize = 3;
-  const { data, isLoading: postsLoading, isError: postsError } = useTopPost({ pageSize });
+  const {
+    data,
+    isLoading: postsLoading,
+    isError: postsError,
+  } = useTopPost({ pageSize });
 
   const posts: MinimalThread[] = useMemo(() => {
     const raw = Array.isArray((data as any)?.pages)
@@ -164,7 +191,12 @@ export default function Information() {
     return (raw as any[]).map((item) => ({
       _id: item._id,
       title: item.title,
-      likes: typeof item.likes === "number" ? item.likes : typeof item.like === "number" ? item.like : 0,
+      likes:
+        typeof item.likes === "number"
+          ? item.likes
+          : typeof item.like === "number"
+            ? item.like
+            : 0,
     }));
   }, [data]);
 
@@ -177,8 +209,8 @@ export default function Information() {
       .filter((s) =>
         q
           ? s.name.toLowerCase().includes(q) ||
-          (s.customId?.toLowerCase().includes(q) ?? false)
-          : true
+            (s.customId?.toLowerCase().includes(q) ?? false)
+          : true,
       );
   }, [sigs, sigQuery]);
 
@@ -195,11 +227,15 @@ export default function Information() {
             <SectionHeader icon="heart" title="Top 3 Posts" />
             <div className="mt-2 flex flex-col divide-y divide-gray-100">
               {postsError && (
-                <p className="text-sm text-red-500">Failed to load posts. Please try again later.</p>
+                <p className="text-sm text-red-500">
+                  Failed to load posts. Please try again later.
+                </p>
               )}
 
               {!postsError && posts.length === 0 && (
-                <p className="text-sm text-gray-500">No posts yet. Check back soon!</p>
+                <p className="text-sm text-gray-500">
+                  No posts yet. Check back soon!
+                </p>
               )}
 
               {!postsError && posts.length > 0 && (
@@ -222,7 +258,9 @@ export default function Information() {
               count={filteredSigs.length}
               action={
                 <div className="relative">
-                  <label htmlFor="sig-search" className="sr-only">Search SIGs</label>
+                  <label htmlFor="sig-search" className="sr-only">
+                    Search SIGs
+                  </label>
                   <input
                     id="sig-search"
                     value={sigQuery}
@@ -235,7 +273,9 @@ export default function Information() {
             />
 
             <div className="absolute top-[2.6rem] left-0 right-0 bottom-0 mt-2 overflow-y-auto custom-scrollbar">
-              {sigsError && <p className="text-sm text-red-500 px-0.5">{sigsError}</p>}
+              {sigsError && (
+                <p className="text-sm text-red-500 px-0.5">{sigsError}</p>
+              )}
 
               {!sigsError && (
                 <ul className="flex flex-wrap items-start justify-center gap-4 px-0.5">

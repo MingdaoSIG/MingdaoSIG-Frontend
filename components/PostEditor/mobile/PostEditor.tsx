@@ -209,7 +209,8 @@ export default function NewPostMobile({
                   style={{
                     backgroundImage: (data.cover.includes("http")
                       ? `url(${data.cover})`
-                      : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`).replace(".lazco.dev", ".mingdao.edu.tw"),
+                      : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`
+                    ).replace(".lazco.dev", ".mingdao.edu.tw"),
                   }}
                 >
                   <div className="absolute inset-0 bg-black/0 active:bg-black/20 transition-all duration-200 flex items-center justify-center">

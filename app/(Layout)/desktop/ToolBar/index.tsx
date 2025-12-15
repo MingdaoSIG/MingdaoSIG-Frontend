@@ -77,12 +77,7 @@ const ToolBar = () => {
                 className="rounded-full cursor-pointer relative flex justify-center items-center transition-opacity duration-500"
                 onClick={() => setSelected(index)}
               >
-                <Image
-                  src={item.icon}
-                  height={32}
-                  width={32}
-                  alt={item.name}
-                />
+                <Image src={item.icon} height={32} width={32} alt={item.name} />
               </Link>
             </div>
           );

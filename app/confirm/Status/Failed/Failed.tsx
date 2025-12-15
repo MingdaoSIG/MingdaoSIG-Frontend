@@ -70,7 +70,10 @@ export default function Failed({ message }: { message: string }) {
           y2="92.2"
         />
       </svg>
-      <h1 className="text-2xl text-center font-semibold" style={{ color: "#D06079" }}>
+      <h1
+        className="text-2xl text-center font-semibold"
+        style={{ color: "#D06079" }}
+      >
         {message}
       </h1>
     </>

@@ -78,7 +78,7 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
           )}
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

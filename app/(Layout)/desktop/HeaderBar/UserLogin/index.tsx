@@ -9,7 +9,9 @@ export default function UserLogin() {
     return (
       <div className="w-[15.75rem] h-14 rounded-full p-0.5 cursor-pointer bg-gradient-to-r from-[#6FA8FF] to-[#003F47]">
         <div className="h-full w-full rounded-full bg-white flex justify-center items-center">
-          <p className="text-[1.2rem] text-[#004C64] font-medium">Loading ...</p>
+          <p className="text-[1.2rem] text-[#004C64] font-medium">
+            Loading ...
+          </p>
         </div>
       </div>
     );
@@ -33,7 +35,9 @@ export default function UserLogin() {
             onClick={() => window.open("/admin", "_self")}
           >
             <div className="h-full w-full rounded-full bg-white flex justify-center items-center">
-              <p className="text-[1.25rem] text-[#004C64] font-medium">管理平台</p>
+              <p className="text-[1.25rem] text-[#004C64] font-medium">
+                管理平台
+              </p>
             </div>
           </div>
         )}
@@ -45,7 +49,7 @@ export default function UserLogin() {
             src={
               (userData && userData.avatar) ||
               process.env.NEXT_PUBLIC_API_URL +
-              "/image/653299930b891d1f6b5b4458"
+                "/image/653299930b891d1f6b5b4458"
             }
             width={50}
             height={50}
