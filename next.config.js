@@ -1,25 +1,25 @@
 // next.config.js
 // @ts-check
 
-const path = require('path');
+const path = require("path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
+    includePaths: [path.join(__dirname, "styles")],
   },
 
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "**",
+        pathname: "/**",
       },
       {
-        protocol: 'http',
-        hostname: '**',
-        pathname: '/**',
+        protocol: "http",
+        hostname: "**",
+        pathname: "/**",
       },
     ],
   },
@@ -27,17 +27,20 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: [
-          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
         ],
       },
     ];
   },
 
   turbopack: {
-    resolveAlias: { '@': './src' },
-    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
+    resolveAlias: { "@": "./src" },
+    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
 };
 

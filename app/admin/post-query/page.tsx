@@ -48,10 +48,10 @@ export default function Page() {
   const formatDateTime = (iso?: string) =>
     iso
       ? new Date(iso).toLocaleDateString("zh-TW", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
       : "";
 
   const fetchPosts = async () => {
@@ -363,7 +363,7 @@ export default function Page() {
                               clipRule="evenodd"
                             />
                           </svg>
-                          <span className="font-medium">{r.userName}{" "}</span>
+                          <span className="font-medium">{r.userName} </span>
                         </div>
                         <div className="flex items-center">
                           <svg

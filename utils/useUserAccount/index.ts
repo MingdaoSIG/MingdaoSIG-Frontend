@@ -19,9 +19,8 @@ export function useUserAccount() {
       // 優先使用 session 登入
       if (sessionLocalStorage) {
         try {
-          const { token, data } = await platformLoginWithSession(
-            sessionLocalStorage
-          );
+          const { token, data } =
+            await platformLoginWithSession(sessionLocalStorage);
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
           setToken(token);

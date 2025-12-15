@@ -10,7 +10,6 @@ import Buttons from "./Buttons";
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 
-
 interface Props {
   discardFunction: Function;
   postFunction: Function;
@@ -158,7 +157,8 @@ export default function MetaDataForm({
                 style={{
                   backgroundImage: (data.cover.includes("http")
                     ? `url(${data.cover})`
-                    : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`).replace(".lazco.dev", ".mingdao.edu.tw"),
+                    : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`
+                  ).replace(".lazco.dev", ".mingdao.edu.tw"),
                 }}
               >
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center">
@@ -194,9 +194,10 @@ export default function MetaDataForm({
               className={`
                 w-full h-40 border-2 border-dashed rounded-lg cursor-pointer transition-all
                 flex flex-col justify-center items-center gap-2 p-8
-                ${isDragging
-                  ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
-                  : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
+                ${
+                  isDragging
+                    ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
+                    : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
                 }
               `}
               onDragOver={handleDragOver}

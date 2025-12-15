@@ -39,7 +39,13 @@ function fixCoverUrl(cover: string) {
   return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
 }
 
-const Thread = ({ threadData, priority = false }: { threadData: TThread; priority?: boolean }) => {
+const Thread = ({
+  threadData,
+  priority = false,
+}: {
+  threadData: TThread;
+  priority?: boolean;
+}) => {
   const user = threadData.user as User;
   const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
@@ -47,8 +53,9 @@ const Thread = ({ threadData, priority = false }: { threadData: TThread; priorit
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={`block bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer select-none transition-all hover:bg-white/70 ${isAnnouncement ? "bg-white" : ""
-        }`}
+      className={`block bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer select-none transition-all hover:bg-white/70 ${
+        isAnnouncement ? "bg-white" : ""
+      }`}
     >
       {/* Cover Image */}
       {threadData.cover && (
@@ -75,13 +82,19 @@ const Thread = ({ threadData, priority = false }: { threadData: TThread; priorit
               </span>
               <span
                 className="px-3 py-1 rounded-full text-xs font-medium text-white"
-                style={{ backgroundColor: sigDefaultColors[sig._id!] || "#009BB0" }}
+                style={{
+                  backgroundColor: sigDefaultColors[sig._id!] || "#009BB0",
+                }}
               >
                 {sig.name}
               </span>
             </div>
             <div className="text-gray-500 text-sm">
-              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
+              {
+                new Date(threadData.createdAt!)
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
             </div>
           </div>
         )}
@@ -94,29 +107,32 @@ const Thread = ({ threadData, priority = false }: { threadData: TThread; priorit
 
         {/* Content Preview - Dynamic lines based on hashtags */}
         <p
-          className={`text-gray-700 text-sm leading-relaxed mb-3 ${isAnnouncement
+          className={`text-gray-700 text-sm leading-relaxed mb-3 ${
+            isAnnouncement
               ? "line-clamp-3"
               : threadData.hashtag && threadData.hashtag.length > 0
                 ? "line-clamp-2"
                 : "line-clamp-4"
-            }`}
+          }`}
         >
           {markdownToPlainText(threadData.content)}
         </p>
 
         {/* Hashtags - Horizontal scroll without scrollbar */}
-        {threadData.hashtag && threadData.hashtag.length > 0 && !isAnnouncement && (
-          <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide pb-1">
-            {threadData.hashtag.map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-[#5FCDF5] text-white rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {threadData.hashtag &&
+          threadData.hashtag.length > 0 &&
+          !isAnnouncement && (
+            <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide pb-1">
+              {threadData.hashtag.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-[#5FCDF5] text-white rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
 
         {/* Spacer to push footer to bottom */}
         <div className="flex-grow"></div>
@@ -267,7 +283,13 @@ export const InfinityThreadsList = ({
               const shouldPrioritize = globalIndex < 4;
 
               if (!isAnnouncement) {
-                return <Thread threadData={item} priority={shouldPrioritize} key={itemIndex} />;
+                return (
+                  <Thread
+                    threadData={item}
+                    priority={shouldPrioritize}
+                    key={itemIndex}
+                  />
+                );
               }
             })}
           </Fragment>

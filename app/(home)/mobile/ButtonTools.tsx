@@ -13,12 +13,14 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
       {/* Toggle Button */}
       <div className="flex bg-white/50 backdrop-blur-sm rounded-full relative select-none w-40">
         <div
-          className={`absolute w-20 h-10 bg-md-dark-green rounded-full transition-all duration-500 ${activeTab === "latest" ? "left-0" : "left-20"
-            }`}
+          className={`absolute w-20 h-10 bg-md-dark-green rounded-full transition-all duration-500 ${
+            activeTab === "latest" ? "left-0" : "left-20"
+          }`}
         />
         <button
-          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${activeTab === "latest" ? "text-white" : "text-md-dark-green"
-            }`}
+          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${
+            activeTab === "latest" ? "text-white" : "text-md-dark-green"
+          }`}
           onClick={() => {
             setActiveTab("latest");
             switchCallback(1);
@@ -27,8 +29,9 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
           Latest
         </button>
         <button
-          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${activeTab === "top" ? "text-white" : "text-md-dark-green"
-            }`}
+          className={`w-20 text-center relative h-10 transition-colors duration-500 text-sm md:text-base ${
+            activeTab === "top" ? "text-white" : "text-md-dark-green"
+          }`}
           onClick={() => {
             setActiveTab("top");
             switchCallback(0);

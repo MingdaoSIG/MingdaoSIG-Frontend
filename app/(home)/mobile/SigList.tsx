@@ -16,7 +16,10 @@ const SIG = (child: any) => {
     >
       <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-2xl transition-colors duration-300" />
       {maxMatch(child.name).map((name, index) => (
-        <p key={index} className="text-white text-xs leading-3 font-semibold relative z-10 text-center">
+        <p
+          key={index}
+          className="text-white text-xs leading-3 font-semibold relative z-10 text-center"
+        >
           {name}
         </p>
       ))}
@@ -103,9 +106,7 @@ const SigList = ({ sigListToggle }: { sigListToggle: Function }) => {
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-gradient-to-t from-white/95 to-transparent px-6 py-3 text-center">
-          <p className="text-gray-500 text-xs">
-            選擇一個 SIG 來探索更多內容
-          </p>
+          <p className="text-gray-500 text-xs">選擇一個 SIG 來探索更多內容</p>
         </div>
       </div>
     </div>

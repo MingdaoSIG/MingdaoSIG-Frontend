@@ -12,7 +12,8 @@ const SigCardSkeleton = () => (
     className="w-20 h-20 shrink-0 rounded-2xl animate-pulse"
     style={{
       borderRadius: 16,
-      background: "linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)) padding-box, linear-gradient(90deg, #6fa8ff, #30b4ac) border-box",
+      background:
+        "linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)) padding-box, linear-gradient(90deg, #6fa8ff, #30b4ac) border-box",
       border: "2px solid transparent",
     }}
   />
@@ -20,7 +21,7 @@ const SigCardSkeleton = () => (
 
 const SectionHeaderSkeleton = ({
   hasCount = false,
-  hasAction = false
+  hasAction = false,
 }: {
   hasCount?: boolean;
   hasAction?: boolean;
