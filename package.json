@@ -1,6 +1,6 @@
 {
   "name": "mdsig-frontend",
-  "version": "2.18.7",
+  "version": "2.18.8",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
