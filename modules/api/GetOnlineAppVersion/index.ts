@@ -1,8 +1,10 @@
 import axios from "axios";
 
 export default async function GetOnlineAppVersion() {
-  const mainVersion = await getMainVersion();
-  const developmentVersion = await getDevelopmentVersion();
+  const [mainVersion, developmentVersion] = await Promise.all([
+    getMainVersion(),
+    getDevelopmentVersion(),
+  ]);
 
   return {
     mainVersion,
@@ -20,7 +22,7 @@ async function getMainVersion(): Promise<string> {
         Accept: "application/vnd.github.v3.raw",
         Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
       },
-      timeout: 5000,
+      timeout: 10000,
     });
 
     const responseObj = response.data;
@@ -44,7 +46,7 @@ async function getDevelopmentVersion(): Promise<string> {
         Accept: "application/vnd.github.v3.raw",
         Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
       },
-      timeout: 5000,
+      timeout: 10000,
     });
 
     const responseObj = response.data;

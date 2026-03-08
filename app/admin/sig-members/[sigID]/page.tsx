@@ -205,7 +205,7 @@ export default function ManageSIGMembers({
                   <tr key={m._id} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                     <td className="py-3 px-2 text-center"><span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs">{m.code}</span></td>
                     <td className="py-3 px-2 text-center">{m.name}</td>
-                    <td className="py-3 px-2 truncate max-w-0"><div className="truncate" title={m.email}>{m.email}</div></td>
+                    <td className="py-3 px-2 text-center">{m.email}</td>
                     <td className="py-3 px-2 text-center text-gray-500">{m.class || "-"}</td>
                   </tr>
                 ))

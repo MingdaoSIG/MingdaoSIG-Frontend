@@ -63,8 +63,8 @@ export default function Mobile() {
         
         // Calculate start times based on uptime
         const now = Date.now();
-        const frontendUptime = parseUptime(data?.Frontend?.uptime);
-        const backendUptime = parseUptime(data?.Backend?.uptime);
+        const frontendUptime = parseUptime(data?.frontend?.uptime);
+        const backendUptime = parseUptime(data?.backend?.uptime);
         
         startTimeRef.current = now - frontendUptime;
         backendStartTimeRef.current = now - backendUptime;
@@ -147,10 +147,10 @@ export default function Mobile() {
             ) : (
               <>
                 <p>
-                  前端版本號：{ping?.Frontend?.currentVersion ? `v${ping.Frontend.currentVersion}` : "未知"}
+                  前端版本號：{ping?.frontend?.currentVersion ? `v${ping.frontend.currentVersion}` : "未知"}
                 </p>
                 <p>
-                  後端版本號：{ping?.Backend?.currentVersion && ping.Backend.currentVersion !== "N/A" ? `v${ping.Backend.currentVersion}` : "未知"}
+                  後端版本號：{ping?.backend?.currentVersion && ping.backend.currentVersion !== "N/A" ? `v${ping.backend.currentVersion}` : "未知"}
                 </p>
                 <br />
                 <p>前端運行時間：{uptimeDisplay.frontend}</p>

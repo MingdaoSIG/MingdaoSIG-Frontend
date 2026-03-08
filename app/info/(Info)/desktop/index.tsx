@@ -60,8 +60,8 @@ export default function Desktop() {
         
         // Calculate start times based on uptime
         const now = Date.now();
-        const frontendUptime = parseUptime(data?.Frontend?.uptime);
-        const backendUptime = parseUptime(data?.Backend?.uptime);
+        const frontendUptime = parseUptime(data?.frontend?.uptime);
+        const backendUptime = parseUptime(data?.backend?.uptime);
         
         startTimeRef.current = now - frontendUptime;
         backendStartTimeRef.current = now - backendUptime;
@@ -158,17 +158,17 @@ export default function Desktop() {
                 <div className="space-y-2 text-base text-[#003f47]">
                   <p>
                     前端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                    {ping?.Frontend?.currentVersion}
+                    {ping?.frontend?.currentVersion}
                   </p>
                   <p>
                     後端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                    {ping?.Backend?.currentVersion}
+                    {ping?.backend?.currentVersion}
                   </p>
                 </div>
 
                 <div className="space-y-2 text-base text-[#003f47] mt-4">
-                  <p>前端運行時間：{timeEn2Zh(ping?.Frontend?.uptime)}</p>
-                  <p>後端運行時間：{timeEn2Zh(ping?.Backend?.uptime)}</p>
+                  <p>前端運行時間：{uptimeDisplay.frontend}</p>
+                  <p>後端運行時間：{uptimeDisplay.backend}</p>
                 </div>
 
                 <div className="mt-4 text-base text-[#003f47]">
