@@ -7,12 +7,37 @@ import GetOnlineAppVersion from "@/modules/api/GetOnlineAppVersion";
 
 export async function GET() {
   const packageJSON = JSON.parse(readFileSync("./package.json").toString());
-  const { mainVersion, developmentVersion } = await GetOnlineAppVersion();
+  
+  // Get online versions with fallback
+  let mainVersion = "Unknown";
+  let developmentVersion = "Unknown";
+  try {
+    const versions = await GetOnlineAppVersion();
+    mainVersion = versions.mainVersion;
+    developmentVersion = versions.developmentVersion;
+  } catch (error) {
+    console.error("Failed to get online app version:", error);
+  }
 
-  const apiResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/ping`,
-  );
-  const apiData = apiResponse.data;
+  // Get backend status with fallback
+  let backendData: any = {
+    service: "unknown",
+    uptime: "N/A",
+    version: {
+      current: "N/A",
+      latest: "N/A",
+      upToDate: "N/A",
+    },
+  };
+  try {
+    const apiResponse = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/ping`,
+      { timeout: 5000 }
+    );
+    backendData = apiResponse.data;
+  } catch (error) {
+    console.error("Failed to get backend ping:", error);
+  }
 
   const data: any = {
     Frontend: {
@@ -24,16 +49,16 @@ export async function GET() {
         development: developmentVersion,
       },
       upToDate: {
-        main: mainVersion >= packageJSON.version,
-        development: developmentVersion >= packageJSON.version,
+        main: mainVersion !== "Unknown" && mainVersion >= packageJSON.version,
+        development: developmentVersion !== "Unknown" && developmentVersion >= packageJSON.version,
       },
     },
     Backend: {
-      status: apiData.service.replace("up", "Online") || "Offline",
-      uptime: apiData.uptime || "N/A",
-      currentVersion: apiData.version.current || "N/A",
-      latestVersion: apiData.version.latest || "N/A",
-      upToDate: apiData.version.upToDate || "N/A",
+      status: backendData.service?.replace("up", "Online") || "Offline",
+      uptime: backendData.uptime || "N/A",
+      currentVersion: backendData.version?.current || "N/A",
+      latestVersion: backendData.version?.latest || "N/A",
+      upToDate: backendData.version?.upToDate || "N/A",
     },
   };
 

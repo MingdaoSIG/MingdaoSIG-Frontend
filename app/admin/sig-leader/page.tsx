@@ -6,6 +6,7 @@ import useIsMobile from "@/utils/useIsMobile";
 import { useRouter } from "next/navigation";
 import sigAPI from "@/modules/sigAPI";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function ManageLeaderChooseSIG() {
   const isMobile = useIsMobile();
@@ -13,6 +14,7 @@ export default function ManageLeaderChooseSIG() {
   const router = useRouter();
 
   const [sigList, setSigList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -21,6 +23,8 @@ export default function ManageLeaderChooseSIG() {
         setSigList(response);
       } catch (error: any) {
         console.error(error.message);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -44,37 +48,68 @@ export default function ManageLeaderChooseSIG() {
   };
 
   return isMobile ? (
-    <div className="flex flex-col justify-start w-screen h-screen pt-[4rem] pb-[4rem] px-2 relative overflow-y-auto">
-      <div className="pt-[1rem] pb-[1rem]">
-        <div className="w-full flex text-center mb-4">
+    <div className="w-full h-[calc(100dvh-8rem)] pt-4 px-4 pb-4 overflow-y-auto bg-gradient-to-br from-indigo-50 to-purple-50">
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
           <button
             onClick={handleBack}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full mx-auto"
+            className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-600 hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            ← 返回
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
+          <h1 className="text-xl font-bold text-gray-800">選擇 SIG</h1>
+          <div className="w-10"></div>
         </div>
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-6">SIG Leader管理</h1>
-          <p className="text-xl mb-4">請選擇您要管理的 SIG:</p>
-          <div className="grid grid-cols-2 gap-4">
-            {sigList.map((sig) => {
-              if (sig._id !== "663b09e19aa7c3d74577a786") {
-                return (
-                  <button
-                    key={sig._id}
-                    id={sig._id}
-                    className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed"
-                    onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}
-                  >
-                    {sig.name}
-                  </button>
-                );
-              }
-              return null;
-            })}
+
+        {/* Title Card */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl shadow-lg p-5 mb-6 text-white">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">👑</div>
+            <div>
+              <h2 className="text-lg font-bold">SIG Leader 管理</h2>
+              <p className="text-white/80 text-sm">選擇要管理的 SIG</p>
+            </div>
           </div>
         </div>
+
+        {/* SIG Grid */}
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {sigList
+              .filter((sig) => sig._id !== "663b09e19aa7c3d74577a786")
+              .map((sig) => (
+                <button
+                  key={sig._id}
+                  onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}
+                  className="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border border-gray-100 flex flex-col items-center gap-2"
+                >
+                  {sig.avatar ? (
+                    <Image
+                      src={sig.avatar}
+                      alt={sig.name}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center text-xl">
+                      {sig.name.charAt(0)}
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-gray-700 text-center line-clamp-2">
+                    {sig.name}
+                  </span>
+                </button>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   ) : (
@@ -82,7 +117,7 @@ export default function ManageLeaderChooseSIG() {
       <div className="w-full flex text-center mb-6">
         <button
           onClick={handleBack}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full mx-auto"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full mx-auto cursor-pointer transition-colors"
         >
           ← 返回
         </button>
@@ -97,7 +132,7 @@ export default function ManageLeaderChooseSIG() {
                 <button
                   key={sig._id}
                   id={sig._id}
-                  className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed"
+                  className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => router.push(`/admin/sig-leader/${sig._id}`)}
                 >
                   {sig.name}

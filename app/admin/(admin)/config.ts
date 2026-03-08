@@ -10,6 +10,11 @@ export const menuConfig = [
     disable: false,
   },
   {
+    name: "SIG 成員名單下載",
+    link: "/admin/sig-members",
+    disable: false,
+  },
+  {
     name: "貼文管理",
     link: "/admin/post",
     disable: true,

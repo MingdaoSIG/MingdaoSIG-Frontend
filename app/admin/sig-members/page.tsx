@@ -8,7 +8,7 @@ import sigAPI from "@/modules/sigAPI";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function ManageAdvisorChooseSIG() {
+export default function ManageMembersChooseSIG() {
   const isMobile = useIsMobile();
   const userAccount = useUserAccount();
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function ManageAdvisorChooseSIG() {
   };
 
   return isMobile ? (
-    <div className="w-full h-[calc(100dvh-8rem)] pt-4 px-4 pb-4 overflow-y-auto bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="w-full h-[calc(100dvh-8rem)] pt-4 px-4 pb-4 overflow-y-auto bg-gradient-to-br from-green-50 to-emerald-50">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -65,12 +65,12 @@ export default function ManageAdvisorChooseSIG() {
         </div>
 
         {/* Title Card */}
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-lg p-5 mb-6 text-white">
+        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-lg p-5 mb-6 text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">👨‍🏫</div>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">👥</div>
             <div>
-              <h2 className="text-lg font-bold">SIG 指導老師管理</h2>
-              <p className="text-white/80 text-sm">選擇要管理的 SIG</p>
+              <h2 className="text-lg font-bold">SIG 成員名單下載</h2>
+              <p className="text-white/80 text-sm">選擇要查看的 SIG</p>
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function ManageAdvisorChooseSIG() {
         {/* SIG Grid */}
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-500"></div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -87,7 +87,7 @@ export default function ManageAdvisorChooseSIG() {
               .map((sig) => (
                 <button
                   key={sig._id}
-                  onClick={() => router.push(`/admin/sig-advisor/${sig._id}`)}
+                  onClick={() => router.push(`/admin/sig-members/${sig._id}`)}
                   className="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border border-gray-100 flex flex-col items-center gap-2"
                 >
                   {sig.avatar ? (
@@ -99,7 +99,7 @@ export default function ManageAdvisorChooseSIG() {
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center text-xl">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center text-xl">
                       {sig.name.charAt(0)}
                     </div>
                   )}
@@ -123,8 +123,8 @@ export default function ManageAdvisorChooseSIG() {
         </button>
       </div>
       <div className="flex flex-col items-center justify-start h-full">
-        <h1 className="text-3xl font-bold mb-4">SIG 指導老師管理</h1>
-        <p className="text-xl mb-4">請選擇您要管理的 SIG:</p>
+        <h1 className="text-3xl font-bold mb-4">SIG 成員名單下載</h1>
+        <p className="text-xl mb-4">請選擇您要查看的 SIG:</p>
         <div className="grid grid-cols-3 gap-4">
           {sigList.map((sig) => {
             if (sig._id !== "663b09e19aa7c3d74577a786") {
@@ -133,7 +133,7 @@ export default function ManageAdvisorChooseSIG() {
                   key={sig._id}
                   id={sig._id}
                   className="bg-white text-[#5fcdf5] px-4 py-2 rounded-full disabled:cursor-not-allowed cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => router.push(`/admin/sig-advisor/${sig._id}`)}
+                  onClick={() => router.push(`/admin/sig-members/${sig._id}`)}
                 >
                   {sig.name}
                 </button>

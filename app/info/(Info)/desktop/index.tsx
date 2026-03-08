@@ -1,20 +1,109 @@
 // Styles
 import Link from "next/link";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 
 // data
 import data from "../config/data.json";
 
 export default function Desktop() {
-  const [ping, setPing] = useState<any>({});
+  const [ping, setPing] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [uptimeDisplay, setUptimeDisplay] = useState({ frontend: "載入中...", backend: "載入中..." });
+  const startTimeRef = useRef<number>(0);
+  const backendStartTimeRef = useRef<number>(0);
+
+  // Parse uptime string to milliseconds
+  const parseUptime = (uptimeStr: string): number => {
+    if (!uptimeStr || uptimeStr === "N/A") return 0;
+    
+    let totalMs = 0;
+    const monthsMatch = uptimeStr.match(/(\d+)\s*month/);
+    const daysMatch = uptimeStr.match(/(\d+)\s*day/);
+    const hoursMatch = uptimeStr.match(/(\d+)\s*hour/);
+    const minutesMatch = uptimeStr.match(/(\d+)\s*minute/);
+    const secondsMatch = uptimeStr.match(/(\d+)\s*second/);
+    
+    if (monthsMatch) totalMs += parseInt(monthsMatch[1]) * 30 * 24 * 60 * 60 * 1000;
+    if (daysMatch) totalMs += parseInt(daysMatch[1]) * 24 * 60 * 60 * 1000;
+    if (hoursMatch) totalMs += parseInt(hoursMatch[1]) * 60 * 60 * 1000;
+    if (minutesMatch) totalMs += parseInt(minutesMatch[1]) * 60 * 1000;
+    if (secondsMatch) totalMs += parseInt(secondsMatch[1]) * 1000;
+    
+    return totalMs;
+  };
+
+  // Format milliseconds to readable time
+  const formatUptime = (ms: number): string => {
+    if (ms <= 0) return "未知";
+    
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+    const days = Math.floor((ms / (1000 * 60 * 60 * 24)) % 30);
+    const months = Math.floor(ms / (1000 * 60 * 60 * 24 * 30));
+    
+    const parts = [];
+    if (months > 0) parts.push(`${months} 月`);
+    if (days > 0) parts.push(`${days} 天`);
+    if (hours > 0) parts.push(`${hours} 時`);
+    if (minutes > 0) parts.push(`${minutes} 分`);
+    parts.push(`${seconds} 秒`);
+    
+    return parts.join(" ");
+  };
 
   useEffect(() => {
     fetch("/ping")
       .then((res) => res.json())
       .then((data) => {
         setPing(data);
+        
+        // Calculate start times based on uptime
+        const now = Date.now();
+        const frontendUptime = parseUptime(data?.Frontend?.uptime);
+        const backendUptime = parseUptime(data?.Backend?.uptime);
+        
+        startTimeRef.current = now - frontendUptime;
+        backendStartTimeRef.current = now - backendUptime;
+        
+        setUptimeDisplay({
+          frontend: formatUptime(frontendUptime),
+          backend: formatUptime(backendUptime)
+        });
+        
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
       });
   }, []);
+
+  // Real-time update interval
+  useEffect(() => {
+    if (loading) return;
+    
+    const interval = setInterval(() => {
+      const now = Date.now();
+      
+      if (startTimeRef.current > 0) {
+        const frontendElapsed = now - startTimeRef.current;
+        setUptimeDisplay(prev => ({
+          ...prev,
+          frontend: formatUptime(frontendElapsed)
+        }));
+      }
+      
+      if (backendStartTimeRef.current > 0) {
+        const backendElapsed = now - backendStartTimeRef.current;
+        setUptimeDisplay(prev => ({
+          ...prev,
+          backend: formatUptime(backendElapsed)
+        }));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   return (
     <><div className="w-[90vw] h-full mx-auto rounded-[1.2rem] overflow-hidden">
@@ -61,21 +150,25 @@ export default function Desktop() {
                 運行狀態
               </h2>
 
-              <div className="space-y-2 text-base text-[#003f47]">
-                <p>
-                  前端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                  {ping?.Frontend?.currentVersion}
-                </p>
-                <p>
-                  後端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                  {ping?.Backend?.currentVersion}
-                </p>
-              </div>
+              {loading ? (
+                <p className="text-base text-[#003f47]">載入中...</p>
+              ) : (
+                <>
+                  <div className="space-y-2 text-base text-[#003f47]">
+                    <p>
+                      前端版本號：{ping?.Frontend?.currentVersion ? `v${ping.Frontend.currentVersion}` : "未知"}
+                    </p>
+                    <p>
+                      後端版本號：{ping?.Backend?.currentVersion && ping.Backend.currentVersion !== "N/A" ? `v${ping.Backend.currentVersion}` : "未知"}
+                    </p>
+                  </div>
 
-              <div className="space-y-2 text-base text-[#003f47] mt-4">
-                <p>前端運行時間：{timeEn2Zh(ping?.Frontend?.uptime)}</p>
-                <p>後端運行時間：{timeEn2Zh(ping?.Backend?.uptime)}</p>
-              </div>
+                  <div className="space-y-2 text-base text-[#003f47] mt-4">
+                    <p>前端運行時間：{uptimeDisplay.frontend}</p>
+                    <p>後端運行時間：{uptimeDisplay.backend}</p>
+                  </div>
+                </>
+              )}
 
               <div className="mt-4 text-base text-[#003f47]">
                 <p>
@@ -147,26 +240,4 @@ export default function Desktop() {
       }
     `}</style></>
   );
-}
-
-function timeEn2Zh(time: string) {
-  return time
-    ?.replace("month,", "月")
-    .replace("months,", "月")
-    .replace("days,", "天")
-    .replace("hours,", "時")
-    .replace("minutes,", "分")
-    .replace("seconds", "秒")
-    .replace("day,", "天")
-    .replace("hour,", "時")
-    .replace("minute,", "分")
-    .replace("second", "秒")
-    .replace("month", "月")
-    .replace("months", "月")
-    .replace("days", "天")
-    .replace("hours", "時")
-    .replace("minutes", "分")
-    .replace("day", "天")
-    .replace("hour", "時")
-    .replace("minute", "分");
 }
