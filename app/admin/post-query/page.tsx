@@ -26,7 +26,13 @@ export default function Page() {
   if (userAccount.userData?.permission !== 2) return <NotFoundPage />;
 
   const formatDateTime = (iso?: string) =>
-    iso ? new Date(iso).toLocaleDateString("zh-TW") : "";
+    iso
+      ? new Date(iso).toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+      : "";
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -220,14 +226,60 @@ export default function Page() {
               {results.length === 0 ? (
                 <tr><td colSpan={4} className="text-center py-8 text-gray-500">暫無資料</td></tr>
               ) : (
-                results.map((r, i) => (
-                  <tr key={r._id} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                    <td className="py-3 px-2 text-center"><span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{r._id}</span></td>
-                    <td className="py-3 px-2 truncate max-w-0"><div className="truncate" title={r.title}>{r.title}</div></td>
-                    <td className="py-3 px-2 text-center">{r.userName}</td>
-                    <td className="py-3 px-2 text-center text-gray-500">{formatDateTime(r.createdAt)}</td>
-                  </tr>
-                ))
+                <div className="space-y-3 p-4">
+                  {results?.map((r, index) => (
+                    <div
+                      key={r._id}
+                      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200"
+                    >
+                      {/* ID 標籤 */}
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          ID: {r._id}
+                        </span>
+                      </div>
+
+                      {/* 標題 */}
+                      <div className="mb-3">
+                        <h3 className="text-sm font-medium text-gray-900 leading-5">
+                          {r.title}
+                        </h3>
+                      </div>
+
+                      {/* 作者和時間 */}
+                      <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
+                        <div className="flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="font-medium">{r.userName} </span>
+                        </div>
+                        <div className="flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span>{formatDateTime(r.createdAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </tbody>
           </table>

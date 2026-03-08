@@ -171,7 +171,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             setTypeComments(e.target.value);
           }}
           value={typeComments}
-        // disabled
+          // disabled
         />
         <button className="h-full w-[40px] flex-none">
           <Image

@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
 import { Suspense, type Dispatch, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-
 
 // Components
 import SplitBlock from "@/app/(Layout)/splitBlockNew";

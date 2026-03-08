@@ -41,7 +41,9 @@ function ConfirmContent() {
   const accept = searchParams.get("accept");
 
   const [isLoading, setIsLoading] = useState(true);
-  const [confirmStatus, setConfirmStatus] = useState<ConfirmStatus | null>(null);
+  const [confirmStatus, setConfirmStatus] = useState<ConfirmStatus | null>(
+    null,
+  );
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const confirmUrl =
@@ -71,7 +73,9 @@ function ConfirmContent() {
       } catch (error) {
         if (isMounted) {
           console.error("Confirm request failed:", error);
-          setErrorMessage(error instanceof Error ? error.message : "Unknown error occurred");
+          setErrorMessage(
+            error instanceof Error ? error.message : "Unknown error occurred",
+          );
           setConfirmStatus(2);
           setIsLoading(false);
         }
@@ -128,7 +132,7 @@ async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
     const response = await fetch(confirmUrl.toString(), {
       method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 

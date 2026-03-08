@@ -55,7 +55,10 @@ export default function Success({ message }: { message: string }) {
           points="100.2,40.2 51.5,88.8 29.8,67.5 "
         />
       </svg>
-      <h1 className="text-2xl text-center font-semibold" style={{ color: "#73AF55" }}>
+      <h1
+        className="text-2xl text-center font-semibold"
+        style={{ color: "#73AF55" }}
+      >
         {message}
       </h1>
     </>

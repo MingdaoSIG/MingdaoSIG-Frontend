@@ -20,9 +20,9 @@ import sigAPI from "@/modules/sigAPI";
 import ProfileMobile from "./(User)/mobile";
 
 export default function UserPage({
-  params
+  params,
 }: {
-  params: Promise<{ userID: string }>
+  params: Promise<{ userID: string }>;
 }) {
   // Unwrap the params Promise using React.use()
   const resolvedParams = use(params);

@@ -1,64 +1,52 @@
-import { NextResponse } from "next/server";
-import { readFileSync } from "fs";
 import axios from "axios";
-
-import ReadableTime from "@/modules/api/ReadableTime";
+import { NextResponse } from "next/server";
 import GetOnlineAppVersion from "@/modules/api/GetOnlineAppVersion";
+import ReadableTime from "@/modules/api/ReadableTime";
+import packageJSON from "@/package.json";
+
+interface BackendData {
+  service?: string;
+  uptime?: string;
+  version?: {
+    current: string;
+    latest: string;
+    upToDate: string | boolean;
+  };
+}
 
 export async function GET() {
-  const packageJSON = JSON.parse(readFileSync("./package.json").toString());
-  
-  // Get online versions with fallback
-  let mainVersion = "Unknown";
-  let developmentVersion = "Unknown";
-  try {
-    const versions = await GetOnlineAppVersion();
-    mainVersion = versions.mainVersion;
-    developmentVersion = versions.developmentVersion;
-  } catch (error) {
-    console.error("Failed to get online app version:", error);
-  }
+  const [onlineVersions, apiResponse] = await Promise.all([
+    GetOnlineAppVersion(),
+    axios
+      .get<BackendData>(`${process.env.NEXT_PUBLIC_API_URL}/ping`)
+      .catch(() => null),
+  ]);
 
-  // Get backend status with fallback
-  let backendData: any = {
-    service: "unknown",
-    uptime: "N/A",
-    version: {
-      current: "N/A",
-      latest: "N/A",
-      upToDate: "N/A",
-    },
-  };
-  try {
-    const apiResponse = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/ping`,
-      { timeout: 5000 }
-    );
-    backendData = apiResponse.data;
-  } catch (error) {
-    console.error("Failed to get backend ping:", error);
-  }
+  const { mainVersion, developmentVersion } = onlineVersions;
+  const apiData = apiResponse?.data || {};
 
-  const data: any = {
-    Frontend: {
+  const currentFrontendVersion = packageJSON.version;
+
+  const data = {
+    frontend: {
       status: "Online",
-      uptime: ReadableTime(Math.round(performance.now()))["string"],
-      currentVersion: packageJSON.version,
+      uptime: ReadableTime(Math.round(performance.now())).string,
+      currentVersion: currentFrontendVersion,
       latestVersion: {
         main: mainVersion,
         development: developmentVersion,
       },
       upToDate: {
-        main: mainVersion !== "Unknown" && mainVersion >= packageJSON.version,
-        development: developmentVersion !== "Unknown" && developmentVersion >= packageJSON.version,
+        main: mainVersion >= currentFrontendVersion,
+        development: developmentVersion >= currentFrontendVersion,
       },
     },
-    Backend: {
-      status: backendData.service?.replace("up", "Online") || "Offline",
-      uptime: backendData.uptime || "N/A",
-      currentVersion: backendData.version?.current || "N/A",
-      latestVersion: backendData.version?.latest || "N/A",
-      upToDate: backendData.version?.upToDate || "N/A",
+    backend: {
+      status: apiData.service?.replace("up", "Online") || "Offline",
+      uptime: apiData.uptime || "N/A",
+      currentVersion: apiData.version?.current || "N/A",
+      latestVersion: apiData.version?.latest || "N/A",
+      upToDate: apiData.version?.upToDate || "N/A",
     },
   };
 

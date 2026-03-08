@@ -69,7 +69,11 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           </div>
           <div className={style.statist}>
             <p className={style.date}>
-              {new Date(threadData.createdAt!).toLocaleString("zh-TW").split(" ")[0]}
+              {
+                new Date(threadData.createdAt!)
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
             </p>
             <div className={style.likes}>
               <Image
@@ -110,15 +114,17 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           {markdownToPlainText(threadData.content)}
         </p>
 
-        {threadData.hashtag && threadData.hashtag.length > 0 && !isAnnouncement && (
-          <div className={style.hashtags}>
-            {threadData.hashtag.slice(0, 3).map((tag, index) => (
-              <span key={index} className={style.hashtag}>
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {threadData.hashtag &&
+          threadData.hashtag.length > 0 &&
+          !isAnnouncement && (
+            <div className={style.hashtags}>
+              {threadData.hashtag.slice(0, 3).map((tag, index) => (
+                <span key={index} className={style.hashtag}>
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
       </div>
 
       <div

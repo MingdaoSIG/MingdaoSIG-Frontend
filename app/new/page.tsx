@@ -92,7 +92,7 @@ export default function NewPostPage() {
 
     // 如果有存儲的數據，則加載
     if (Object.keys(loadedData).length > 0) {
-      setPostData(prev => ({
+      setPostData((prev) => ({
         ...prev,
         ...loadedData,
       }));
