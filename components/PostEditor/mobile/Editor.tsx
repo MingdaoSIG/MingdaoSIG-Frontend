@@ -1,15 +1,14 @@
-import type { Dispatch, SetStateAction } from "react";
 import { MdEditor, MdPreview } from "md-editor-rt";
+import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
-
-// Types
-import type { TPostAPI } from "../types/postAPI";
-
-// Configs
-import { toolbars } from "../config/editorToolbar";
 
 // APIs Request Function
 import { imageUpload } from "@/modules/imageUploadAPI";
+
+// Configs
+import { toolbars } from "../config/editorToolbar";
+// Types
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;

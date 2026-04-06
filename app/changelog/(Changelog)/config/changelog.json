@@ -1,0 +1,1294 @@
+[
+  {
+    "version": "2.19.0",
+    "date": "2026-04-06",
+    "type": "security",
+    "title": "安全性與效能優化更新",
+    "summary": "強化平台安全性，修復漏洞並優化記憶體使用效率",
+    "changes": [
+      {
+        "type": "security",
+        "description": "修復 GitHub Token 洩露問題，將敏感資訊移至伺服器端處理"
+      },
+      {
+        "type": "security",
+        "description": "強化 XSS 防護機制，新增 URL 協議驗證與 HTML 轉義"
+      },
+      {
+        "type": "security",
+        "description": "新增 URL 參數驗證機制，防止路徑遍歷攻擊"
+      },
+      {
+        "type": "feature",
+        "description": "新增更新日誌頁面，方便使用者查看版本變更"
+      },
+      {
+        "type": "improvement",
+        "description": "優化 API 請求處理，新增 AbortController 防止記憶體洩漏"
+      },
+      {
+        "type": "improvement",
+        "description": "強化 localStorage 資料驗證，確保資料完整性"
+      }
+    ]
+  },
+  {
+    "version": "2.18.9",
+    "date": "2026-03-15",
+    "type": "improvement",
+    "title": "表格結構與樣式優化",
+    "summary": "優化 SIG 成員管理介面與資訊頁面顯示",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "更新表格結構與樣式，提升可讀性"
+      },
+      {
+        "type": "fix",
+        "description": "調整 SIG 成員管理的電子郵件顯示"
+      },
+      {
+        "type": "fix",
+        "description": "修正前後端資料存取的大小寫問題"
+      }
+    ]
+  },
+  {
+    "version": "2.18.8",
+    "date": "2026-02-28",
+    "type": "feature",
+    "title": "SIG 成員管理功能",
+    "summary": "新增 SIG 成員名單管理與下載功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 SIG 成員管理功能"
+      },
+      {
+        "type": "feature",
+        "description": "支援成員名單下載功能"
+      }
+    ]
+  },
+  {
+    "version": "2.18.7",
+    "date": "2026-02-20",
+    "type": "improvement",
+    "title": "依賴套件更新",
+    "summary": "更新依賴套件以修復安全漏洞",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "更新依賴套件至最新版本"
+      },
+      {
+        "type": "security",
+        "description": "修復已知安全漏洞"
+      }
+    ]
+  },
+  {
+    "version": "2.18.6",
+    "date": "2026-02-10",
+    "type": "improvement",
+    "title": "程式碼結構重構",
+    "summary": "清理未使用的程式碼與樣式，優化載入體驗",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "移除未使用的連結設定與骨架樣式"
+      },
+      {
+        "type": "improvement",
+        "description": "增強 Information 元件的載入狀態與介面"
+      },
+      {
+        "type": "improvement",
+        "description": "增加骨架屏貼文數量以改善載入體驗"
+      }
+    ]
+  },
+  {
+    "version": "2.18.5",
+    "date": "2026-01-25",
+    "type": "improvement",
+    "title": "介面樣式調整",
+    "summary": "優化狀態圖片與表單元件的樣式",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "更新依賴套件至最新版本"
+      },
+      {
+        "type": "fix",
+        "description": "調整狀態圖片最大寬度以改善版面一致性"
+      },
+      {
+        "type": "improvement",
+        "description": "清理未使用的樣式並更新版面配置"
+      }
+    ]
+  },
+  {
+    "version": "2.18.4",
+    "date": "2026-01-15",
+    "type": "improvement",
+    "title": "程式碼可讀性提升",
+    "summary": "優化 Buttons 與 MetaDataForm 元件的程式碼結構",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "清理 Buttons 與 MetaDataForm 元件程式碼以提升可讀性"
+      },
+      {
+        "type": "improvement",
+        "description": "調整 SplitBlock 與 TitleSigForm 元件樣式一致性"
+      }
+    ]
+  },
+  {
+    "version": "2.18.3",
+    "date": "2026-01-05",
+    "type": "improvement",
+    "title": "Tailwind CSS 遷移",
+    "summary": "將 SCSS 模組遷移至 Tailwind CSS",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "移除 SCSS 模組，改用 Tailwind CSS 類別"
+      },
+      {
+        "type": "improvement",
+        "description": "更新元件版面與功能"
+      }
+    ]
+  },
+  {
+    "version": "2.18.2",
+    "date": "2025-12-25",
+    "type": "improvement",
+    "title": "元件樣式與功能優化",
+    "summary": "優化 ButtonTools 與 SigList 元件",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "更新 ButtonTools 與 SigList 元件樣式與功能"
+      },
+      {
+        "type": "improvement",
+        "description": "移除未使用的樣式與元件"
+      }
+    ]
+  },
+  {
+    "version": "2.18.1",
+    "date": "2025-12-20",
+    "type": "fix",
+    "title": "Session 管理修復",
+    "summary": "改善 Session 處理與本地儲存邏輯",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "改善 useUserAccount 中的 Session 處理與本地儲存邏輯"
+      }
+    ]
+  },
+  {
+    "version": "2.18.0",
+    "date": "2025-12-15",
+    "type": "feature",
+    "title": "MDAPP 整合與系統優化",
+    "summary": "新增明道 APP 快速登入功能，並優化平台穩定性",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 MDAPP 直接登入功能，從明道學 APP 進入即可自動登入"
+      },
+      {
+        "type": "improvement",
+        "description": "優化前端效能，減少不必要的重新渲染"
+      },
+      {
+        "type": "improvement",
+        "description": "改善行動裝置上的觸控操作體驗"
+      },
+      {
+        "type": "fix",
+        "description": "修復部分情況下頁面載入緩慢的問題"
+      }
+    ]
+  },
+  {
+    "version": "2.17.9",
+    "date": "2025-12-01",
+    "type": "fix",
+    "title": "工具列與封面連結修復",
+    "summary": "修復工具列點擊問題與封面網址處理",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "更新 ToolBar 可點擊屬性"
+      },
+      {
+        "type": "fix",
+        "description": "改善 ThreadsList 封面網址處理"
+      }
+    ]
+  },
+  {
+    "version": "2.17.8",
+    "date": "2025-11-20",
+    "type": "improvement",
+    "title": "Skeleton 與主題標籤支援",
+    "summary": "優化 Skeleton 元件版面並新增主題標籤支援",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "更新 Skeleton 與 ThreadsList 元件版面"
+      },
+      {
+        "type": "feature",
+        "description": "新增主題標籤 Skeleton 支援"
+      }
+    ]
+  },
+  {
+    "version": "2.17.7",
+    "date": "2025-11-10",
+    "type": "fix",
+    "title": "封面圖片處理修復",
+    "summary": "修復 MetaDataForm 封面圖片網址處理問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "更新 MetaDataForm 元件封面圖片網址處理"
+      }
+    ]
+  },
+  {
+    "version": "2.17.6",
+    "date": "2025-11-01",
+    "type": "fix",
+    "title": "編輯器背景圖片修復",
+    "summary": "修復 PostEditor 背景圖片網址處理",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "更新 PostEditor 元件背景圖片網址處理"
+      }
+    ]
+  },
+  {
+    "version": "2.17.5",
+    "date": "2025-10-25",
+    "type": "fix",
+    "title": "編輯器版面調整",
+    "summary": "調整 PostEditor 內距以改善版面",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "調整 PostEditor 元件內距以改善版面"
+      }
+    ]
+  },
+  {
+    "version": "2.17.4",
+    "date": "2025-10-20",
+    "type": "improvement",
+    "title": "檔案驗證與標籤管理",
+    "summary": "增強檔案輸入驗證與標籤顯示樣式",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "增強檔案輸入驗證"
+      },
+      {
+        "type": "improvement",
+        "description": "改善標籤顯示與封面圖片樣式"
+      }
+    ]
+  },
+  {
+    "version": "2.17.3",
+    "date": "2025-10-15",
+    "type": "feature",
+    "title": "貼文資料持久化",
+    "summary": "新增貼文資料本地儲存功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "將貼文資料持久化儲存於本地儲存空間"
+      },
+      {
+        "type": "improvement",
+        "description": "改善日期顯示與表格版面"
+      }
+    ]
+  },
+  {
+    "version": "2.17.2",
+    "date": "2025-10-10",
+    "type": "improvement",
+    "title": "編輯器樣式優化",
+    "summary": "優化 PostEditor 元件樣式與結構",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "清理程式碼格式以確保一致性"
+      },
+      {
+        "type": "feature",
+        "description": "新增未登入使用者提示"
+      },
+      {
+        "type": "improvement",
+        "description": "重組並增強主題標籤區塊"
+      }
+    ]
+  },
+  {
+    "version": "2.17.1",
+    "date": "2025-10-05",
+    "type": "improvement",
+    "title": "SplitBlock 與 TitleSigForm",
+    "summary": "重構編輯器版面配置",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "重構 useFetch 與 usePost Hooks 以提升可讀性"
+      },
+      {
+        "type": "feature",
+        "description": "實作 SplitBlock 元件"
+      },
+      {
+        "type": "feature",
+        "description": "新增 TitleSigForm 元件"
+      }
+    ]
+  },
+  {
+    "version": "2.17.0",
+    "date": "2025-10-01",
+    "type": "feature",
+    "title": "SIG 管理功能增強",
+    "summary": "新增 SIG Leader 與指導老師管理功能，強化社群管理能力",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 SIG Leader 管理功能（新增、刪除）"
+      },
+      {
+        "type": "feature",
+        "description": "新增 SIG 指導老師管理功能（新增、刪除）"
+      },
+      {
+        "type": "improvement",
+        "description": "更新網站架構套件"
+      },
+      {
+        "type": "fix",
+        "description": "修復網站快取問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復狀態元件顯示錯誤"
+      },
+      {
+        "type": "fix",
+        "description": "修復上線時間顯示格式"
+      }
+    ]
+  },
+  {
+    "version": "2.16.5",
+    "date": "2025-09-25",
+    "type": "improvement",
+    "title": "登入體驗優化",
+    "summary": "改善非明道帳號登入的錯誤提示",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "新增非明道帳號登入顯示錯誤訊息"
+      }
+    ]
+  },
+  {
+    "version": "2.16.4",
+    "date": "2025-09-20",
+    "type": "fix",
+    "title": "多項顯示問題修復",
+    "summary": "修復手機版與電腦版的多項顯示問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復手機版個人頁面內容顯示"
+      },
+      {
+        "type": "fix",
+        "description": "修復統計頁面統計圖表縮放問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復電腦版貼文 Cover 顯示問題"
+      },
+      {
+        "type": "improvement",
+        "description": "修改資訊頁面內容"
+      }
+    ]
+  },
+  {
+    "version": "2.16.2",
+    "date": "2025-09-12",
+    "type": "improvement",
+    "title": "Node 與套件管理",
+    "summary": "指定 Node 與套件管理器版本需求",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "指定 Node 與套件管理器版本需求"
+      }
+    ]
+  },
+  {
+    "version": "2.16.1",
+    "date": "2025-09-10",
+    "type": "feature",
+    "title": "GTM 與載入優化",
+    "summary": "新增 Google Tag Manager 與優化載入體驗",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 Google Tag Manager (GTM) 支援"
+      },
+      {
+        "type": "fix",
+        "description": "修復區塊載入問題"
+      }
+    ]
+  },
+  {
+    "version": "2.16.0",
+    "date": "2025-09-01",
+    "type": "feature",
+    "title": "Dashboard 統計功能上線",
+    "summary": "全新 Dashboard 頁面，即時查看平台統計數據",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 Dashboard 頁面可察看平台統計資訊"
+      },
+      {
+        "type": "feature",
+        "description": "Dashboard 可查看使用者數量、平台按讚數、發文人數、有效貼文數"
+      },
+      {
+        "type": "feature",
+        "description": "Dashboard 可查看各 SIG 發文數量、各 SIG 人數"
+      },
+      {
+        "type": "feature",
+        "description": "更新升級網站架構核心"
+      },
+      {
+        "type": "improvement",
+        "description": "Info 頁面新增 Dashboard 連結"
+      },
+      {
+        "type": "improvement",
+        "description": "Info 頁面新增版本號顯示"
+      },
+      {
+        "type": "improvement",
+        "description": "Info 頁面新增運行時間"
+      },
+      {
+        "type": "improvement",
+        "description": "修改上傳圖片網址為 ID"
+      },
+      {
+        "type": "fix",
+        "description": "修復登入紀錄身分、Badge 顯示"
+      },
+      {
+        "type": "fix",
+        "description": "修復 Info 頁面 Markdown 教學連結"
+      },
+      {
+        "type": "fix",
+        "description": "修復 Info 頁面開啟新頁面問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復平台圖片連結問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復貼文 Cover 連結"
+      }
+    ]
+  },
+  {
+    "version": "2.15.5",
+    "date": "2025-08-25",
+    "type": "feature",
+    "title": "狀態監控與 Bug Hunter 徽章",
+    "summary": "新增網站狀態監控與貢獻者徽章系統",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "在 Info 頁面新增網站上線狀態以及 Status 頁面連結"
+      },
+      {
+        "type": "feature",
+        "description": "使用者頁面新增 Bug Hunter 徽章"
+      }
+    ]
+  },
+  {
+    "version": "2.15.4",
+    "date": "2025-08-20",
+    "type": "feature",
+    "title": "狀態頁面整合",
+    "summary": "在 Info 頁面新增平台狀態顯示",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增狀態頁面整合"
+      }
+    ]
+  },
+  {
+    "version": "2.15.3",
+    "date": "2025-08-15",
+    "type": "fix",
+    "title": "手機版顯示修復",
+    "summary": "修復手機版首頁顯示問題與調整 Info 頁面內容",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復手機版首頁高度過高無法顯示貼文問題"
+      },
+      {
+        "type": "improvement",
+        "description": "將 Info 頁面 Join Us 修改為 Join Dev 並且放置在聯絡我們"
+      }
+    ]
+  },
+  {
+    "version": "2.15.2",
+    "date": "2025-08-10",
+    "type": "improvement",
+    "title": "系統架構升級",
+    "summary": "重新建置系統架構，提升平台承載能力",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "重新建置一套系統性的架構，加入負載平衡器以及新的運算節點"
+      },
+      {
+        "type": "improvement",
+        "description": "使平台可以承受更高的峰值流量"
+      },
+      {
+        "type": "fix",
+        "description": "修正 API 網址環境變數內容"
+      }
+    ]
+  },
+  {
+    "version": "2.15.1",
+    "date": "2025-08-05",
+    "type": "fix",
+    "title": "SIG 列表修復",
+    "summary": "修復 SIG 列表顯示異常",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復 SIG list 開發者項的顯示異常"
+      }
+    ]
+  },
+  {
+    "version": "2.15.0",
+    "date": "2025-08-01",
+    "type": "feature",
+    "title": "Info 頁面登場",
+    "summary": "全新 Info 資訊頁面，取代原有的 Hashtag 功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 Info 頁面"
+      },
+      {
+        "type": "improvement",
+        "description": "更換工具列 hashtag 圖示為 info"
+      },
+      {
+        "type": "improvement",
+        "description": "移除電腦版首頁右側功能選單"
+      },
+      {
+        "type": "improvement",
+        "description": "移除 hashtag 頁面"
+      }
+    ]
+  },
+  {
+    "version": "2.14.0",
+    "date": "2025-07-15",
+    "type": "improvement",
+    "title": "手機版全面優化",
+    "summary": "全面優化手機版介面與操作體驗",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "💖 手機介面大改美化，首頁完成"
+      },
+      {
+        "type": "improvement",
+        "description": "調整手機版最大支援寬度為 1024px"
+      },
+      {
+        "type": "improvement",
+        "description": "移除手機使用者打橫拒絕使用畫面"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機版字體內容大小"
+      },
+      {
+        "type": "fix",
+        "description": "修復手機按鈕大小問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機貼文瀏覽問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機使用者頁面介紹版面"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機 SIG 頁面介紹版面"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機首頁 SIG 列表滑動問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機未完工頁面內容顯示問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復手機使用者打橫畫面問題"
+      }
+    ]
+  },
+  {
+    "version": "2.13.19",
+    "date": "2025-07-01",
+    "type": "fix",
+    "title": "換行問題修復",
+    "summary": "修復換行顯示問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復換行顯示問題"
+      }
+    ]
+  },
+  {
+    "version": "2.13.18",
+    "date": "2025-06-25",
+    "type": "improvement",
+    "title": "分隔線樣式調整",
+    "summary": "調整分隔線顏色",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "調整分隔線顏色"
+      },
+      {
+        "type": "improvement",
+        "description": "更新 pnpm 版本"
+      }
+    ]
+  },
+  {
+    "version": "2.13.17",
+    "date": "2025-06-20",
+    "type": "security",
+    "title": "安全性提升",
+    "summary": "移除敏感資訊顯示",
+    "changes": [
+      {
+        "type": "security",
+        "description": "移除 IP 位址顯示"
+      }
+    ]
+  },
+  {
+    "version": "2.13.16",
+    "date": "2025-06-15",
+    "type": "feature",
+    "title": "登入紀錄功能",
+    "summary": "新增登入紀錄與 Webhook 通知",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增登入紀錄功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增登入 Webhook 路由"
+      }
+    ]
+  },
+  {
+    "version": "2.13.15",
+    "date": "2025-06-10",
+    "type": "feature",
+    "title": "公告手機版支援",
+    "summary": "新增公告貼文在手機版的顯示支援",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增公告貼文在手機版的顯示支援"
+      }
+    ]
+  },
+  {
+    "version": "2.13.14",
+    "date": "2025-06-05",
+    "type": "fix",
+    "title": "貼文載入數量修復",
+    "summary": "修復貼文載入數量限制問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復首頁貼文無法載入 11-20 篇問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復使用者與 SIG 頁面限制 10 篇貼文問題"
+      }
+    ]
+  },
+  {
+    "version": "2.13.13",
+    "date": "2025-06-01",
+    "type": "fix",
+    "title": "提示文字大小修復",
+    "summary": "修復提示文字大小錯誤",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復提示文字大小錯誤"
+      }
+    ]
+  },
+  {
+    "version": "2.13.12",
+    "date": "2025-05-25",
+    "type": "feature",
+    "title": "公告功能",
+    "summary": "新增公告貼文列表與發布功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增公告貼文列表與發布功能"
+      }
+    ]
+  },
+  {
+    "version": "2.13.11",
+    "date": "2025-05-20",
+    "type": "fix",
+    "title": "貼文載入修復",
+    "summary": "修復貼文無法載入 10 篇問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復貼文無法載入 10 篇問題"
+      }
+    ]
+  },
+  {
+    "version": "2.13.10",
+    "date": "2025-05-15",
+    "type": "feature",
+    "title": "編輯封面功能",
+    "summary": "新增編輯貼文封面功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增編輯貼文封面功能"
+      }
+    ]
+  },
+  {
+    "version": "2.13.7",
+    "date": "2025-05-10",
+    "type": "fix",
+    "title": "封面遺失修復",
+    "summary": "修復編輯後封面遺失問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復編輯後封面遺失問題"
+      },
+      {
+        "type": "improvement",
+        "description": "重構 CSS 單位使用"
+      },
+      {
+        "type": "feature",
+        "description": "新增貼文統計圖示"
+      }
+    ]
+  },
+  {
+    "version": "2.13.6",
+    "date": "2025-05-05",
+    "type": "improvement",
+    "title": "CSS 單位重構",
+    "summary": "重構 CSS 單位使用",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "重構 CSS 單位使用"
+      }
+    ]
+  },
+  {
+    "version": "2.13.5",
+    "date": "2025-04-25",
+    "type": "improvement",
+    "title": "手機閱讀體驗",
+    "summary": "改善手機閱讀體驗",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "改善手機閱讀體驗"
+      }
+    ]
+  },
+  {
+    "version": "2.13.4",
+    "date": "2025-04-20",
+    "type": "fix",
+    "title": "留言數量問題修復",
+    "summary": "修復留言數量 429 問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復留言數量 429 問題"
+      }
+    ]
+  },
+  {
+    "version": "2.13.3",
+    "date": "2025-04-15",
+    "type": "fix",
+    "title": "留言互動修復",
+    "summary": "修復留言互動相關問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復點擊第一則留言使用者 ID 底線問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復點擊留言使用者 ID 會關閉留言問題"
+      },
+      {
+        "type": "fix",
+        "description": "修復編輯貼文上傳封面按鈕"
+      }
+    ]
+  },
+  {
+    "version": "2.13.0",
+    "date": "2025-04-01",
+    "type": "feature",
+    "title": "留言功能上線",
+    "summary": "新增貼文留言功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增貼文留言功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增延伸回覆功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增無留言提示訊息"
+      },
+      {
+        "type": "feature",
+        "description": "新增留言登入檢查"
+      }
+    ]
+  },
+  {
+    "version": "2.12.2",
+    "date": "2025-03-20",
+    "type": "fix",
+    "title": "上線時間修復",
+    "summary": "修復上線時間未運行問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復上線時間未運行問題"
+      }
+    ]
+  },
+  {
+    "version": "2.12.1",
+    "date": "2025-03-15",
+    "type": "fix",
+    "title": "Skeleton 最大寬度調整",
+    "summary": "調整 Skeleton 最大寬度",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "調整 Skeleton 最大寬度"
+      }
+    ]
+  },
+  {
+    "version": "2.12.0",
+    "date": "2025-03-10",
+    "type": "feature",
+    "title": "貼文資訊功能",
+    "summary": "新增貼文資訊顯示功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增貼文資訊顯示功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增留言擷取功能"
+      }
+    ]
+  },
+  {
+    "version": "2.11.0",
+    "date": "2025-03-01",
+    "type": "improvement",
+    "title": "手機貼文預覽優化",
+    "summary": "優化手機貼文預覽顯示",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "移除貼文預覽中的圖片"
+      },
+      {
+        "type": "improvement",
+        "description": "更新背景顏色與 SigList 模組樣式"
+      },
+      {
+        "type": "improvement",
+        "description": "移除使用者徽章通知"
+      }
+    ]
+  },
+  {
+    "version": "2.10.0",
+    "date": "2025-02-20",
+    "type": "feature",
+    "title": "編輯器重構",
+    "summary": "重構編輯器元件與功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增貼文頁面編輯按鈕"
+      },
+      {
+        "type": "feature",
+        "description": "新增手機版編輯頁面"
+      },
+      {
+        "type": "improvement",
+        "description": "將 DISCARD 按鈕改為 UNDO"
+      },
+      {
+        "type": "improvement",
+        "description": "重構編輯器元件結構"
+      }
+    ]
+  },
+  {
+    "version": "2.9.0",
+    "date": "2025-02-10",
+    "type": "feature",
+    "title": "手機個人頁面",
+    "summary": "新增手機版個人頁面與 SIG 列表",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增手機版個人頁面"
+      },
+      {
+        "type": "feature",
+        "description": "新增手機版 SIG 列表"
+      },
+      {
+        "type": "improvement",
+        "description": "改善手機版個人卡片樣式"
+      }
+    ]
+  },
+  {
+    "version": "2.8.2",
+    "date": "2025-01-25",
+    "type": "fix",
+    "title": "Info 元件修復",
+    "summary": "修復 Info 元件渲染問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復 Info 元件條件渲染問題"
+      },
+      {
+        "type": "feature",
+        "description": "新增 ReadJoinSigAPI 功能"
+      }
+    ]
+  },
+  {
+    "version": "2.8.0",
+    "date": "2025-01-20",
+    "type": "feature",
+    "title": "封面圖片功能",
+    "summary": "新增貼文封面圖片功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增封面圖片上傳功能"
+      },
+      {
+        "type": "improvement",
+        "description": "更新封面圖片上傳 API 回應處理"
+      },
+      {
+        "type": "fix",
+        "description": "修正檔案上傳標籤錯字"
+      }
+    ]
+  },
+  {
+    "version": "2.7.3",
+    "date": "2025-01-10",
+    "type": "improvement",
+    "title": "工具列優化",
+    "summary": "優化工具列大小與顯示",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "優化工具列大小"
+      },
+      {
+        "type": "fix",
+        "description": "修復自動登出問題"
+      }
+    ]
+  },
+  {
+    "version": "2.7.2",
+    "date": "2025-01-05",
+    "type": "fix",
+    "title": "編輯頁面修復",
+    "summary": "修復編輯頁面相關問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復 useEffect 依賴陣列問題"
+      },
+      {
+        "type": "improvement",
+        "description": "移除不必要的 console.log"
+      }
+    ]
+  },
+  {
+    "version": "2.7.1",
+    "date": "2024-12-25",
+    "type": "fix",
+    "title": "首頁滾動修復",
+    "summary": "修復電腦版最新貼文滾動問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復電腦版最新貼文滾動問題"
+      },
+      {
+        "type": "improvement",
+        "description": "工具列圓角設計"
+      }
+    ]
+  },
+  {
+    "version": "2.7.0",
+    "date": "2024-12-20",
+    "type": "feature",
+    "title": "編輯貼文功能",
+    "summary": "新增編輯貼文功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增編輯貼文功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增按讚功能"
+      },
+      {
+        "type": "improvement",
+        "description": "將 EDIT 按鈕改為 SEND"
+      }
+    ]
+  },
+  {
+    "version": "2.6.1",
+    "date": "2024-12-10",
+    "type": "fix",
+    "title": "手機列表高度修復",
+    "summary": "修復手機列表高度問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修復手機列表高度問題"
+      }
+    ]
+  },
+  {
+    "version": "2.6.0",
+    "date": "2024-12-05",
+    "type": "feature",
+    "title": "貼文類型切換器",
+    "summary": "新增手機貼文列表類型切換器",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增手機貼文列表類型切換器"
+      },
+      {
+        "type": "fix",
+        "description": "修復新增貼文頁面抖動問題"
+      }
+    ]
+  },
+  {
+    "version": "2.5.1",
+    "date": "2024-11-25",
+    "type": "feature",
+    "title": "加入 SIG 確認頁面",
+    "summary": "新增加入 SIG 確認頁面與狀態元件",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增加入 SIG 確認頁面"
+      },
+      {
+        "type": "feature",
+        "description": "新增成功與失敗狀態元件"
+      },
+      {
+        "type": "feature",
+        "description": "新增返回首頁按鈕"
+      },
+      {
+        "type": "improvement",
+        "description": "引入自定義狀態碼模組"
+      }
+    ]
+  },
+  {
+    "version": "2.4.1",
+    "date": "2024-11-15",
+    "type": "feature",
+    "title": "Ping API",
+    "summary": "新增 Ping API 用於檢查服務狀態",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增 Ping API 路由"
+      },
+      {
+        "type": "feature",
+        "description": "新增服務狀態與版本資訊檢查"
+      }
+    ]
+  },
+  {
+    "version": "2.4.0",
+    "date": "2024-11-01",
+    "type": "feature",
+    "title": "加入 SIG 功能",
+    "summary": "新增加入 SIG 功能",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增加入 SIG 功能"
+      }
+    ]
+  },
+  {
+    "version": "2.0.0",
+    "date": "2024-09-01",
+    "type": "feature",
+    "title": "MDSIG 2.0 正式上線",
+    "summary": "全面重構的 MDSIG 平台正式發布",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "全新設計的使用者介面"
+      },
+      {
+        "type": "feature",
+        "description": "支援響應式設計，完美適配各種裝置"
+      },
+      {
+        "type": "feature",
+        "description": "全新貼文編輯器，支援 Markdown 語法"
+      },
+      {
+        "type": "feature",
+        "description": "整合 Google OAuth 登入"
+      },
+      {
+        "type": "feature",
+        "description": "支援無限滾動載入貼文"
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2024-06-01",
+    "type": "feature",
+    "title": "MDSIG 平台誕生",
+    "summary": "明道中學 SIG 社群平台首次發布",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "基礎貼文發布與瀏覽功能"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 社群建立與管理"
+      },
+      {
+        "type": "feature",
+        "description": "使用者帳號系統"
+      }
+    ]
+  }
+]

@@ -1,31 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-
-// Components
-import Reply from "../components/Reply";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
-
-// Styles
-import style from "./Thread.module.scss";
-
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
-
-// API Request Function
-import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
-
 // Custom Hooks
 import useAlert from "@/utils/useAlert";
+// Utils
+import { useUserAccount } from "@/utils/useUserAccount";
+
+// API Request Function
+import { GetCommentAPI, PostCommentAPI } from "../apis/CommentAPI";
+// Components
+import Reply from "../components/Reply";
 
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
-
-// Utils
-import { useUserAccount } from "@/utils/useUserAccount";
+// Styles
+import style from "./Thread.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -37,6 +32,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const [sig, setSig] = useState<any>(null);
   const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
+
+  // 使用 ref 追蹤組件是否已卸載
+  const isMounted = useRef(true);
 
   const route = useRouter();
 
@@ -63,24 +61,29 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   }
 
   useEffect(() => {
-    GetUserAPI();
-    GetSigAPI();
-    GetCommentAPI(post).then((res) => {
-      setComments(res.data);
-    });
+    // 重置掛載狀態
+    isMounted.current = true;
+
+    // 創建 AbortController 用於取消請求
+    const controller = new AbortController();
 
     async function GetUserAPI() {
       try {
         const res = await (
           await fetch(`${API_URL}/user/${post.user}`, {
             method: "GET",
+            signal: controller.signal,
           })
         ).json();
-        setUser(res.data);
 
-        return;
-      } catch (error) {
-        console.log(error);
+        // 只有在組件仍然掛載時才更新狀態
+        if (isMounted.current) {
+          setUser(res.data);
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.log(error);
+        }
       }
     }
 
@@ -89,15 +92,44 @@ export default function ThreadInfo({ post }: { post: TThread }) {
         const res = await (
           await fetch(`${API_URL}/sig/${post.sig}`, {
             method: "GET",
+            signal: controller.signal,
           })
         ).json();
-        setSig(res.data);
 
-        return;
-      } catch (error) {
-        console.log(error);
+        // 只有在組件仍然掛載時才更新狀態
+        if (isMounted.current) {
+          setSig(res.data);
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.log(error);
+        }
       }
     }
+
+    async function GetCommentsAPI() {
+      try {
+        const res = await GetCommentAPI(post);
+        // 只有在組件仍然掛載時才更新狀態
+        if (isMounted.current) {
+          setComments(res.data);
+        }
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.log(error);
+        }
+      }
+    }
+
+    GetUserAPI();
+    GetSigAPI();
+    GetCommentsAPI();
+
+    // 清理函數
+    return () => {
+      isMounted.current = false;
+      controller.abort();
+    };
   }, [post]);
 
   return (

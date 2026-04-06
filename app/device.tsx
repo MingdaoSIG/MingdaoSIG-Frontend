@@ -2,14 +2,12 @@
 
 // Third-Party Package
 import { Fragment, type ReactNode } from "react";
-
+import HeaderBarDesktop from "@/app/(Layout)/desktop/HeaderBar";
 // Desktop-Side Component
 import ToolBarDesktop from "@/app/(Layout)/desktop/ToolBar";
-import HeaderBarDesktop from "@/app/(Layout)/desktop/HeaderBar";
-
+import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 // Mobile-Side Component
 import ToolBarMobile from "@/app/(Layout)/mobile/ToolBar";
-import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";

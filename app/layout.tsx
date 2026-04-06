@@ -1,11 +1,11 @@
 // app/layout.tsx
 
+import { GoogleTagManager } from "@next/third-parties/google";
+import { config } from "md-editor-rt";
 // Third-Party Package
 import type { Metadata, Viewport } from "next";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { Noto_Sans_TC } from "next/font/google";
 import type { ReactNode } from "react";
-import { config } from "md-editor-rt";
 
 // Providers
 import { Providers } from "./providers";

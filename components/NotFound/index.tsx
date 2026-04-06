@@ -1,9 +1,8 @@
-import styles from "./NotFound.module.scss";
-import Link from "next/link";
 import Image from "next/image";
-
+import Link from "next/link";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+import styles from "./NotFound.module.scss";
 
 export function NotFound({
   code,

@@ -1,16 +1,16 @@
 "use client";
 
-import style from "./Thread.module.scss";
+import { MdPreview } from "md-editor-rt";
 
 import type { TThread } from "@/interfaces/Thread";
-import { MdPreview } from "md-editor-rt";
+import style from "./Thread.module.scss";
 
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {

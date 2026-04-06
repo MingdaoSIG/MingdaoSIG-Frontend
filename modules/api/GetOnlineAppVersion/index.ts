@@ -1,61 +1,23 @@
-import axios from "axios";
+"use client";
 
 export default async function GetOnlineAppVersion() {
-  const [mainVersion, developmentVersion] = await Promise.all([
-    getMainVersion(),
-    getDevelopmentVersion(),
-  ]);
-
-  return {
-    mainVersion,
-    developmentVersion,
-  };
-}
-
-async function getMainVersion(): Promise<string> {
   try {
-    const API_URL =
-      "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/main/package.json";
+    const response = await fetch("/api/version");
+    const data = await response.json();
 
-    const response = await axios.get(API_URL, {
-      headers: {
-        Accept: "application/vnd.github.v3.raw",
-        Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-      },
-      timeout: 10000,
-    });
+    if (data.status === 2000) {
+      return {
+        mainVersion: data.data.mainVersion,
+        developmentVersion: data.data.developmentVersion,
+      };
+    }
 
-    const responseObj = response.data;
-    const version = responseObj?.version;
-    if (!version) return "Unknown";
-
-    return version;
+    throw new Error("Failed to get version");
   } catch (error) {
-    console.error("Failed to get main version:", error);
-    return "Unknown";
-  }
-}
-
-async function getDevelopmentVersion(): Promise<string> {
-  try {
-    const API_URL =
-      "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/development/package.json";
-
-    const response = await axios.get(API_URL, {
-      headers: {
-        Accept: "application/vnd.github.v3.raw",
-        Authorization: `token ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-      },
-      timeout: 10000,
-    });
-
-    const responseObj = response.data;
-    const version = responseObj?.version;
-    if (!version) return "Unknown";
-
-    return version;
-  } catch (error) {
-    console.error("Failed to get development version:", error);
-    return "Unknown";
+    console.error("Failed to get online app version:", error);
+    return {
+      mainVersion: "Unknown",
+      developmentVersion: "Unknown",
+    };
   }
 }

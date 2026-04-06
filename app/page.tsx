@@ -1,17 +1,16 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import Swal from "sweetalert2";
-import { useSearchParams, useRouter } from "next/navigation";
-
-// Desktop Components
-import SplitBlock from "./(Layout)/splitBlock";
-import ThreadsListDesktop from "./(home)/desktop/ThreadsList";
+import useIsMobile from "@/utils/useIsMobile";
 import Information from "./(home)/desktop/Information";
+import ThreadsListDesktop from "./(home)/desktop/ThreadsList";
 
 // Mobile Components
 import ThreadsListMobile from "./(home)/mobile/ThreadsList";
-import useIsMobile from "@/utils/useIsMobile";
+// Desktop Components
+import SplitBlock from "./(Layout)/splitBlock";
 
 export default function Home() {
   // 這裡是「頁面層級」的 Suspense 邊界

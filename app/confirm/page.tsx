@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { CustomStatus } from "@/modules/customStatusCode";
+import BackToHome from "./Status/BackToHome/BackToHome";
 import Failed from "./Status/Failed/Failed";
 import Success from "./Status/Success/Success";
-import BackToHome from "./Status/BackToHome/BackToHome";
-import { CustomStatus } from "@/modules/customStatusCode";
 
 type ConfirmStatus = 0 | 1 | 2;
 
@@ -62,16 +62,20 @@ function ConfirmContent() {
     if (!confirmUrl) return;
 
     let isMounted = true;
+    const controller = new AbortController();
 
     const confirmRequest = async () => {
       try {
-        const status = await sendConfirmRequest(new URL(confirmUrl));
+        const status = await sendConfirmRequest(
+          new URL(confirmUrl),
+          controller.signal,
+        );
         if (isMounted) {
           setConfirmStatus(status);
           setIsLoading(false);
         }
-      } catch (error) {
-        if (isMounted) {
+      } catch (error: any) {
+        if (isMounted && error.name !== "AbortError") {
           console.error("Confirm request failed:", error);
           setErrorMessage(
             error instanceof Error ? error.message : "Unknown error occurred",
@@ -86,6 +90,7 @@ function ConfirmContent() {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [confirmUrl]);
 
@@ -127,13 +132,17 @@ function ConfirmContent() {
   }
 }
 
-async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
+async function sendConfirmRequest(
+  confirmUrl: URL,
+  signal?: AbortSignal,
+): Promise<ConfirmStatus> {
   try {
     const response = await fetch(confirmUrl.toString(), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      signal,
     });
 
     const data: ConfirmResponse = await response.json();

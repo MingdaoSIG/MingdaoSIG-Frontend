@@ -1,20 +1,17 @@
-import type { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
+import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
 
-// Styles
-import styles from "./Editor.module.scss";
-
-// Interfaces
-import type { TPostAPI } from "../types/postAPI";
-
-// Configs
-import { toolbars } from "../config/editorToolbar";
-import { imageUpload } from "@/modules/imageUploadAPI";
 import Swal from "sweetalert2";
-
+import { imageUpload } from "@/modules/imageUploadAPI";
 // Use User Account
 import { useUserAccount } from "@/utils/useUserAccount";
+// Configs
+import { toolbars } from "../config/editorToolbar";
+// Interfaces
+import type { TPostAPI } from "../types/postAPI";
+// Styles
+import styles from "./Editor.module.scss";
 
 interface Props {
   data: TPostAPI;

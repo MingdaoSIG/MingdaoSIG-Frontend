@@ -1,26 +1,24 @@
-import Link from "next/link";
-import Image from "next/image";
-import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import type {
   FetchNextPageOptions,
-  InfiniteQueryObserverResult,
   InfiniteData,
+  InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
-
+import Image from "next/image";
+import Link from "next/link";
+import React, { Fragment, useCallback, useEffect, useRef } from "react";
+import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
-
-// Configs
-import { sigDefaultColors } from "../configs/sigDefaultColors";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
+// Configs
+import { sigDefaultColors } from "../configs/sigDefaultColors";
 
 // Helper function to fix cover URL
 function fixCoverUrl(cover: string) {

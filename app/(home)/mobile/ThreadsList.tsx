@@ -6,11 +6,10 @@ import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
-import SigList from "./SigList";
-import SwitchButton from "./ButtonTools";
-
 // Interfaces
 import { useAllPost, useSigPost } from "@/utils/usePost";
+import SwitchButton from "./ButtonTools";
+import SigList from "./SigList";
 
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);

@@ -16,7 +16,7 @@ async function get(
   option?: {
     token?: string;
     requestQuery?: PaginationQuery;
-    requestOption?: LimitedRequestInit;
+    requestOption?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
   const baseUrl = baseUrlMap[baseUrlType];
@@ -53,7 +53,7 @@ async function post(
   option?: {
     token?: string;
     requestQuery?: PaginationQuery;
-    requestOptions?: LimitedRequestInit;
+    requestOptions?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
   const baseUrl = baseUrlMap[baseUrlType];

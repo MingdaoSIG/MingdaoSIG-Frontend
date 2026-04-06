@@ -1,27 +1,85 @@
 "use client";
 
-import { type ChangeEvent, useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
+import assert from "assert";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-
 // Desktop Components
 import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 // Mobile Components
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
-// Types
-import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
+// Modules
+import { imageUpload } from "@/modules/imageUploadAPI";
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
 import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
+// Types
+import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 // APIs Request Function
 import { postAPI } from "./(new)/apis/postAPI";
-// Utils
-import useIsMobile from "@/utils/useIsMobile";
-import assert from "assert";
-import { useUserAccount } from "@/utils/useUserAccount";
-// Modules
-import { imageUpload } from "@/modules/imageUploadAPI";
+
+// 驗證 localStorage 資料的類型
+type PostDataSchema = {
+  title?: string;
+  sig?: string;
+  content?: string;
+  cover?: string;
+  hashtag?: string[];
+};
+
+// 驗證並清理 localStorage 資料
+function validateStoredData(data: unknown): Partial<TPostAPI> {
+  if (typeof data !== "object" || data === null) {
+    return {};
+  }
+
+  const result: Partial<TPostAPI> = {};
+  const typedData = data as PostDataSchema;
+
+  // 驗證 title
+  if (typeof typedData.title === "string" && typedData.title.length <= 200) {
+    result.title = typedData.title;
+  }
+
+  // 驗證 sig（必須是有效的 ObjectId 格式）
+  if (typeof typedData.sig === "string") {
+    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+    if (objectIdRegex.test(typedData.sig)) {
+      result.sig = typedData.sig;
+    }
+  }
+
+  // 驗證 content
+  if (
+    typeof typedData.content === "string" &&
+    typedData.content.length <= 100000
+  ) {
+    result.content = typedData.content;
+  }
+
+  // 驗證 cover（必須是有效的 URL）
+  if (typeof typedData.cover === "string") {
+    try {
+      new URL(typedData.cover);
+      result.cover = typedData.cover;
+    } catch {
+      // 無效的 URL，忽略
+    }
+  }
+
+  // 驗證 hashtag（必須是字串陣列）
+  if (Array.isArray(typedData.hashtag)) {
+    result.hashtag = typedData.hashtag.filter(
+      (tag): tag is string => typeof tag === "string" && tag.length <= 50,
+    );
+  }
+
+  return result;
+}
 
 export default function NewPostPage() {
   const { status } = useSession();
@@ -84,9 +142,13 @@ export default function NewPostPage() {
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        loadedData = { ...loadedData, ...parsed };
+        // 驗證並清理資料
+        const validatedData = validateStoredData(parsed);
+        loadedData = { ...loadedData, ...validatedData };
       } catch (error) {
         console.error("Failed to parse stored post data:", error);
+        // 如果解析失敗，清除 localStorage 中的無效資料
+        localStorage.removeItem("postData");
       }
     }
 

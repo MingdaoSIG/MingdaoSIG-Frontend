@@ -1,17 +1,17 @@
 "use client";
 
-// Styles
-import styles from "./index.module.scss";
+import dynamic from "next/dynamic";
 
 // Modules
-import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
+// Styles
+import styles from "./index.module.scss";
 import "chart.js/auto";
 
 // Configs
 import {
-  sigDefaultColors,
   sigDefaultBorderColors,
+  sigDefaultColors,
 } from "@/app/dashboard/(Dashboard)/config/sigDefaultColors";
 
 const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
@@ -133,13 +133,23 @@ export default function Desktop() {
   ]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/information/post/sig?date=${date}`,
+      { signal: controller.signal },
     )
       .then((res) => res.json())
       .then((data) => {
         setSigPostCount(data.data.content);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Failed to fetch sig post count:", error);
+        }
       });
+
+    return () => controller.abort();
   }, []);
   // Sig Posts Count End
 
@@ -182,50 +192,110 @@ export default function Desktop() {
   ]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/information/user/sig?date=${date}`,
+      { signal: controller.signal },
     )
       .then((res) => res.json())
       .then((data) => {
         setSigUserCount(data.data.content);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Failed to fetch sig user count:", error);
+        }
       });
+
+    return () => controller.abort();
   }, []);
   // Sig Users Count End
 
   useEffect(() => {
+    const controllers: AbortController[] = [];
+
     if (userCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setUserCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch user count:", error);
+          }
         });
     }
 
     if (likeCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setLikeCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch like count:", error);
+          }
         });
     }
 
     if (postUserCount === 0) {
+      const controller = new AbortController();
+      controllers.push(controller);
       fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/information/user/posted?date=${date}`,
+        { signal: controller.signal },
       )
         .then((res) => res.json())
         .then((data) => {
           setPostUserCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch post user count:", error);
+          }
         });
     }
 
     if (validPostCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setValidPostCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch valid post count:", error);
+          }
         });
     }
+
+    return () => {
+      controllers.forEach((controller) => controller.abort());
+    };
   }, []);
 
   return (

@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import UserLogin from "./UserLogin";
 import Image from "next/image";
-
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
   const router = useRouter();

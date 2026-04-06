@@ -1,9 +1,9 @@
 "use client";
 
-import { useUserAccount } from "@/utils/useUserAccount";
+import { useRouter } from "next/navigation";
 import NotFoundPage from "@/app/not-found";
 import useIsMobile from "@/utils/useIsMobile";
-import { useRouter } from "next/navigation";
+import { useUserAccount } from "@/utils/useUserAccount";
 import { menuConfig } from "./(admin)/config";
 
 export default function AdminPage() {
@@ -30,7 +30,9 @@ export default function AdminPage() {
       <div className="max-w-md mx-auto">
         {/* Header Card */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-4 border border-gray-100">
-          <h1 className="text-2xl font-bold text-gray-800 text-center mb-2">管理員頁面</h1>
+          <h1 className="text-2xl font-bold text-gray-800 text-center mb-2">
+            管理員頁面
+          </h1>
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
         </div>
 
@@ -47,7 +49,9 @@ export default function AdminPage() {
         </div>
 
         {/* Menu Title */}
-        <p className="text-gray-600 text-center mb-4 font-medium">請選擇您要管理的項目</p>
+        <p className="text-gray-600 text-center mb-4 font-medium">
+          請選擇您要管理的項目
+        </p>
 
         {/* Menu Buttons */}
         <div className="space-y-3">
@@ -58,17 +62,20 @@ export default function AdminPage() {
               disabled={item.disable}
               className={`
                 w-full py-4 px-6 rounded-xl font-medium text-left transition-all duration-200 flex items-center justify-between
-                ${item.disable 
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                  : "bg-white text-gray-700 shadow-md hover:shadow-lg hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer border border-gray-100"
+                ${
+                  item.disable
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 shadow-md hover:shadow-lg hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer border border-gray-100"
                 }
               `}
             >
               <span className="flex items-center gap-3">
-                <span className={`
+                <span
+                  className={`
                   w-10 h-10 rounded-lg flex items-center justify-center text-lg
                   ${item.disable ? "bg-gray-200" : "bg-gradient-to-br from-blue-500 to-indigo-500 text-white"}
-                `}>
+                `}
+                >
                   {item.name.includes("Leader") && "👑"}
                   {item.name.includes("指導") && "👨‍🏫"}
                   {item.name.includes("成員") && "👥"}
@@ -78,12 +85,24 @@ export default function AdminPage() {
                 <span className="font-semibold">{item.name}</span>
               </span>
               {!item.disable && (
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               )}
               {item.disable && (
-                <span className="text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-full">開發中</span>
+                <span className="text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-full">
+                  開發中
+                </span>
               )}
             </button>
           ))}

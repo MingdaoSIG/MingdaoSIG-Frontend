@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
-import { TPostAPI } from "../types/postAPI";
-import { Sig } from "@/interfaces/Sig";
-import sigAPI from "@/modules/sigAPI";
-import { announcementSigId } from "../config/announcement";
-import { useUserAccount } from "@/utils/useUserAccount";
 import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import type { Sig } from "@/interfaces/Sig";
+import sigAPI from "@/modules/sigAPI";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { announcementSigId } from "../config/announcement";
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;

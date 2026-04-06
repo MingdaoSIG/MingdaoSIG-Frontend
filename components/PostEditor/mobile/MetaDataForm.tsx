@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-// Types
-import type { TPostAPI } from "../types/postAPI";
-
 // Modules
 import sigAPI from "@/modules/sigAPI";
+// Types
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI | undefined;

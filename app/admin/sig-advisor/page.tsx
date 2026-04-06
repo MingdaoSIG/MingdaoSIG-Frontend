@@ -1,12 +1,12 @@
 "use client";
 
-import { useUserAccount } from "@/utils/useUserAccount";
-import NotFoundPage from "@/app/not-found";
-import useIsMobile from "@/utils/useIsMobile";
-import { useRouter } from "next/navigation";
-import sigAPI from "@/modules/sigAPI";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import NotFoundPage from "@/app/not-found";
+import sigAPI from "@/modules/sigAPI";
+import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 
 export default function ManageAdvisorChooseSIG() {
   const isMobile = useIsMobile();
@@ -56,8 +56,18 @@ export default function ManageAdvisorChooseSIG() {
             onClick={handleBack}
             className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-600 hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
           <h1 className="text-xl font-bold text-gray-800">選擇 SIG</h1>
@@ -67,7 +77,9 @@ export default function ManageAdvisorChooseSIG() {
         {/* Title Card */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl shadow-lg p-5 mb-6 text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">👨‍🏫</div>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">
+              👨‍🏫
+            </div>
             <div>
               <h2 className="text-lg font-bold">SIG 指導老師管理</h2>
               <p className="text-white/80 text-sm">選擇要管理的 SIG</p>

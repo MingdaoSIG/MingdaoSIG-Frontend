@@ -1,9 +1,9 @@
 // Styles
-import styles from "./index.module.scss";
 
 // Modules
 import Link from "next/link";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
+import styles from "./index.module.scss";
 
 export default function Mobile() {
   const [sigData, setSigData] = useState<any>({});

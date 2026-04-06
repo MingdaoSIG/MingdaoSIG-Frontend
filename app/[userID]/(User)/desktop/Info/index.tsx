@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Tooltip } from "react-tooltip";
 import {
   type Dispatch,
   Fragment,
@@ -7,29 +6,25 @@ import {
   useEffect,
   useState,
 } from "react";
-import Linkify from "react-linkify";
-import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
-
-// Styles
-import styles from "./Info.module.scss";
-
-// Interfaces
-import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
-
-// Hooks
-import { useUserAccount } from "@/utils/useUserAccount";
-
-// APIs
-import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
+import Linkify from "react-linkify";
+import { Tooltip } from "react-tooltip";
+import Swal from "sweetalert2";
 import {
   JoinSigAPI,
   ReadJoinSigAPI,
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
-
+// APIs
+import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import type { Sig } from "@/interfaces/Sig";
+// Interfaces
+import type { User } from "@/interfaces/User";
+// Hooks
+import { useUserAccount } from "@/utils/useUserAccount";
+// Styles
+import styles from "./Info.module.scss";
 
 export default function Info({
   user: accountData,
@@ -57,12 +52,48 @@ export default function Info({
     })();
   }, [accountData?._id, dataType, token]);
 
-  function JumpOut(url: any) {
+  // 驗證並跳轉外部連結（防止 XSS）
+  function JumpOut(url: string) {
+    // 驗證 URL 協議
+    let validatedUrl: string;
+    try {
+      const urlObj = new URL(url);
+      // 只允許 http 和 https 協議
+      if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
+        console.warn(
+          "Blocked potentially dangerous URL protocol:",
+          urlObj.protocol,
+        );
+        return;
+      }
+      validatedUrl = url;
+    } catch {
+      // 如果不是完整 URL，嘗試添加 https://
+      try {
+        const urlWithProtocol = `https://${url}`;
+        const urlObj = new URL(urlWithProtocol);
+        validatedUrl = urlWithProtocol;
+      } catch {
+        console.warn("Invalid URL:", url);
+        return;
+      }
+    }
+
+    // HTML 轉義函數（防止 XSS）
+    const escapeHtml = (unsafe: string): string => {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
     Swal.fire({
       title: "<strong>HOLD UP</strong>",
       html:
         "<p>This link will take you to <br/><strong>" +
-        url +
+        escapeHtml(validatedUrl) +
         "</strong><br/>Are you sure you want to go there?</p>",
       icon: "warning",
       showCancelButton: true,
@@ -70,7 +101,7 @@ export default function Info({
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        window.open(url, "_blank");
+        window.open(validatedUrl, "_blank", "noopener,noreferrer");
       }
     });
   }

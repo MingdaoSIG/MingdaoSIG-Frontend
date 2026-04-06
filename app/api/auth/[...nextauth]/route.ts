@@ -1,7 +1,6 @@
-import NextAuth from "next-auth";
 import axios from "axios";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { profile } from "console";
 import Swal from "sweetalert2";
 
 const emoji: { [key: string]: string } = {

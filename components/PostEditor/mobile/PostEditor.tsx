@@ -1,15 +1,13 @@
-import type { Dispatch, SetStateAction } from "react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
-// Components
-import MetaDataForm from "./MetaDataForm";
-import Button from "./Buttons";
-
 // Types
 import type { TPostAPI } from "../types/postAPI";
+import Button from "./Buttons";
+// Components
+import MetaDataForm from "./MetaDataForm";
 
 interface Props {
   data: TPostAPI;

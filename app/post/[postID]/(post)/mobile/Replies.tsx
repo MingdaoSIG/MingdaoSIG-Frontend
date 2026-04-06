@@ -1,26 +1,22 @@
 // Components
-import { useEffect, useState } from "react";
-import Reply from "../components/Reply";
-
-// Styles
-import styles from "./Replies.module.scss";
-
-// Interfaces
-import type { TThread } from "@/interfaces/Thread";
-
-// API Request Function
-import { PostCommentAPI, GetCommentAPI } from "../apis/CommentAPI";
-
-// Utils
-import useAlert from "@/utils/useAlert";
-import { useUserAccount } from "@/utils/useUserAccount";
 
 // Module
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
+// Interfaces
+import type { TThread } from "@/interfaces/Thread";
+// Utils
+import useAlert from "@/utils/useAlert";
+import { useUserAccount } from "@/utils/useUserAccount";
+// API Request Function
+import { GetCommentAPI, PostCommentAPI } from "../apis/CommentAPI";
+import Reply from "../components/Reply";
 // Config
 import { alertMessageConfigs } from "../configs/alertMessages";
+// Styles
+import styles from "./Replies.module.scss";
 
 export default function Replies({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useState<string>("");

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 import type { User } from "@/interfaces/User";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

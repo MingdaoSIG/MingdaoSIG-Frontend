@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-
-// APIs / Types
-import { useTopPost } from "@/utils/usePost";
-import type { TThread } from "@/interfaces/Thread";
+import { useEffect, useMemo, useState } from "react";
+import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
 import type { Sig } from "@/interfaces/Sig";
+import type { TThread } from "@/interfaces/Thread";
 
 // Modules / Components
 import maxMatch from "@/modules/maxMatch";
-import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
+// APIs / Types
+import { useTopPost } from "@/utils/usePost";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

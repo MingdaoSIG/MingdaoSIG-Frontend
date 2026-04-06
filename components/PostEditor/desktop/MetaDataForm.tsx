@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
-// Components
-import Buttons from "./Buttons";
-
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
+// Components
+import Buttons from "./Buttons";
 
 interface Props {
   discardFunction: Function;

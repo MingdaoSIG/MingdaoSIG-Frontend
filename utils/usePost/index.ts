@@ -1,6 +1,6 @@
-import type { TThread } from "@/interfaces/Thread";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import type { TThread } from "@/interfaces/Thread";
 
 type PostQuery = {
   pageSize: number;

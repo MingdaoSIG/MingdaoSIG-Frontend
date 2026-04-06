@@ -1,15 +1,19 @@
 "use client";
 
-import { Suspense, type Dispatch, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 
 // Components
 import SplitBlock from "@/app/(Layout)/splitBlockNew";
-import MetaDataForm from "./MetaDataForm";
-
 // Types
 import type { TPostAPI } from "../types/postAPI";
+import MetaDataForm from "./MetaDataForm";
 import TitleSigForm from "./TitleSigForm";
 
 interface Props {

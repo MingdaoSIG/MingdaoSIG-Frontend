@@ -1,22 +1,18 @@
 import { MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
 import Image from "next/image";
-
-// Components
-import Replies from "./Replies";
-
-// Styles
-import styles from "./Thread.module.scss";
-
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
-
 // Utils
 import { useUserAccount } from "@/utils/useUserAccount";
+// Components
+import Replies from "./Replies";
+// Styles
+import styles from "./Thread.module.scss";
 
 const Thread = ({
   post,

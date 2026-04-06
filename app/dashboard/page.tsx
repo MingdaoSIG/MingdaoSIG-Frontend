@@ -1,11 +1,11 @@
 "use client";
 
-// Utils
-import useIsMobile from "@/utils/useIsMobile";
+import Desktop from "@/app/dashboard/(Dashboard)/Desktop";
 
 // Components
 import Mobile from "@/app/dashboard/(Dashboard)/Mobile";
-import Desktop from "@/app/dashboard/(Dashboard)/Desktop";
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
 
 export default function Dashboard() {
   const isMobile = useIsMobile();

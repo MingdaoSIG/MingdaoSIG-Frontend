@@ -1,9 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import styles from "./HeaderBar.module.scss";
 import UserLogin from "./UserLogin";
-
-import { useRouter } from "next/navigation";
 
 const HeaderBar = () => {
   const router = useRouter();

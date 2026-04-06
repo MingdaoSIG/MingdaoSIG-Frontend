@@ -1,25 +1,20 @@
-import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-
-// Interfaces
-import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
-
-// Styles
-import styles from "./mobile.module.scss";
-
+import { useEffect, useState } from "react";
 // Components
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
-import Info from "./info";
-
+import type { Sig } from "@/interfaces/Sig";
+// Interfaces
+import type { User } from "@/interfaces/User";
 // apis
 import sigAPI from "@/modules/sigAPI";
-
 // Hooks
 import { useSigPost, useUserPost } from "@/utils/usePost";
+import Info from "./info";
+// Styles
+import styles from "./mobile.module.scss";
 
 export default function ProfileMobile({
   params,
