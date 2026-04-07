@@ -10,7 +10,8 @@
     "check:fix": "biome check --fix",
     "check:fix-unsafe": "pnpm exec biome check --fix --unsafe",
     "types": "tsc --noEmit",
-    "before-push": "pnpm install && pnpm run check:fix && pnpm run check:fix-unsafe && pnpm run types && pnpm build"
+    "before-push": "pnpm install && pnpm run check:fix && pnpm run check:fix-unsafe && pnpm run types && pnpm build",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@next/third-parties": "15.5.5",

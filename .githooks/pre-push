@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# MDSIG Frontend — Pre-Push Hook
+# Runs install, lint/format, type-check, and build before pushing.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Colors
+_CLI_RED='\033[0;31m'
+_CLI_GREEN='\033[0;32m'
+_CLI_YELLOW='\033[0;33m'
+_CLI_BLUE='\033[0;34m'
+_CLI_PURPLE='\033[0;35m'
+_CLI_CYAN='\033[0;36m'
+_CLI_GRAY='\033[0;90m'
+_CLI_NC='\033[0m'
+
+# Symbols
+_CLI_CHECK="${_CLI_GREEN}[✓]${_CLI_NC}"
+_CLI_CROSS="${_CLI_RED}[✗]${_CLI_NC}"
+_CLI_WARN="${_CLI_YELLOW}[!]${_CLI_NC}"
+_CLI_INFO="${_CLI_CYAN}[i]${_CLI_NC}"
+
+# Helpers
+log_info()    { echo -e "$_CLI_INFO $1"; }
+log_success() { echo -e "$_CLI_CHECK $1"; }
+log_warn()    { echo -e "$_CLI_WARN $1"; }
+log_error()   { echo -e "$_CLI_CROSS $1"; }
+
+print_divider() {
+  local color="${1:-$_CLI_PURPLE}" label="${2:-}"
+  local width="${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}"
+  if [[ -n "$label" ]]; then
+    local padding=$((width - ${#label} - 6))
+    local fill
+    printf -v fill '%*s' "$padding" ''
+    printf '%b━━━━[%s]%s%b\n' "$color" "$label" "${fill// /━}" "$_CLI_NC"
+  else
+    local fill
+    printf -v fill '%*s' "$width" ''
+    printf '%b%s%b\n' "$color" "${fill// /━}" "$_CLI_NC"
+  fi
+}
+
+run_step() {
+  local step_num="$1"
+  local step_name="$2"
+  local step_cmd="$3"
+
+  log_info "${_CLI_GRAY}[${step_num}/5]${_CLI_NC} Running ${_CLI_CYAN}${step_name}${_CLI_NC}..."
+
+  if eval "$step_cmd"; then
+    log_success "${_CLI_GRAY}[${step_num}/5]${_CLI_NC} ${step_name}"
+    return 0
+  else
+    echo ""
+    log_error "${_CLI_GRAY}[${step_num}/5]${_CLI_NC} ${step_name} ${_CLI_RED}failed${_CLI_NC}"
+    echo ""
+    log_info "Fix the errors above, then try pushing again."
+    echo ""
+    print_divider "$_CLI_RED"
+    echo ""
+    return 1
+  fi
+}
+
+# ── Main ──────────────────────────────────────────────────────────
+
+echo ""
+print_divider "$_CLI_PURPLE" "Pre-Push Checks"
+echo ""
+log_info "Verifying codebase before push..."
+echo ""
+
+run_step 1 "pnpm install"          "pnpm install"          || exit 1
+run_step 2 "pnpm run check:fix"    "pnpm run check:fix"    || exit 1
+run_step 3 "pnpm run check:fix-unsafe" "pnpm run check:fix-unsafe" || exit 1
+run_step 4 "pnpm run types"        "pnpm run types"        || exit 1
+run_step 5 "pnpm build"            "pnpm build"            || exit 1
+
+echo ""
+log_success "All pre-push checks passed"
+echo ""
+print_divider "$_CLI_PURPLE"
+echo ""
