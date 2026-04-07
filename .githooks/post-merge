@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# MDSIG Frontend — Post-Merge Hook
+# Automatically runs pnpm install after git pull to keep deps in sync.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Colors
+_CLI_GREEN='\033[0;32m'
+_CLI_CYAN='\033[0;36m'
+_CLI_PURPLE='\033[0;35m'
+_CLI_RED='\033[0;31m'
+_CLI_NC='\033[0m'
+
+# Symbols
+_CLI_CHECK="${_CLI_GREEN}[✓]${_CLI_NC}"
+_CLI_CROSS="${_CLI_RED}[✗]${_CLI_NC}"
+_CLI_INFO="${_CLI_CYAN}[i]${_CLI_NC}"
+
+# Helpers
+log_info()    { echo -e "$_CLI_INFO $1"; }
+log_success() { echo -e "$_CLI_CHECK $1"; }
+log_error()   { echo -e "$_CLI_CROSS $1"; }
+
+print_divider() {
+  local color="${1:-$_CLI_PURPLE}" label="${2:-}"
+  local width="${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}"
+  if [[ -n "$label" ]]; then
+    local padding=$((width - ${#label} - 6))
+    local fill
+    printf -v fill '%*s' "$padding" ''
+    printf '%b━━━━[%s]%s%b\n' "$color" "$label" "${fill// /━}" "$_CLI_NC"
+  else
+    local fill
+    printf -v fill '%*s' "$width" ''
+    printf '%b%s%b\n' "$color" "${fill// /━}" "$_CLI_NC"
+  fi
+}
+
+# ── Main ──────────────────────────────────────────────────────────
+
+echo ""
+print_divider "$_CLI_PURPLE" "Post-Merge"
+echo ""
+log_info "Running ${_CLI_CYAN}pnpm install${_CLI_NC} to sync dependencies..."
+
+if pnpm install; then
+  echo ""
+  log_success "Dependencies up to date"
+else
+  echo ""
+  log_error "pnpm install failed — run it manually"
+fi
+
+echo ""
+print_divider "$_CLI_PURPLE"
+echo ""
