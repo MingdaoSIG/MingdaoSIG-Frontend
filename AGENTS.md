@@ -8,7 +8,8 @@ MDSIG is a community sharing platform for Mingdao High School students and teach
 pnpm install       # Install dependencies
 pnpm dev           # Dev server (DO NOT use for build verification)
 pnpm build         # Production build (USE THIS for build verification)
-pnpm check         # Format and lint with Biome — run after making any changes
+pnpm types         # Type check only (no emit)
+pnpm check:fix     # Biome auto-fix (safe fixes only)
 ```
 
 ## Code Style Rules (Biome)

@@ -39,7 +39,6 @@ const nextConfig = {
   },
 
   turbopack: {
-    resolveAlias: { "@": "./src" },
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
 };
