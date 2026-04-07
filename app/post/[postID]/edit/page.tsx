@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, use, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 // APIs Request Function
 import {
@@ -24,8 +24,9 @@ import { useUserAccount } from "@/utils/useUserAccount";
 export default function EditPostPage({
   params,
 }: {
-  params: { postID: string };
+  params: Promise<{ postID: string }>;
 }) {
+  const { postID } = use(params);
   const route = useRouter();
   const isMobile = useIsMobile();
   const { isLogin, token, userData, isLoading } = useUserAccount();
@@ -58,14 +59,13 @@ export default function EditPostPage({
       (!isLoading && !isLogin) ||
       (!isLoading && oldPostData?.user !== userData?._id)
     ) {
-      route.push(`/post/${params.postID}`);
+      route.push(`/post/${postID}`);
     }
-  }, [oldPostData, userData, isLoading, isLogin, route, params.postID]);
+  }, [oldPostData, userData, isLoading, isLogin, route, postID]);
 
   useEffect(() => {
-    if (params.postID && currentPostData.content === oldPostData.content) {
+    if (postID && currentPostData.content === oldPostData.content) {
       (async () => {
-        const { postID } = params;
         const res = await getPostAPI(postID);
         if (res.status !== 2000) {
           route.push("/");
@@ -74,7 +74,7 @@ export default function EditPostPage({
         }
       })();
     }
-  }, [currentPostData.content, oldPostData.content, params, route]);
+  }, [currentPostData.content, oldPostData.content, postID, route]);
 
   useEffect(() => {
     if (
@@ -147,7 +147,6 @@ export default function EditPostPage({
       cancelButtonText: "Cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { postID } = params;
         const res = await editPostAPI(currentPostData, postID, token ?? "");
         if (res.status === 2000) {
           Swal.fire({
