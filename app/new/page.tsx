@@ -1,6 +1,6 @@
 "use client";
 
-import assert from "assert";
+import assert from "node:assert";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
@@ -202,7 +202,7 @@ export default function NewPostPage() {
         setPostButtonDisable(false);
         throw new Error("Unexpected error");
       }
-    } catch (error) {
+    } catch (_error) {
       Swal.fire(alertMessageConfigs.OthersError).then(() =>
         setPostButtonDisable(false),
       );

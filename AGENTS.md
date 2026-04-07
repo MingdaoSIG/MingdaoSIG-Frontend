@@ -12,9 +12,9 @@ MDSIG is a community sharing platform for Mingdao High School students and teach
 
 ```bash
 pnpm install       # Install dependencies
-pnpm dev           # Dev server (Turbopack)
-pnpm build         # Production build (Turbopack)
-pnpm lint          # Format and lint with Biome — run before completing any task
+pnpm dev           # Dev server (DO NOT use for build verification)
+pnpm build         # Production build (USE THIS for build verification)
+pnpm check         # Format and lint with Biome — run after making any changes
 ```
 
 ## Environment Variables

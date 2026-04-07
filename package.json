@@ -1,12 +1,12 @@
 {
   "name": "mdsig-frontend",
-  "version": "2.19.0",
+  "version": "2.18.8",
   "private": false,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "pnpm exec biome format --write"
+    "check": "pnpm exec biome check --fix --unsafe"
   },
   "dependencies": {
     "@next/third-parties": "^15.5.5",

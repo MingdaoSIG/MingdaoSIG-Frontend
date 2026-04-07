@@ -1,7 +1,7 @@
 // next.config.js
 // @ts-check
 
-const path = require("path");
+const path = require("node:path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
