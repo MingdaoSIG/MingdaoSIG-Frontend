@@ -2,24 +2,29 @@
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # MDSIG Frontend — Post-Merge Hook
-# Automatically runs pnpm install after git pull to keep deps in sync.
+# Syncs deps, cleans stale caches, and notifies about env changes.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # Colors
 _CLI_GREEN='\033[0;32m'
+_CLI_YELLOW='\033[0;33m'
 _CLI_CYAN='\033[0;36m'
 _CLI_PURPLE='\033[0;35m'
 _CLI_RED='\033[0;31m'
+_CLI_BLUE='\033[0;34m'
+_CLI_GRAY='\033[0;90m'
 _CLI_NC='\033[0m'
 
 # Symbols
 _CLI_CHECK="${_CLI_GREEN}[✓]${_CLI_NC}"
 _CLI_CROSS="${_CLI_RED}[✗]${_CLI_NC}"
+_CLI_WARN="${_CLI_YELLOW}[!]${_CLI_NC}"
 _CLI_INFO="${_CLI_CYAN}[i]${_CLI_NC}"
 
 # Helpers
 log_info()    { echo -e "$_CLI_INFO $1"; }
 log_success() { echo -e "$_CLI_CHECK $1"; }
+log_warn()    { echo -e "$_CLI_WARN $1"; }
 log_error()   { echo -e "$_CLI_CROSS $1"; }
 
 print_divider() {
@@ -37,19 +42,75 @@ print_divider() {
   fi
 }
 
+# Get list of files changed in this merge
+changed_files() {
+  git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD 2>/dev/null
+}
+
 # ── Main ──────────────────────────────────────────────────────────
 
 echo ""
 print_divider "$_CLI_PURPLE" "Post-Merge"
 echo ""
-log_info "Running ${_CLI_CYAN}pnpm install${_CLI_NC} to sync dependencies..."
 
-if pnpm install; then
-  echo ""
-  log_success "Dependencies up to date"
+CHANGED=$(changed_files)
+
+# 1. Run pnpm install only if lockfile changed
+if echo "$CHANGED" | grep -qE "(pnpm-lock\.yaml|package\.json)"; then
+  log_info "Dependencies changed — running ${_CLI_CYAN}pnpm install${_CLI_NC}..."
+  if pnpm install; then
+    echo ""
+    log_success "Dependencies updated"
+  else
+    echo ""
+    log_error "pnpm install failed — run it manually"
+  fi
 else
+  log_success "Dependencies unchanged — skipping install"
+fi
+
+echo ""
+
+# 2. Clean .next cache when next.config.js changed
+if echo "$CHANGED" | grep -qE "next\.config\.(js|mjs|ts)"; then
+  log_warn "next.config changed — cleaning ${_CLI_BLUE}.next${_CLI_NC} cache..."
+  if [[ -d ".next" ]]; then
+    rm -rf .next
+    log_success "Cleared ${_CLI_BLUE}.next${_CLI_NC} cache"
+    log_info "Run ${_CLI_CYAN}pnpm dev${_CLI_NC} or ${_CLI_CYAN}pnpm build${_CLI_NC} to rebuild"
+  else
+    log_info "No .next cache to clean"
+  fi
   echo ""
-  log_error "pnpm install failed — run it manually"
+fi
+
+# 3. Notify when .env.local.example changed
+if echo "$CHANGED" | grep -q ".env.local.example"; then
+  echo ""
+  print_divider "$_CLI_YELLOW" "Environment Update Required"
+  echo ""
+  log_warn "The ${_CLI_BLUE}.env.local.example${_CLI_NC} file was updated!"
+  echo ""
+  log_info "Review the changes and update your local ${_CLI_BLUE}.env.local${_CLI_NC}:"
+  echo ""
+  echo -e "    ${_CLI_CYAN}git diff ORIG_HEAD HEAD -- .env.local.example${_CLI_NC}"
+  echo ""
+  # Show the actual diff inline for convenience
+  diff_output=$(git diff ORIG_HEAD HEAD -- .env.local.example 2>/dev/null)
+  if [[ -n "$diff_output" ]]; then
+    log_info "Changes:"
+    echo ""
+    echo "$diff_output" | while IFS= read -r line; do
+      if [[ "$line" == +* && "$line" != "+++"* ]]; then
+        echo -e "    ${_CLI_GREEN}${line}${_CLI_NC}"
+      elif [[ "$line" == -* && "$line" != "---"* ]]; then
+        echo -e "    ${_CLI_RED}${line}${_CLI_NC}"
+      fi
+    done
+    echo ""
+  fi
+  print_divider "$_CLI_YELLOW"
+  echo ""
 fi
 
 echo ""
