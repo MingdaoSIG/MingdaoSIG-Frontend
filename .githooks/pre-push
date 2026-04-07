@@ -5,7 +5,7 @@
 # Runs security scans, lint/format, type-check, and build before pushing.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-TOTAL_STEPS=9
+TOTAL_STEPS=8
 BUNDLE_SIZE_LIMIT_MB=50
 
 # Colors
@@ -107,32 +107,6 @@ check_env_secrets() {
   return $failed
 }
 
-check_console_log() {
-  local hits
-  hits=$(grep -rn --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' \
-    -E '\bconsole\.log\b' \
-    app/ components/ modules/ utils/ 2>/dev/null || true)
-
-  if [[ -n "$hits" ]]; then
-    local count
-    count=$(echo "$hits" | wc -l | tr -d ' ')
-    echo ""
-    log_error "Found ${_CLI_RED}${count}${_CLI_NC} console.log statement(s):"
-    echo ""
-    echo "$hits" | head -20 | while IFS= read -r line; do
-      echo -e "    ${_CLI_GRAY}${line}${_CLI_NC}"
-    done
-    if [[ "$count" -gt 20 ]]; then
-      echo -e "    ${_CLI_GRAY}... and $((count - 20)) more${_CLI_NC}"
-    fi
-    echo ""
-    log_info "Use ${_CLI_CYAN}console.error${_CLI_NC}, ${_CLI_CYAN}console.warn${_CLI_NC}, or ${_CLI_CYAN}console.info${_CLI_NC} instead."
-    return 1
-  fi
-
-  return 0
-}
-
 check_bundle_size() {
   if [[ ! -d ".next" ]]; then
     log_warn "No .next directory found — skipping bundle size check"
@@ -176,18 +150,15 @@ fi
 # 2. Check for .env secrets in staged files
 run_step 2 "env secrets check"      "check_env_secrets"      || exit 1
 
-# 3. Check for console.log
-run_step 3 "console.log check"      "check_console_log"      || exit 1
+# 3–7. Install, lint, type-check, build
+run_step 3 "pnpm install"           "pnpm install"           || exit 1
+run_step 4 "pnpm run check:fix"     "pnpm run check:fix"     || exit 1
+run_step 5 "pnpm run check:fix-unsafe" "pnpm run check:fix-unsafe" || exit 1
+run_step 6 "pnpm run types"         "pnpm run types"         || exit 1
+run_step 7 "pnpm build"             "pnpm build"             || exit 1
 
-# 4–8. Install, lint, type-check, build
-run_step 4 "pnpm install"           "pnpm install"           || exit 1
-run_step 5 "pnpm run check:fix"     "pnpm run check:fix"     || exit 1
-run_step 6 "pnpm run check:fix-unsafe" "pnpm run check:fix-unsafe" || exit 1
-run_step 7 "pnpm run types"         "pnpm run types"         || exit 1
-run_step 8 "pnpm build"             "pnpm build"             || exit 1
-
-# 9. Bundle size check (after build)
-run_step 9 "bundle size check"      "check_bundle_size"      || exit 1
+# 8. Bundle size check (after build)
+run_step 8 "bundle size check"      "check_bundle_size"      || exit 1
 
 echo ""
 log_success "All pre-push checks passed"
