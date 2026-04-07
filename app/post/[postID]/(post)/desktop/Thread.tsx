@@ -7,6 +7,7 @@ import style from "./Thread.module.scss";
 
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
+import "@/app/mdEditorConfig";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

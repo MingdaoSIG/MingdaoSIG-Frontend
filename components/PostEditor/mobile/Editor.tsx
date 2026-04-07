@@ -1,6 +1,7 @@
 import { MdEditor, MdPreview } from "md-editor-rt";
 import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
+import "@/app/mdEditorConfig";
 
 // APIs Request Function
 import { imageUpload } from "@/modules/imageUploadAPI";

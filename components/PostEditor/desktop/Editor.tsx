@@ -1,6 +1,7 @@
 import { MdEditor } from "md-editor-rt";
 import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
+import "@/app/mdEditorConfig";
 
 import Swal from "sweetalert2";
 import { imageUpload } from "@/modules/imageUploadAPI";
