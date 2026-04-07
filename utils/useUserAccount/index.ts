@@ -72,7 +72,7 @@ export function useUserAccount() {
         setIsLoading(false);
       }
     })();
-  }, [OAuth, session]); // ⚠️ 移除 isLogin 依賴避免循環
+  }, [OAuth, session, isLogin]); // ⚠️ 移除 isLogin 依賴避免循環
 
   // ✅ 修復：更安全的清除邏輯
   useEffect(() => {

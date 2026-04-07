@@ -29,11 +29,11 @@ export default function Mobile() {
     const secondsMatch = uptimeStr.match(/(\d+)\s*second/);
 
     if (monthsMatch)
-      totalMs += parseInt(monthsMatch[1]) * 30 * 24 * 60 * 60 * 1000;
-    if (daysMatch) totalMs += parseInt(daysMatch[1]) * 24 * 60 * 60 * 1000;
-    if (hoursMatch) totalMs += parseInt(hoursMatch[1]) * 60 * 60 * 1000;
-    if (minutesMatch) totalMs += parseInt(minutesMatch[1]) * 60 * 1000;
-    if (secondsMatch) totalMs += parseInt(secondsMatch[1]) * 1000;
+      totalMs += parseInt(monthsMatch[1], 10) * 30 * 24 * 60 * 60 * 1000;
+    if (daysMatch) totalMs += parseInt(daysMatch[1], 10) * 24 * 60 * 60 * 1000;
+    if (hoursMatch) totalMs += parseInt(hoursMatch[1], 10) * 60 * 60 * 1000;
+    if (minutesMatch) totalMs += parseInt(minutesMatch[1], 10) * 60 * 1000;
+    if (secondsMatch) totalMs += parseInt(secondsMatch[1], 10) * 1000;
 
     return totalMs;
   };
@@ -82,7 +82,7 @@ export default function Mobile() {
       .catch(() => {
         setLoading(false);
       });
-  }, []);
+  }, [formatUptime, parseUptime]);
 
   // Real-time update interval
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function Mobile() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [loading]);
+  }, [loading, formatUptime]);
 
   return (
     <div className={styles.mobileView}>

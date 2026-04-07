@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 // Modules
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // Styles
 import styles from "./index.module.scss";
 import "chart.js/auto";
@@ -150,7 +150,7 @@ export default function Desktop() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [date]);
   // Sig Posts Count End
 
   // Sig Users Count Start
@@ -209,7 +209,7 @@ export default function Desktop() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [date]);
   // Sig Users Count End
 
   useEffect(() => {
@@ -296,7 +296,7 @@ export default function Desktop() {
     return () => {
       controllers.forEach((controller) => controller.abort());
     };
-  }, []);
+  }, [validPostCount, userCount, postUserCount, likeCount, date]);
 
   return (
     <div>

@@ -72,7 +72,7 @@ export default function EditPostPage({
         }
       })();
     }
-  }, [currentPostData.content, oldPostData.content, params, route, userData]);
+  }, [currentPostData.content, oldPostData.content, params, route]);
 
   useEffect(() => {
     if (
