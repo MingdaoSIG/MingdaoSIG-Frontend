@@ -16,22 +16,6 @@ export function isValidCustomId(id: string): boolean {
 }
 
 /**
- * 驗證 SIG ID 格式（可以是 ObjectId 或自訂義 ID）
- */
-export function isValidSigId(id: string): boolean {
-  return isValidObjectId(id) || isValidCustomId(id);
-}
-
-/**
- * 驗證 UUID v4 格式
- */
-export function isValidUUID(uuid: string): boolean {
-  const uuidV4Regex =
-    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-  return uuidV4Regex.test(uuid);
-}
-
-/**
  * 驗證並清理 URL 參數，防止路徑遍歷
  */
 export function sanitizeUrlParam(param: string): string {
@@ -39,11 +23,4 @@ export function sanitizeUrlParam(param: string): string {
   return param
     .replace(/\.\./g, "") // 移除 ..
     .replace(/[<>"'`|;{}[\]]/g, ""); // 移除特殊字符
-}
-
-/**
- * 驗證電子郵件是否為明道中學網域
- */
-export function isMingdaoEmail(email: string): boolean {
-  return email.endsWith("@ms.mingdao.edu.tw");
 }

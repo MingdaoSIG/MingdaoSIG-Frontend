@@ -38,7 +38,7 @@ function fixCoverUrl(cover: string) {
   return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
 }
 
-export const Thread = ({ threadData }: { threadData: TThread }) => {
+const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
   const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
