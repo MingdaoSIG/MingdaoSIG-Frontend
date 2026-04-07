@@ -1,7 +1,6 @@
 import axios from "axios";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import Swal from "sweetalert2";
 
 const emoji: { [key: string]: string } = {
   developer: "<:developer:1222933983164235876>",

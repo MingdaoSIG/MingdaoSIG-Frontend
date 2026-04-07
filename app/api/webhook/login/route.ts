@@ -76,6 +76,8 @@ export async function POST(req: NextRequest) {
       "Content-type": "application/json",
     },
     data: JSON.stringify(content),
+  }).catch((error) => {
+    console.error("Failed to send login webhook:", error.message);
   });
 
   return NextResponse.json({ message: "Request Sent!" });
