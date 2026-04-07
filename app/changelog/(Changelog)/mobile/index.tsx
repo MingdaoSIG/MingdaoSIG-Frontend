@@ -41,28 +41,28 @@ export default function Mobile() {
   return (
     <div className={styles.mobileView}>
       <div className={styles.wrapper}>
-        <div className="space-y-4 overflow-auto h-[83dvh] w-full scrollbar-hide">
+        <div className="scrollbar-hide h-[83dvh] w-full space-y-4 overflow-auto">
           {typedChangelog.map((entry, _index) => (
             <Fragment key={entry.version}>
               <div
-                className="bg-white rounded-2xl p-4 shadow-sm"
+                className="rounded-2xl bg-white p-4 shadow-sm"
                 style={{
                   borderLeft: `4px solid ${typeLabels[entry.type].color}`,
                 }}
               >
                 {/* Version Header - 純色背景 */}
                 <div
-                  className="flex items-center justify-between mb-3 p-2 rounded"
+                  className="mb-3 flex items-center justify-between rounded p-2"
                   style={{
                     backgroundColor: versionBgColors[entry.type],
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-[#003f47]">
+                    <span className="font-bold text-[#003f47] text-lg">
                       v{entry.version}
                     </span>
                     <span
-                      className="text-[10px] px-2 py-0.5 rounded-full"
+                      className="rounded-full px-2 py-0.5 text-[10px]"
                       style={{
                         backgroundColor: typeLabels[entry.type].color,
                         color: "white",
@@ -71,34 +71,34 @@ export default function Mobile() {
                       {typeLabels[entry.type].text}
                     </span>
                   </div>
-                  <span className="text-xs text-[#003f47]/50">
+                  <span className="text-[#003f47]/50 text-xs">
                     {formatDate(entry.date)}
                   </span>
                 </div>
 
                 {/* Title & Summary */}
-                <h2 className="text-base font-medium text-[#003f47] mb-1">
+                <h2 className="mb-1 font-medium text-[#003f47] text-base">
                   {entry.title}
                 </h2>
-                <p className="text-xs text-[#003f47]/70 mb-3">
+                <p className="mb-3 text-[#003f47]/70 text-xs">
                   {entry.summary}
                 </p>
 
                 {/* Changes List */}
                 <ul className="space-y-2">
-                  {entry.changes.map((change, changeIndex) => (
+                  {entry.changes.map((change) => (
                     <li
-                      key={changeIndex}
-                      className="flex items-start gap-2 text-xs text-[#003f47]"
+                      key={change.description}
+                      className="flex items-start gap-2 text-[#003f47] text-xs"
                     >
                       <span
-                        className="inline-block w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0"
+                        className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{
                           backgroundColor: typeLabels[change.type].color,
                         }}
                       />
                       <span
-                        className="inline-block px-1.5 py-0.5 rounded text-[10px] text-white flex-shrink-0"
+                        className="inline-block flex-shrink-0 rounded px-1.5 py-0.5 text-[10px] text-white"
                         style={{
                           backgroundColor: typeLabels[change.type].color,
                         }}

@@ -61,12 +61,12 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           <div className={style.user_sig}>
             <p className={style.user}>{user?.name}</p>
             <span>•</span>
-            <p style={{ color: sigDefaultColors[sig._id!] }}>{sig.name}</p>
+            <p style={{ color: sigDefaultColors[sig._id ?? ""] }}>{sig.name}</p>
           </div>
           <div className={style.statist}>
             <p className={style.date}>
               {
-                new Date(threadData.createdAt!)
+                new Date(threadData.createdAt ?? "")
                   .toLocaleString("zh-TW")
                   .split(" ")[0]
               }
@@ -114,8 +114,8 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           threadData.hashtag.length > 0 &&
           !isAnnouncement && (
             <div className={style.hashtags}>
-              {threadData.hashtag.slice(0, 3).map((tag, index) => (
-                <span key={index} className={style.hashtag}>
+              {threadData.hashtag.slice(0, 3).map((tag, _index) => (
+                <span key={tag} className={style.hashtag}>
                   #{tag}
                 </span>
               ))}
@@ -173,7 +173,7 @@ export const InfinityThreadsList = ({
   isFetchingNextPage,
   announcementData,
 }: {
-  data: any;
+  data: InfiniteData<TThread[], unknown>;
   height?: string;
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
@@ -181,7 +181,7 @@ export const InfinityThreadsList = ({
     InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
   >;
   isFetchingNextPage: boolean;
-  announcementData?: any;
+  announcementData?: InfiniteData<TThread[], unknown>;
 }) => {
   const postList = useRef(null);
 
@@ -197,7 +197,7 @@ export const InfinityThreadsList = ({
   }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const listInnerElement: HTMLElement = postList.current!;
+    const listInnerElement = postList.current as HTMLElement | null;
 
     if (listInnerElement) {
       listInnerElement.addEventListener("scroll", onScroll);
@@ -211,25 +211,28 @@ export const InfinityThreadsList = ({
     <div className={style.threads} style={{ height }} ref={postList}>
       {announcementData &&
         announcementData.pages[0].length >= 1 &&
-        announcementData.pages.map((page: TThread[], index: number) => {
+        announcementData.pages.map((page: TThread[], _index: number) => {
           const currentDate = Date.now();
-          const postDate = new Date(page[0].createdAt!).getTime();
+          const postDate = new Date(page[0].createdAt ?? "").getTime();
           const diffDays = Math.floor(
             (currentDate - postDate) / (1000 * 60 * 60 * 24),
           );
 
           if (diffDays < announcementStayTime) {
-            return <Thread threadData={page[0]} key={index} />;
+            return <Thread threadData={page[0]} key={page[0]._id} />;
           }
+          return null;
         })}
-      {data.pages.map((page: TThread[], index: number) => (
-        <Fragment key={index}>
-          {page.map((item, index) => {
+      {data.pages.map((page: TThread[], pageIndex: number) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
+        <Fragment key={`page-${pageIndex}`}>
+          {page.map((item) => {
             const sig = item.sig as unknown as Sig;
             const isAnnouncement = sig._id === announcementSigId;
             if (!isAnnouncement) {
-              return <Thread threadData={item} key={index} />;
+              return <Thread threadData={item} key={item._id} />;
             }
+            return null;
           })}
         </Fragment>
       ))}
@@ -252,7 +255,8 @@ export const ThreadsListSkeleton = ({
   return (
     <div className={style.threads} style={{ height }}>
       {[...Array(repeat)].map((_, index) => (
-        <ThreadSkeleton key={index} />
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no unique identifier
+        <ThreadSkeleton key={`skeleton-${index}`} />
       ))}
     </div>
   );

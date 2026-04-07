@@ -1,10 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import data from "../config/data.json";
 import styles from "./index.module.scss";
 
+interface PingEndpoint {
+  currentVersion?: string;
+  uptime?: string;
+}
+
+interface PingData {
+  frontend?: PingEndpoint;
+  backend?: PingEndpoint;
+}
+
 function parseUptime(uptimeStr: string): number {
-  if (!uptimeStr || uptimeStr === "N/A") return 0;
+  if (!uptimeStr || uptimeStr === "N/A") {
+    return 0;
+  }
 
   let totalMs = 0;
   const monthsMatch = uptimeStr.match(/(\d+)\s*month/);
@@ -13,18 +26,29 @@ function parseUptime(uptimeStr: string): number {
   const minutesMatch = uptimeStr.match(/(\d+)\s*minute/);
   const secondsMatch = uptimeStr.match(/(\d+)\s*second/);
 
-  if (monthsMatch)
+  if (monthsMatch) {
     totalMs += parseInt(monthsMatch[1], 10) * 30 * 24 * 60 * 60 * 1000;
-  if (daysMatch) totalMs += parseInt(daysMatch[1], 10) * 24 * 60 * 60 * 1000;
-  if (hoursMatch) totalMs += parseInt(hoursMatch[1], 10) * 60 * 60 * 1000;
-  if (minutesMatch) totalMs += parseInt(minutesMatch[1], 10) * 60 * 1000;
-  if (secondsMatch) totalMs += parseInt(secondsMatch[1], 10) * 1000;
+  }
+  if (daysMatch) {
+    totalMs += parseInt(daysMatch[1], 10) * 24 * 60 * 60 * 1000;
+  }
+  if (hoursMatch) {
+    totalMs += parseInt(hoursMatch[1], 10) * 60 * 60 * 1000;
+  }
+  if (minutesMatch) {
+    totalMs += parseInt(minutesMatch[1], 10) * 60 * 1000;
+  }
+  if (secondsMatch) {
+    totalMs += parseInt(secondsMatch[1], 10) * 1000;
+  }
 
   return totalMs;
 }
 
 function formatUptime(ms: number): string {
-  if (ms <= 0) return "未知";
+  if (ms <= 0) {
+    return "未知";
+  }
 
   const seconds = Math.floor((ms / 1000) % 60);
   const minutes = Math.floor((ms / (1000 * 60)) % 60);
@@ -33,17 +57,25 @@ function formatUptime(ms: number): string {
   const months = Math.floor(ms / (1000 * 60 * 60 * 24 * 30));
 
   const parts = [];
-  if (months > 0) parts.push(`${months} 月`);
-  if (days > 0) parts.push(`${days} 天`);
-  if (hours > 0) parts.push(`${hours} 時`);
-  if (minutes > 0) parts.push(`${minutes} 分`);
+  if (months > 0) {
+    parts.push(`${months} 月`);
+  }
+  if (days > 0) {
+    parts.push(`${days} 天`);
+  }
+  if (hours > 0) {
+    parts.push(`${hours} 時`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes} 分`);
+  }
   parts.push(`${seconds} 秒`);
 
   return parts.join(" ");
 }
 
 export default function Mobile() {
-  const [ping, setPing] = useState<any>(null);
+  const [ping, setPing] = useState<PingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [uptimeDisplay, setUptimeDisplay] = useState({
     frontend: "載入中...",
@@ -78,7 +110,9 @@ export default function Mobile() {
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     const interval = setInterval(() => {
       const now = Date.now();
@@ -113,19 +147,19 @@ export default function Mobile() {
           <div>
             {data.map((item, index) => {
               return (
-                <Fragment key={index}>
+                <Fragment key={item.name}>
                   <h1 className={index === 0 ? styles.links : styles.links2}>
                     {item.name}
                   </h1>
-                  {item.children.map((child, childIndex) => {
+                  {item.children.map((child, _childIndex) => {
                     return (
-                      <Fragment key={childIndex}>
+                      <Fragment key={child.name}>
                         <Link
                           href={child.url}
                           target={
                             child.url.includes("http") ? "_blank" : "_self"
                           }
-                          key={childIndex}
+                          key={child.name}
                         >
                           {child.name}
                         </Link>
@@ -172,10 +206,13 @@ export default function Mobile() {
                 前端
               </Link>
             </p>
-            <img
+            <Image
               src="https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge"
               alt="frontend-status"
+              width={208}
+              height={28}
               className={styles.statusImg}
+              unoptimized
             />
             <p className={styles.endText}>
               <Link
@@ -185,16 +222,22 @@ export default function Mobile() {
                 後端
               </Link>
             </p>
-            <img
+            <Image
               src="https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge"
               alt="backend-status"
+              width={208}
+              height={28}
               className={styles.statusImg}
+              unoptimized
             />
             <p className={styles.endText}>資料庫</p>
-            <img
+            <Image
               src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge"
               alt="backend-status"
+              width={208}
+              height={28}
               className={styles.statusImg}
+              unoptimized
             />
           </div>
         </div>

@@ -19,7 +19,9 @@ export async function getBranchVersion(branch: string): Promise<string> {
     });
 
     const version = response.data?.version;
-    if (!version) return "Unknown";
+    if (!version) {
+      return "Unknown";
+    }
 
     return version;
   } catch (error) {

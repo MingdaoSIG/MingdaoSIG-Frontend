@@ -9,12 +9,14 @@ import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 import Buttons from "./Buttons";
 
 interface Props {
-  discardFunction: Function;
-  postFunction: Function;
+  discardFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  postFunction: () => void;
   data: TPostAPI | undefined;
-  handleFormEventFunction: Function;
+  handleFormEventFunction: (e: {
+    target: { name: string; value: string | string[] };
+  }) => void;
   postButtonDisable: boolean;
-  handleFileChange?: Function;
+  handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
 }
 
@@ -51,7 +53,9 @@ export default function MetaDataForm({
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (status !== "authenticated") return;
+    if (status !== "authenticated") {
+      return;
+    }
     setIsDragging(true);
   };
 
@@ -74,7 +78,7 @@ export default function MetaDataForm({
     if (e.dataTransfer.files?.[0] && handleFileChange) {
       const mockEvent = {
         target: { files: e.dataTransfer.files },
-      } as any;
+      } as React.ChangeEvent<HTMLInputElement>;
       handleFileChange(mockEvent);
     }
   };
@@ -85,7 +89,9 @@ export default function MetaDataForm({
       e.target.value = "";
       return;
     }
-    if (handleFileChange) handleFileChange(e);
+    if (handleFileChange) {
+      handleFileChange(e);
+    }
   };
 
   const handleFileInputClick = (e: React.MouseEvent<HTMLLabelElement>) => {
@@ -102,7 +108,9 @@ export default function MetaDataForm({
       handleFormEventFunction({ target: { name: "cover", value: "" } });
     }
     const fileInput = document.getElementById("file") as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
+    if (fileInput) {
+      fileInput.value = "";
+    }
   };
 
   const handleAddTag = () => {
@@ -134,44 +142,48 @@ export default function MetaDataForm({
     }
   };
 
-  if (status === "loading") return <div></div>;
+  if (status === "loading") {
+    return <div></div>;
+  }
 
   return (
-    <div className="flex flex-col h-full gap-1">
+    <div className="flex h-full flex-col gap-1">
       {/* 白色卡片 - 只有 Cover 和 Hashtag */}
-      <div className="flex-1 min-h-0 bg-white rounded-2xl p-4 overflow-y-auto scrollbar-hide">
+      <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto rounded-2xl bg-white p-4">
         {/* Cover Section */}
         <div className="mb-6">
-          <label className="font-semibold text-gray-700 text-lg mb-2 block">
+          <span className="mb-2 block font-semibold text-gray-700 text-lg">
             Cover
-          </label>
+          </span>
 
           {data?.cover && data.cover !== "" ? (
-            <div className="relative group h-40">
+            <div className="group relative h-40">
               <label
                 htmlFor="file"
                 onClick={handleFileInputClick}
-                className="block w-full h-full bg-cover bg-center bg-no-repeat rounded-lg cursor-pointer relative overflow-hidden"
+                className="relative block h-full w-full cursor-pointer overflow-hidden rounded-lg bg-center bg-cover bg-no-repeat"
                 style={{
                   backgroundImage: (data.cover.includes("http")
                     ? `url(${data.cover})`
-                    : `url(${process.env.NEXT_PUBLIC_API_URL!}/image/${data.cover})`
+                    : `url(${process.env.NEXT_PUBLIC_API_URL ?? ""}/image/${data.cover})`
                   ).replace(".lazco.dev", ".mingdao.edu.tw"),
                 }}
               >
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center">
-                  <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-medium">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-200 group-hover:bg-black/20">
+                  <span className="font-medium text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     點擊更換圖片
                   </span>
                 </div>
               </label>
 
               <button
+                type="button"
                 onClick={handleRemoveCover}
-                className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 z-10"
+                className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600"
                 title="移除封面"
               >
                 <svg
+                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
@@ -189,21 +201,18 @@ export default function MetaDataForm({
             <label
               htmlFor="file"
               onClick={handleFileInputClick}
-              className={`
-                w-full h-40 border-2 border-dashed rounded-lg cursor-pointer transition-all
-                flex flex-col justify-center items-center gap-2 p-8
-                ${
-                  isDragging
-                    ? "border-[#4ab8e0] bg-blue-100 scale-[0.98]"
-                    : "border-[#5FCDF5] bg-blue-50 hover:bg-blue-100 hover:border-[#4ab8e0]"
-                }
+              className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-8 transition-all ${
+                isDragging
+                  ? "scale-[0.98] border-[#4ab8e0] bg-blue-100"
+                  : "border-[#5FCDF5] bg-blue-50 hover:border-[#4ab8e0] hover:bg-blue-100"
+              }
               `}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
               <div className="text-5xl opacity-60">📷</div>
-              <div className="text-[#5FCDF5] font-medium text-sm">
+              <div className="font-medium text-[#5FCDF5] text-sm">
                 點擊上傳或拖拽圖片
               </div>
               <div className="text-gray-500 text-xs">
@@ -241,11 +250,11 @@ export default function MetaDataForm({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyPress={handleTagInputKeyPress}
               placeholder="新增標籤..."
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-0 text-sm max-w-xs min-w-0"
+              className="min-w-0 max-w-xs rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-0"
             />
             <button
               onClick={handleAddTag}
-              className="px-4 py-2 bg-[#5FCDF5] text-white rounded-lg hover:bg-[#4ab8e0] transition-colors font-medium text-sm whitespace-nowrap cursor-pointer"
+              className="cursor-pointer whitespace-nowrap rounded-lg bg-[#5FCDF5] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[#4ab8e0]"
               type="button"
             >
               ADD
@@ -256,15 +265,15 @@ export default function MetaDataForm({
           {tags.length > 0 && (
             <div className="max-h-48 overflow-y-auto">
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
+                {tags.map((tag, _index) => (
                   <span
-                    key={index}
-                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm h-[1.5rem]"
+                    key={tag}
+                    className="inline-flex h-[1.5rem] items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-blue-600 text-sm"
                   >
                     #{tag}
                     <button
                       onClick={() => handleRemoveTag(tag)}
-                      className="hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
+                      className="flex h-4 w-4 items-center justify-center rounded-full transition-colors hover:bg-blue-200"
                       type="button"
                     >
                       ×

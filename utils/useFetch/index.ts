@@ -48,15 +48,18 @@ export function useFetch<T>(url: string, options?: RequestInit): State<T> {
         if (isMounted.current) {
           setState({ data: response.data, isLoading: false, error: undefined });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         // 忽略 AbortError（這是正常的取消行為）
-        if (error.name === "AbortError") {
+        if (error instanceof Error && error.name === "AbortError") {
           return;
         }
 
         // 只有在組件仍然掛載時才更新錯誤狀態
         if (isMounted.current) {
-          setState({ error, isLoading: false });
+          setState({
+            error: error instanceof Error ? error : new Error(String(error)),
+            isLoading: false,
+          });
         }
       }
     };

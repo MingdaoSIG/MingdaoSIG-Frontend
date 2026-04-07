@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
   return (
-    <nav className="h-[3.7rem] w-[85vw] mx-auto flex flex-row justify-between items-center cursor-default select-none">
+    <nav className="mx-auto flex h-[3.7rem] w-[85vw] cursor-default select-none flex-row items-center justify-between">
       <Link href={"/"} className="my-auto cursor-pointer">
         <Image
           src="/images/logo.svg"

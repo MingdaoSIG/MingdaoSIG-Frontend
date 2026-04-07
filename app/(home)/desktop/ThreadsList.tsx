@@ -20,7 +20,7 @@ const ThreadsList = () => {
   });
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden">
       {isLoading ? (
         <ThreadsListSkeleton repeat={10} height="auto" />
       ) : (

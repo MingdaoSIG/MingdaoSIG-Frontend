@@ -1,11 +1,12 @@
 import { useState } from "react";
+import type { TThread } from "@/interfaces/Thread";
 
 const SwitchButton = ({
   callback,
   posts,
 }: {
-  callback: Function;
-  posts: any;
+  callback: (value: number) => void;
+  posts: TThread[];
 }) => {
   const [buttonStyle, setButtonStyle] = useState("left-0");
   const [leftStyle, setLeftStyle] = useState(
@@ -18,14 +19,15 @@ const SwitchButton = ({
   return (
     <div
       className={
-        "flex bg-white bg-opacity-50 rounded-full relative select-none " +
+        "relative flex select-none rounded-full bg-white bg-opacity-50" +
         (!posts?.length && "hidden")
       }
     >
       <div
-        className={`transition-all duration-500 w-[100px] h-[56px] absolute bg-md-dark-green rounded-full ${buttonStyle}`}
+        className={`absolute h-[56px] w-[100px] rounded-full bg-md-dark-green transition-all duration-500 ${buttonStyle}`}
       ></div>
       <button
+        type="button"
         className={leftStyle}
         onClick={() => {
           setButtonStyle("left-0");
@@ -41,6 +43,7 @@ const SwitchButton = ({
         Posts
       </button>
       <button
+        type="button"
         className={rightStyle}
         onClick={() => {
           setButtonStyle("left-[100px]");

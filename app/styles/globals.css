@@ -44,7 +44,6 @@ body {
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: rgb(255, 217, 103);
   background: linear-gradient(
     127deg,
     rgba(255, 217, 103, 1) 0%,
@@ -64,7 +63,6 @@ body {
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: rgb(255, 217, 103);
   background: linear-gradient(
     127deg,
     rgba(255, 217, 103, 1) 0%,

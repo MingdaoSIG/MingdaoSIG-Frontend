@@ -2,7 +2,8 @@ export default function Failed({ message }: { message: string }) {
   return (
     <>
       <svg
-        className="w-24 h-24 block"
+        aria-hidden="true"
+        className="block h-24 w-24"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 130.2 130.2"
@@ -71,7 +72,7 @@ export default function Failed({ message }: { message: string }) {
         />
       </svg>
       <h1
-        className="text-2xl text-center font-semibold"
+        className="text-center font-semibold text-2xl"
         style={{ color: "#D06079" }}
       >
         {message}

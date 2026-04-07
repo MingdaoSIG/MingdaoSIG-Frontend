@@ -39,7 +39,9 @@ export default function EditPostPage({
     hashtag: oldPostData.hashtag,
   });
 
-  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: {
+    target: { name: string; value: string | string[] };
+  }) {
     setCurrentPostData(
       (prev: TPostAPI | undefined) =>
         ({
@@ -146,7 +148,7 @@ export default function EditPostPage({
     }).then(async (result) => {
       if (result.isConfirmed) {
         const { postID } = params;
-        const res = await editPostAPI(currentPostData, postID, token!);
+        const res = await editPostAPI(currentPostData, postID, token ?? "");
         if (res.status === 2000) {
           Swal.fire({
             title: "Success Edit",
@@ -174,7 +176,9 @@ export default function EditPostPage({
       "image/tiff",
     ];
 
-    if (!e.target.files) return;
+    if (!e.target.files) {
+      return;
+    }
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
@@ -224,7 +228,7 @@ export default function EditPostPage({
 
   return isMobile ? (
     <PostEditorMobile
-      token={token!}
+      token={token ?? ""}
       data={currentPostData}
       setPostData={setCurrentPostData}
       discardFunction={undo}
@@ -236,7 +240,7 @@ export default function EditPostPage({
     ></PostEditorMobile>
   ) : (
     <PostEditorDesktop
-      token={token!}
+      token={token ?? ""}
       data={currentPostData}
       setPostData={setCurrentPostData}
       discardFunction={undo}

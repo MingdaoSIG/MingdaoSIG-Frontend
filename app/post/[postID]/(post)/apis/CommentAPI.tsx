@@ -1,10 +1,10 @@
 import type { TThread } from "@/interfaces/Thread";
 
 export async function PostCommentAPI(
-  post: any,
-  reply: any,
-  content: any,
-  token: any,
+  post: string | undefined,
+  reply: string,
+  content: string,
+  token: string | null,
 ) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comment`, {
     method: "POST",

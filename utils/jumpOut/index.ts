@@ -34,7 +34,9 @@ function validateUrl(url: string): string | null {
 
 export function jumpOut(url: string) {
   const validatedUrl = validateUrl(url);
-  if (!validatedUrl) return;
+  if (!validatedUrl) {
+    return;
+  }
 
   Swal.fire({
     title: "<strong>HOLD UP</strong>",

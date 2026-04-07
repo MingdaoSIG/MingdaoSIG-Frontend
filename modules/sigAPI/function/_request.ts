@@ -40,8 +40,12 @@ async function get(
     })
   ).json();
 
-  if (response.status !== 2000) throw new Error(response.status);
-  if (!response.data) throw new Error("Unexpected response");
+  if (response.status !== 2000) {
+    throw new Error(response.status);
+  }
+  if (!response.data) {
+    throw new Error("Unexpected response");
+  }
 
   return response.data;
 }
@@ -78,8 +82,12 @@ async function post(
     })
   ).json();
 
-  if (response.status !== 2000) throw new Error(response.status);
-  if (!response.data) throw new Error("Unexpected response");
+  if (response.status !== 2000) {
+    throw new Error(response.status);
+  }
+  if (!response.data) {
+    throw new Error("Unexpected response");
+  }
 
   return response.data;
 }

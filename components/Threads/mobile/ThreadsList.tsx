@@ -51,13 +51,13 @@ const Thread = ({
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={`block bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer select-none transition-all hover:bg-white/70 ${
+      className={`block cursor-pointer select-none overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm transition-all hover:bg-white/70 ${
         isAnnouncement ? "bg-white" : ""
       }`}
     >
       {/* Cover Image */}
       {threadData.cover && (
-        <div className="relative w-full h-48 bg-gradient-to-b from-gray-100 to-gray-400">
+        <div className="relative h-48 w-full bg-gradient-to-b from-gray-100 to-gray-400">
           <Image
             src={fixCoverUrl(threadData.cover)}
             alt={threadData.title}
@@ -70,18 +70,18 @@ const Thread = ({
       )}
 
       {/* Content Container */}
-      <div className="p-4 flex flex-col min-h-[200px]">
+      <div className="flex min-h-[200px] flex-col p-4">
         {/* Header: User info and Date */}
         {!isAnnouncement && user && (
-          <div className="flex justify-between items-start mb-3">
+          <div className="mb-3 flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-gray-700 text-sm font-medium">
+              <span className="font-medium text-gray-700 text-sm">
                 {user?.name}
               </span>
               <span
-                className="px-3 py-1 rounded-full text-xs font-medium text-white"
+                className="rounded-full px-3 py-1 font-medium text-white text-xs"
                 style={{
-                  backgroundColor: sigDefaultColors[sig._id!] || "#009BB0",
+                  backgroundColor: sigDefaultColors[sig._id ?? ""] || "#009BB0",
                 }}
               >
                 {sig.name}
@@ -89,7 +89,7 @@ const Thread = ({
             </div>
             <div className="text-gray-500 text-sm">
               {
-                new Date(threadData.createdAt!)
+                new Date(threadData.createdAt ?? "")
                   .toLocaleString("zh-TW")
                   .split(" ")[0]
               }
@@ -98,14 +98,14 @@ const Thread = ({
         )}
 
         {/* Title */}
-        <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
+        <h2 className="mb-2 line-clamp-1 font-semibold text-gray-900 text-xl">
           {isAnnouncement && "🔔 公告 - "}
           {threadData.title}
         </h2>
 
         {/* Content Preview - Dynamic lines based on hashtags */}
         <p
-          className={`text-gray-700 text-sm leading-relaxed mb-3 ${
+          className={`mb-3 text-gray-700 text-sm leading-relaxed ${
             isAnnouncement
               ? "line-clamp-3"
               : threadData.hashtag && threadData.hashtag.length > 0
@@ -120,11 +120,11 @@ const Thread = ({
         {threadData.hashtag &&
           threadData.hashtag.length > 0 &&
           !isAnnouncement && (
-            <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide pb-1">
-              {threadData.hashtag.map((tag, index) => (
+            <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1">
+              {threadData.hashtag.map((tag, _index) => (
                 <span
-                  key={index}
-                  className="px-3 py-1 bg-[#5FCDF5] text-white rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0"
+                  key={tag}
+                  className="flex-shrink-0 whitespace-nowrap rounded-full bg-[#5FCDF5] px-3 py-1 font-semibold text-white text-xs"
                 >
                   #{tag}
                 </span>
@@ -137,7 +137,7 @@ const Thread = ({
 
         {/* Footer: Likes and Comments - No border */}
         {!isAnnouncement && (
-          <div className="flex items-center gap-4 text-gray-600 pt-2 mt-2">
+          <div className="mt-2 flex items-center gap-4 pt-2 text-gray-600">
             <div className="flex items-center gap-1.5">
               <Image
                 src="/icons/likes.svg"
@@ -146,7 +146,7 @@ const Thread = ({
                 height={18}
                 className="opacity-60"
               />
-              <span className="text-sm font-medium">{threadData.likes}</span>
+              <span className="font-medium text-sm">{threadData.likes}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Image
@@ -156,7 +156,7 @@ const Thread = ({
                 height={18}
                 className="opacity-60"
               />
-              <span className="text-sm font-medium">{threadData.comments}</span>
+              <span className="font-medium text-sm">{threadData.comments}</span>
             </div>
           </div>
         )}
@@ -167,30 +167,30 @@ const Thread = ({
 
 const ThreadSkeleton = () => {
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden animate-pulse">
+    <div className="animate-pulse overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm">
       {/* Cover Skeleton */}
-      <div className="w-full h-48 bg-gradient-to-b from-gray-200 to-gray-300" />
+      <div className="h-48 w-full bg-gradient-to-b from-gray-200 to-gray-300" />
 
       {/* Content Container */}
       <div className="p-4">
-        <div className="flex justify-between items-start mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-4 w-16 bg-gray-300 rounded"></div>
-            <div className="h-6 w-20 bg-gray-300 rounded-full"></div>
+            <div className="h-4 w-16 rounded bg-gray-300"></div>
+            <div className="h-6 w-20 rounded-full bg-gray-300"></div>
           </div>
-          <div className="h-4 w-20 bg-gray-300 rounded"></div>
+          <div className="h-4 w-20 rounded bg-gray-300"></div>
         </div>
-        <div className="h-6 w-3/4 bg-gray-300 rounded mb-2"></div>
-        <div className="h-4 w-full bg-gray-300 rounded mb-1"></div>
-        <div className="h-4 w-full bg-gray-300 rounded mb-3"></div>
-        <div className="flex gap-2 mb-3">
-          <div className="h-6 w-20 bg-gray-300 rounded-full"></div>
-          <div className="h-6 w-16 bg-gray-300 rounded-full"></div>
-          <div className="h-6 w-24 bg-gray-300 rounded-full"></div>
+        <div className="mb-2 h-6 w-3/4 rounded bg-gray-300"></div>
+        <div className="mb-1 h-4 w-full rounded bg-gray-300"></div>
+        <div className="mb-3 h-4 w-full rounded bg-gray-300"></div>
+        <div className="mb-3 flex gap-2">
+          <div className="h-6 w-20 rounded-full bg-gray-300"></div>
+          <div className="h-6 w-16 rounded-full bg-gray-300"></div>
+          <div className="h-6 w-24 rounded-full bg-gray-300"></div>
         </div>
         <div className="flex gap-4">
-          <div className="h-4 w-12 bg-gray-300 rounded"></div>
-          <div className="h-4 w-12 bg-gray-300 rounded"></div>
+          <div className="h-4 w-12 rounded bg-gray-300"></div>
+          <div className="h-4 w-12 rounded bg-gray-300"></div>
         </div>
       </div>
     </div>
@@ -204,7 +204,7 @@ export const InfinityThreadsList = ({
   isFetchingNextPage,
   announcementData,
 }: {
-  data: any;
+  data: InfiniteData<TThread[], unknown>;
   height?: string;
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
@@ -212,7 +212,7 @@ export const InfinityThreadsList = ({
     InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
   >;
   isFetchingNextPage: boolean;
-  announcementData?: any;
+  announcementData?: InfiniteData<TThread[], unknown>;
 }) => {
   const postList = useRef(null);
 
@@ -229,7 +229,7 @@ export const InfinityThreadsList = ({
   }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const listInnerElement: HTMLElement = postList.current!;
+    const listInnerElement = postList.current as HTMLElement | null;
 
     if (listInnerElement) {
       // 監聽滾輪滾動（桌面）
@@ -246,33 +246,35 @@ export const InfinityThreadsList = ({
 
   return data && data.pages[0].length >= 1 ? (
     <div
-      className="w-full overflow-y-auto scrollbar-hide"
+      className="scrollbar-hide w-full overflow-y-auto"
       style={{ height }}
       ref={postList}
     >
       {/* Announcement Section */}
       {announcementData &&
         announcementData.pages[0].length >= 1 &&
-        announcementData.pages.map((page: TThread[], index: number) => {
+        announcementData.pages.map((page: TThread[], _index: number) => {
           const currentDate = Date.now();
-          const postDate = new Date(page[0].createdAt!).getTime();
+          const postDate = new Date(page[0].createdAt ?? "").getTime();
           const diffDays = Math.floor(
             (currentDate - postDate) / (1000 * 60 * 60 * 24),
           );
 
           if (diffDays < announcementStayTime) {
             return (
-              <div key={index} className="sm:col-span-2">
+              <div key={page[0]._id} className="sm:col-span-2">
                 <Thread threadData={page[0]} priority={true} />
               </div>
             );
           }
+          return null;
         })}
 
       {/* Threads Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {data.pages.map((page: TThread[], pageIndex: number) => (
-          <Fragment key={pageIndex}>
+          // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
+          <Fragment key={`page-${pageIndex}`}>
             {page.map((item, itemIndex) => {
               const sig = item.sig as unknown as Sig;
               const isAnnouncement = sig._id === announcementSigId;
@@ -285,10 +287,11 @@ export const InfinityThreadsList = ({
                   <Thread
                     threadData={item}
                     priority={shouldPrioritize}
-                    key={itemIndex}
+                    key={item._id}
                   />
                 );
               }
+              return null;
             })}
           </Fragment>
         ))}
@@ -301,7 +304,7 @@ export const InfinityThreadsList = ({
       </div>
     </div>
   ) : (
-    <div className="h-full w-full flex items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <h1 className="text-2xl text-gray-600">No Post Yet</h1>
     </div>
   );
@@ -316,9 +319,10 @@ export const ThreadsListSkeleton = ({
 }) => {
   return (
     <div className="w-full overflow-y-auto" style={{ height }}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {[...Array(repeat)].map((_, index) => (
-          <ThreadSkeleton key={index} />
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no unique identifier
+          <ThreadSkeleton key={`skeleton-${index}`} />
         ))}
       </div>
     </div>

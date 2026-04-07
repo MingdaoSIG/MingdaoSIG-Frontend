@@ -30,7 +30,12 @@ export default function ReadableTime(milliseconds: number): {
   };
   string: string;
 } {
-  let year, month, day, hour, minute, second;
+  let year: number,
+    month: number,
+    day: number,
+    hour: number,
+    minute: number,
+    second: number;
 
   second = Math.floor(milliseconds / 1000);
   minute = Math.floor(second / 60);

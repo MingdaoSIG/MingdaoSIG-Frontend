@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
 import "@/app/mdEditorConfig";
 
+import type { IImageUpload } from "@/interfaces/Image.interface";
 // APIs Request Function
 import { imageUpload } from "@/modules/imageUploadAPI";
 
@@ -18,9 +19,12 @@ interface Props {
 }
 
 const MdEditorSync = ({ data, setPostData, token }: Props) => {
-  const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
+  const onUploadImg = async (
+    files: File[],
+    callback: (urls: string[]) => void,
+  ) => {
     const responseImage = await Promise.all(
-      files.map(async (file: any) => {
+      files.map(async (file: File) => {
         try {
           const res = await imageUpload(file, token);
           return await res.json();
@@ -32,7 +36,8 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
     );
     callback(
       responseImage.map(
-        (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/${item?.id}`,
+        (item: IImageUpload | string) =>
+          `${process.env.NEXT_PUBLIC_API_URL}/image/${typeof item === "object" ? item?.id : ""}`,
       ),
     );
   };
@@ -52,7 +57,7 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
   return (
     <div className="w-full space-y-2">
       {/* 編輯器區域 */}
-      <div className="h-[20rem] w-full bg-white overflow-hidden mx-auto py-1 border border-gray-300 rounded-md editor-wrapper">
+      <div className="editor-wrapper mx-auto h-[20rem] w-full overflow-hidden rounded-md border border-gray-300 bg-white py-1">
         <MdEditor
           value={data?.content || ""}
           onChange={handleEditorChange}
@@ -65,13 +70,13 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
       </div>
 
       {/* 預覽區域 */}
-      <div className="w-full bg-white border border-gray-300 rounded-md p-1 max-h-[20rem] overflow-hidden">
-        <div className="max-w-none overflow-hidden h-[19rem]">
+      <div className="max-h-[20rem] w-full overflow-hidden rounded-md border border-gray-300 bg-white p-1">
+        <div className="h-[19rem] max-w-none overflow-hidden">
           {data?.content ? (
             <MdPreview
               value={data.content}
               previewTheme="github"
-              className=" max-w-none !overflow-auto !max-h-[19rem] small-scrollbar"
+              className="!overflow-auto !max-h-[19rem] small-scrollbar max-w-none"
             />
           ) : (
             <p className="text-gray-400">預覽內容將顯示在這裡...</p>

@@ -14,10 +14,10 @@ export default function Reply({
   overflow,
   first,
 }: {
-  customId: any;
-  avatar: any;
-  content: any;
-  createdAt: any;
+  customId: string;
+  avatar: string;
+  content: string;
+  createdAt: string;
   overflow: boolean;
   first?: boolean;
 }) {
@@ -35,7 +35,7 @@ export default function Reply({
         className="rounded-full"
       ></Image>
       <div className={styles.content}>
-        <div className="info flex gap-2 items-center">
+        <div className="info flex items-center gap-2">
           <div
             className={`font-semibold text-[12px] ${!first && styles.name}`}
             onClick={() => {
@@ -47,21 +47,22 @@ export default function Reply({
           >
             @{customId}
           </div>
-          <div className="time text-[10px] text-[#979797] font-extralight">
+          <div className="time font-extralight text-[#979797] text-[10px]">
             {createdAt}
           </div>
         </div>
         <p
           className={
-            "text-md-dark-green font-extralight text-[12px] break-words " +
-            (overflow ? "w-[65dvw] truncate " : " ") +
+            "break-words font-extralight text-[12px] text-md-dark-green" +
+            (overflow ? "w-[65dvw] truncate" : " ") +
             styles.content
           }
         >
           <Linkify
             componentDecorator={(decoratedHref, decoratedText, key) => (
               <button
-                className={" break-words "}
+                type="button"
+                className={"break-words"}
                 key={key}
                 onClick={() => {
                   if (!first) {

@@ -19,11 +19,11 @@ export async function getPostListAPI(
 
     setParentsPost(res.data);
 
-    const posts: any = res.data;
+    const posts: TThread[] = res.data;
     setPosts(posts);
     setStatus("success");
     return;
-  } catch (error) {
-    console.log(error);
+  } catch (_error) {
+    // Silently ignore fetch errors
   }
 }

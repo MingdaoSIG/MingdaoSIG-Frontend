@@ -99,7 +99,9 @@ export default function NewPostPage() {
     hashtag: [],
   });
 
-  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: {
+    target: { name: string; value: string | string[] };
+  }) {
     setPostData(
       (prev: TPostAPI | undefined) =>
         ({
@@ -111,7 +113,9 @@ export default function NewPostPage() {
 
   // ✅ 修復：只在真正有內容變化時才保存
   useEffect(() => {
-    if (!isInitialized || !hasLoadedFromStorage.current) return;
+    if (!isInitialized || !hasLoadedFromStorage.current) {
+      return;
+    }
 
     const hasContent =
       data.title !== "" ||
@@ -127,7 +131,9 @@ export default function NewPostPage() {
 
   // ✅ 修復：確保只在組件首次掛載時讀取一次
   useEffect(() => {
-    if (hasLoadedFromStorage.current) return;
+    if (hasLoadedFromStorage.current) {
+      return;
+    }
 
     const storedContent = localStorage?.getItem("editorContent");
     const storedData = localStorage?.getItem("postData");
@@ -166,12 +172,15 @@ export default function NewPostPage() {
   async function NewPostAPI() {
     setPostButtonDisable(true);
 
-    if (!data) return;
+    if (!data) {
+      return;
+    }
 
-    if (data?.title === "")
+    if (data?.title === "") {
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
         setPostButtonDisable(false),
       );
+    }
     if (!data.sig) {
       return Swal.fire(alertMessageConfigs.sigError).then(() =>
         setPostButtonDisable(false),
@@ -179,9 +188,10 @@ export default function NewPostPage() {
     }
 
     try {
-      if (!data || !token) throw new Error("Missing data or token");
+      if (!data || !token) {
+        throw new Error("Missing data or token");
+      }
       const res = await postAPI(data, token);
-      console.debug(res);
 
       if (res.status === 2000) {
         return Swal.fire(alertMessageConfigs.Success).then(() => {
@@ -192,7 +202,8 @@ export default function NewPostPage() {
           hasLoadedFromStorage.current = false; // 重置標記
           route.push(`/post/${res.data._id}`);
         });
-      } else if (res.status === 4001) {
+      }
+      if (res.status === 4001) {
         Swal.fire(alertMessageConfigs.PermissionError).then(() =>
           setPostButtonDisable(false),
         );
@@ -207,7 +218,7 @@ export default function NewPostPage() {
     }
   }
 
-  function discard(e: ChangeEvent<HTMLInputElement>) {
+  function discard(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
     Swal.fire({
@@ -242,7 +253,9 @@ export default function NewPostPage() {
       "image/tiff",
     ];
 
-    if (!e.target.files || e.target.files.length === 0) return;
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
@@ -285,14 +298,14 @@ export default function NewPostPage() {
   }
 
   if (status === "loading") {
-    return <div className="h-full flex items-center justify-center"></div>;
+    return <div className="flex h-full items-center justify-center"></div>;
   }
 
   return isMobile ? (
     <PostEditorMobile
       data={data}
       setPostData={setPostData}
-      token={token!}
+      token={token ?? ""}
       handleFormEventFunction={handleFormChange}
       discardFunction={discard}
       postFunction={NewPostAPI}
@@ -305,7 +318,7 @@ export default function NewPostPage() {
       setPostData={setPostData}
       discardFunction={discard}
       postFunction={NewPostAPI}
-      token={token!}
+      token={token ?? ""}
       handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
       handleFileChange={handleFileChange}

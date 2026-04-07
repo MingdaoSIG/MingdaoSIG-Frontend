@@ -48,19 +48,21 @@ const ToolBar = () => {
 
   // 計算選中項目的 left 位置 (rem)
   const getSelectedPosition = () => {
-    if (selected === -1) return "0rem";
+    if (selected === -1) {
+      return "0rem";
+    }
     // 23.5rem / 4 = 5.875rem per item
     return `${selected * 5.875}rem`;
   };
 
   return (
-    <div className="h-20 w-[25rem] mx-auto bg-white/50 border border-white/60 rounded-full select-none flex items-center justify-center">
-      <div className="relative h-14 w-[23.5rem] flex">
+    <div className="mx-auto flex h-20 w-[25rem] select-none items-center justify-center rounded-full border border-white/60 bg-white/50">
+      <div className="relative flex h-14 w-[23.5rem]">
         {menu.map((item, index) => {
           return (
             <div
-              key={index}
-              className="flex-1 rounded-full relative flex justify-center items-center z-10"
+              key={item.name}
+              className="relative z-10 flex flex-1 items-center justify-center rounded-full"
             >
               <div
                 style={{
@@ -74,7 +76,7 @@ const ToolBar = () => {
                   opacity: item.clickable ? 1 : 0.5,
                   pointerEvents: item.clickable ? "auto" : "none",
                 }}
-                className="rounded-full cursor-pointer relative flex justify-center items-center transition-opacity duration-500"
+                className="relative flex cursor-pointer items-center justify-center rounded-full transition-opacity duration-500"
                 onClick={() => setSelected(index)}
               >
                 <Image src={item.icon} height={32} width={32} alt={item.name} />
@@ -87,7 +89,7 @@ const ToolBar = () => {
             display: selected === -1 ? "none" : "block",
             left: getSelectedPosition(),
           }}
-          className="absolute h-full w-[5.875rem] bg-slate-400/30 rounded-full transition-all duration-300 ease-in-out"
+          className="absolute h-full w-[5.875rem] rounded-full bg-slate-400/30 transition-all duration-300 ease-in-out"
         />
       </div>
     </div>
@@ -104,11 +106,14 @@ function pathToSelected(path: string) {
 
   if (homeRegex.test(path)) {
     return 0;
-  } else if (userRegex.test(path)) {
+  }
+  if (userRegex.test(path)) {
     return 1;
-  } else if (newRegex.test(path)) {
+  }
+  if (newRegex.test(path)) {
     return 2;
-  } else if (infoRegex.test(path)) {
+  }
+  if (infoRegex.test(path)) {
     return 3;
   }
 

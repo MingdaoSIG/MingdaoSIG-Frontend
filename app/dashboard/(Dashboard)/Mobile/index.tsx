@@ -14,6 +14,21 @@ import {
   sigDefaultColors,
 } from "@/app/dashboard/(Dashboard)/config/sigDefaultColors";
 
+type SigCountItem = {
+  name: string;
+  count: number;
+};
+
+type ChartData = {
+  labels: string[];
+  datasets: {
+    data: number[];
+    backgroundColor: string[];
+    borderColor: string[];
+    borderWidth: number;
+  }[];
+};
+
 const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
   ssr: false,
 });
@@ -51,68 +66,76 @@ export default function Mobile() {
   const [validPostCount, setValidPostCount] = useState(0);
 
   // Sig Posts Count
-  const [sigPostCount, setSigPostCount] = useState<any>([]);
-  const [sigPostCountLabel, setSigPostCountLabel] = useState<any>([]);
-  const [sigPostCountData, setSigPostCountData] = useState<any>([]);
-  const [sigPostCountColor, setSigPostCountColor] = useState<any>([]);
-  const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<any>(
-    [],
-  );
+  const [sigPostCount, setSigPostCount] = useState<SigCountItem[]>([]);
+  const [sigPostCountLabel, setSigPostCountLabel] = useState<string[]>([]);
+  const [sigPostCountData, setSigPostCountData] = useState<number[]>([]);
+  const [sigPostCountColor, setSigPostCountColor] = useState<string[]>([]);
+  const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<
+    string[]
+  >([]);
 
   // Sig User Count
-  const [sigUserCount, setSigUserCount] = useState<any>([]);
-  const [sigUserCountLabel, setSigUserCountLabel] = useState<any>([]);
-  const [sigUserCountData, setSigUserCountData] = useState<any>([]);
-  const [sigUserCountColor, setSigUserCountColor] = useState<any>([]);
-  const [sigUserCountBorderColor, setSigUserCountBorderColor] = useState<any>(
-    [],
+  const [sigUserCount, setSigUserCount] = useState<SigCountItem[]>([]);
+  const [sigUserCountLabel, setSigUserCountLabel] = useState<string[]>([]);
+  const [sigUserCountData, setSigUserCountData] = useState<number[]>([]);
+  const [sigUserCountColor, setSigUserCountColor] = useState<string[]>([]);
+  const [sigUserCountBorderColor, setSigUserCountBorderColor] = useState<
+    string[]
+  >([]);
+
+  const [sigPostCountFinalData, setSigPostCountFinalData] = useState<ChartData>(
+    {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: [],
+          borderWidth: 1,
+        },
+      ],
+    },
   );
 
-  const [sigPostCountFinalData, setSigPostCountFinalData] = useState({
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: [],
-        borderColor: [],
-        borderWidth: 1,
-      },
-    ],
-  } as any);
-
-  const [sigUserCountFinalData, setSigUserCountFinalData] = useState({
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: [],
-        borderColor: [],
-        borderWidth: 1,
-      },
-    ],
-  } as any);
+  const [sigUserCountFinalData, setSigUserCountFinalData] = useState<ChartData>(
+    {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: [],
+          borderWidth: 1,
+        },
+      ],
+    },
+  );
 
   const [date] = useState(() => new Date().toISOString());
 
   // Sig Posts Count Start
   useEffect(() => {
-    if (sigPostCount.length === 0) return;
-    sigPostCount.forEach((sig: any) => {
-      setSigPostCountLabel((prev: any) => [...prev, sig.name]);
-      setSigPostCountData((prev: any) => [...prev, sig.count]);
-      setSigPostCountColor((prev: any) => [
+    if (sigPostCount.length === 0) {
+      return;
+    }
+    for (const sig of sigPostCount) {
+      setSigPostCountLabel((prev: string[]) => [...prev, sig.name]);
+      setSigPostCountData((prev: number[]) => [...prev, sig.count]);
+      setSigPostCountColor((prev: string[]) => [
         ...prev,
         sigDefaultColors[sig.name],
       ]);
-      setSigPostCountBorderColor((prev: any) => [
+      setSigPostCountBorderColor((prev: string[]) => [
         ...prev,
         sigDefaultBorderColors[sig.name],
       ]);
-    });
+    }
   }, [sigPostCount]);
 
   useEffect(() => {
-    if (sigPostCountFinalData.labels.length !== 0) return;
+    if (sigPostCountFinalData.labels.length !== 0) {
+      return;
+    }
     setSigPostCountFinalData({
       labels: sigPostCountLabel,
       datasets: [
@@ -155,23 +178,27 @@ export default function Mobile() {
 
   // Sig Users Count Start
   useEffect(() => {
-    if (sigUserCount.length === 0) return;
-    sigUserCount.forEach((sig: any) => {
-      setSigUserCountLabel((prev: any) => [...prev, sig.name]);
-      setSigUserCountData((prev: any) => [...prev, sig.count]);
-      setSigUserCountColor((prev: any) => [
+    if (sigUserCount.length === 0) {
+      return;
+    }
+    for (const sig of sigUserCount) {
+      setSigUserCountLabel((prev: string[]) => [...prev, sig.name]);
+      setSigUserCountData((prev: number[]) => [...prev, sig.count]);
+      setSigUserCountColor((prev: string[]) => [
         ...prev,
         sigDefaultColors[sig.name],
       ]);
-      setSigUserCountBorderColor((prev: any) => [
+      setSigUserCountBorderColor((prev: string[]) => [
         ...prev,
         sigDefaultBorderColors[sig.name],
       ]);
-    });
+    }
   }, [sigUserCount]);
 
   useEffect(() => {
-    if (sigUserCountFinalData.labels.length !== 0) return;
+    if (sigUserCountFinalData.labels.length !== 0) {
+      return;
+    }
     setSigUserCountFinalData({
       labels: sigUserCountLabel,
       datasets: [
@@ -294,7 +321,9 @@ export default function Mobile() {
     }
 
     return () => {
-      controllers.forEach((controller) => controller.abort());
+      for (const controller of controllers) {
+        controller.abort();
+      }
     };
   }, [validPostCount, userCount, postUserCount, likeCount, date]);
 

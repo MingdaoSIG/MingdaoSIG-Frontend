@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 // Interfaces
+import type { TComments } from "@/interfaces/comments";
 import type { TThread } from "@/interfaces/Thread";
 // Utils
 import useAlert from "@/utils/useAlert";
@@ -21,18 +22,21 @@ import styles from "./Replies.module.scss";
 export default function Replies({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useState<string>("");
   const [typeText, setTypeText] = useState(false);
-  const [comments, setComments] = useState<any>([]);
+  const [comments, setComments] = useState<TComments[]>([]);
   const [extended, setExtended] = useState(false);
   const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
 
-  async function handleCommandSubmit(e: any) {
+  async function handleCommandSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!isLogin) return showAlert(alertMessageConfigs.noLogin);
+    if (!isLogin) {
+      return showAlert(alertMessageConfigs.noLogin);
+    }
     const reply = "";
     const content = typeComments;
-    if (typeComments.length === 0)
+    if (typeComments.length === 0) {
       return showAlert(alertMessageConfigs.noComment);
+    }
     try {
       const res = await PostCommentAPI(post?._id, reply, content, token);
       if (res.status === 2000) {
@@ -48,12 +52,13 @@ export default function Replies({ post }: { post: TThread }) {
     }
   }
 
-  async function handleCloseExtended(e: any) {
+  async function handleCloseExtended(e: React.MouseEvent<HTMLDivElement>) {
+    const target = e.target as HTMLElement;
     if (
       !(
-        e.target instanceof HTMLInputElement ||
-        e.target.id === "send" ||
-        e.target.id === "customId"
+        target instanceof HTMLInputElement ||
+        target.id === "send" ||
+        target.id === "customId"
       )
     ) {
       setExtended(false);
@@ -62,7 +67,9 @@ export default function Replies({ post }: { post: TThread }) {
 
   useEffect(() => {
     GetCommentAPI(post).then((res) => {
-      if (res.data.length === 0) return;
+      if (res.data.length === 0) {
+        return;
+      }
       setComments(res.data);
     });
   }, [post]);
@@ -70,16 +77,20 @@ export default function Replies({ post }: { post: TThread }) {
   return (
     <div
       className={
-        styles.wrapper + (extended ? " h-[70dvh] !bg-white" : " h-[6.5rem]")
+        styles.wrapper + (extended ? "!bg-white h-[70dvh]" : "h-[6.5rem]")
       }
       onClick={() => {
-        if (!extended) setExtended(true);
+        if (!extended) {
+          setExtended(true);
+        }
       }}
     >
       <div
-        className={styles.repliesWrapper + (extended ? " h-full" : " h-auto")}
-        onClick={(e: any) => {
-          if (extended) handleCloseExtended(e);
+        className={styles.repliesWrapper + (extended ? "h-full" : "h-auto")}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          if (extended) {
+            handleCloseExtended(e);
+          }
         }}
       >
         <div className={styles.title}>
@@ -87,11 +98,11 @@ export default function Replies({ post }: { post: TThread }) {
           <span>-</span>
           <p>{comments.length}</p>
         </div>
-        <div className={styles.replyList + (extended ? " h-full m-0" : " ")}>
-          {comments.map((comment: any, index: number) => {
+        <div className={styles.replyList + (extended ? "m-0 h-full" : " ")}>
+          {comments.map((comment: TComments, index: number) => {
             if (extended) {
               return (
-                <div key={index}>
+                <div key={comment._id ?? `comment-${index}`}>
                   <Reply
                     customId={comment.user.customId}
                     avatar={comment.user.avatar}
@@ -106,6 +117,7 @@ export default function Replies({ post }: { post: TThread }) {
                 </div>
               );
             }
+            return null;
           })}
           {comments.length > 0 && !extended ? (
             <Reply
@@ -123,7 +135,7 @@ export default function Replies({ post }: { post: TThread }) {
           ) : (
             !extended &&
             comments.length === 0 && (
-              <p className="mx-auto font-medium text-[1rem] my-auto">
+              <p className="mx-auto my-auto font-medium text-[1rem]">
                 No comments
               </p>
             )
@@ -131,13 +143,13 @@ export default function Replies({ post }: { post: TThread }) {
         </div>
         <form
           className={
-            "h-[42px] w-full flex-none bg-[#D5E5E8] rounded-full mt-5 border border-[#BDBDBD] pl-[12px] flex bottom-5 " +
+            "bottom-5 mt-5 flex h-[42px] w-full flex-none rounded-full border border-[#BDBDBD] bg-[#D5E5E8] pl-[12px]" +
             (extended ? "" : "hidden")
           }
           onSubmit={handleCommandSubmit}
         >
           <input
-            className="focus-visible:outline-none px-3 w-full h-full bg-transparent flex-1 disabled:cursor-not-allowed"
+            className="h-full w-full flex-1 bg-transparent px-3 focus-visible:outline-none disabled:cursor-not-allowed"
             placeholder="Reply..."
             onChange={(e) => {
               e.target.value.length > 0
@@ -148,17 +160,17 @@ export default function Replies({ post }: { post: TThread }) {
             value={typeComments}
             // disabled
           />
-          <button className="h-full w-[40px] flex-none">
+          <button type="button" className="h-full w-[40px] flex-none">
             <Image
               src={"/icons/bx-send.svg"}
               height={24}
               width={24}
               alt="send"
               className={
-                "mt-auto h-full " +
+                "mt-auto h-full" +
                 (typeText && isLogin
-                  ? "opacity-100 cursor-pointer"
-                  : "opacity-30 cursor-not-allowed")
+                  ? "cursor-pointer opacity-100"
+                  : "cursor-not-allowed opacity-30")
               }
               id="send"
             />

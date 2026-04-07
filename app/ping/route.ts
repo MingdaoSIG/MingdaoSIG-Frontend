@@ -39,11 +39,6 @@ export async function GET() {
 
   if (!apiResponse) {
     console.warn(`[Ping] Backend API not available at ${apiUrl}`);
-  } else {
-    console.log(`[Ping] Successfully fetched backend data:`, {
-      service: apiData.service,
-      version: apiData.version?.current,
-    });
   }
 
   const currentFrontendVersion = packageJSON.version;

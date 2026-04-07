@@ -39,27 +39,27 @@ export default function Desktop() {
 
   return (
     <>
-      <div className="w-[90vw] h-full mx-auto rounded-[1.2rem] overflow-hidden">
-        <div className="h-full flex flex-col overflow-hidden">
-          <div className="bg-white rounded-[1.2rem] overflow-hidden p-6 pr-3 flex-1">
-            <div className="space-y-6 overflow-y-auto h-full flex-1 pr-3">
+      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-[1.2rem]">
+        <div className="flex h-full flex-col overflow-hidden">
+          <div className="flex-1 overflow-hidden rounded-[1.2rem] bg-white p-6 pr-3">
+            <div className="h-full flex-1 space-y-6 overflow-y-auto pr-3">
               {typedChangelog.map((entry, index) => (
                 <Fragment key={entry.version}>
                   <div className="relative">
                     <div
-                      className="flex items-center gap-3 mb-3 p-3 rounded-lg"
+                      className="mb-3 flex items-center gap-3 rounded-lg p-3"
                       style={{
                         backgroundColor: versionBgColors[entry.type],
                       }}
                     >
-                      <span className="text-xl font-bold text-[#003f47]">
+                      <span className="font-bold text-[#003f47] text-xl">
                         v{entry.version}
                       </span>
-                      <span className="text-sm text-[#003f47]/70">
+                      <span className="text-[#003f47]/70 text-sm">
                         {formatDate(entry.date)}
                       </span>
                       <span
-                        className="text-xs px-2 py-1 rounded-full ml-auto"
+                        className="ml-auto rounded-full px-2 py-1 text-xs"
                         style={{
                           backgroundColor: typeLabels[entry.type].color,
                           color: "white",
@@ -70,28 +70,28 @@ export default function Desktop() {
                     </div>
 
                     {/* Title & Summary */}
-                    <h2 className="text-lg font-medium text-[#003f47] mb-1">
+                    <h2 className="mb-1 font-medium text-[#003f47] text-lg">
                       {entry.title}
                     </h2>
-                    <p className="text-sm text-[#003f47]/70 mb-3">
+                    <p className="mb-3 text-[#003f47]/70 text-sm">
                       {entry.summary}
                     </p>
 
                     {/* Changes List */}
                     <ul className="space-y-2">
-                      {entry.changes.map((change, changeIndex) => (
+                      {entry.changes.map((change) => (
                         <li
-                          key={changeIndex}
-                          className="flex items-start gap-2 text-sm text-[#003f47]"
+                          key={change.description}
+                          className="flex items-start gap-2 text-[#003f47] text-sm"
                         >
                           <span
-                            className="inline-block w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+                            className="mt-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
                             style={{
                               backgroundColor: typeLabels[change.type].color,
                             }}
                           />
                           <span
-                            className="inline-block px-2 py-0.5 rounded text-xs text-white flex-shrink-0"
+                            className="inline-block flex-shrink-0 rounded px-2 py-0.5 text-white text-xs"
                             style={{
                               backgroundColor: typeLabels[change.type].color,
                             }}

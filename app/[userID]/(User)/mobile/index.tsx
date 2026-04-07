@@ -53,13 +53,13 @@ export default function ProfileMobile({
         dataType={dataType}
         setInfo={setData}
       />
-      <div className="overflow-y-hidden mx-[0.5rem]">
+      <div className="mx-[0.5rem] overflow-y-hidden">
         {isLoading ? (
           <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
         ) : dataType === "user" ? (
-          <UserInfinityThreadList id={data?._id!} />
+          <UserInfinityThreadList id={data?._id ?? ""} />
         ) : (
-          <SIGInfinityThreadList id={data?._id!} />
+          <SIGInfinityThreadList id={data?._id ?? ""} />
         )}
       </div>
     </div>
@@ -132,10 +132,9 @@ async function getAccountData(accountId: string): Promise<{
       data: userData || sigData || null,
       dataType: userData ? "user" : sigData ? "sig" : null,
     };
-  } else {
-    return {
-      data: null,
-      dataType: null,
-    };
   }
+  return {
+    data: null,
+    dataType: null,
+  };
 }

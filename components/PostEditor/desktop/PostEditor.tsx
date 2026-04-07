@@ -20,11 +20,13 @@ interface Props {
   data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
-  discardFunction: Function;
-  handleFormEventFunction: Function;
-  postFunction: Function;
+  discardFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleFormEventFunction: (e: {
+    target: { name: string; value: string | string[] };
+  }) => void;
+  postFunction: () => void;
   postButtonDisable: boolean;
-  handleFileChange?: Function;
+  handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
 }
 

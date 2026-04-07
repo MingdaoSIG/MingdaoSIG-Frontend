@@ -57,8 +57,12 @@ export default function UserPage({
           setData(data);
           setDataType(dataType);
         }
-      } catch (error: any) {
-        if (error.name !== "AbortError" && isMounted) {
+      } catch (error: unknown) {
+        if (
+          error instanceof Error &&
+          error.name !== "AbortError" &&
+          isMounted
+        ) {
           console.error("Failed to fetch account data:", error);
         }
       } finally {
@@ -94,9 +98,9 @@ export default function UserPage({
       {isLoading ? (
         <ThreadsListSkeleton repeat={6} height="auto" />
       ) : dataType === "user" ? (
-        <UserInfinityThreadList id={data?._id!} />
+        <UserInfinityThreadList id={data?._id ?? ""} />
       ) : (
-        <SIGInfinityThreadList id={data?._id!} />
+        <SIGInfinityThreadList id={data?._id ?? ""} />
       )}
       <Info
         user={data}
@@ -149,8 +153,10 @@ function SIGInfinityThreadList({ id }: { id: string }) {
 async function getUser(userId: string, signal?: AbortSignal) {
   try {
     return await sigAPI.getUserData(userId, signal);
-  } catch (error: any) {
-    if (error.name === "AbortError") throw error;
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
     return false;
   }
 }
@@ -158,8 +164,10 @@ async function getUser(userId: string, signal?: AbortSignal) {
 async function getSIG(userId: string, signal?: AbortSignal) {
   try {
     return await sigAPI.getSigData(userId, signal);
-  } catch (error: any) {
-    if (error.name === "AbortError") throw error;
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
     return false;
   }
 }
@@ -181,10 +189,9 @@ async function getAccountData(
       data: userData || sigData || null,
       dataType: userData ? "user" : sigData ? "sig" : null,
     };
-  } else {
-    return {
-      data: null,
-      dataType: null,
-    };
   }
+  return {
+    data: null,
+    dataType: null,
+  };
 }

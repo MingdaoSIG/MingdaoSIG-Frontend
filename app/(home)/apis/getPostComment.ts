@@ -10,7 +10,7 @@ export async function getPostCommentAPI({ _id }: TThread) {
       },
     );
     return await res.json();
-  } catch (error) {
-    console.log(error);
+  } catch (_error) {
+    // Silently ignore fetch errors
   }
 }

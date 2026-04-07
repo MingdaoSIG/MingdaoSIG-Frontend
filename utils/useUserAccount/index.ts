@@ -45,7 +45,8 @@ export function useUserAccount() {
       // OAuth 登入成功
       if (OAuth === "authenticated") {
         try {
-          const accessToken = (session as any)?.accessToken;
+          const accessToken = (session as unknown as Record<string, unknown>)
+            ?.accessToken as string;
           const { token, data } = await platformLogin(accessToken);
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
@@ -119,15 +120,16 @@ async function platformLogin(accessToken: string) {
       })
     ).json();
 
-    if (response.status !== 2000)
+    if (response.status !== 2000) {
       throw new Error("Failed to login to platform");
+    }
 
     return {
       token: response.authorization.toString().split(" ")[1],
       data: response.data,
     };
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }
 
@@ -145,14 +147,15 @@ async function platformLoginWithSession(session: string) {
       })
     ).json();
 
-    if (response.status !== 2000)
+    if (response.status !== 2000) {
       throw new Error("Failed to login to platform");
+    }
 
     return {
       token: response.authorization.toString().split(" ")[1],
       data: response.data,
     };
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }

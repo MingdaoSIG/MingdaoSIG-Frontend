@@ -59,9 +59,9 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
         }
 
         return;
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
-          console.log(error);
+      } catch (error: unknown) {
+        if ((error as Error).name !== "AbortError") {
+          // Non-abort fetch errors are silently ignored - UI shows loading/notfound state
         }
       }
     }
@@ -71,7 +71,8 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
 
   if (status === "loading") {
     return <div></div>;
-  } else if (status === "notfound") {
+  }
+  if (status === "notfound") {
     return (
       <NotFound
         content={{
@@ -82,22 +83,22 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
         }}
       />
     );
-  } else if (post?.sig === "652d60b842cdf6a660c2b778") {
+  }
+  if (post?.sig === "652d60b842cdf6a660c2b778") {
     return isMobile ? (
-      <ThreadMobile post={post!} isAnnouncement />
+      <ThreadMobile post={post as TThread} isAnnouncement />
     ) : (
-      <ThreadDesktop post={post!} />
-    );
-  } else {
-    return isMobile ? (
-      <ThreadMobile post={post!}></ThreadMobile>
-    ) : (
-      <SplitBlock>
-        <ThreadDesktop post={post!} />
-        <ThreadInfo post={post!} />
-      </SplitBlock>
+      <ThreadDesktop post={post as TThread} />
     );
   }
+  return isMobile ? (
+    <ThreadMobile post={post as TThread}></ThreadMobile>
+  ) : (
+    <SplitBlock>
+      <ThreadDesktop post={post as TThread} />
+      <ThreadInfo post={post as TThread} />
+    </SplitBlock>
+  );
 };
 
 export default Post;
