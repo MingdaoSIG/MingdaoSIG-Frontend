@@ -1,30 +1,26 @@
-import Image from "next/image";
-import Link from "next/link";
-import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import type {
   FetchNextPageOptions,
-  InfiniteQueryObserverResult,
   InfiniteData,
+  InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
-
-// Styles
-import style from "./ThreadsList.module.scss";
-import skeleton from "./Skeleton.module.scss";
-
+import Image from "next/image";
+import Link from "next/link";
+import { Fragment, useCallback, useEffect, useRef } from "react";
+import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
-
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
-
-// Configs
-import { sigDefaultColors } from "../configs/sigDefaultColors";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
+// Configs
+import { sigDefaultColors } from "../configs/sigDefaultColors";
+import skeleton from "./Skeleton.module.scss";
+// Styles
+import style from "./ThreadsList.module.scss";
 
 function fixCoverUrl(cover: string) {
   if (cover.startsWith("http://") || cover.startsWith("https://")) {
@@ -42,7 +38,7 @@ function fixCoverUrl(cover: string) {
   return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
 }
 
-export const Thread = ({ threadData }: { threadData: TThread }) => {
+const Thread = ({ threadData }: { threadData: TThread }) => {
   const user = threadData.user as User;
   const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
@@ -50,7 +46,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={style.thread + " cursor-pointer select-none"}
+      className={`${style.thread} cursor-pointer select-none`}
       style={{
         backgroundColor: isAnnouncement ? "white" : "",
       }}
@@ -65,12 +61,12 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           <div className={style.user_sig}>
             <p className={style.user}>{user?.name}</p>
             <span>•</span>
-            <p style={{ color: sigDefaultColors[sig._id!] }}>{sig.name}</p>
+            <p style={{ color: sigDefaultColors[sig._id ?? ""] }}>{sig.name}</p>
           </div>
           <div className={style.statist}>
             <p className={style.date}>
               {
-                new Date(threadData.createdAt!)
+                new Date(threadData.createdAt ?? "")
                   .toLocaleString("zh-TW")
                   .split(" ")[0]
               }
@@ -118,8 +114,8 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
           threadData.hashtag.length > 0 &&
           !isAnnouncement && (
             <div className={style.hashtags}>
-              {threadData.hashtag.slice(0, 3).map((tag, index) => (
-                <span key={index} className={style.hashtag}>
+              {threadData.hashtag.slice(0, 3).map((tag, _index) => (
+                <span key={tag} className={style.hashtag}>
                   #{tag}
                 </span>
               ))}
@@ -177,7 +173,7 @@ export const InfinityThreadsList = ({
   isFetchingNextPage,
   announcementData,
 }: {
-  data: any;
+  data: InfiniteData<TThread[], unknown> | undefined;
   height?: string;
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
@@ -185,7 +181,7 @@ export const InfinityThreadsList = ({
     InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
   >;
   isFetchingNextPage: boolean;
-  announcementData?: any;
+  announcementData?: InfiniteData<TThread[], unknown>;
 }) => {
   const postList = useRef(null);
 
@@ -201,7 +197,7 @@ export const InfinityThreadsList = ({
   }, [fetchNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const listInnerElement: HTMLElement = postList.current!;
+    const listInnerElement = postList.current as HTMLElement | null;
 
     if (listInnerElement) {
       listInnerElement.addEventListener("scroll", onScroll);
@@ -212,35 +208,36 @@ export const InfinityThreadsList = ({
     }
   }, [onScroll]);
   return data && data.pages[0].length >= 1 ? (
-    <Fragment>
-      <div className={style.threads} style={{ height }} ref={postList}>
-        {announcementData &&
-          announcementData.pages[0].length >= 1 &&
-          announcementData.pages.map((page: TThread[], index: number) => {
-            const currentDate = new Date().getTime();
-            const postDate = new Date(page[0].createdAt!).getTime();
-            const diffDays = Math.floor(
-              (currentDate - postDate) / (1000 * 60 * 60 * 24),
-            );
+    <div className={style.threads} style={{ height }} ref={postList}>
+      {announcementData &&
+        announcementData.pages[0].length >= 1 &&
+        announcementData.pages.map((page: TThread[], _index: number) => {
+          const currentDate = Date.now();
+          const postDate = new Date(page[0].createdAt ?? "").getTime();
+          const diffDays = Math.floor(
+            (currentDate - postDate) / (1000 * 60 * 60 * 24),
+          );
 
-            if (diffDays < announcementStayTime) {
-              return <Thread threadData={page[0]} key={index} />;
+          if (diffDays < announcementStayTime) {
+            return <Thread threadData={page[0]} key={page[0]._id} />;
+          }
+          return null;
+        })}
+      {data.pages.map((page: TThread[], pageIndex: number) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
+        <Fragment key={`page-${pageIndex}`}>
+          {page.map((item) => {
+            const sig = item.sig as unknown as Sig;
+            const isAnnouncement = sig._id === announcementSigId;
+            if (!isAnnouncement) {
+              return <Thread threadData={item} key={item._id} />;
             }
+            return null;
           })}
-        {data.pages.map((page: TThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              const sig = item.sig as unknown as Sig;
-              const isAnnouncement = sig._id === announcementSigId;
-              if (!isAnnouncement) {
-                return <Thread threadData={item} key={index} />;
-              }
-            })}
-          </Fragment>
-        ))}
-        {isFetchingNextPage && <ThreadSkeleton />}
-      </div>
-    </Fragment>
+        </Fragment>
+      ))}
+      {isFetchingNextPage && <ThreadSkeleton />}
+    </div>
   ) : (
     <div className={style.noPost}>
       <h1>No Post Yet</h1>
@@ -258,7 +255,8 @@ export const ThreadsListSkeleton = ({
   return (
     <div className={style.threads} style={{ height }}>
       {[...Array(repeat)].map((_, index) => (
-        <ThreadSkeleton key={index} />
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no unique identifier
+        <ThreadSkeleton key={`skeleton-${index}`} />
       ))}
     </div>
   );

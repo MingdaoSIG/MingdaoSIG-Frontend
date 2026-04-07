@@ -1,7 +1,7 @@
 // next.config.js
 // @ts-check
 
-const path = require("path");
+const path = require("node:path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -39,7 +39,6 @@ const nextConfig = {
   },
 
   turbopack: {
-    resolveAlias: { "@": "./src" },
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
 };

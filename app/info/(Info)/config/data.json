@@ -43,11 +43,15 @@
     ]
   },
   {
-    "name": "統計資料",
+    "name": "常用資料",
     "children": [
       {
         "name": "Dashboard",
         "url": "/dashboard"
+      },
+      {
+        "name": "Changelog",
+        "url": "/changelog"
       }
     ]
   },

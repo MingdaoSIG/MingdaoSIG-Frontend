@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Tooltip } from "react-tooltip";
 import {
   type Dispatch,
   Fragment,
@@ -7,29 +6,26 @@ import {
   useEffect,
   useState,
 } from "react";
-import Linkify from "react-linkify";
-import Swal from "sweetalert2";
 import ReactDOMServer from "react-dom/server";
-
-// Styles
-import styles from "./Info.module.scss";
-
-// Interfaces
-import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
-
-// Hooks
-import { useUserAccount } from "@/utils/useUserAccount";
-
-// APIs
-import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
+import Linkify from "react-linkify";
+import { Tooltip } from "react-tooltip";
+import Swal from "sweetalert2";
 import {
   JoinSigAPI,
   ReadJoinSigAPI,
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
-
+// APIs
+import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import type { Sig } from "@/interfaces/Sig";
+// Interfaces
+import type { User } from "@/interfaces/User";
+import { jumpOut } from "@/utils/jumpOut";
+// Hooks
+import { useUserAccount } from "@/utils/useUserAccount";
+// Styles
+import styles from "./Info.module.scss";
 
 export default function Info({
   user: accountData,
@@ -40,7 +36,7 @@ export default function Info({
   user: User | Sig | null;
   isLoading: boolean;
   dataType: string | null;
-  setInfo: Dispatch<SetStateAction<any>>;
+  setInfo: Dispatch<SetStateAction<User | Sig | null>>;
 }) {
   const { userData, token } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
@@ -51,29 +47,16 @@ export default function Info({
   useEffect(() => {
     (async () => {
       if (dataType === "sig") {
-        const response = await ReadJoinSigAPI(accountData?._id!, token!);
+        const response = await ReadJoinSigAPI(
+          accountData?._id ?? "",
+          token ?? "",
+        );
         setJoinRequest(response.data?.state);
       }
     })();
   }, [accountData?._id, dataType, token]);
 
-  function JumpOut(url: any) {
-    Swal.fire({
-      title: "<strong>HOLD UP</strong>",
-      html:
-        "<p>This link will take you to <br/><strong>" +
-        url +
-        "</strong><br/>Are you sure you want to go there?</p>",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yep",
-      cancelButtonText: "Cancel",
-    }).then((res) => {
-      if (res.isConfirmed) {
-        window.open(url, "_blank");
-      }
-    });
-  }
+  const JumpOut = jumpOut;
 
   function EditDescriptionButtonHandle() {
     if (isInput && isEdit) {
@@ -90,9 +73,11 @@ export default function Info({
         if (res.isConfirmed) {
           const response = await postUser(
             { description: newDescription },
-            token!,
+            token ?? "",
           );
-          setInfo((prev: any) => ({ ...prev, description: newDescription }));
+          setInfo((prev) =>
+            prev ? { ...prev, description: newDescription } : prev,
+          );
           if (response.status !== 2000) {
             Swal.fire(
               "Error",
@@ -115,7 +100,7 @@ export default function Info({
     }
   }
 
-  function OnEditDescription(e: any) {
+  function OnEditDescription(e: React.ChangeEvent<HTMLTextAreaElement>) {
     if (e.target.value !== userData?.description) {
       setIsEdit(true);
       setNewDescription(e.target.value);
@@ -130,7 +115,7 @@ export default function Info({
       <br />
       <textarea
         id="aboutYou"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I am ..."
       />
@@ -140,7 +125,7 @@ export default function Info({
       <br />
       <textarea
         id="whyJoin"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I want to join ..."
       />
@@ -150,7 +135,7 @@ export default function Info({
       <br />
       <textarea
         id="whichTopic"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I am interest in ..."
       />
@@ -158,13 +143,14 @@ export default function Info({
   ];
 
   function JoinSIGhandle() {
-    if (!token)
+    if (!token) {
       return Swal.fire({
         title: "Please login first",
         text: "You must login to join a SIG",
         icon: "warning",
         confirmButtonText: "Confirm",
       });
+    }
 
     let aboutYou: HTMLTextAreaElement;
     let whyJoin: HTMLTextAreaElement;
@@ -178,13 +164,15 @@ export default function Info({
       showCancelButton: true,
       focusConfirm: false,
       didOpen: () => {
-        const popup = Swal.getPopup()!;
+        const popup = Swal.getPopup() as HTMLElement;
         aboutYou = popup.querySelector("#aboutYou") as HTMLTextAreaElement;
         whyJoin = popup.querySelector("#whyJoin") as HTMLTextAreaElement;
         whichTopic = popup.querySelector("#whichTopic") as HTMLTextAreaElement;
-        aboutYou.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
-        whyJoin.onkeyup = (e: any) => e.key === "Enter" && Swal.clickConfirm();
-        whichTopic.onkeyup = (e: any) =>
+        aboutYou.onkeyup = (e: KeyboardEvent) =>
+          e.key === "Enter" && Swal.clickConfirm();
+        whyJoin.onkeyup = (e: KeyboardEvent) =>
+          e.key === "Enter" && Swal.clickConfirm();
+        whichTopic.onkeyup = (e: KeyboardEvent) =>
           e.key === "Enter" && Swal.clickConfirm();
       },
       preConfirm: async () => {
@@ -196,8 +184,13 @@ export default function Info({
         }
 
         const res = await JoinSigAPI(
-          { sig: accountData?._id!, q1: aboutRes, q2: joinRes, q3: topicRes },
-          token!,
+          {
+            sig: accountData?._id ?? "",
+            q1: aboutRes,
+            q2: joinRes,
+            q3: topicRes,
+          },
+          token ?? "",
         );
 
         if (res.status === 2000) {
@@ -237,7 +230,7 @@ export default function Info({
             alt="Avatar"
             className={styles.avatar}
           />
-          {accountData?.badge ? <BadgeList userData={accountData} /> : <></>}
+          {accountData?.badge ? <BadgeList userData={accountData} /> : null}
         </div>
       </div>
       <div className={styles.contentWrapper}>
@@ -255,6 +248,7 @@ export default function Info({
               accountData?._id !== "652d60b842cdf6a660c2b778" && [
                 // ID of announcement SIG
                 <button
+                  type="button"
                   className={styles.joinBtn}
                   onClick={JoinSIGhandle}
                   key={"Join SIG Button"}
@@ -278,6 +272,7 @@ export default function Info({
             <h1 className={styles.descriptionTitle}>ABOUT ME</h1>
             {userData && userData.customId === accountData?.customId && (
               <button
+                type="button"
                 className={styles.descriptionEditButton}
                 onClick={EditDescriptionButtonHandle}
               >
@@ -301,6 +296,7 @@ export default function Info({
               <Linkify
                 componentDecorator={(decoratedHref, decoratedText, key) => (
                   <button
+                    type="button"
                     key={key}
                     onClick={() => {
                       JumpOut(decoratedHref);
@@ -311,7 +307,7 @@ export default function Info({
                 )}
               >
                 {accountData?.description?.split("\n").map((line, index) => (
-                  <p key={index}>{line}</p>
+                  <p key={`${index}-${line}`}>{line}</p>
                 ))}
               </Linkify>
             </div>
@@ -331,33 +327,31 @@ function BadgeList({ userData }: { userData: User | null }) {
         {chosenBadge.sort().map((badge) => {
           if (badgeList[badge] === undefined) {
             return <Fragment key={badge} />;
-          } else {
-            return (
-              <Fragment key={badge}>
-                <Image
-                  src={badgeList[badge].icon}
-                  height={24}
-                  width={24}
-                  alt={badgeList[badge].name}
-                  className={styles.badge}
-                  data-tooltip-id={badgeList[badge].name}
-                  data-tooltip-content={badgeList[badge].content}
-                  data-tooltip-place="top"
-                />
-                <Tooltip
-                  id={badgeList[badge].name}
-                  style={{
-                    padding: "0.2rem 0.4rem",
-                    backgroundColor: "rgb(50, 50, 50)",
-                  }}
-                />
-              </Fragment>
-            );
           }
+          return (
+            <Fragment key={badge}>
+              <Image
+                src={badgeList[badge].icon}
+                height={24}
+                width={24}
+                alt={badgeList[badge].name}
+                className={styles.badge}
+                data-tooltip-id={badgeList[badge].name}
+                data-tooltip-content={badgeList[badge].content}
+                data-tooltip-place="top"
+              />
+              <Tooltip
+                id={badgeList[badge].name}
+                style={{
+                  padding: "0.2rem 0.4rem",
+                  backgroundColor: "rgb(50, 50, 50)",
+                }}
+              />
+            </Fragment>
+          );
         })}
       </div>
     );
-  } else {
-    return <></>;
   }
+  return null;
 }

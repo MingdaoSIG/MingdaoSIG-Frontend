@@ -1,25 +1,20 @@
-import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-
-// Interfaces
-import type { User } from "@/interfaces/User";
-import type { Sig } from "@/interfaces/Sig";
-
-// Styles
-import styles from "./mobile.module.scss";
-
+import { useEffect, useState } from "react";
 // Components
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
-import Info from "./info";
-
+import type { Sig } from "@/interfaces/Sig";
+// Interfaces
+import type { User } from "@/interfaces/User";
 // apis
 import sigAPI from "@/modules/sigAPI";
-
 // Hooks
 import { useSigPost, useUserPost } from "@/utils/usePost";
+import Info from "./info";
+// Styles
+import styles from "./mobile.module.scss";
 
 export default function ProfileMobile({
   params,
@@ -58,13 +53,13 @@ export default function ProfileMobile({
         dataType={dataType}
         setInfo={setData}
       />
-      <div className="overflow-y-hidden mx-[0.5rem]">
+      <div className="mx-[0.5rem] overflow-y-hidden">
         {isLoading ? (
           <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
         ) : dataType === "user" ? (
-          <UserInfinityThreadList id={data?._id!} />
+          <UserInfinityThreadList id={data?._id ?? ""} />
         ) : (
-          <SIGInfinityThreadList id={data?._id!} />
+          <SIGInfinityThreadList id={data?._id ?? ""} />
         )}
       </div>
     </div>
@@ -112,7 +107,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
 async function getUser(userId: string) {
   try {
     return await sigAPI.getUserData(userId);
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -120,7 +115,7 @@ async function getUser(userId: string) {
 async function getSIG(userId: string) {
   try {
     return await sigAPI.getSigData(userId);
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -137,10 +132,9 @@ async function getAccountData(accountId: string): Promise<{
       data: userData || sigData || null,
       dataType: userData ? "user" : sigData ? "sig" : null,
     };
-  } else {
-    return {
-      data: null,
-      dataType: null,
-    };
   }
+  return {
+    data: null,
+    dataType: null,
+  };
 }

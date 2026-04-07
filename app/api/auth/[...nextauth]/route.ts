@@ -1,8 +1,5 @@
 import NextAuth from "next-auth";
-import axios from "axios";
 import GoogleProvider from "next-auth/providers/google";
-import { profile } from "console";
-import Swal from "sweetalert2";
 
 const emoji: { [key: string]: string } = {
   developer: "<:developer:1222933983164235876>",
@@ -11,17 +8,18 @@ const emoji: { [key: string]: string } = {
 };
 
 const handler = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET!,
+  secret: process.env.NEXTAUTH_SECRET as string,
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      if (!profile?.email?.endsWith("@ms.mingdao.edu.tw"))
+      if (!profile?.email?.endsWith("@ms.mingdao.edu.tw")) {
         return "/?error=not_md";
+      }
       if (account) {
         const urlencoded = new URLSearchParams();
         urlencoded.append("googleToken", String(account.access_token));
@@ -52,10 +50,10 @@ const handler = NextAuth({
           data.append("class", response.data.class || "No Class");
 
           if (response.data.badge.length > 0) {
-            badges[0]?.split(",").forEach((badge: string) => {
+            for (const badge of badges[0]?.split(",") ?? []) {
               badgeData += emoji[badge];
               badgeData += " ";
-            });
+            }
           }
 
           data.append("badge", badgeData !== "" ? badgeData : "No Badge");
@@ -78,10 +76,11 @@ const handler = NextAuth({
       return _token;
     },
     async session({ session, token }) {
-      const _session: any = session;
-      const _token: any = token;
-      _session.accessToken = _token.accessToken;
-      return _session;
+      const _session = session as unknown as Record<string, unknown>;
+      _session.accessToken = (
+        token as unknown as Record<string, unknown>
+      ).accessToken;
+      return session;
     },
   },
 });

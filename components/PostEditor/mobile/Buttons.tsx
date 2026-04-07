@@ -1,8 +1,8 @@
 import Image from "next/image";
 
 interface Props {
-  discardFunction: Function;
-  postFunction: Function;
+  discardFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  postFunction: () => void;
   postButtonDisable: boolean;
   isEdit?: boolean;
 }
@@ -14,9 +14,10 @@ export default function Buttons({
   isEdit,
 }: Props) {
   return (
-    <div className="h-auto w-full rounded-[3rem] mx-auto grid grid-cols-2 gap-2">
+    <div className="mx-auto grid h-auto w-full grid-cols-2 gap-2 rounded-[3rem]">
       <button
-        className="flex flex-row justify-center items-center text-center rounded-lg gap-1 bg-[#dc0032] text-white text-base font-bold py-1.5"
+        type="button"
+        className="flex flex-row items-center justify-center gap-1 rounded-lg bg-[#dc0032] py-1.5 text-center font-bold text-base text-white"
         onClick={(e) => discardFunction(e)}
       >
         {isEdit ? (
@@ -32,7 +33,8 @@ export default function Buttons({
         )}
       </button>
       <button
-        className="flex flex-row justify-center items-center text-center rounded-lg gap-1 bg-white text-[#5fcdf5] text-base font-bold disabled:opacity-50 disabled:cursor-not-allowed border border-[#5fcdf5] py-1.5"
+        type="button"
+        className="flex flex-row items-center justify-center gap-1 rounded-lg border border-[#5fcdf5] bg-white py-1.5 text-center font-bold text-[#5fcdf5] text-base disabled:cursor-not-allowed disabled:opacity-50"
         onClick={async () => await postFunction()}
         disabled={postButtonDisable}
       >

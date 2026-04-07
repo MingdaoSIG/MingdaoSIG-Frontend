@@ -1,27 +1,77 @@
 "use client";
 
-import { type ChangeEvent, useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-
 // Desktop Components
 import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 // Mobile Components
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
-// Types
-import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
+// Modules
+import { imageUpload } from "@/modules/imageUploadAPI";
+import { isValidObjectId } from "@/modules/validation";
+// Utils
+import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
 import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
+// Types
+import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 // APIs Request Function
 import { postAPI } from "./(new)/apis/postAPI";
-// Utils
-import useIsMobile from "@/utils/useIsMobile";
-import assert from "assert";
-import { useUserAccount } from "@/utils/useUserAccount";
-// Modules
-import { imageUpload } from "@/modules/imageUploadAPI";
+
+// 驗證 localStorage 資料的類型
+type PostDataSchema = {
+  title?: string;
+  sig?: string;
+  content?: string;
+  cover?: string;
+  hashtag?: string[];
+};
+
+// 驗證並清理 localStorage 資料
+function validateStoredData(data: unknown): Partial<TPostAPI> {
+  if (typeof data !== "object" || data === null) {
+    return {};
+  }
+
+  const result: Partial<TPostAPI> = {};
+  const typedData = data as PostDataSchema;
+
+  // 驗證 title
+  if (typeof typedData.title === "string" && typedData.title.length <= 200) {
+    result.title = typedData.title;
+  }
+
+  // 驗證 sig（必須是有效的 ObjectId 格式）
+  if (typeof typedData.sig === "string" && isValidObjectId(typedData.sig)) {
+    result.sig = typedData.sig;
+  }
+
+  // 驗證 content
+  if (
+    typeof typedData.content === "string" &&
+    typedData.content.length <= 100000
+  ) {
+    result.content = typedData.content;
+  }
+
+  // 驗證 cover（接受 image ID 或完整 URL）
+  if (typeof typedData.cover === "string" && typedData.cover.length > 0) {
+    result.cover = typedData.cover;
+  }
+
+  // 驗證 hashtag（必須是字串陣列）
+  if (Array.isArray(typedData.hashtag)) {
+    result.hashtag = typedData.hashtag.filter(
+      (tag): tag is string => typeof tag === "string" && tag.length <= 50,
+    );
+  }
+
+  return result;
+}
 
 export default function NewPostPage() {
   const { status } = useSession();
@@ -42,7 +92,9 @@ export default function NewPostPage() {
     hashtag: [],
   });
 
-  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: {
+    target: { name: string; value: string | string[] };
+  }) {
     setPostData(
       (prev: TPostAPI | undefined) =>
         ({
@@ -54,7 +106,9 @@ export default function NewPostPage() {
 
   // ✅ 修復：只在真正有內容變化時才保存
   useEffect(() => {
-    if (!isInitialized || !hasLoadedFromStorage.current) return;
+    if (!isInitialized || !hasLoadedFromStorage.current) {
+      return;
+    }
 
     const hasContent =
       data.title !== "" ||
@@ -70,7 +124,9 @@ export default function NewPostPage() {
 
   // ✅ 修復：確保只在組件首次掛載時讀取一次
   useEffect(() => {
-    if (hasLoadedFromStorage.current) return;
+    if (hasLoadedFromStorage.current) {
+      return;
+    }
 
     const storedContent = localStorage?.getItem("editorContent");
     const storedData = localStorage?.getItem("postData");
@@ -84,9 +140,13 @@ export default function NewPostPage() {
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        loadedData = { ...loadedData, ...parsed };
+        // 驗證並清理資料
+        const validatedData = validateStoredData(parsed);
+        loadedData = { ...loadedData, ...validatedData };
       } catch (error) {
         console.error("Failed to parse stored post data:", error);
+        // 如果解析失敗，清除 localStorage 中的無效資料
+        localStorage.removeItem("postData");
       }
     }
 
@@ -105,12 +165,15 @@ export default function NewPostPage() {
   async function NewPostAPI() {
     setPostButtonDisable(true);
 
-    if (!data) return;
+    if (!data) {
+      return;
+    }
 
-    if (data?.title === "")
+    if (data?.title === "") {
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
         setPostButtonDisable(false),
       );
+    }
     if (!data.sig) {
       return Swal.fire(alertMessageConfigs.sigError).then(() =>
         setPostButtonDisable(false),
@@ -118,10 +181,10 @@ export default function NewPostPage() {
     }
 
     try {
-      assert(data);
-      assert(token !== "");
-      const res = await postAPI(data, token!);
-      console.debug(res);
+      if (!data || !token) {
+        throw new Error("Missing data or token");
+      }
+      const res = await postAPI(data, token);
 
       if (res.status === 2000) {
         return Swal.fire(alertMessageConfigs.Success).then(() => {
@@ -132,7 +195,8 @@ export default function NewPostPage() {
           hasLoadedFromStorage.current = false; // 重置標記
           route.push(`/post/${res.data._id}`);
         });
-      } else if (res.status === 4001) {
+      }
+      if (res.status === 4001) {
         Swal.fire(alertMessageConfigs.PermissionError).then(() =>
           setPostButtonDisable(false),
         );
@@ -140,14 +204,14 @@ export default function NewPostPage() {
         setPostButtonDisable(false);
         throw new Error("Unexpected error");
       }
-    } catch (error) {
+    } catch (_error) {
       Swal.fire(alertMessageConfigs.OthersError).then(() =>
         setPostButtonDisable(false),
       );
     }
   }
 
-  function discard(e: ChangeEvent<HTMLInputElement>) {
+  function discard(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
     Swal.fire({
@@ -182,7 +246,9 @@ export default function NewPostPage() {
       "image/tiff",
     ];
 
-    if (!e.target.files || e.target.files.length === 0) return;
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
@@ -225,14 +291,14 @@ export default function NewPostPage() {
   }
 
   if (status === "loading") {
-    return <div className="h-full flex items-center justify-center"></div>;
+    return <div className="flex h-full items-center justify-center"></div>;
   }
 
   return isMobile ? (
     <PostEditorMobile
       data={data}
       setPostData={setPostData}
-      token={token!}
+      token={token ?? ""}
       handleFormEventFunction={handleFormChange}
       discardFunction={discard}
       postFunction={NewPostAPI}
@@ -245,7 +311,7 @@ export default function NewPostPage() {
       setPostData={setPostData}
       discardFunction={discard}
       postFunction={NewPostAPI}
-      token={token!}
+      token={token ?? ""}
       handleFormEventFunction={handleFormChange}
       postButtonDisable={postButtonDisable}
       handleFileChange={handleFileChange}

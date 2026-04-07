@@ -44,7 +44,6 @@ body {
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: rgb(255, 217, 103);
   background: linear-gradient(
     127deg,
     rgba(255, 217, 103, 1) 0%,
@@ -64,7 +63,6 @@ body {
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: rgb(255, 217, 103);
   background: linear-gradient(
     127deg,
     rgba(255, 217, 103, 1) 0%,
@@ -116,7 +114,7 @@ body {
 
 /* Editor specific styles */
 .editor-wrapper > div {
-  border: none !important;
+  border: none;
   height: 100%;
 }
 
@@ -142,6 +140,17 @@ body {
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

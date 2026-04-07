@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       {
         title: `${data.get("name")}`,
         description: data.get("description"),
-        color: parseInt("0x34e718"),
+        color: 0x34e718,
         thumbnail: {
           url: data.get("avatar"),
         },
@@ -76,6 +76,8 @@ export async function POST(req: NextRequest) {
       "Content-type": "application/json",
     },
     data: JSON.stringify(content),
+  }).catch((error) => {
+    console.error("Failed to send login webhook:", error.message);
   });
 
   return NextResponse.json({ message: "Request Sent!" });

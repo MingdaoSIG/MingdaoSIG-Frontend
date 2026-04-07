@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { CustomStatus } from "@/modules/customStatusCode";
+import BackToHome from "./Status/BackToHome/BackToHome";
 import Failed from "./Status/Failed/Failed";
 import Success from "./Status/Success/Success";
-import BackToHome from "./Status/BackToHome/BackToHome";
-import { CustomStatus } from "@/modules/customStatusCode";
 
 type ConfirmStatus = 0 | 1 | 2;
 
@@ -24,11 +24,11 @@ export default function ConfirmPage() {
 
 function Fallback() {
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-8">
-      <div className="relative w-16 h-16">
-        <div className="absolute inset-0 rounded-full border-4 border-gray-300 border-t-white animate-spin"></div>
+    <div className="flex h-full flex-col items-center justify-center gap-8">
+      <div className="relative h-16 w-16">
+        <div className="absolute inset-0 animate-spin rounded-full border-4 border-gray-300 border-t-white"></div>
       </div>
-      <h1 className="text-5xl font-bold text-white">Confirming</h1>
+      <h1 className="font-bold text-5xl text-white">Confirming</h1>
     </div>
   );
 }
@@ -59,19 +59,28 @@ function ConfirmContent() {
   }, [confirmId, accept, router]);
 
   useEffect(() => {
-    if (!confirmUrl) return;
+    if (!confirmUrl) {
+      return;
+    }
 
     let isMounted = true;
+    const controller = new AbortController();
 
     const confirmRequest = async () => {
       try {
-        const status = await sendConfirmRequest(new URL(confirmUrl));
+        const status = await sendConfirmRequest(
+          new URL(confirmUrl),
+          controller.signal,
+        );
         if (isMounted) {
           setConfirmStatus(status);
           setIsLoading(false);
         }
-      } catch (error) {
-        if (isMounted) {
+      } catch (error: unknown) {
+        if (
+          isMounted &&
+          (!(error instanceof Error) || error.name !== "AbortError")
+        ) {
           console.error("Confirm request failed:", error);
           setErrorMessage(
             error instanceof Error ? error.message : "Unknown error occurred",
@@ -86,14 +95,17 @@ function ConfirmContent() {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [confirmUrl]);
 
-  if (isLoading) return <Fallback />;
+  if (isLoading) {
+    return <Fallback />;
+  }
 
   if (confirmStatus === null) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
+      <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
         <Failed message="Invalid request" />
         <BackToHome />
       </div>
@@ -105,21 +117,21 @@ function ConfirmContent() {
   switch (confirmStatus) {
     case 0:
       return (
-        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
+        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
           <Success message={`Successfully ${acceptMessage}`} />
           <BackToHome />
         </div>
       );
     case 1:
       return (
-        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
+        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
           <Success message="Already Reviewed" />
           <BackToHome />
         </div>
       );
     default:
       return (
-        <div className="h-full flex flex-col items-center justify-center gap-8 p-4">
+        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
           <Failed message={errorMessage || "Please try again later"} />
           <BackToHome />
         </div>
@@ -127,19 +139,27 @@ function ConfirmContent() {
   }
 }
 
-async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
+async function sendConfirmRequest(
+  confirmUrl: URL,
+  signal?: AbortSignal,
+): Promise<ConfirmStatus> {
   try {
     const response = await fetch(confirmUrl.toString(), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      signal,
     });
 
     const data: ConfirmResponse = await response.json();
 
-    if (data.status === CustomStatus.OK) return 0;
-    if (data.status === CustomStatus.ALREADY_CONFIRMED) return 1;
+    if (data.status === CustomStatus.OK) {
+      return 0;
+    }
+    if (data.status === CustomStatus.ALREADY_CONFIRMED) {
+      return 1;
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,13 +173,17 @@ async function sendConfirmRequest(confirmUrl: URL): Promise<ConfirmStatus> {
 }
 
 function isValidConfirmId(uuid: string | null): uuid is string {
-  if (!uuid) return false;
+  if (!uuid) {
+    return false;
+  }
   const uuidV4Regex =
     /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
   return uuidV4Regex.test(uuid);
 }
 
 function isValidAccept(accept: string | null): accept is "true" | "false" {
-  if (!accept) return false;
+  if (!accept) {
+    return false;
+  }
   return accept === "true" || accept === "false";
 }

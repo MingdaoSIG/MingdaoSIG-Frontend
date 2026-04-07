@@ -1,26 +1,32 @@
 "use client";
 
-import { Suspense, type Dispatch, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 
 // Components
 import SplitBlock from "@/app/(Layout)/splitBlockNew";
-import MetaDataForm from "./MetaDataForm";
-
 // Types
 import type { TPostAPI } from "../types/postAPI";
+import MetaDataForm from "./MetaDataForm";
 import TitleSigForm from "./TitleSigForm";
 
 interface Props {
   data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
-  discardFunction: Function;
-  handleFormEventFunction: Function;
-  postFunction: Function;
+  discardFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleFormEventFunction: (e: {
+    target: { name: string; value: string | string[] };
+  }) => void;
+  postFunction: () => void;
   postButtonDisable: boolean;
-  handleFileChange?: Function;
+  handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
 }
 
@@ -37,7 +43,7 @@ export default function NewPost({
   handleFileChange,
   isEdit,
 }: Props) {
-  const [hashtag, setHashtag] = useState<string[]>([]);
+  const [_hashtag, setHashtag] = useState<string[]>([]);
 
   useEffect(() => {
     if (data.hashtag) {

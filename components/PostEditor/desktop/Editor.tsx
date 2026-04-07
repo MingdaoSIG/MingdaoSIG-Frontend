@@ -1,20 +1,17 @@
-import type { Dispatch, SetStateAction } from "react";
 import { MdEditor } from "md-editor-rt";
+import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
+import "@/app/mdEditorConfig";
 
-// Styles
-import styles from "./Editor.module.scss";
-
-// Interfaces
-import type { TPostAPI } from "../types/postAPI";
-
+import Swal from "sweetalert2";
+import type { IImageUpload } from "@/interfaces/Image.interface";
+import { imageUpload } from "@/modules/imageUploadAPI";
 // Configs
 import { toolbars } from "../config/editorToolbar";
-import { imageUpload } from "@/modules/imageUploadAPI";
-import Swal from "sweetalert2";
-
-// Use User Account
-import { useUserAccount } from "@/utils/useUserAccount";
+// Interfaces
+import type { TPostAPI } from "../types/postAPI";
+// Styles
+import styles from "./Editor.module.scss";
 
 interface Props {
   data: TPostAPI;
@@ -22,12 +19,16 @@ interface Props {
   token: string;
 }
 
-const MdEditorSync = ({ data, setPostData }: Props) => {
-  const { token } = useUserAccount();
-  const onUploadImg = async (files: any[], callback: (arg0: any[]) => void) => {
-    if (!files.length) return;
+const MdEditorSync = ({ data, setPostData, token }: Props) => {
+  const onUploadImg = async (
+    files: File[],
+    callback: (urls: string[]) => void,
+  ) => {
+    if (!files.length) {
+      return;
+    }
     const responseImage = await Promise.all(
-      files.map(async (file: any) => {
+      files.map(async (file: File) => {
         const validImageTypes = [
           "image/webp",
           "image/jpeg",
@@ -71,7 +72,8 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     if (responseImage[0] !== undefined) {
       callback(
         responseImage.map(
-          (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id,
+          (item: IImageUpload | undefined) =>
+            `${process.env.NEXT_PUBLIC_API_URL}/image/${item?.id}`,
         ),
       );
     }

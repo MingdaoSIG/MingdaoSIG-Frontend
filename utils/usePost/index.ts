@@ -1,6 +1,6 @@
-import type { TThread } from "@/interfaces/Thread";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import type { TThread } from "@/interfaces/Thread";
 
 type PostQuery = {
   pageSize: number;
@@ -13,7 +13,7 @@ export const useAllPost = (query: PostQuery) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["allPost"] });
-  }, []);
+  }, [queryClient]);
 
   return useInfiniteQuery<TThread[], Error>({
     queryKey: ["allPost", query],
@@ -48,7 +48,7 @@ export const useUserPost = (userId: string, query: PostQuery) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["userPost"] });
-  }, []);
+  }, [queryClient]);
 
   return useInfiniteQuery<TThread[], Error>({
     queryKey: ["userPost", query],
@@ -83,7 +83,7 @@ export const useSigPost = (sigId: string, query: PostQuery) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["sigPost"] });
-  }, []);
+  }, [queryClient]);
 
   return useInfiniteQuery<TThread[], Error>({
     queryKey: ["sigPost", query],
@@ -118,7 +118,7 @@ export const useTopPost = (query: PostQuery) => {
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["topPost"] });
-  }, []);
+  }, [queryClient]);
 
   return useInfiniteQuery<TThread[], Error>({
     queryKey: ["topPost", query],

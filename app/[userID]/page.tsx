@@ -1,22 +1,21 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
-
-import SplitBlock from "../(Layout)/splitBlock";
+import { use, useEffect, useState } from "react";
+import { NotFound } from "@/components/NotFound";
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/desktop/ThreadsList";
-import useIsMobile from "@/utils/useIsMobile";
-import type { User } from "@/interfaces/User";
 import type { Sig } from "@/interfaces/Sig";
-import Info from "./(User)/desktop/Info";
-import { useSigPost, useUserPost } from "@/utils/usePost";
-
-import { NotFound } from "@/components/NotFound";
+import type { User } from "@/interfaces/User";
 import sigAPI from "@/modules/sigAPI";
-
+// Validation
+import { isValidCustomId, sanitizeUrlParam } from "@/modules/validation";
+import useIsMobile from "@/utils/useIsMobile";
+import { useSigPost, useUserPost } from "@/utils/usePost";
+import SplitBlock from "../(Layout)/splitBlock";
+import Info from "./(User)/desktop/Info";
 import ProfileMobile from "./(User)/mobile";
 
 export default function UserPage({
@@ -26,12 +25,15 @@ export default function UserPage({
 }) {
   // Unwrap the params Promise using React.use()
   const resolvedParams = use(params);
+  const rawUserID = decodeURIComponent(resolvedParams.userID);
 
-  if (!decodeURIComponent(resolvedParams.userID).startsWith("@")) {
+  // 驗證 userID 格式
+  if (!isValidCustomId(rawUserID)) {
     notFound();
   }
 
-  const accountId = decodeURIComponent(resolvedParams.userID);
+  // 清理 userID（防止路徑遍歷）
+  const accountId = sanitizeUrlParam(rawUserID);
   const isMobile = useIsMobile();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -39,16 +41,41 @@ export default function UserPage({
   const [data, setData] = useState<User | Sig | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let isMounted = true;
+
     (async () => {
       setIsLoading(true);
 
-      const { data, dataType } = await getAccountData(accountId);
+      try {
+        const { data, dataType } = await getAccountData(
+          accountId,
+          controller.signal,
+        );
 
-      setData(data);
-      setDataType(dataType);
-
-      return setIsLoading(false);
+        if (isMounted) {
+          setData(data);
+          setDataType(dataType);
+        }
+      } catch (error: unknown) {
+        if (
+          error instanceof Error &&
+          error.name !== "AbortError" &&
+          isMounted
+        ) {
+          console.error("Failed to fetch account data:", error);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     })();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [accountId]);
 
   if (!isLoading && dataType === null) {
@@ -71,9 +98,9 @@ export default function UserPage({
       {isLoading ? (
         <ThreadsListSkeleton repeat={6} height="auto" />
       ) : dataType === "user" ? (
-        <UserInfinityThreadList id={data?._id!} />
+        <UserInfinityThreadList id={data?._id ?? ""} />
       ) : (
-        <SIGInfinityThreadList id={data?._id!} />
+        <SIGInfinityThreadList id={data?._id ?? ""} />
       )}
       <Info
         user={data}
@@ -123,38 +150,48 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   );
 }
 
-async function getUser(userId: string) {
+async function getUser(userId: string, signal?: AbortSignal) {
   try {
-    return await sigAPI.getUserData(userId);
-  } catch (error) {
+    return await sigAPI.getUserData(userId, signal);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
     return false;
   }
 }
 
-async function getSIG(userId: string) {
+async function getSIG(userId: string, signal?: AbortSignal) {
   try {
-    return await sigAPI.getSigData(userId);
-  } catch (error) {
+    return await sigAPI.getSigData(userId, signal);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
     return false;
   }
 }
 
-async function getAccountData(accountId: string): Promise<{
+async function getAccountData(
+  accountId: string,
+  signal?: AbortSignal,
+): Promise<{
   data: User | Sig | null;
   dataType: "user" | "sig" | null;
 }> {
-  const userData = await getUser(accountId);
-  const sigData = await getSIG(accountId);
+  const [userData, sigData] = await Promise.all([
+    getUser(accountId, signal),
+    getSIG(accountId, signal),
+  ]);
 
   if (!(userData && sigData)) {
     return {
       data: userData || sigData || null,
       dataType: userData ? "user" : sigData ? "sig" : null,
     };
-  } else {
-    return {
-      data: null,
-      dataType: null,
-    };
   }
+  return {
+    data: null,
+    dataType: null,
+  };
 }

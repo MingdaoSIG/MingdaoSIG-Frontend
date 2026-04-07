@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Linkify from "react-linkify";
-import Swal from "sweetalert2";
+import { jumpOut } from "@/utils/jumpOut";
 
 // Styles
 import styles from "./Reply.module.scss";
@@ -14,32 +14,16 @@ export default function Reply({
   overflow,
   first,
 }: {
-  customId: any;
-  avatar: any;
-  content: any;
-  createdAt: any;
+  customId: string;
+  avatar: string;
+  content: string;
+  createdAt: string;
   overflow: boolean;
   first?: boolean;
 }) {
   const route = useRouter();
 
-  function JumpOut(url: any) {
-    Swal.fire({
-      title: "<strong>HOLD UP</strong>",
-      html:
-        "<p>This link will take you to <br/><strong>" +
-        url +
-        "</strong><br/>Are you sure you want to go there?</p>",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yep",
-      cancelButtonText: "Cancel",
-    }).then((res) => {
-      if (res.isConfirmed) {
-        window.open(url, "_blank");
-      }
-    });
-  }
+  const JumpOut = jumpOut;
 
   return (
     <div className={styles.reply}>
@@ -51,9 +35,9 @@ export default function Reply({
         className="rounded-full"
       ></Image>
       <div className={styles.content}>
-        <div className="info flex gap-2 items-center">
+        <div className="info flex items-center gap-2">
           <div
-            className={"font-semibold text-[12px] " + (!first && styles.name)}
+            className={`font-semibold text-[12px] ${!first && styles.name}`}
             onClick={() => {
               if (!first) {
                 route.push(`/@${customId}`);
@@ -63,21 +47,22 @@ export default function Reply({
           >
             @{customId}
           </div>
-          <div className="time text-[10px] text-[#979797] font-extralight">
+          <div className="time font-extralight text-[#979797] text-[10px]">
             {createdAt}
           </div>
         </div>
         <p
           className={
-            "text-md-dark-green font-extralight text-[12px] break-words " +
-            (overflow ? "w-[65dvw] truncate " : " ") +
+            "break-words font-extralight text-[12px] text-md-dark-green" +
+            (overflow ? "w-[65dvw] truncate" : " ") +
             styles.content
           }
         >
           <Linkify
             componentDecorator={(decoratedHref, decoratedText, key) => (
               <button
-                className={" break-words "}
+                type="button"
+                className={"break-words"}
                 key={key}
                 onClick={() => {
                   if (!first) {

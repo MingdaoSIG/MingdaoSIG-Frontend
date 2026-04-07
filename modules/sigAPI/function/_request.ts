@@ -16,7 +16,7 @@ async function get(
   option?: {
     token?: string;
     requestQuery?: PaginationQuery;
-    requestOption?: LimitedRequestInit;
+    requestOption?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
   const baseUrl = baseUrlMap[baseUrlType];
@@ -40,8 +40,12 @@ async function get(
     })
   ).json();
 
-  if (response.status !== 2000) throw new Error(response.status);
-  if (!response.data) throw new Error("Unexpected response");
+  if (response.status !== 2000) {
+    throw new Error(response.status);
+  }
+  if (!response.data) {
+    throw new Error("Unexpected response");
+  }
 
   return response.data;
 }
@@ -53,7 +57,7 @@ async function post(
   option?: {
     token?: string;
     requestQuery?: PaginationQuery;
-    requestOptions?: LimitedRequestInit;
+    requestOptions?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
   const baseUrl = baseUrlMap[baseUrlType];
@@ -78,8 +82,12 @@ async function post(
     })
   ).json();
 
-  if (response.status !== 2000) throw new Error(response.status);
-  if (!response.data) throw new Error("Unexpected response");
+  if (response.status !== 2000) {
+    throw new Error(response.status);
+  }
+  if (!response.data) {
+    throw new Error("Unexpected response");
+  }
 
   return response.data;
 }

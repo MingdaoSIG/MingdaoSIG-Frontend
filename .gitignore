@@ -40,3 +40,7 @@ next-env.d.ts
 # Other Package Manager (Remove if needed, just one PM one time)
 bun.lockb
 package-lock.json
+
+/.claude/worktrees
+/.claude/.recent_work_last_update
+/.claude/RECENT_WORK.md

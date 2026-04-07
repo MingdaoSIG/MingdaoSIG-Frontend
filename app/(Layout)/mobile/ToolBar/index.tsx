@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useUserAccount } from "@/utils/useUserAccount";
 import styles from "./ToolBar.module.scss";
@@ -52,7 +52,7 @@ const ToolBar = () => {
       <div className={styles.iconWrapper}>
         {menu.map((item, index) => {
           return (
-            <div key={index} className={styles.iconBackground}>
+            <div key={item.name} className={styles.iconBackground}>
               <div
                 className={styles.icon}
                 style={{
@@ -97,11 +97,14 @@ function pathToSelected(path: string) {
 
   if (homeRegex.test(path)) {
     return 0;
-  } else if (userRegex.test(path)) {
+  }
+  if (userRegex.test(path)) {
     return 1;
-  } else if (newRegex.test(path)) {
+  }
+  if (newRegex.test(path)) {
     return 2;
-  } else if (infoRegex.test(path)) {
+  }
+  if (infoRegex.test(path)) {
     return 3;
   }
 

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 import type { User } from "@/interfaces/User";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -45,7 +45,11 @@ export function useUserAccount() {
       // OAuth 登入成功
       if (OAuth === "authenticated") {
         try {
-          const accessToken = (session as any)?.accessToken;
+          const accessToken = (session as unknown as Record<string, unknown>)
+            ?.accessToken;
+          if (typeof accessToken !== "string" || !accessToken) {
+            throw new Error("Missing or invalid access token");
+          }
           const { token, data } = await platformLogin(accessToken);
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
@@ -119,15 +123,17 @@ async function platformLogin(accessToken: string) {
       })
     ).json();
 
-    if (response.status !== 2000)
+    if (response.status !== 2000) {
       throw new Error("Failed to login to platform");
+    }
 
     return {
       token: response.authorization.toString().split(" ")[1],
       data: response.data,
     };
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(message);
   }
 }
 
@@ -145,14 +151,16 @@ async function platformLoginWithSession(session: string) {
       })
     ).json();
 
-    if (response.status !== 2000)
+    if (response.status !== 2000) {
       throw new Error("Failed to login to platform");
+    }
 
     return {
       token: response.authorization.toString().split(" ")[1],
       data: response.data,
     };
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(message);
   }
 }

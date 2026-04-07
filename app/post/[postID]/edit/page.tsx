@@ -1,37 +1,32 @@
 "use client";
 
-import { type ChangeEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { type ChangeEvent, use, useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
-// Desktop Components
-import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
-
-// Mobile Components
-import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
-
-// Types
-import type { TThread } from "@/interfaces/Thread";
-
 // APIs Request Function
 import {
-  getPostAPI,
   editPostAPI,
+  getPostAPI,
 } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
-
+// Desktop Components
+import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
+// Mobile Components
+import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
+import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
+// Types
+import type { TThread } from "@/interfaces/Thread";
+// Modules
+import { imageUpload } from "@/modules/imageUploadAPI";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
-import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
-
-// Modules
-import { imageUpload } from "@/modules/imageUploadAPI";
 
 export default function EditPostPage({
   params,
 }: {
-  params: { postID: string };
+  params: Promise<{ postID: string }>;
 }) {
+  const { postID } = use(params);
   const route = useRouter();
   const isMobile = useIsMobile();
   const { isLogin, token, userData, isLoading } = useUserAccount();
@@ -45,7 +40,9 @@ export default function EditPostPage({
     hashtag: oldPostData.hashtag,
   });
 
-  function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: {
+    target: { name: string; value: string | string[] };
+  }) {
     setCurrentPostData(
       (prev: TPostAPI | undefined) =>
         ({
@@ -62,14 +59,13 @@ export default function EditPostPage({
       (!isLoading && !isLogin) ||
       (!isLoading && oldPostData?.user !== userData?._id)
     ) {
-      route.push(`/post/${params.postID}`);
+      route.push(`/post/${postID}`);
     }
-  }, [oldPostData, userData, isLoading, isLogin, route, params.postID]);
+  }, [oldPostData, userData, isLoading, isLogin, route, postID]);
 
   useEffect(() => {
-    if (params.postID && currentPostData.content === oldPostData.content) {
+    if (postID && currentPostData.content === oldPostData.content) {
       (async () => {
-        const { postID } = params;
         const res = await getPostAPI(postID);
         if (res.status !== 2000) {
           route.push("/");
@@ -78,7 +74,7 @@ export default function EditPostPage({
         }
       })();
     }
-  }, [currentPostData.content, oldPostData.content, params, route, userData]);
+  }, [currentPostData.content, oldPostData.content, postID, route]);
 
   useEffect(() => {
     if (
@@ -151,8 +147,7 @@ export default function EditPostPage({
       cancelButtonText: "Cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { postID } = params;
-        const res = await editPostAPI(currentPostData, postID, token!);
+        const res = await editPostAPI(currentPostData, postID, token ?? "");
         if (res.status === 2000) {
           Swal.fire({
             title: "Success Edit",
@@ -180,7 +175,9 @@ export default function EditPostPage({
       "image/tiff",
     ];
 
-    if (!e.target.files) return;
+    if (!e.target.files) {
+      return;
+    }
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
@@ -230,7 +227,7 @@ export default function EditPostPage({
 
   return isMobile ? (
     <PostEditorMobile
-      token={token!}
+      token={token ?? ""}
       data={currentPostData}
       setPostData={setCurrentPostData}
       discardFunction={undo}
@@ -242,7 +239,7 @@ export default function EditPostPage({
     ></PostEditorMobile>
   ) : (
     <PostEditorDesktop
-      token={token!}
+      token={token ?? ""}
       data={currentPostData}
       setPostData={setCurrentPostData}
       discardFunction={undo}

@@ -1,22 +1,23 @@
 "use client";
 
-import style from "./Thread.module.scss";
+import { MdPreview } from "md-editor-rt";
 
 import type { TThread } from "@/interfaces/Thread";
-import { MdPreview } from "md-editor-rt";
+import style from "./Thread.module.scss";
 
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import "@/app/mdEditorConfig";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
 
-  const [like, setLike] = useState<any>(false);
+  const [like, setLike] = useState<boolean>(false);
 
   const route = useRouter();
 
@@ -80,8 +81,8 @@ const Thread = ({ post }: { post: TThread }) => {
           authorization: `Bearer ${token}`,
         },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
+      // Silently ignore - delete result does not affect UI
     }
   }
 
@@ -94,8 +95,8 @@ const Thread = ({ post }: { post: TThread }) => {
           authorization: `Bearer ${token}`,
         },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
+      // Silently ignore - like state is optimistically toggled in UI
     }
   }
   async function DeleteLike() {
@@ -107,92 +108,85 @@ const Thread = ({ post }: { post: TThread }) => {
           authorization: `Bearer ${token}`,
         },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
+      // Silently ignore - unlike state is optimistically toggled in UI
     }
   }
 
   useEffect(() => {
     if (isLogin) {
-      post.like?.includes(userData?._id!) ? setLike(true) : setLike(false);
+      post.like?.includes(userData?._id ?? "") ? setLike(true) : setLike(false);
     }
   }, [isLogin, post.like, userData?._id]);
 
   if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
-      <>
-        <div className="py-[1rem] max-h-[60dvh]">
-          <div className={style.threadTitle + " " + style.customTitle}>
-            <h1 className="my-auto">{post.title}</h1>
-          </div>
-          <MdPreview
-            language="en-US"
-            value={post.content}
-            className={style.threadContent + " " + style.customThread}
-            previewTheme="github"
-          />
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <div className={style.thread}>
-        <div className={style.threadTitle + " flex relative"}>
-          <h1>{post.title}</h1>
-          {isLogin && post.user === userData?._id && (
-            <div
-              key="edit"
-              className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
-              onClick={onEdit}
-            >
-              <Image
-                src="/icons/edit.svg"
-                width={32}
-                height={32}
-                alt="delete"
-              />
-            </div>
-          )}
-          {isLogin && post.user === userData?._id && (
-            <div
-              key="delete"
-              className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
-              onClick={onDelete}
-            >
-              <Image
-                src="/icons/delete.svg"
-                width={32}
-                height={32}
-                alt="delete"
-              />
-            </div>
-          )}
-          <div
-            className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
-            onClick={onLike}
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M26.9399 6.38798C26.2047 5.64761 25.3304 5.05985 24.3673 4.65849C23.4042 4.25714 22.3713 4.05012 21.3279 4.04932C19.3543 4.04964 17.4528 4.79101 15.9999 6.12665C14.5471 4.79079 12.6455 4.04938 10.6719 4.04932C9.62728 4.0504 8.59319 4.25806 7.62914 4.66034C6.66509 5.06262 5.79011 5.65158 5.05456 6.39332C1.91723 9.54398 1.91856 14.472 5.05723 17.6093L15.9999 28.552L26.9426 17.6093C30.0812 14.472 30.0826 9.54398 26.9399 6.38798Z"
-                fill={like ? "#EE5757" : "#BDBDBD"}
-              />
-            </svg>
-          </div>
+      <div className="max-h-[60dvh] py-[1rem]">
+        <div className={`${style.threadTitle} ${style.customTitle}`}>
+          <h1 className="my-auto">{post.title}</h1>
         </div>
         <MdPreview
+          language="en-US"
           value={post.content}
-          className={style.threadContent}
+          className={`${style.threadContent} ${style.customThread}`}
           previewTheme="github"
         />
       </div>
     );
   }
+  return (
+    <div className={style.thread}>
+      <div className={`${style.threadTitle} relative flex`}>
+        <h1>{post.title}</h1>
+        {isLogin && post.user === userData?._id && (
+          <div
+            key="edit"
+            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+            onClick={onEdit}
+          >
+            <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
+          </div>
+        )}
+        {isLogin && post.user === userData?._id && (
+          <div
+            key="delete"
+            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+            onClick={onDelete}
+          >
+            <Image
+              src="/icons/delete.svg"
+              width={32}
+              height={32}
+              alt="delete"
+            />
+          </div>
+        )}
+        <div
+          className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+          onClick={onLike}
+        >
+          <svg
+            aria-hidden="true"
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26.9399 6.38798C26.2047 5.64761 25.3304 5.05985 24.3673 4.65849C23.4042 4.25714 22.3713 4.05012 21.3279 4.04932C19.3543 4.04964 17.4528 4.79101 15.9999 6.12665C14.5471 4.79079 12.6455 4.04938 10.6719 4.04932C9.62728 4.0504 8.59319 4.25806 7.62914 4.66034C6.66509 5.06262 5.79011 5.65158 5.05456 6.39332C1.91723 9.54398 1.91856 14.472 5.05723 17.6093L15.9999 28.552L26.9426 17.6093C30.0812 14.472 30.0826 9.54398 26.9399 6.38798Z"
+              fill={like ? "#EE5757" : "#BDBDBD"}
+            />
+          </svg>
+        </div>
+      </div>
+      <MdPreview
+        value={post.content}
+        className={style.threadContent}
+        previewTheme="github"
+      />
+    </div>
+  );
 };
 
 export default Thread;

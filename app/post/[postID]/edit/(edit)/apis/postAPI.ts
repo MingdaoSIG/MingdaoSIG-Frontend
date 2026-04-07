@@ -32,8 +32,8 @@ export async function getPostAPI(postId: string) {
       })
     ).json();
     return res;
-  } catch (error) {
-    console.log(error);
+  } catch (_error) {
+    // Silently ignore - caller handles missing data
   }
 }
 

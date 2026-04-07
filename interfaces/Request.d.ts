@@ -11,7 +11,7 @@ export interface RequestInit {
   referrer?: string;
   referrerPolicy?: ReferrerPolicy;
   signal?: AbortSignal | null;
-  window?: any;
+  window?: null;
 }
 
 export interface LimitedRequestInit {
@@ -24,7 +24,7 @@ export interface LimitedRequestInit {
   referrer?: string;
   referrerPolicy?: ReferrerPolicy;
   signal?: AbortSignal | null;
-  window?: any;
+  window?: null;
 }
 
 export type BodyInit =

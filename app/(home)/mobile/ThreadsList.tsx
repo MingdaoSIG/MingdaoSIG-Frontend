@@ -6,11 +6,10 @@ import {
   InfinityThreadsList,
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
-import SigList from "./SigList";
-import SwitchButton from "./ButtonTools";
-
 // Interfaces
 import { useAllPost, useSigPost } from "@/utils/usePost";
+import SwitchButton from "./ButtonTools";
+import SigList from "./SigList";
 
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
@@ -36,7 +35,7 @@ const ThreadsList = () => {
   }
 
   return (
-    <div className="w-full h-auto pt-16 pb-16 px-2 sm:px-4 md:px-6 lg:px-8 max-w-7xl mx-auto relative overflow-y-auto scrollbar-hide">
+    <div className="scrollbar-hide relative mx-auto h-auto w-full max-w-7xl overflow-y-auto px-2 pt-16 pb-16 sm:px-4 md:px-6 lg:px-8">
       {showList && <SigList sigListToggle={setShowList} />}
 
       <SwitchButton

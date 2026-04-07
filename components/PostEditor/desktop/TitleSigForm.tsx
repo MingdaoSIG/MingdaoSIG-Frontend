@@ -1,21 +1,23 @@
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
-import { TPostAPI } from "../types/postAPI";
-import { Sig } from "@/interfaces/Sig";
-import sigAPI from "@/modules/sigAPI";
-import { announcementSigId } from "../config/announcement";
-import { useUserAccount } from "@/utils/useUserAccount";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import type { Sig } from "@/interfaces/Sig";
+import sigAPI from "@/modules/sigAPI";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { announcementSigId } from "../config/announcement";
+import type { TPostAPI } from "../types/postAPI";
 
 interface Props {
   data: TPostAPI;
-  handleFormEventFunction: Function;
+  handleFormEventFunction: (e: {
+    target: { name: string; value: string | string[] };
+  }) => void;
 }
 
 export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
   const { status } = useSession();
   const { userData } = useUserAccount();
 
-  const [sigs, setSigs] = useState<any[]>([]);
+  const [sigs, setSigs] = useState<Sig[]>([]);
   const [announcementSigData, setAnnouncementSigData] = useState<Sig>();
 
   useEffect(() => {
@@ -23,8 +25,8 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
       try {
         const response = await sigAPI.getSigList();
         setSigs(response);
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error: unknown) {
+        console.error(error instanceof Error ? error.message : error);
       }
     })();
   }, []);
@@ -34,27 +36,27 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
       try {
         const response = await sigAPI.getSigData(announcementSigId);
         setAnnouncementSigData(response);
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error: unknown) {
+        console.error(error instanceof Error ? error.message : error);
       }
     })();
   }, []);
 
   return (
-    <div className="w-full mb-2 h-10 flex items-center rounded-full">
+    <div className="mb-2 flex h-10 w-full items-center rounded-full">
       <input
         type="text"
         name="title"
-        className="h-full flex-1 rounded-l-full pl-5 pr-3 border-r border-gray-300 bg-white"
+        className="h-full flex-1 rounded-l-full border-gray-300 border-r bg-white pr-3 pl-5"
         value={data?.title}
         placeholder="請輸入標題..."
         onChange={(e) => handleFormEventFunction(e)}
       />
-      <div className="h-full w-[10.5rem] rounded-r-full bg-white text-left items-center justify-center">
+      <div className="h-full w-[10.5rem] items-center justify-center rounded-r-full bg-white text-left">
         <select
           name="sig"
           value={data?.sig}
-          className="h-full text-left rounded-r-full px-1"
+          className="h-full rounded-r-full px-1 text-left"
           onChange={(e) => {
             handleFormEventFunction(e);
           }}
@@ -69,8 +71,7 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
           })}
           {status === "authenticated" &&
             userData &&
-            announcementSigData &&
-            announcementSigData?.moderator?.includes(userData._id!) && (
+            announcementSigData?.moderator?.includes(userData._id ?? "") && (
               <option value="652d60b842cdf6a660c2b778">公告</option>
             )}
         </select>

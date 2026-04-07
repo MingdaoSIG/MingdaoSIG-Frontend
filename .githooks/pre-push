@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# MDSIG Frontend — Pre-Push Hook
+# Runs security scans, lint/format, type-check, and build before pushing.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOTAL_STEPS=8
+BUNDLE_SIZE_LIMIT_MB=50
+
+# Colors
+_CLI_RED='\033[0;31m'
+_CLI_GREEN='\033[0;32m'
+_CLI_YELLOW='\033[0;33m'
+_CLI_BLUE='\033[0;34m'
+_CLI_PURPLE='\033[0;35m'
+_CLI_CYAN='\033[0;36m'
+_CLI_GRAY='\033[0;90m'
+_CLI_NC='\033[0m'
+
+# Symbols
+_CLI_CHECK="${_CLI_GREEN}[✓]${_CLI_NC}"
+_CLI_CROSS="${_CLI_RED}[✗]${_CLI_NC}"
+_CLI_WARN="${_CLI_YELLOW}[!]${_CLI_NC}"
+_CLI_INFO="${_CLI_CYAN}[i]${_CLI_NC}"
+
+# Helpers
+log_info()    { echo -e "$_CLI_INFO $1"; }
+log_success() { echo -e "$_CLI_CHECK $1"; }
+log_warn()    { echo -e "$_CLI_WARN $1"; }
+log_error()   { echo -e "$_CLI_CROSS $1"; }
+
+print_divider() {
+  local color="${1:-$_CLI_PURPLE}" label="${2:-}"
+  local width="${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}"
+  if [[ -n "$label" ]]; then
+    local padding=$((width - ${#label} - 6))
+    local fill
+    printf -v fill '%*s' "$padding" ''
+    printf '%b━━━━[%s]%s%b\n' "$color" "$label" "${fill// /━}" "$_CLI_NC"
+  else
+    local fill
+    printf -v fill '%*s' "$width" ''
+    printf '%b%s%b\n' "$color" "${fill// /━}" "$_CLI_NC"
+  fi
+}
+
+run_step() {
+  local step_num="$1"
+  local step_name="$2"
+  local step_cmd="$3"
+
+  log_info "${_CLI_GRAY}[${step_num}/${TOTAL_STEPS}]${_CLI_NC} Running ${_CLI_CYAN}${step_name}${_CLI_NC}..."
+
+  if eval "$step_cmd"; then
+    log_success "${_CLI_GRAY}[${step_num}/${TOTAL_STEPS}]${_CLI_NC} ${step_name}"
+    return 0
+  else
+    echo ""
+    log_error "${_CLI_GRAY}[${step_num}/${TOTAL_STEPS}]${_CLI_NC} ${step_name} ${_CLI_RED}failed${_CLI_NC}"
+    echo ""
+    log_info "Fix the errors above, then try pushing again."
+    echo ""
+    print_divider "$_CLI_RED"
+    echo ""
+    return 1
+  fi
+}
+
+# ── Check Functions ───────────────────────────────────────────────
+
+check_env_secrets() {
+  local failed=0
+
+  # Check for .env files being pushed
+  local env_files
+  env_files=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep -E '\.env(\..*)?\.local$' || true)
+  if [[ -z "$env_files" ]]; then
+    env_files=$(git diff origin/HEAD --name-only --diff-filter=ACM 2>/dev/null | grep -E '\.env(\..*)?\.local$' || true)
+  fi
+
+  if [[ -n "$env_files" ]]; then
+    echo ""
+    log_error "Secret files detected in changes:"
+    while IFS= read -r f; do
+      echo -e "    ${_CLI_RED}✗${_CLI_NC} $f"
+    done <<< "$env_files"
+    echo ""
+    log_info "Add these to ${_CLI_CYAN}.gitignore${_CLI_NC} or unstage them."
+    failed=1
+  fi
+
+  # Grep source files for hardcoded secret patterns
+  local secret_patterns='(GOOGLE_CLIENT_SECRET|NEXTAUTH_SECRET|GITHUB_TOKEN|NEXT_PUBLIC_WEBHOOK_LOGIN|DISCORD_WEBHOOK)\s*=\s*["\x27][^"\x27]{8,}'
+  local hits
+  hits=$(git diff origin/HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx' 2>/dev/null \
+    | grep -E '^\+' \
+    | grep -iE "$secret_patterns" || true)
+
+  if [[ -n "$hits" ]]; then
+    echo ""
+    log_error "Possible hardcoded secrets in diff:"
+    echo -e "    ${_CLI_GRAY}${hits}${_CLI_NC}"
+    failed=1
+  fi
+
+  return $failed
+}
+
+check_bundle_size() {
+  if [[ ! -d ".next" ]]; then
+    log_warn "No .next directory found — skipping bundle size check"
+    return 0
+  fi
+
+  local size_kb
+  size_kb=$(du -sk .next 2>/dev/null | cut -f1)
+  local size_mb=$(( size_kb / 1024 ))
+  local limit_kb=$(( BUNDLE_SIZE_LIMIT_MB * 1024 ))
+
+  if [[ "$size_kb" -gt "$limit_kb" ]]; then
+    echo ""
+    log_error "Bundle size ${_CLI_RED}${size_mb}MB${_CLI_NC} exceeds limit of ${_CLI_CYAN}${BUNDLE_SIZE_LIMIT_MB}MB${_CLI_NC}"
+    echo ""
+    log_info "Check for large imports or unoptimized assets."
+    return 1
+  fi
+
+  log_info "  Bundle size: ${_CLI_CYAN}${size_mb}MB${_CLI_NC} ${_CLI_GRAY}(limit: ${BUNDLE_SIZE_LIMIT_MB}MB)${_CLI_NC}"
+  return 0
+}
+
+# ── Main ──────────────────────────────────────────────────────────
+
+echo ""
+print_divider "$_CLI_PURPLE" "Pre-Push Checks"
+echo ""
+log_info "Verifying codebase before push..."
+echo ""
+
+# 1. Secret detection with gitleaks
+if command -v gitleaks &> /dev/null; then
+  run_step 1 "gitleaks (secret scan)" "gitleaks protect --staged --verbose" || exit 1
+else
+  log_warn "${_CLI_GRAY}[1/${TOTAL_STEPS}]${_CLI_NC} gitleaks not installed — skipping"
+  log_info "Install with: ${_CLI_CYAN}brew install gitleaks${_CLI_NC}"
+  echo ""
+fi
+
+# 2. Check for .env secrets in staged files
+run_step 2 "env secrets check"      "check_env_secrets"      || exit 1
+
+# 3–7. Install, lint, type-check, build
+run_step 3 "pnpm install"           "pnpm install"           || exit 1
+run_step 4 "pnpm run check:fix"     "pnpm run check:fix"     || exit 1
+run_step 5 "pnpm run check:fix-unsafe" "pnpm run check:fix-unsafe" || exit 1
+run_step 6 "pnpm run types"         "pnpm run types"         || exit 1
+run_step 7 "pnpm build"             "pnpm build"             || exit 1
+
+# 8. Bundle size check (after build)
+run_step 8 "bundle size check"      "check_bundle_size"      || exit 1
+
+echo ""
+log_success "All pre-push checks passed"
+echo ""
+print_divider "$_CLI_PURPLE"
+echo ""

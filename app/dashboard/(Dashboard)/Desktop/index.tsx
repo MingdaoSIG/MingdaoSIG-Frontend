@@ -1,18 +1,33 @@
 "use client";
 
-// Styles
-import styles from "./index.module.scss";
+import dynamic from "next/dynamic";
 
 // Modules
-import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+// Styles
+import styles from "./index.module.scss";
 import "chart.js/auto";
 
 // Configs
 import {
-  sigDefaultColors,
   sigDefaultBorderColors,
+  sigDefaultColors,
 } from "@/app/dashboard/(Dashboard)/config/sigDefaultColors";
+
+type SigCountItem = {
+  name: string;
+  count: number;
+};
+
+type ChartData = {
+  labels: string[];
+  datasets: {
+    data: number[];
+    backgroundColor: string[];
+    borderColor: string[];
+    borderWidth: number;
+  }[];
+};
 
 const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
   ssr: false,
@@ -51,68 +66,76 @@ export default function Desktop() {
   const [validPostCount, setValidPostCount] = useState(0);
 
   // Sig Posts Count
-  const [sigPostCount, setSigPostCount] = useState<any>([]);
-  const [sigPostCountLabel, setSigPostCountLabel] = useState<any>([]);
-  const [sigPostCountData, setSigPostCountData] = useState<any>([]);
-  const [sigPostCountColor, setSigPostCountColor] = useState<any>([]);
-  const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<any>(
-    [],
-  );
+  const [sigPostCount, setSigPostCount] = useState<SigCountItem[]>([]);
+  const [sigPostCountLabel, setSigPostCountLabel] = useState<string[]>([]);
+  const [sigPostCountData, setSigPostCountData] = useState<number[]>([]);
+  const [sigPostCountColor, setSigPostCountColor] = useState<string[]>([]);
+  const [sigPostCountBorderColor, setSigPostCountBorderColor] = useState<
+    string[]
+  >([]);
 
   // Sig User Count
-  const [sigUserCount, setSigUserCount] = useState<any>([]);
-  const [sigUserCountLabel, setSigUserCountLabel] = useState<any>([]);
-  const [sigUserCountData, setSigUserCountData] = useState<any>([]);
-  const [sigUserCountColor, setSigUserCountColor] = useState<any>([]);
-  const [sigUserCountBorderColor, setSigUserCountBorderColor] = useState<any>(
-    [],
+  const [sigUserCount, setSigUserCount] = useState<SigCountItem[]>([]);
+  const [sigUserCountLabel, setSigUserCountLabel] = useState<string[]>([]);
+  const [sigUserCountData, setSigUserCountData] = useState<number[]>([]);
+  const [sigUserCountColor, setSigUserCountColor] = useState<string[]>([]);
+  const [sigUserCountBorderColor, setSigUserCountBorderColor] = useState<
+    string[]
+  >([]);
+
+  const [sigPostCountFinalData, setSigPostCountFinalData] = useState<ChartData>(
+    {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: [],
+          borderWidth: 1,
+        },
+      ],
+    },
   );
 
-  const [sigPostCountFinalData, setSigPostCountFinalData] = useState({
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: [],
-        borderColor: [],
-        borderWidth: 1,
-      },
-    ],
-  } as any);
+  const [sigUserCountFinalData, setSigUserCountFinalData] = useState<ChartData>(
+    {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: [],
+          borderWidth: 1,
+        },
+      ],
+    },
+  );
 
-  const [sigUserCountFinalData, setSigUserCountFinalData] = useState({
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: [],
-        borderColor: [],
-        borderWidth: 1,
-      },
-    ],
-  } as any);
-
-  const date = new Date().toISOString();
+  const [date] = useState(() => new Date().toISOString());
 
   // Sig Posts Count Start
   useEffect(() => {
-    if (sigPostCount.length === 0) return;
-    sigPostCount.forEach((sig: any) => {
-      setSigPostCountLabel((prev: any) => [...prev, sig.name]);
-      setSigPostCountData((prev: any) => [...prev, sig.count]);
-      setSigPostCountColor((prev: any) => [
+    if (sigPostCount.length === 0) {
+      return;
+    }
+    for (const sig of sigPostCount) {
+      setSigPostCountLabel((prev: string[]) => [...prev, sig.name]);
+      setSigPostCountData((prev: number[]) => [...prev, sig.count]);
+      setSigPostCountColor((prev: string[]) => [
         ...prev,
         sigDefaultColors[sig.name],
       ]);
-      setSigPostCountBorderColor((prev: any) => [
+      setSigPostCountBorderColor((prev: string[]) => [
         ...prev,
         sigDefaultBorderColors[sig.name],
       ]);
-    });
+    }
   }, [sigPostCount]);
 
   useEffect(() => {
-    if (sigPostCountFinalData.labels.length !== 0) return;
+    if (sigPostCountFinalData.labels.length !== 0) {
+      return;
+    }
     setSigPostCountFinalData({
       labels: sigPostCountLabel,
       datasets: [
@@ -133,35 +156,49 @@ export default function Desktop() {
   ]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/information/post/sig?date=${date}`,
+      { signal: controller.signal },
     )
       .then((res) => res.json())
       .then((data) => {
         setSigPostCount(data.data.content);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Failed to fetch sig post count:", error);
+        }
       });
-  }, []);
+
+    return () => controller.abort();
+  }, [date]);
   // Sig Posts Count End
 
   // Sig Users Count Start
   useEffect(() => {
-    if (sigUserCount.length === 0) return;
-    sigUserCount.forEach((sig: any) => {
-      setSigUserCountLabel((prev: any) => [...prev, sig.name]);
-      setSigUserCountData((prev: any) => [...prev, sig.count]);
-      setSigUserCountColor((prev: any) => [
+    if (sigUserCount.length === 0) {
+      return;
+    }
+    for (const sig of sigUserCount) {
+      setSigUserCountLabel((prev: string[]) => [...prev, sig.name]);
+      setSigUserCountData((prev: number[]) => [...prev, sig.count]);
+      setSigUserCountColor((prev: string[]) => [
         ...prev,
         sigDefaultColors[sig.name],
       ]);
-      setSigUserCountBorderColor((prev: any) => [
+      setSigUserCountBorderColor((prev: string[]) => [
         ...prev,
         sigDefaultBorderColors[sig.name],
       ]);
-    });
+    }
   }, [sigUserCount]);
 
   useEffect(() => {
-    if (sigUserCountFinalData.labels.length !== 0) return;
+    if (sigUserCountFinalData.labels.length !== 0) {
+      return;
+    }
     setSigUserCountFinalData({
       labels: sigUserCountLabel,
       datasets: [
@@ -182,51 +219,113 @@ export default function Desktop() {
   ]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/information/user/sig?date=${date}`,
+      { signal: controller.signal },
     )
       .then((res) => res.json())
       .then((data) => {
         setSigUserCount(data.data.content);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Failed to fetch sig user count:", error);
+        }
       });
-  }, []);
+
+    return () => controller.abort();
+  }, [date]);
   // Sig Users Count End
 
   useEffect(() => {
+    const controllers: AbortController[] = [];
+
     if (userCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/user?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setUserCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch user count:", error);
+          }
         });
     }
 
     if (likeCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/like?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setLikeCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch like count:", error);
+          }
         });
     }
 
     if (postUserCount === 0) {
+      const controller = new AbortController();
+      controllers.push(controller);
       fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/information/user/posted?date=${date}`,
+        { signal: controller.signal },
       )
         .then((res) => res.json())
         .then((data) => {
           setPostUserCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch post user count:", error);
+          }
         });
     }
 
     if (validPostCount === 0) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`)
+      const controller = new AbortController();
+      controllers.push(controller);
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/information/post?date=${date}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((res) => res.json())
         .then((data) => {
           setValidPostCount(data.data.content);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to fetch valid post count:", error);
+          }
         });
     }
-  }, []);
+
+    return () => {
+      for (const controller of controllers) {
+        controller.abort();
+      }
+    };
+  }, [validPostCount, userCount, postUserCount, likeCount, date]);
 
   return (
     <div>

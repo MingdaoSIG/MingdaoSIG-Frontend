@@ -1,22 +1,19 @@
 import { MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/preview.css";
 import "md-editor-rt/lib/style.css";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
+import "@/app/mdEditorConfig";
 import Image from "next/image";
-
-// Components
-import Replies from "./Replies";
-
-// Styles
-import styles from "./Thread.module.scss";
-
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
-
 // Utils
 import { useUserAccount } from "@/utils/useUserAccount";
+// Components
+import Replies from "./Replies";
+// Styles
+import styles from "./Thread.module.scss";
 
 const Thread = ({
   post,
@@ -26,7 +23,7 @@ const Thread = ({
   isAnnouncement?: boolean;
 }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
-  const [like, setLike] = useState<any>(false);
+  const [like, setLike] = useState<boolean>(false);
   const router = useRouter();
 
   function onLike() {
@@ -53,32 +50,26 @@ const Thread = ({
 
   async function PostLike() {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
     } catch (error) {
       console.error(error);
     }
   }
   async function DeleteLike() {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
     } catch (error) {
       console.error(error);
     }
@@ -86,13 +77,13 @@ const Thread = ({
 
   useEffect(() => {
     if (isLogin) {
-      post.like?.includes(userData?._id!) ? setLike(true) : setLike(false);
+      post.like?.includes(userData?._id ?? "") ? setLike(true) : setLike(false);
     }
   }, [isLogin, post.like, userData?._id]);
 
   if (isAnnouncement) {
     return (
-      <div className={styles.thread + " " + styles.threadAnnouncement}>
+      <div className={`${styles.thread} ${styles.threadAnnouncement}`}>
         <div className={styles.threadTitle}>
           <h1>{post.title}</h1>
         </div>
@@ -112,7 +103,7 @@ const Thread = ({
         {isLogin && post.user === userData?._id && (
           <div
             key="edit"
-            className="max-h-[64px] my-auto right-[20px] top-0 bottom-0 flex items-center justify-center cursor-pointer"
+            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
             onClick={onEdit}
           >
             <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
@@ -120,6 +111,7 @@ const Thread = ({
         )}
         <div onClick={onLike}>
           <svg
+            aria-hidden="true"
             width="32"
             height="32"
             viewBox="0 0 32 32"
