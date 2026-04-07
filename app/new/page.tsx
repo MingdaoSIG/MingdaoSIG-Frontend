@@ -10,6 +10,7 @@ import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
 import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
+import { isValidObjectId } from "@/modules/validation";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -45,11 +46,8 @@ function validateStoredData(data: unknown): Partial<TPostAPI> {
   }
 
   // 驗證 sig（必須是有效的 ObjectId 格式）
-  if (typeof typedData.sig === "string") {
-    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
-    if (objectIdRegex.test(typedData.sig)) {
-      result.sig = typedData.sig;
-    }
+  if (typeof typedData.sig === "string" && isValidObjectId(typedData.sig)) {
+    result.sig = typedData.sig;
   }
 
   // 驗證 content
@@ -60,14 +58,9 @@ function validateStoredData(data: unknown): Partial<TPostAPI> {
     result.content = typedData.content;
   }
 
-  // 驗證 cover（必須是有效的 URL）
-  if (typeof typedData.cover === "string") {
-    try {
-      new URL(typedData.cover);
-      result.cover = typedData.cover;
-    } catch {
-      // 無效的 URL，忽略
-    }
+  // 驗證 cover（接受 image ID 或完整 URL）
+  if (typeof typedData.cover === "string" && typedData.cover.length > 0) {
+    result.cover = typedData.cover;
   }
 
   // 驗證 hashtag（必須是字串陣列）

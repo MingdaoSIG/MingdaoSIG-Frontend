@@ -177,7 +177,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           </div>
         </div>
       </div>
-      <div className="overflow-y- mt-5 flex h-[calc(100%-42px-64px)] flex-col gap-[10px] overflow-x-hidden">
+      <div className="mt-5 flex h-[calc(100%-42px-64px)] flex-col gap-[10px] overflow-x-hidden overflow-y-auto">
         {comments.length !== 0 ? (
           comments.map((comment: TComments) => {
             return (
@@ -215,7 +215,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           value={typeComments}
           // disabled
         />
-        <button type="button" className="h-full w-[40px] flex-none">
+        <button type="submit" className="h-full w-[40px] flex-none">
           <Image
             src={"/icons/bx-send.svg"}
             height={24}

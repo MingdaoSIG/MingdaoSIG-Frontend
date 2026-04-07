@@ -13,7 +13,7 @@
 | Markdown Editor | md-editor-rt |
 | Charts | Chart.js + Recharts |
 | HTTP Client | Axios |
-| Linter/Formatter | Biome v2.2.5 |
+| Linter/Formatter | Biome v2.3.13 |
 
 ## Project Structure
 
@@ -64,9 +64,8 @@ components/              # Reusable components
 
 modules/                 # Business logic modules
 ├── api/
+│   └── getBranchVersion/
 ├── customStatusCode/
-├── getSigDataById/
-├── getSigListAPI/
 ├── imageUploadAPI/
 ├── markdownToPlainText/
 ├── maxMatch/

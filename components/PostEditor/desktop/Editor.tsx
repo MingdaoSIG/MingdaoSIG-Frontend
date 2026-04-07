@@ -6,8 +6,6 @@ import "@/app/mdEditorConfig";
 import Swal from "sweetalert2";
 import type { IImageUpload } from "@/interfaces/Image.interface";
 import { imageUpload } from "@/modules/imageUploadAPI";
-// Use User Account
-import { useUserAccount } from "@/utils/useUserAccount";
 // Configs
 import { toolbars } from "../config/editorToolbar";
 // Interfaces
@@ -21,8 +19,7 @@ interface Props {
   token: string;
 }
 
-const MdEditorSync = ({ data, setPostData }: Props) => {
-  const { token } = useUserAccount();
+const MdEditorSync = ({ data, setPostData, token }: Props) => {
   const onUploadImg = async (
     files: File[],
     callback: (urls: string[]) => void,

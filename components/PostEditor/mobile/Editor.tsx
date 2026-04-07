@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import "md-editor-rt/lib/style.css";
 import "@/app/mdEditorConfig";
 
+import Swal from "sweetalert2";
 import type { IImageUpload } from "@/interfaces/Image.interface";
 // APIs Request Function
 import { imageUpload } from "@/modules/imageUploadAPI";
@@ -34,10 +35,16 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
         }
       }),
     );
+    const successfulUploads = responseImage.filter(
+      (item): item is IImageUpload => typeof item === "object" && item?.id,
+    );
+    if (successfulUploads.length === 0) {
+      Swal.fire("Error", "All image uploads failed", "error");
+      return;
+    }
     callback(
-      responseImage.map(
-        (item: IImageUpload | string) =>
-          `${process.env.NEXT_PUBLIC_API_URL}/image/${typeof item === "object" ? item?.id : ""}`,
+      successfulUploads.map(
+        (item) => `${process.env.NEXT_PUBLIC_API_URL}/image/${item.id}`,
       ),
     );
   };

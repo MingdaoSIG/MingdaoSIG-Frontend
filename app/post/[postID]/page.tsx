@@ -61,7 +61,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
         return;
       } catch (error: unknown) {
         if ((error as Error).name !== "AbortError") {
-          // Non-abort fetch errors are silently ignored - UI shows loading/notfound state
+          setStatus("notfound");
         }
       }
     }

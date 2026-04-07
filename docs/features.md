@@ -26,7 +26,7 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 ## Session Management
 
 - Use `useUserAccount` hook to read login state
-- `useFetch` hook for data fetching with built-in caching via TanStack Query
+- TanStack Query hooks (`usePost`, `useAllPost`, etc.) for data fetching with built-in caching
 - `useAlert` hook wraps SweetAlert2 for consistent dialogs
 
 ## Changelog Page
@@ -55,4 +55,4 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 ## Validation Module
 
 - Located at `modules/validation/index.ts`
-- Helpers: `isValidObjectId`, `isValidCustomId`, `isValidSigId`, `isValidUUID`, `sanitizeUrlParam`, `isMingdaoEmail`
+- Helpers: `isValidObjectId`, `isValidCustomId`, `sanitizeUrlParam`

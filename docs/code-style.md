@@ -5,7 +5,7 @@
 | Type | Convention | Example |
 |------|------------|---------|
 | Component files | PascalCase | `PostEditor.tsx` |
-| Utility functions / hooks | camelCase | `useFetch.ts` |
+| Utility functions / hooks | camelCase | `useIsMobile.ts` |
 | Type definitions | PascalCase | `TThread`, `User` |
 | SCSS modules | camelCase + `.module.scss` | `ThreadsList.module.scss` |
 | Constants | UPPER_SNAKE_CASE | `API_BASE_URL` |
@@ -42,4 +42,4 @@ Do **not** use barrel imports (re-exporting from `index.ts`).
 - Double quotes
 - Automatic import sorting (enforced by Biome)
 
-Run `pnpm lint` to format and check before completing any task.
+Run `pnpm check` to format and check before completing any task.

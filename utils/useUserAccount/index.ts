@@ -46,7 +46,10 @@ export function useUserAccount() {
       if (OAuth === "authenticated") {
         try {
           const accessToken = (session as unknown as Record<string, unknown>)
-            ?.accessToken as string;
+            ?.accessToken;
+          if (typeof accessToken !== "string" || !accessToken) {
+            throw new Error("Missing or invalid access token");
+          }
           const { token, data } = await platformLogin(accessToken);
           localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(data));
@@ -73,7 +76,7 @@ export function useUserAccount() {
         setIsLoading(false);
       }
     })();
-  }, [OAuth, session, isLogin]); // ⚠️ 移除 isLogin 依賴避免循環
+  }, [OAuth, session]); // ⚠️ 移除 isLogin 依賴避免循環
 
   // ✅ 修復：更安全的清除邏輯
   useEffect(() => {
@@ -129,7 +132,8 @@ async function platformLogin(accessToken: string) {
       data: response.data,
     };
   } catch (error: unknown) {
-    throw new Error((error as Error).message);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(message);
   }
 }
 
@@ -156,6 +160,7 @@ async function platformLoginWithSession(session: string) {
       data: response.data,
     };
   } catch (error: unknown) {
-    throw new Error((error as Error).message);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(message);
   }
 }

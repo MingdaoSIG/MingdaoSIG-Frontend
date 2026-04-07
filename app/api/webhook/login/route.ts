@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       {
         title: `${data.get("name")}`,
         description: data.get("description"),
-        color: parseInt("0x34e718", 10),
+        color: 0x34e718,
         thumbnail: {
           url: data.get("avatar"),
         },
