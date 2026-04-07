@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Sig } from "@/interfaces/Sig";
 import sigAPI from "@/modules/sigAPI";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -69,7 +69,6 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
           })}
           {status === "authenticated" &&
             userData &&
-            announcementSigData &&
             announcementSigData?.moderator?.includes(userData._id!) && (
               <option value="652d60b842cdf6a660c2b778">公告</option>
             )}

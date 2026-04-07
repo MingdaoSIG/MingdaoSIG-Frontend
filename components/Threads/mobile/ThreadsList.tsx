@@ -5,7 +5,7 @@ import type {
 } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
@@ -254,7 +254,7 @@ export const InfinityThreadsList = ({
       {announcementData &&
         announcementData.pages[0].length >= 1 &&
         announcementData.pages.map((page: TThread[], index: number) => {
-          const currentDate = new Date().getTime();
+          const currentDate = Date.now();
           const postDate = new Date(page[0].createdAt!).getTime();
           const diffDays = Math.floor(
             (currentDate - postDate) / (1000 * 60 * 60 * 24),

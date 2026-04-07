@@ -84,17 +84,13 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
     );
   } else if (post?.sig === "652d60b842cdf6a660c2b778") {
     return isMobile ? (
-      <>
-        <ThreadMobile post={post!} isAnnouncement />
-      </>
+      <ThreadMobile post={post!} isAnnouncement />
     ) : (
       <ThreadDesktop post={post!} />
     );
   } else {
     return isMobile ? (
-      <>
-        <ThreadMobile post={post!}></ThreadMobile>
-      </>
+      <ThreadMobile post={post!}></ThreadMobile>
     ) : (
       <SplitBlock>
         <ThreadDesktop post={post!} />

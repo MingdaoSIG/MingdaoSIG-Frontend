@@ -71,7 +71,7 @@ export default function Info({
       // 如果不是完整 URL，嘗試添加 https://
       try {
         const urlWithProtocol = `https://${url}`;
-        const urlObj = new URL(urlWithProtocol);
+        const _urlObj = new URL(urlWithProtocol);
         validatedUrl = urlWithProtocol;
       } catch {
         console.warn("Invalid URL:", url);
@@ -161,7 +161,7 @@ export default function Info({
       <br />
       <textarea
         id="aboutYou"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I am ..."
       />
@@ -171,7 +171,7 @@ export default function Info({
       <br />
       <textarea
         id="whyJoin"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I want to join ..."
       />
@@ -181,7 +181,7 @@ export default function Info({
       <br />
       <textarea
         id="whichTopic"
-        className={"swal2-textarea " + styles.JoinSIGFormInput}
+        className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
         placeholder="I am interest in ..."
       />

@@ -47,7 +47,7 @@ export default function UserLogin() {
         >
           <Image
             src={
-              (userData && userData.avatar) ||
+              userData?.avatar ||
               process.env.NEXT_PUBLIC_API_URL +
                 "/image/653299930b891d1f6b5b4458"
             }
@@ -58,10 +58,10 @@ export default function UserLogin() {
           />
           <div className="ml-[0.4rem] h-full flex flex-col justify-evenly items-start">
             <p className="text-[1.2rem] leading-[1.2rem] font-medium">
-              {userData && userData.name}
+              {userData?.name}
             </p>
             <p className="text-[#006180] text-[0.8rem] leading-[0.8rem]">
-              {userData && userData.email}
+              {userData?.email}
             </p>
           </div>
         </div>

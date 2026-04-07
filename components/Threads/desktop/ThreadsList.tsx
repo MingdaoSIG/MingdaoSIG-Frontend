@@ -5,7 +5,7 @@ import type {
 } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
@@ -46,7 +46,7 @@ export const Thread = ({ threadData }: { threadData: TThread }) => {
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={style.thread + " cursor-pointer select-none"}
+      className={`${style.thread} cursor-pointer select-none`}
       style={{
         backgroundColor: isAnnouncement ? "white" : "",
       }}
@@ -208,35 +208,33 @@ export const InfinityThreadsList = ({
     }
   }, [onScroll]);
   return data && data.pages[0].length >= 1 ? (
-    <Fragment>
-      <div className={style.threads} style={{ height }} ref={postList}>
-        {announcementData &&
-          announcementData.pages[0].length >= 1 &&
-          announcementData.pages.map((page: TThread[], index: number) => {
-            const currentDate = new Date().getTime();
-            const postDate = new Date(page[0].createdAt!).getTime();
-            const diffDays = Math.floor(
-              (currentDate - postDate) / (1000 * 60 * 60 * 24),
-            );
+    <div className={style.threads} style={{ height }} ref={postList}>
+      {announcementData &&
+        announcementData.pages[0].length >= 1 &&
+        announcementData.pages.map((page: TThread[], index: number) => {
+          const currentDate = Date.now();
+          const postDate = new Date(page[0].createdAt!).getTime();
+          const diffDays = Math.floor(
+            (currentDate - postDate) / (1000 * 60 * 60 * 24),
+          );
 
-            if (diffDays < announcementStayTime) {
-              return <Thread threadData={page[0]} key={index} />;
+          if (diffDays < announcementStayTime) {
+            return <Thread threadData={page[0]} key={index} />;
+          }
+        })}
+      {data.pages.map((page: TThread[], index: number) => (
+        <Fragment key={index}>
+          {page.map((item, index) => {
+            const sig = item.sig as unknown as Sig;
+            const isAnnouncement = sig._id === announcementSigId;
+            if (!isAnnouncement) {
+              return <Thread threadData={item} key={index} />;
             }
           })}
-        {data.pages.map((page: TThread[], index: number) => (
-          <Fragment key={index}>
-            {page.map((item, index) => {
-              const sig = item.sig as unknown as Sig;
-              const isAnnouncement = sig._id === announcementSigId;
-              if (!isAnnouncement) {
-                return <Thread threadData={item} key={index} />;
-              }
-            })}
-          </Fragment>
-        ))}
-        {isFetchingNextPage && <ThreadSkeleton />}
-      </div>
-    </Fragment>
+        </Fragment>
+      ))}
+      {isFetchingNextPage && <ThreadSkeleton />}
+    </div>
   ) : (
     <div className={style.noPost}>
       <h1>No Post Yet</h1>

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Fragment } from "react";
 import changelog from "../config/changelog.json";
 

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
 import NotFoundPage from "@/app/not-found";
 import type { TThread } from "@/interfaces/Thread";
@@ -56,7 +56,7 @@ export default function Page() {
       setResults(
         data.map((d: any) => ({ ...d, userName: userMap[d.user] || "未知" })),
       );
-    } catch (e) {
+    } catch (_e) {
       setResults([]);
     } finally {
       setLoading(false);

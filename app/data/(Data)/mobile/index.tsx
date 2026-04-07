@@ -1,8 +1,4 @@
-// Styles
-
-// Modules
-import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./index.module.scss";
 
 export default function Mobile() {

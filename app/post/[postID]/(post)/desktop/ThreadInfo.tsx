@@ -55,7 +55,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           });
         });
       }
-    } catch (e) {
+    } catch (_e) {
       Swal.fire(alertMessageConfigs.otherError);
     }
   }
@@ -133,9 +133,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   }, [post]);
 
   return (
-    <div className={style.info + " box-border"}>
+    <div className={`${style.info} box-border`}>
       <div className="flex justify-between items-center flex-initial relative h-[64px] mb-3">
-        <div className={style.author + " select-none"}>
+        <div className={`${style.author} select-none`}>
           <Image
             src={user?.avatar || "/images/default-avatar.png"} // Make sure to add a default avatar image
             width={64}
@@ -147,7 +147,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           <div className="flex flex-col items-start my-auto flex-initial w-auto">
             <div className="flex">
               <div
-                className={style.name + " flex"}
+                className={`${style.name} flex`}
                 onClick={() => route.push(`/@${user?.customId}`)}
               >
                 {user?.name || "Loading..."}

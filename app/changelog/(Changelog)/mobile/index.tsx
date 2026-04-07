@@ -42,7 +42,7 @@ export default function Mobile() {
     <div className={styles.mobileView}>
       <div className={styles.wrapper}>
         <div className="space-y-4 overflow-auto h-[83dvh] w-full scrollbar-hide">
-          {typedChangelog.map((entry, index) => (
+          {typedChangelog.map((entry, _index) => (
             <Fragment key={entry.version}>
               <div
                 className="bg-white rounded-2xl p-4 shadow-sm"

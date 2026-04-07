@@ -4,7 +4,7 @@ export async function imageUpload(file: any, token: any) {
   return fetch(`${API_URL}/image`, {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
     },
     body: file,
   });

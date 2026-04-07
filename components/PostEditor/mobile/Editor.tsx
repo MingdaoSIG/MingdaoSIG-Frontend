@@ -32,7 +32,7 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
     );
     callback(
       responseImage.map(
-        (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id,
+        (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/${item?.id}`,
       ),
     );
   };

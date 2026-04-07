@@ -107,7 +107,7 @@ function SIGInfinityThreadList({ id }: { id: string }) {
 async function getUser(userId: string) {
   try {
     return await sigAPI.getUserData(userId);
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -115,7 +115,7 @@ async function getUser(userId: string) {
 async function getSIG(userId: string) {
   try {
     return await sigAPI.getSigData(userId);
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

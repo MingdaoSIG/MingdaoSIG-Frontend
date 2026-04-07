@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
-  const router = useRouter();
+  const _router = useRouter();
 
   return (
     <nav className="h-[3.7rem] w-[85vw] mx-auto flex flex-row justify-between items-center cursor-default select-none">

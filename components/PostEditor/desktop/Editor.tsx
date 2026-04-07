@@ -69,7 +69,7 @@ const MdEditorSync = ({ data, setPostData }: Props) => {
     if (responseImage[0] !== undefined) {
       callback(
         responseImage.map(
-          (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/` + item?.id,
+          (item: any) => `${process.env.NEXT_PUBLIC_API_URL}/image/${item?.id}`,
         ),
       );
     }

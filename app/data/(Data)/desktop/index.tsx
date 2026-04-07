@@ -1,14 +1,8 @@
-// Styles
-
-// Modules
-import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
-// data
-import data from "../config/data.json";
+import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 
 export default function Desktop() {
-  const [ping, setPing] = useState<any>({});
+  const [_ping, setPing] = useState<any>({});
 
   useEffect(() => {
     fetch("/ping")

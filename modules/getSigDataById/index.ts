@@ -15,7 +15,7 @@ export async function getSigDataById(id: string) {
     ).json();
 
     return (response as TThread) || "";
-  } catch (error) {
+  } catch (_error) {
     return "";
   }
 }

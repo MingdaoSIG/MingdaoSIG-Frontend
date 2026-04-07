@@ -43,7 +43,7 @@ export default function Replies({ post }: { post: TThread }) {
           });
         });
       }
-    } catch (e) {
+    } catch (_e) {
       Swal.fire(alertMessageConfigs.otherError);
     }
   }

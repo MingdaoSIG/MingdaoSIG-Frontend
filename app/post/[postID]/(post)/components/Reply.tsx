@@ -42,7 +42,7 @@ export default function Reply({
       // 如果不是完整 URL，嘗試添加 https://
       try {
         const urlWithProtocol = `https://${url}`;
-        const urlObj = new URL(urlWithProtocol);
+        const _urlObj = new URL(urlWithProtocol);
         validatedUrl = urlWithProtocol;
       } catch {
         console.warn("Invalid URL:", url);
@@ -89,7 +89,7 @@ export default function Reply({
       <div className={styles.content}>
         <div className="info flex gap-2 items-center">
           <div
-            className={"font-semibold text-[12px] " + (!first && styles.name)}
+            className={`font-semibold text-[12px] ${!first && styles.name}`}
             onClick={() => {
               if (!first) {
                 route.push(`/@${customId}`);

@@ -50,7 +50,7 @@ const Thread = ({
 
   async function PostLike() {
     try {
-      const res = await fetch(
+      const _res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
         {
           method: "POST",
@@ -66,7 +66,7 @@ const Thread = ({
   }
   async function DeleteLike() {
     try {
-      const res = await fetch(
+      const _res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
         {
           method: "DELETE",
@@ -89,7 +89,7 @@ const Thread = ({
 
   if (isAnnouncement) {
     return (
-      <div className={styles.thread + " " + styles.threadAnnouncement}>
+      <div className={`${styles.thread} ${styles.threadAnnouncement}`}>
         <div className={styles.threadTitle}>
           <h1>{post.title}</h1>
         </div>

@@ -116,7 +116,7 @@ body {
 
 /* Editor specific styles */
 .editor-wrapper > div {
-  border: none !important;
+  border: none;
   height: 100%;
 }
 

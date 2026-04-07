@@ -41,7 +41,7 @@ export default function NewPost({
   handleFileChange,
   isEdit,
 }: Props) {
-  const [hashtag, setHashtag] = useState<string[]>([]);
+  const [_hashtag, setHashtag] = useState<string[]>([]);
 
   useEffect(() => {
     if (data.hashtag) {

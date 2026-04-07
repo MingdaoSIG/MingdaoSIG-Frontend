@@ -121,24 +121,22 @@ const Thread = ({ post }: { post: TThread }) => {
 
   if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
-      <>
-        <div className="py-[1rem] max-h-[60dvh]">
-          <div className={style.threadTitle + " " + style.customTitle}>
-            <h1 className="my-auto">{post.title}</h1>
-          </div>
-          <MdPreview
-            language="en-US"
-            value={post.content}
-            className={style.threadContent + " " + style.customThread}
-            previewTheme="github"
-          />
+      <div className="py-[1rem] max-h-[60dvh]">
+        <div className={`${style.threadTitle} ${style.customTitle}`}>
+          <h1 className="my-auto">{post.title}</h1>
         </div>
-      </>
+        <MdPreview
+          language="en-US"
+          value={post.content}
+          className={`${style.threadContent} ${style.customThread}`}
+          previewTheme="github"
+        />
+      </div>
     );
   } else {
     return (
       <div className={style.thread}>
-        <div className={style.threadTitle + " flex relative"}>
+        <div className={`${style.threadTitle} flex relative`}>
           <h1>{post.title}</h1>
           {isLogin && post.user === userData?._id && (
             <div

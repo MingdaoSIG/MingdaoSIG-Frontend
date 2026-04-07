@@ -71,7 +71,7 @@ export default function MetaDataForm({
       return;
     }
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0] && handleFileChange) {
+    if (e.dataTransfer.files?.[0] && handleFileChange) {
       const mockEvent = {
         target: { files: e.dataTransfer.files },
       } as any;
