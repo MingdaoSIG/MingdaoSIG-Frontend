@@ -92,7 +92,7 @@ export default function Desktop() {
     ],
   } as any);
 
-  const date = new Date().toISOString();
+  const [date] = useState(() => new Date().toISOString());
 
   // Sig Posts Count Start
   useEffect(() => {

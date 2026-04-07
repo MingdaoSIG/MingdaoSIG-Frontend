@@ -171,8 +171,10 @@ async function getAccountData(
   data: User | Sig | null;
   dataType: "user" | "sig" | null;
 }> {
-  const userData = await getUser(accountId, signal);
-  const sigData = await getSIG(accountId, signal);
+  const [userData, sigData] = await Promise.all([
+    getUser(accountId, signal),
+    getSIG(accountId, signal),
+  ]);
 
   if (!(userData && sigData)) {
     return {

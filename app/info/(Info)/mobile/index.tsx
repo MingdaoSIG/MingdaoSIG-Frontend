@@ -1,11 +1,46 @@
-// Styles
-
-// Modules
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
-// data
 import data from "../config/data.json";
 import styles from "./index.module.scss";
+
+function parseUptime(uptimeStr: string): number {
+  if (!uptimeStr || uptimeStr === "N/A") return 0;
+
+  let totalMs = 0;
+  const monthsMatch = uptimeStr.match(/(\d+)\s*month/);
+  const daysMatch = uptimeStr.match(/(\d+)\s*day/);
+  const hoursMatch = uptimeStr.match(/(\d+)\s*hour/);
+  const minutesMatch = uptimeStr.match(/(\d+)\s*minute/);
+  const secondsMatch = uptimeStr.match(/(\d+)\s*second/);
+
+  if (monthsMatch)
+    totalMs += parseInt(monthsMatch[1], 10) * 30 * 24 * 60 * 60 * 1000;
+  if (daysMatch) totalMs += parseInt(daysMatch[1], 10) * 24 * 60 * 60 * 1000;
+  if (hoursMatch) totalMs += parseInt(hoursMatch[1], 10) * 60 * 60 * 1000;
+  if (minutesMatch) totalMs += parseInt(minutesMatch[1], 10) * 60 * 1000;
+  if (secondsMatch) totalMs += parseInt(secondsMatch[1], 10) * 1000;
+
+  return totalMs;
+}
+
+function formatUptime(ms: number): string {
+  if (ms <= 0) return "未知";
+
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  const days = Math.floor((ms / (1000 * 60 * 60 * 24)) % 30);
+  const months = Math.floor(ms / (1000 * 60 * 60 * 24 * 30));
+
+  const parts = [];
+  if (months > 0) parts.push(`${months} 月`);
+  if (days > 0) parts.push(`${days} 天`);
+  if (hours > 0) parts.push(`${hours} 時`);
+  if (minutes > 0) parts.push(`${minutes} 分`);
+  parts.push(`${seconds} 秒`);
+
+  return parts.join(" ");
+}
 
 export default function Mobile() {
   const [ping, setPing] = useState<any>(null);
@@ -17,54 +52,12 @@ export default function Mobile() {
   const startTimeRef = useRef<number>(0);
   const backendStartTimeRef = useRef<number>(0);
 
-  // Parse uptime string to milliseconds
-  const parseUptime = (uptimeStr: string): number => {
-    if (!uptimeStr || uptimeStr === "N/A") return 0;
-
-    let totalMs = 0;
-    const monthsMatch = uptimeStr.match(/(\d+)\s*month/);
-    const daysMatch = uptimeStr.match(/(\d+)\s*day/);
-    const hoursMatch = uptimeStr.match(/(\d+)\s*hour/);
-    const minutesMatch = uptimeStr.match(/(\d+)\s*minute/);
-    const secondsMatch = uptimeStr.match(/(\d+)\s*second/);
-
-    if (monthsMatch)
-      totalMs += parseInt(monthsMatch[1], 10) * 30 * 24 * 60 * 60 * 1000;
-    if (daysMatch) totalMs += parseInt(daysMatch[1], 10) * 24 * 60 * 60 * 1000;
-    if (hoursMatch) totalMs += parseInt(hoursMatch[1], 10) * 60 * 60 * 1000;
-    if (minutesMatch) totalMs += parseInt(minutesMatch[1], 10) * 60 * 1000;
-    if (secondsMatch) totalMs += parseInt(secondsMatch[1], 10) * 1000;
-
-    return totalMs;
-  };
-
-  // Format milliseconds to readable time
-  const formatUptime = (ms: number): string => {
-    if (ms <= 0) return "未知";
-
-    const seconds = Math.floor((ms / 1000) % 60);
-    const minutes = Math.floor((ms / (1000 * 60)) % 60);
-    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-    const days = Math.floor((ms / (1000 * 60 * 60 * 24)) % 30);
-    const months = Math.floor(ms / (1000 * 60 * 60 * 24 * 30));
-
-    const parts = [];
-    if (months > 0) parts.push(`${months} 月`);
-    if (days > 0) parts.push(`${days} 天`);
-    if (hours > 0) parts.push(`${hours} 時`);
-    if (minutes > 0) parts.push(`${minutes} 分`);
-    parts.push(`${seconds} 秒`);
-
-    return parts.join(" ");
-  };
-
   useEffect(() => {
     fetch("/ping")
       .then((res) => res.json())
       .then((data) => {
         setPing(data);
 
-        // Calculate start times based on uptime
         const now = Date.now();
         const frontendUptime = parseUptime(data?.frontend?.uptime);
         const backendUptime = parseUptime(data?.backend?.uptime);
@@ -82,9 +75,8 @@ export default function Mobile() {
       .catch(() => {
         setLoading(false);
       });
-  }, [formatUptime, parseUptime]);
+  }, []);
 
-  // Real-time update interval
   useEffect(() => {
     if (loading) return;
 
@@ -109,7 +101,7 @@ export default function Mobile() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [loading, formatUptime]);
+  }, [loading]);
 
   return (
     <div className={styles.mobileView}>

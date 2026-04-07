@@ -1,6 +1,5 @@
 "use client";
 
-import assert from "node:assert";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
@@ -180,9 +179,8 @@ export default function NewPostPage() {
     }
 
     try {
-      assert(data);
-      assert(token !== "");
-      const res = await postAPI(data, token!);
+      if (!data || !token) throw new Error("Missing data or token");
+      const res = await postAPI(data, token);
       console.debug(res);
 
       if (res.status === 2000) {

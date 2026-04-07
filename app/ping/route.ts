@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
+import { getBranchVersion } from "@/modules/api/getBranchVersion";
 import ReadableTime from "@/modules/api/ReadableTime";
 import packageJSON from "@/package.json";
 
@@ -19,72 +20,12 @@ interface BackendData {
   };
 }
 
-async function getMainVersion(): Promise<string> {
-  try {
-    const API_URL =
-      "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/main/package.json";
-
-    const githubToken = process.env.GITHUB_TOKEN;
-    const headers: Record<string, string> = {
-      Accept: "application/vnd.github.v3.raw",
-    };
-
-    if (githubToken) {
-      headers.Authorization = `token ${githubToken}`;
-    }
-
-    const response = await axios.get(API_URL, {
-      headers,
-      timeout: 10000,
-    });
-
-    const responseObj = response.data;
-    const version = responseObj?.version;
-    if (!version) return "Unknown";
-
-    return version;
-  } catch (error) {
-    console.error("Failed to get main version:", error);
-    return "Unknown";
-  }
-}
-
-async function getDevelopmentVersion(): Promise<string> {
-  try {
-    const API_URL =
-      "https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/development/package.json";
-
-    const githubToken = process.env.GITHUB_TOKEN;
-    const headers: Record<string, string> = {
-      Accept: "application/vnd.github.v3.raw",
-    };
-
-    if (githubToken) {
-      headers.Authorization = `token ${githubToken}`;
-    }
-
-    const response = await axios.get(API_URL, {
-      headers,
-      timeout: 10000,
-    });
-
-    const responseObj = response.data;
-    const version = responseObj?.version;
-    if (!version) return "Unknown";
-
-    return version;
-  } catch (error) {
-    console.error("Failed to get development version:", error);
-    return "Unknown";
-  }
-}
-
 export async function GET() {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/ping`;
 
   const [mainVersion, developmentVersion, apiResponse] = await Promise.all([
-    getMainVersion(),
-    getDevelopmentVersion(),
+    getBranchVersion("main"),
+    getBranchVersion("development"),
     axios.get<BackendData>(apiUrl).catch((error) => {
       console.error(
         `[Ping] Failed to fetch backend data from ${apiUrl}:`,

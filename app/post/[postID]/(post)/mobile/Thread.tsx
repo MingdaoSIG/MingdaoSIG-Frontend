@@ -50,32 +50,26 @@ const Thread = ({
 
   async function PostLike() {
     try {
-      const _res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
     } catch (error) {
       console.error(error);
     }
   }
   async function DeleteLike() {
     try {
-      const _res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
-      );
+      });
     } catch (error) {
       console.error(error);
     }
