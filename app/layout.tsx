@@ -75,4 +75,3 @@ export const viewport: Viewport = {
   userScalable: false,
   themeColor: "#FFFFFF",
 };
-
