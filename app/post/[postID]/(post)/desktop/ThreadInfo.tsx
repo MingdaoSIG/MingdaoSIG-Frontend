@@ -161,7 +161,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               <p className={style.dot}>•</p>
               <div
                 className={style.name}
-                style={{ color: sigDefaultColors[sig?._id] }}
+                style={{ color: sigDefaultColors[sig?._id ?? ""] }}
                 onClick={() => route.push(`/@${sig?.customId}`)}
               >
                 {sig?.name || "Loading..."}

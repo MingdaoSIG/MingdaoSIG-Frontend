@@ -173,7 +173,7 @@ export const InfinityThreadsList = ({
   isFetchingNextPage,
   announcementData,
 }: {
-  data: InfiniteData<TThread[], unknown>;
+  data: InfiniteData<TThread[], unknown> | undefined;
   height?: string;
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
