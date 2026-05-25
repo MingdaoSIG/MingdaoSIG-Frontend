@@ -1,10 +1,9 @@
 "use client";
 
-import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { DraggableSheet } from "@/components/mobile/DraggableSheet";
 import type { Sig } from "@/interfaces/Sig";
-
 // Modules
 import maxMatch from "@/modules/maxMatch";
 
@@ -63,7 +62,8 @@ const SigList = ({
       />
 
       {/* Content */}
-      <motion.div
+      <DraggableSheet
+        onDismiss={() => sigListToggle(false)}
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
@@ -122,7 +122,7 @@ const SigList = ({
         <div className="sticky bottom-0 bg-gradient-to-t from-white/95 to-transparent px-6 py-3 text-center">
           <p className="text-gray-500 text-xs">選擇一個 SIG 來探索更多內容</p>
         </div>
-      </motion.div>
+      </DraggableSheet>
     </div>
   );
 };
