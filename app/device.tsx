@@ -9,6 +9,7 @@ import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 // Mobile-Side Component
 import ToolBarMobile from "@/app/(Layout)/mobile/ToolBar";
 import { PageTransition } from "@/components/mobile/PageTransition";
+import { ToastProvider } from "@/components/mobile/Toast";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
@@ -22,6 +23,7 @@ export function Device({ children }: { children: ReactNode }) {
           <HeaderBarMobile />
           <PageTransition>{children}</PageTransition>
           <ToolBarMobile />
+          <ToastProvider />
         </div>
       ) : (
         <div className="wrap">
