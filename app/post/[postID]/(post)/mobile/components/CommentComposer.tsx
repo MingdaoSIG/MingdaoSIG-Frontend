@@ -152,7 +152,13 @@ export default function CommentComposer({
           whileTap={canSend ? { scale: 0.9 } : undefined}
           aria-label="送出留言"
         >
-          ➤
+          <Image
+            src="/icons/bx-send.svg"
+            alt=""
+            width={16}
+            height={16}
+            className="h-4 w-4"
+          />
         </TapScale>
       </form>
     </div>
