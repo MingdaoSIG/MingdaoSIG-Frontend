@@ -82,7 +82,7 @@ export default function CommentList({ comments, isLoading, onReply }: Props) {
     <section
       id="comments-section"
       aria-labelledby="comments-heading"
-      className="flex flex-col gap-2 px-1"
+      className="mb-2 flex flex-col gap-2 px-1"
     >
       <div className="flex items-baseline gap-2 px-1 pt-2">
         <h3
