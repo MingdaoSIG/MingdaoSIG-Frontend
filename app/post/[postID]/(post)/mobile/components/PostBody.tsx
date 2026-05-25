@@ -17,7 +17,7 @@ export default function PostBody({ post, isAnnouncement }: Props) {
   const showHashtags = !isAnnouncement && hashtags.length > 0;
 
   return (
-    <div className="flex flex-col gap-2.5 overflow-x-hidden rounded-2xl bg-white/70 p-4 backdrop-blur-md">
+    <div className="mobile-post-body flex flex-col gap-2.5 overflow-x-hidden rounded-2xl bg-white/70 p-4 backdrop-blur-md">
       <h2 className="m-0 font-bold text-[22px] text-md-dark-green leading-tight">
         {post.title}
       </h2>

@@ -227,3 +227,21 @@ a,
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* Transparent MdPreview backgrounds inside mobile post body */
+.mobile-post-body {
+  --md-bk-color: transparent;
+}
+
+.mobile-post-body .md-editor-preview-wrapper,
+.mobile-post-body .md-editor-preview,
+.mobile-post-body .md-editor,
+.mobile-post-body .md-editor-preview-only {
+  background-color: transparent !important;
+}
+
+.mobile-post-body .md-editor-preview pre,
+.mobile-post-body .md-editor-preview code {
+  /* Keep code blocks visually distinct on the translucent background */
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
