@@ -11,8 +11,7 @@ import relativeTime from "@/modules/relativeTime";
 import useSig from "@/utils/useSig";
 import useUser from "@/utils/useUser";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const DEFAULT_AVATAR = `${API_URL}/image/653299930b891d1f6b5b4458`;
+const DEFAULT_AVATAR = "/images/default-avatar.png";
 
 type Props = {
   post: TThread;
@@ -84,6 +83,9 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
           height={40}
           className="h-10 w-10 rounded-full object-cover"
           unoptimized
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+          }}
         />
       </TapScaleLink>
       <div className="min-w-0 flex-1">

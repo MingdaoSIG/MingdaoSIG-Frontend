@@ -17,8 +17,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 
 import { PostCommentAPI } from "../../apis/CommentAPI";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const DEFAULT_AVATAR = `${API_URL}/image/653299930b891d1f6b5b4458`;
+const DEFAULT_AVATAR = "/images/default-avatar.png";
 
 type Props = {
   postId: string;
@@ -131,6 +130,9 @@ export default function CommentComposer({
           height={32}
           className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
           unoptimized
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+          }}
         />
         <textarea
           ref={textareaRef}

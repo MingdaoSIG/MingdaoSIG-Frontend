@@ -8,6 +8,8 @@ import type { TComments } from "@/interfaces/comments";
 import relativeTime from "@/modules/relativeTime";
 import { jumpOut } from "@/utils/jumpOut";
 
+const DEFAULT_AVATAR = "/images/default-avatar.png";
+
 type Props = {
   comment: TComments;
   variant?: "top" | "reply";
@@ -42,13 +44,16 @@ export default function CommentItem({
         whileTap={{ scale: 0.9 }}
       >
         <Image
-          src={comment.user.avatar}
+          src={comment.user.avatar || DEFAULT_AVATAR}
           alt={`${comment.user.customId} avatar`}
           width={avatarSize}
           height={avatarSize}
           className="rounded-full object-cover"
           style={{ width: avatarSize, height: avatarSize }}
           unoptimized
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+          }}
         />
       </TapScaleLink>
       <div className="min-w-0 flex-1">
