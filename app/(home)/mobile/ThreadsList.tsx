@@ -55,7 +55,7 @@ const ThreadsList = () => {
       disabled={isFetchingNextPage}
       className="scrollbar-hide relative mx-auto h-auto w-full max-w-7xl overflow-y-auto px-2 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))] sm:px-4 md:px-6 lg:px-8"
     >
-      {showList && <SigList sigListToggle={setShowList} />}
+      <SigList open={showList} onClose={() => setShowList(false)} />
 
       <SwitchButton
         switchCallback={switchListType}
