@@ -4,6 +4,21 @@ import type { TComments } from "@/interfaces/comments";
 
 import CommentItem from "./CommentItem";
 
+function getReplyId(comment: TComments): string {
+  const r = comment.reply as unknown;
+  if (!r) {
+    return "";
+  }
+  if (typeof r === "string") {
+    return r;
+  }
+  if (typeof r === "object" && r !== null && "_id" in r) {
+    const id = (r as { _id?: unknown })._id;
+    return typeof id === "string" ? id : "";
+  }
+  return "";
+}
+
 type Props = {
   comments: TComments[];
   isLoading: boolean;
@@ -38,7 +53,7 @@ function CommentSkeleton({ small = false }: { small?: boolean }) {
 
 export default function CommentList({ comments, isLoading, onReply }: Props) {
   const topLevel = comments
-    .filter((c) => !c.reply)
+    .filter((c) => !getReplyId(c))
     .slice()
     .sort(
       (a, b) =>
@@ -48,10 +63,11 @@ export default function CommentList({ comments, isLoading, onReply }: Props) {
 
   const repliesByParent = new Map<string, TComments[]>();
   for (const comment of comments) {
-    if (comment.reply) {
-      const arr = repliesByParent.get(comment.reply) ?? [];
+    const parentId = getReplyId(comment);
+    if (parentId) {
+      const arr = repliesByParent.get(parentId) ?? [];
       arr.push(comment);
-      repliesByParent.set(comment.reply, arr);
+      repliesByParent.set(parentId, arr);
     }
   }
   for (const arr of Array.from(repliesByParent.values())) {
