@@ -56,8 +56,9 @@
 .activeIndicator {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   width: 28px;
   height: 3px;
   background-color: #009bb0;
