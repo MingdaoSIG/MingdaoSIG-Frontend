@@ -74,6 +74,11 @@ const ToolBar = () => {
                     e.preventDefault();
                     return;
                   }
+                  if (isActive) {
+                    window.dispatchEvent(
+                      new CustomEvent("mobile:scroll-to-top"),
+                    );
+                  }
                   setSelected(index);
                 }}
               >
