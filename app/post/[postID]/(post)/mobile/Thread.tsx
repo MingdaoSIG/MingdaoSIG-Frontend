@@ -1,134 +1,92 @@
-import { MdPreview } from "md-editor-rt";
-import "md-editor-rt/lib/preview.css";
-import "md-editor-rt/lib/style.css";
-import "@/app/mdEditorConfig";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "@/components/mobile/Toast";
-// Interfaces
-import type { TThread } from "@/interfaces/Thread";
-// Utils
-import { useUserAccount } from "@/utils/useUserAccount";
-// Components
-import Replies from "./Replies";
-// Styles
-import styles from "./Thread.module.scss";
+"use client";
 
-const Thread = ({
-  post,
-  isAnnouncement,
-}: {
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import type { TComments } from "@/interfaces/comments";
+import type { TThread } from "@/interfaces/Thread";
+
+import { GetCommentAPI } from "../apis/CommentAPI";
+import CommentComposer from "./components/CommentComposer";
+import CommentList from "./components/CommentList";
+import PostActions from "./components/PostActions";
+import PostBody from "./components/PostBody";
+import PostHeader from "./components/PostHeader";
+
+type Props = {
   post: TThread;
   isAnnouncement?: boolean;
-}) => {
-  const { isLogin, isLoading, token, userData } = useUserAccount();
-  const [like, setLike] = useState<boolean>(false);
-  const router = useRouter();
-
-  function onLike() {
-    if (!isLoading && !isLogin) {
-      toast.info("Please login to like this post");
-    } else {
-      setLike(!like);
-      if (like) {
-        DeleteLike();
-      } else {
-        PostLike();
-      }
-    }
-  }
-
-  function onEdit() {
-    router.push(`/post/${post._id}/edit`);
-  }
-
-  async function PostLike() {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  async function DeleteLike() {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    if (isLogin) {
-      post.like?.includes(userData?._id ?? "") ? setLike(true) : setLike(false);
-    }
-  }, [isLogin, post.like, userData?._id]);
-
-  if (isAnnouncement) {
-    return (
-      <div className={`${styles.thread} ${styles.threadAnnouncement}`}>
-        <div className={styles.threadTitle}>
-          <h1>{post.title}</h1>
-        </div>
-        <MdPreview
-          value={post.content}
-          className={styles.threadContent}
-          previewTheme="github"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.thread}>
-      <div className={styles.threadTitle}>
-        <h1>{post.title}</h1>
-        {isLogin && post.user === userData?._id && (
-          <div
-            key="edit"
-            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
-            onClick={onEdit}
-          >
-            <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
-          </div>
-        )}
-        <div onClick={onLike}>
-          <svg
-            aria-hidden="true"
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M26.9399 6.38798C26.2047 5.64761 25.3304 5.05985 24.3673 4.65849C23.4042 4.25714 22.3713 4.05012 21.3279 4.04932C19.3543 4.04964 17.4528 4.79101 15.9999 6.12665C14.5471 4.79079 12.6455 4.04938 10.6719 4.04932C9.62728 4.0504 8.59319 4.25806 7.62914 4.66034C6.66509 5.06262 5.79011 5.65158 5.05456 6.39332C1.91723 9.54398 1.91856 14.472 5.05723 17.6093L15.9999 28.552L26.9426 17.6093C30.0812 14.472 30.0826 9.54398 26.9399 6.38798Z"
-              fill={like ? "#EE5757" : "#BDBDBD"}
-            />
-          </svg>
-        </div>
-      </div>
-      <MdPreview
-        value={post.content}
-        language="en-US"
-        className={styles.threadContent}
-        previewTheme="github"
-      />
-      <Replies post={post} />
-    </div>
-  );
 };
 
-export default Thread;
+export default function Thread({ post, isAnnouncement }: Props) {
+  const [comments, setComments] = useState<TComments[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [replyingTo, setReplyingTo] = useState<TComments | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const commentsAnchorRef = useRef<HTMLDivElement>(null);
+
+  const refetchComments = useCallback(async () => {
+    try {
+      const res = await GetCommentAPI(post);
+      setComments(res?.data ?? []);
+    } catch (_err) {
+      setComments([]);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [post]);
+
+  useEffect(() => {
+    setCommentsLoading(true);
+    refetchComments();
+  }, [refetchComments]);
+
+  useEffect(() => {
+    const onScrollToComments = () => {
+      commentsAnchorRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+    window.addEventListener("mobile:scroll-to-comments", onScrollToComments);
+    return () => {
+      window.removeEventListener(
+        "mobile:scroll-to-comments",
+        onScrollToComments,
+      );
+    };
+  }, []);
+
+  return (
+    <div
+      ref={scrollRef}
+      className="scrollbar-hide absolute inset-0 flex flex-col overflow-y-auto pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]"
+    >
+      <div className="flex flex-col gap-2 px-2 pt-2">
+        <PostHeader post={post} isAnnouncement={isAnnouncement} />
+        <PostBody post={post} isAnnouncement={isAnnouncement} />
+        {!isAnnouncement && (
+          <PostActions post={post} commentCount={comments.length} />
+        )}
+      </div>
+      {!isAnnouncement && (
+        <>
+          <div ref={commentsAnchorRef} className="mt-2 px-1">
+            <CommentList
+              comments={comments}
+              isLoading={commentsLoading}
+              onReply={setReplyingTo}
+            />
+          </div>
+          <CommentComposer
+            postId={post._id ?? ""}
+            replyingTo={replyingTo}
+            onClearReply={() => setReplyingTo(null)}
+            onSubmitted={() => {
+              refetchComments();
+            }}
+          />
+        </>
+      )}
+    </div>
+  );
+}
