@@ -64,7 +64,15 @@ const ToolBar = () => {
                   pointerEvents: item.clickable ? "auto" : "none",
                 }}
                 aria-current={isActive ? "page" : undefined}
-                onClick={() => setSelected(index)}
+                aria-disabled={!item.clickable || undefined}
+                tabIndex={item.clickable ? undefined : -1}
+                onClick={(e) => {
+                  if (!item.clickable) {
+                    e.preventDefault();
+                    return;
+                  }
+                  setSelected(index);
+                }}
               >
                 {isActive && <span className={styles.activeIndicator} />}
                 <Image
