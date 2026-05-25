@@ -146,19 +146,21 @@ export default function CommentComposer({
           onClick={handleSend}
           className={
             canSend
-              ? "flex h-8 w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-md-light-green text-white"
-              : "flex h-8 w-8 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-gray-300 text-white"
+              ? "flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-md-light-green shadow-sm"
+              : "flex h-9 w-9 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-gray-200"
           }
           whileTap={canSend ? { scale: 0.9 } : undefined}
           aria-label="送出留言"
         >
-          <Image
-            src="/icons/bx-send.svg"
-            alt=""
-            width={16}
-            height={16}
-            className="h-4 w-4"
-          />
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill={canSend ? "#ffffff" : "#9ca3af"}
+          >
+            <path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z" />
+          </svg>
         </TapScale>
       </form>
     </div>
