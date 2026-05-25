@@ -3,7 +3,7 @@
 // Module
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { toast } from "@/components/mobile/Toast";
 
 // Interfaces
 import type { TComments } from "@/interfaces/comments";
@@ -48,7 +48,7 @@ export default function Replies({ post }: { post: TThread }) {
         });
       }
     } catch (_e) {
-      Swal.fire(alertMessageConfigs.otherError);
+      toast.error("Something went wrong. Please try again later.");
     }
   }
 
