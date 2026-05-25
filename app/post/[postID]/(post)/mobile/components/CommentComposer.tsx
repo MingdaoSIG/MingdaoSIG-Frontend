@@ -140,7 +140,7 @@ export default function CommentComposer({
           placeholder={replyingTo ? "寫下你的回覆…" : "寫下你的想法…"}
           aria-label="留言內容"
           rows={1}
-          className="min-h-[2rem] flex-1 resize-none rounded-2xl bg-[#f1f5f9] px-3.5 py-1.5 text-[13px] text-md-dark-green outline-none"
+          className="min-h-[2rem] min-w-0 flex-1 resize-none rounded-2xl bg-[#f1f5f9] px-3.5 py-1.5 text-[13px] text-md-dark-green outline-none"
         />
         <TapScale
           onClick={handleSend}
