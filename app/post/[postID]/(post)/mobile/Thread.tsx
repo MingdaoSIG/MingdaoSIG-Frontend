@@ -5,7 +5,7 @@ import "@/app/mdEditorConfig";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { toast } from "@/components/mobile/Toast";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
 // Utils
@@ -28,12 +28,7 @@ const Thread = ({
 
   function onLike() {
     if (!isLoading && !isLogin) {
-      Swal.fire({
-        title: "Please login first",
-        text: "You must login to like someone's post",
-        icon: "warning",
-        confirmButtonText: "Confirm",
-      });
+      toast.info("Please login to like this post");
     } else {
       setLike(!like);
       if (like) {
