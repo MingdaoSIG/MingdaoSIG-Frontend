@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Sig } from "@/interfaces/Sig";
@@ -62,7 +63,13 @@ const SigList = ({
       />
 
       {/* Content */}
-      <div className="relative w-[90vw] max-w-md animate-slideUp overflow-hidden rounded-3xl bg-white/95 shadow-2xl backdrop-blur-xl">
+      <motion.div
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        className="relative w-[90vw] max-w-md overflow-hidden rounded-3xl bg-white/95 shadow-2xl backdrop-blur-xl"
+      >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-br from-[#6fa8ff] to-[#30b4ac] px-6 py-4">
           <h2 className="font-bold text-white text-xl">探索 SIGs</h2>
@@ -115,7 +122,7 @@ const SigList = ({
         <div className="sticky bottom-0 bg-gradient-to-t from-white/95 to-transparent px-6 py-3 text-center">
           <p className="text-gray-500 text-xs">選擇一個 SIG 來探索更多內容</p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
