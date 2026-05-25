@@ -59,9 +59,9 @@ export default function Thread({ post, isAnnouncement }: Props) {
   return (
     <div
       ref={scrollRef}
-      className="scrollbar-hide absolute inset-0 flex flex-col overflow-y-auto pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]"
+      className="scrollbar-hide absolute inset-0 flex flex-col overflow-y-auto overflow-x-hidden pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]"
     >
-      <div className="flex flex-col gap-2 px-2 pt-2">
+      <div className="flex min-w-0 flex-col gap-2 px-2 pt-2">
         <PostHeader post={post} isAnnouncement={isAnnouncement} />
         <PostBody post={post} isAnnouncement={isAnnouncement} />
         {!isAnnouncement && (
@@ -70,7 +70,7 @@ export default function Thread({ post, isAnnouncement }: Props) {
       </div>
       {!isAnnouncement && (
         <>
-          <div ref={commentsAnchorRef} className="mt-2 px-1">
+          <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
             <CommentList
               comments={comments}
               isLoading={commentsLoading}
