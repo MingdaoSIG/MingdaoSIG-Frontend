@@ -4,44 +4,18 @@ import type { TComments } from "@/interfaces/comments";
 
 import CommentItem from "./CommentItem";
 
-function getReplyId(comment: TComments): string {
-  const r = comment.reply as unknown;
-  if (!r) {
-    return "";
-  }
-  if (typeof r === "string") {
-    return r;
-  }
-  if (typeof r === "object" && r !== null && "_id" in r) {
-    const id = (r as { _id?: unknown })._id;
-    return typeof id === "string" ? id : "";
-  }
-  return "";
-}
-
 type Props = {
   comments: TComments[];
   isLoading: boolean;
-  onReply: (comment: TComments) => void;
 };
 
-function CommentSkeleton({ small = false }: { small?: boolean }) {
+function CommentSkeleton() {
   return (
     <div
-      className={
-        small
-          ? "ml-6 flex animate-pulse gap-2 rounded-xl bg-white/55 p-2.5"
-          : "flex animate-pulse gap-2.5 rounded-2xl bg-white/70 p-3"
-      }
+      className="flex animate-pulse gap-2.5 rounded-2xl bg-white/70 p-3"
       aria-busy="true"
     >
-      <div
-        className="flex-shrink-0 rounded-full bg-white/80"
-        style={{
-          width: small ? 28 : 36,
-          height: small ? 28 : 36,
-        }}
-      />
+      <div className="h-9 w-9 flex-shrink-0 rounded-full bg-white/80" />
       <div className="flex-1 space-y-2">
         <div className="h-2.5 w-20 rounded bg-white/80" />
         <div className="h-2 w-full rounded bg-white/80" />
@@ -51,9 +25,8 @@ function CommentSkeleton({ small = false }: { small?: boolean }) {
   );
 }
 
-export default function CommentList({ comments, isLoading, onReply }: Props) {
-  const topLevel = comments
-    .filter((c) => !getReplyId(c))
+export default function CommentList({ comments, isLoading }: Props) {
+  const sorted = comments
     .slice()
     .sort(
       (a, b) =>
@@ -61,28 +34,11 @@ export default function CommentList({ comments, isLoading, onReply }: Props) {
         new Date(a.createdAt ?? 0).getTime(),
     );
 
-  const repliesByParent = new Map<string, TComments[]>();
-  for (const comment of comments) {
-    const parentId = getReplyId(comment);
-    if (parentId) {
-      const arr = repliesByParent.get(parentId) ?? [];
-      arr.push(comment);
-      repliesByParent.set(parentId, arr);
-    }
-  }
-  for (const arr of Array.from(repliesByParent.values())) {
-    arr.sort(
-      (a: TComments, b: TComments) =>
-        new Date(a.createdAt ?? 0).getTime() -
-        new Date(b.createdAt ?? 0).getTime(),
-    );
-  }
-
   return (
     <section
       id="comments-section"
       aria-labelledby="comments-heading"
-      className="mb-2 flex flex-col gap-2 px-1"
+      className="flex flex-col gap-2 px-1"
     >
       <div className="flex items-baseline gap-2 px-1 pt-2">
         <h3
@@ -96,7 +52,7 @@ export default function CommentList({ comments, isLoading, onReply }: Props) {
       {isLoading ? (
         <div className="flex flex-col gap-2">
           <CommentSkeleton />
-          <CommentSkeleton small />
+          <CommentSkeleton />
           <CommentSkeleton />
         </div>
       ) : comments.length === 0 ? (
@@ -111,13 +67,8 @@ export default function CommentList({ comments, isLoading, onReply }: Props) {
         </output>
       ) : (
         <div className="flex flex-col gap-2">
-          {topLevel.map((top) => (
-            <div key={top._id} className="flex flex-col gap-2">
-              <CommentItem comment={top} variant="top" onReply={onReply} />
-              {(repliesByParent.get(top._id) ?? []).map((reply) => (
-                <CommentItem key={reply._id} comment={reply} variant="reply" />
-              ))}
-            </div>
+          {sorted.map((c) => (
+            <CommentItem key={c._id} comment={c} />
           ))}
         </div>
       )}

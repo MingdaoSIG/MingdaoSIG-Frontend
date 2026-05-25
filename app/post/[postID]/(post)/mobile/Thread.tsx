@@ -20,7 +20,6 @@ type Props = {
 export default function Thread({ post, isAnnouncement }: Props) {
   const [comments, setComments] = useState<TComments[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
-  const [replyingTo, setReplyingTo] = useState<TComments | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const commentsAnchorRef = useRef<HTMLDivElement>(null);
 
@@ -71,16 +70,10 @@ export default function Thread({ post, isAnnouncement }: Props) {
       {!isAnnouncement && (
         <>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
-            <CommentList
-              comments={comments}
-              isLoading={commentsLoading}
-              onReply={setReplyingTo}
-            />
+            <CommentList comments={comments} isLoading={commentsLoading} />
           </div>
           <CommentComposer
             postId={post._id ?? ""}
-            replyingTo={replyingTo}
-            onClearReply={() => setReplyingTo(null)}
             onSubmitted={() => {
               refetchComments();
             }}

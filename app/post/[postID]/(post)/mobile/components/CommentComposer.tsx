@@ -12,7 +12,6 @@ import {
 
 import { TapScale } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
-import type { TComments } from "@/interfaces/comments";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 import { PostCommentAPI } from "../../apis/CommentAPI";
@@ -21,17 +20,10 @@ const DEFAULT_AVATAR = "/images/default-avatar.png";
 
 type Props = {
   postId: string;
-  replyingTo: TComments | null;
-  onClearReply: () => void;
   onSubmitted: () => void;
 };
 
-export default function CommentComposer({
-  postId,
-  replyingTo,
-  onClearReply,
-  onSubmitted,
-}: Props) {
+export default function CommentComposer({ postId, onSubmitted }: Props) {
   const { isLogin, isLoading, userData, token, login } = useUserAccount();
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -48,12 +40,6 @@ export default function CommentComposer({
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 72)}px`;
   }, [text]);
-
-  useEffect(() => {
-    if (replyingTo) {
-      textareaRef.current?.focus();
-    }
-  }, [replyingTo]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -75,15 +61,9 @@ export default function CommentComposer({
     }
     setSubmitting(true);
     try {
-      const res = await PostCommentAPI(
-        postId,
-        replyingTo?._id ?? "",
-        text.trim(),
-        token,
-      );
+      const res = await PostCommentAPI(postId, "", text.trim(), token);
       if (res?.status === 2000) {
         setText("");
-        onClearReply();
         onSubmitted();
         toast.success("留言成功");
       } else {
@@ -104,21 +84,6 @@ export default function CommentComposer({
 
   return (
     <div className="sticky right-0 bottom-0 left-0 z-10">
-      {replyingTo && (
-        <div className="flex items-center justify-between bg-[#009BB0]/10 px-3.5 py-1.5 text-[11px] text-md-dark-green">
-          <span>
-            ↩ 回覆 <strong>@{replyingTo.user.customId}</strong>
-          </span>
-          <button
-            type="button"
-            onClick={onClearReply}
-            className="text-gray-500"
-            aria-label="取消回覆"
-          >
-            ✕
-          </button>
-        </div>
-      )}
       <form
         onSubmit={handleSend}
         className="flex items-center gap-2 border-black/5 border-t bg-white/97 px-3 py-2 backdrop-blur-md"
@@ -139,7 +104,7 @@ export default function CommentComposer({
           value={text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder={replyingTo ? "寫下你的回覆…" : "寫下你的想法…"}
+          placeholder="寫下你的想法…"
           aria-label="留言內容"
           rows={1}
           className="min-h-[2rem] min-w-0 flex-1 resize-none rounded-2xl bg-[#f1f5f9] px-3.5 py-1.5 text-[13px] text-md-dark-green outline-none"
