@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-05-25-mobile-post-page-redesign-design.md`
 
+> **Post-execution note (2026-05-25):** This plan was executed in commits `8efc589` through `7b89f1d`. After implementation, reply threading was removed in commit `17c9a90` (backend doesn't persist `comment.reply`). The component code in Tasks 7-10 below describes the *original* threaded implementation; the actual shipped code is the flat-list version. See the design spec for current behavior. Other post-execution refinements: send button visibility (`7bf2fe7`), composer min-w-0 (`1760547`), MdPreview transparency (`2ea08d8`), back chevron SVG (`e24e867`), avatar fallback to `/images/default-avatar.png` (`8e5b1a5`), and the reply removal (`17c9a90`).
+
 **Verification approach:** No Jest/Vitest in this project. Each task ends with `pnpm check && pnpm types && pnpm build`. Visual/gesture correctness validated by the human reviewer at the end.
 
 ---

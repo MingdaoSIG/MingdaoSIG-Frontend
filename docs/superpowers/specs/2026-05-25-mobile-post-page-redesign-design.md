@@ -4,9 +4,11 @@
 **Branch:** `feat/mobile-ui-enhancement` (or a successor; user opens one PR after all work lands)
 **Status:** Approved design; pending implementation plan
 
+> **Post-implementation update (2026-05-25):** Reply threading was implemented per this spec, then removed in commit `17c9a90` after testing revealed the backend doesn't persist the `comment.reply` field — all comments come back with `reply=""` regardless of what the frontend sends. Comments are now a flat list (matching desktop convention). The sections below have been updated to reflect the current state; original threading design preserved in git history if/when backend support lands.
+
 ## Goal
 
-Redesign the mobile post page (post content + comments) end-to-end. Replace today's brittle `position:absolute` layout with a clean flex shell, surface author/SIG information, add native-feeling actions (share, comment threading, animated like), and replace the fiddly slide-up comments panel with an inline comment list and pinned composer.
+Redesign the mobile post page (post content + comments) end-to-end. Replace today's brittle `position:absolute` layout with a clean flex shell, surface author/SIG information, add native-feeling actions (share, animated like), and replace the fiddly slide-up comments panel with an inline comment list and pinned composer.
 
 The target user opens a post and sees an experience that feels like a modern mobile community app (Threads / Medium / Instagram), not a hacked-together web page.
 
@@ -27,8 +29,8 @@ The target user opens a post and sees an experience that feels like a modern mob
 - Post editor (`app/post/[postID]/edit/*`) — untouched
 - Backend changes — none required for this PR
 - Comment-like UI — deferred to a follow-up PR once backend ships `POST /comment/:id/like`
-- Reply-to-reply (nesting deeper than 1 level)
-- Comment sorting controls (always newest-first top-level, oldest-first within a reply thread)
+- Reply threading (any nesting). Removed post-implementation — backend doesn't persist `comment.reply`. Re-introduce when backend supports it.
+- Comment sorting controls (always newest-first, flat list)
 - Hashtag filtering / SIG list links from the post — chips are decorative only
 
 ## Architecture
@@ -44,8 +46,8 @@ A single mobile post page replaces today's `Thread.tsx` and `Replies.tsx`. The n
       <PostBody />                            ── body card: title (wraps!) / hashtags / content
       <PostActions />                         ── actions card: heart+count / comment+count / edit
       <CommentList />                         ── inline scrollable list
-        <CommentItem />                       ── per comment: avatar / name / time / content / reply
-      <CommentComposer />                     ── sticky-bottom: avatar / input / send (+ reply banner)
+        <CommentItem />                       ── per comment: avatar / name / time / content
+      <CommentComposer />                     ── sticky-bottom: avatar / input / send
     </Thread>
   </PageTransition>
   <ToolBarMobile />                           (existing, fixed bottom)
@@ -67,9 +69,9 @@ The Thread component itself is a flex column. The header + body + actions + comm
 | `app/post/[postID]/(post)/mobile/components/PostHeader.tsx` | Create | Back / author / SIG / share |
 | `app/post/[postID]/(post)/mobile/components/PostBody.tsx` | Create | Title / hashtags / divider / MdPreview |
 | `app/post/[postID]/(post)/mobile/components/PostActions.tsx` | Create | Like / comment count / edit (owner) |
-| `app/post/[postID]/(post)/mobile/components/CommentList.tsx` | Create | Inline list with thread grouping |
-| `app/post/[postID]/(post)/mobile/components/CommentItem.tsx` | Create | Avatar / name / time / content / reply (mobile-specific; desktop keeps Reply) |
-| `app/post/[postID]/(post)/mobile/components/CommentComposer.tsx` | Create | Sticky composer with reply mode |
+| `app/post/[postID]/(post)/mobile/components/CommentList.tsx` | Create | Inline flat list (newest first) |
+| `app/post/[postID]/(post)/mobile/components/CommentItem.tsx` | Create | Avatar / name / time / content (mobile-specific; desktop keeps Reply) |
+| `app/post/[postID]/(post)/mobile/components/CommentComposer.tsx` | Create | Sticky composer (flat — no reply mode) |
 | `utils/useUser/index.tsx` | Create | TanStack-Query-cached fetch of `/user/:id` for PostHeader author info |
 | `modules/relativeTime/index.ts` | Create | "剛剛 / N 分鐘前 / …" — zh-TW formatter |
 
@@ -78,7 +80,7 @@ The Thread component itself is a flex column. The header + body + actions + comm
 Two existing concerns plus one new one:
 
 1. **Post fetch** — unchanged. Continues to use the existing `useEffect` in `app/post/[postID]/page.tsx` with `fetch(/post/:id)`.
-2. **Comments fetch** — unchanged endpoints (`GetCommentAPI` / `PostCommentAPI`); composer's submit reuses `PostCommentAPI` and passes the parent comment ID as `reply` when in reply mode (empty string for top-level).
+2. **Comments fetch** — unchanged endpoints (`GetCommentAPI` / `PostCommentAPI`). Composer always submits with `reply=""` (flat comments only — reply threading was removed post-implementation; see status note at the top).
 3. **User fetch (new)** — the single-post API returns `user` as a string ID, not populated. Add a new `useUser(userId)` hook (in `utils/useUser/index.tsx`) that fetches `/user/:id` via TanStack Query (5-minute cache). PostHeader consumes it. On failure, falls back to `{ customId: "anonymous", avatar: defaultAvatarUrl, _id: userId }`. (Verified during self-review: no existing useUser hook in the codebase — only `useUserAccount` which is about the *current* logged-in user, not arbitrary users by ID.)
 
 ## Visual design (component-by-component)
@@ -121,38 +123,32 @@ Two existing concerns plus one new one:
 - Body:
   - Loading: 3 skeleton placeholders (animated pulse)
   - Empty: centered card "💬 / 尚無留言 / 搶先留下你的想法吧！"
-  - Populated: grouped render — for each top-level comment (where `comment.reply === ""`), render a `CommentItem`, then render all replies (`comment.reply === parent._id`) indented to the left margin (24px) directly below.
-- Sort:
-  - Top-level: newest first (`createdAt` descending)
-  - Replies within a thread: oldest first (`createdAt` ascending)
+  - Populated: flat list of `CommentItem`s sorted newest first by `createdAt`
+- Sort: newest first (`createdAt` descending)
 
 ### CommentItem
 
-- Container: glassmorphism card (`rounded-xl`, padding 12, slightly less opaque for replies)
+- Container: glassmorphism card (`rounded-2xl`, padding 12)
 - Layout (flex row, gap 10): `[avatar 36px] [content column, flex:1]`
-- Top-level avatar: 36px; reply avatar: 28px
+- Avatar: 36px (one size only — no top/reply variant since threading is removed)
 - Content column:
   - Line 1: `@{customId}` (weight 600, size 13) + relative time (gray, size 11)
   - Line 2: comment text (color `#354242`, size 13, line-height 1.5). Uses `Linkify` like today's Reply.
-  - Line 3: action row — "↩ 回覆" button only (no comment-like in V1 per scope decision)
-- Tap author name → `router.push(/@{customId})`
-- Tap "回覆" → calls parent callback `onReply(comment)` which puts the composer in reply mode
-- Reply button is HIDDEN on reply-level items (no nesting deeper than 1)
-- Wrapped in `TapScale` for avatar and "回覆"
+- Tap author name OR avatar → `router.push(/@{customId})`
+- Wrapped in `TapScaleLink` for avatar and name (both navigate to profile)
 
 ### CommentComposer
 
 - Container: sticky bottom (`position: sticky; bottom: 0`), backdrop-blur, white/97 background, border-top
-- Optional reply banner above input: when in reply mode, shows `↩ 回覆 @{user} ✕` strip in cyan-tinted background; ✕ exits reply mode
 - Layout (flex row, gap 8, padding 8/12):
-  - Avatar: 32px (current user, or default 1f4ac default if not logged in)
-  - Input: flex-1, `<textarea rows={1}>` that auto-grows to `max-rows=3` then scrolls
-  - Send button: round 32px, cyan `#009BB0` when text is non-empty + user is logged in; disabled gray otherwise
+  - Avatar: 32px (current user, or `/images/default-avatar.png` if not logged in)
+  - Input: flex-1 with `min-w-0`, `<textarea rows={1}>` that auto-grows to max 72px (~3 lines) then scrolls
+  - Send button: round 36px, cyan `#009BB0` + white inline SVG icon when text is non-empty + user is logged in; gray-200 bg + gray-400 icon otherwise
 - Submit:
   - If logged out: tap send → `toast.info("登入後即可留言", { action: { label: "登入", onClick: login } })`
-  - Empty text: tap send → no-op (button is disabled visually)
-  - Valid: call `PostCommentAPI(post._id, replyParentId ?? "", text, token)` optimistically (insert into local list with `pending: true` flag, clear input + exit reply mode). On success: replace the optimistic item with the server one and `toast.success("留言成功")`. On failure: remove optimistic + `toast.error("發送失敗")`.
-- Keyboard handling: input `autoCapitalize="sentences"`. iOS will reveal/hide keyboard naturally; since composer is sticky, it'll ride up with the keyboard.
+  - Empty text: tap send → no-op (button is visually disabled)
+  - Valid: call `PostCommentAPI(post._id, "", text, token)`. On success: clear input, call `onSubmitted()` to refetch, `toast.success("留言成功")`. On failure: `toast.error("發送失敗")`.
+- Keyboard: Enter submits, Shift+Enter newline. iOS keyboard naturally pushes the sticky composer up.
 
 ## Module: relativeTime
 
@@ -177,13 +173,12 @@ Used by PostHeader (post createdAt) and CommentItem (comment createdAt).
 - All interactive elements use `TapScale` so tap feedback is universal
 - Comment likes are NOT in V1 (per scope), so no a11y for that path needed yet
 - Like button on the post: `aria-label="按讚"` / `aria-pressed={liked}`
-- Reply button: `aria-label="回覆 @{user}"`
 - Share button: `aria-label="分享貼文"`
 - Back button: `aria-label="返回"`
 - Composer textarea: `aria-label="留言內容"`
 - Comment section: `<section aria-labelledby="comments-heading">` with `<h3 id="comments-heading">留言</h3>`
 - Skeleton placeholders: `aria-busy="true"` on the container; remove when loaded
-- Empty state: `role="status"`
+- Empty state: rendered as `<output>` (implicit `role="status"`)
 - All toasts already use proper roles (Phase 4 work)
 
 ## Performance
@@ -201,12 +196,9 @@ No automated test suite. Per-task verification: `pnpm check && pnpm types && pnp
 - Tap heart → animates fill, count increments; tap again → un-likes
 - Tap share → native share dialog OR clipboard + toast
 - Tap comment count → page smooth-scrolls to comments section
-- Tap "回覆" on a top-level comment → composer shows reply banner
-- Type → input grows; tap ✕ banner → exits reply mode
-- Send a top-level comment → appears immediately at top of list
-- Send a reply → appears indented under parent
+- Send a comment → appears at top of the flat list
 - Log out → tap send → toast with "登入" action
-- Test announcement post → confirm no hashtags/divider; 🔔 prefix on title
+- Test announcement post → confirm no hashtags/divider; "公告" badge in header instead of SIG name
 - Empty post (no comments) → empty state visible
 - Network failure on comment send → optimistic item disappears + error toast
 
@@ -218,6 +210,6 @@ One PR. Lands on `feat/mobile-ui-enhancement` (or its successor) — same branch
 
 None blocking. Decisions deferred to implementation:
 
-- Default avatar URL for anonymous users: use the existing `${API_URL}/image/653299930b891d1f6b5b4458` placeholder (same as the current UserLogin and Thread fallbacks).
-- `useUser` hook location: `utils/useUser/index.tsx`. If a similar hook exists, reuse it.
+- Default avatar URL: `/images/default-avatar.png` (local static asset, matches desktop ThreadInfo convention). All avatars also have `onError` handlers that swap to this default if the configured URL fails to load.
+- `useUser` hook location: `utils/useUser/index.tsx` (new — no similar hook existed). Symmetric `useSig` hook also added at `utils/useSig/index.tsx` for the SIG badge name lookup (same problem — single-post API returns `sig` as a string ID).
 - Exact px/spacing values for cards: follow Tailwind classes already in use in the codebase (`bg-white/70`, `backdrop-blur-md`, `rounded-2xl`, gaps in 8px increments).
