@@ -12,9 +12,7 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | number>(
-    pathToSelected(path),
-  );
+  const [selected, setSelected] = useState<number>(pathToSelected(path));
 
   useEffect(() => {
     setSelected(pathToSelected(path));
@@ -23,67 +21,66 @@ const ToolBar = () => {
   const menu = [
     {
       name: "home",
+      label: "Home",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      clickable: !isLoading && true,
+      clickable: !isLoading,
     },
     {
       name: "user",
+      label: "You",
       route: userData ? `/@${userData.customId}` : "/",
       icon: "/icons/bx-user.svg",
       clickable: !isLoading && isLogin,
     },
     {
       name: "new",
+      label: "Post",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: !isLoading && true,
+      clickable: !isLoading,
     },
     {
       name: "info",
+      label: "Info",
       route: "/info",
       icon: "/icons/info.svg",
-      clickable: !isLoading && true,
+      clickable: !isLoading,
     },
   ];
 
   return (
-    <div className={styles.toolBarWrapper}>
-      <div className={styles.iconWrapper}>
+    <nav className={styles.toolBarWrapper} aria-label="Primary">
+      <ul className={styles.tabList}>
         {menu.map((item, index) => {
+          const isActive = selected === index;
           return (
-            <div key={item.name} className={styles.iconBackground}>
-              <div
-                className={styles.icon}
+            <li key={item.name} className={styles.tabItem}>
+              <Link
+                href={item.route}
+                className={`${styles.tab} ${isActive ? styles.tabActive : ""}`}
                 style={{
-                  backgroundColor:
-                    selected === index
-                      ? "rgba(148, 163, 184, 0.3)"
-                      : "rgba(255, 255, 255, 1)",
+                  opacity: item.clickable ? 1 : 0.4,
+                  pointerEvents: item.clickable ? "auto" : "none",
                 }}
+                aria-current={isActive ? "page" : undefined}
+                onClick={() => setSelected(index)}
               >
-                <Link
-                  href={item.route}
-                  style={{
-                    opacity: item.clickable ? 1 : 0.5,
-                    pointerEvents: item.clickable ? "auto" : "none",
-                  }}
-                  className={styles.icon}
-                  onClick={() => setSelected(index)}
-                >
-                  <Image
-                    src={item.icon}
-                    height={25}
-                    width={25}
-                    alt={item.name}
-                  ></Image>
-                </Link>
-              </div>
-            </div>
+                {isActive && <span className={styles.activeIndicator} />}
+                <Image
+                  src={item.icon}
+                  height={24}
+                  width={24}
+                  alt=""
+                  aria-hidden="true"
+                />
+                <span className={styles.label}>{item.label}</span>
+              </Link>
+            </li>
           );
         })}
-      </div>
-    </div>
+      </ul>
+    </nav>
   );
 };
 
