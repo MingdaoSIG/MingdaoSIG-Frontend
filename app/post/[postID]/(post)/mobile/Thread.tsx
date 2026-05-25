@@ -27,6 +27,16 @@ export default function Thread({ post, isAnnouncement }: Props) {
   const refetchComments = useCallback(async () => {
     try {
       const res = await GetCommentAPI(post);
+      // DIAG: temporary — confirms reply field shape from API. Remove once
+      // reply threading is verified working.
+      console.info(
+        "[Thread diag] comments raw:",
+        res?.data,
+        "first reply field:",
+        res?.data?.[0]?.reply,
+        "type:",
+        typeof res?.data?.[0]?.reply,
+      );
       setComments(res?.data ?? []);
     } catch (_err) {
       setComments([]);
