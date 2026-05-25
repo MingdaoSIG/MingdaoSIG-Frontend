@@ -1,10 +1,11 @@
 "use client";
 
+import { motion } from "motion/react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { TapScaleLink } from "@/components/mobile/TapScale";
 import { useUserAccount } from "@/utils/useUserAccount";
 import styles from "./ToolBar.module.scss";
 
@@ -56,7 +57,7 @@ const ToolBar = () => {
           const isActive = selected === index;
           return (
             <li key={item.name} className={styles.tabItem}>
-              <Link
+              <TapScaleLink
                 href={item.route}
                 className={`${styles.tab} ${isActive ? styles.tabActive : ""}`}
                 style={{
@@ -66,6 +67,8 @@ const ToolBar = () => {
                 aria-current={isActive ? "page" : undefined}
                 aria-disabled={!item.clickable || undefined}
                 tabIndex={item.clickable ? undefined : -1}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 onClick={(e) => {
                   if (!item.clickable) {
                     e.preventDefault();
@@ -74,7 +77,17 @@ const ToolBar = () => {
                   setSelected(index);
                 }}
               >
-                {isActive && <span className={styles.activeIndicator} />}
+                {isActive && (
+                  <motion.span
+                    layoutId="tab-indicator"
+                    className={styles.activeIndicator}
+                    transition={{
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 30,
+                    }}
+                  />
+                )}
                 <Image
                   src={item.icon}
                   height={24}
@@ -83,7 +96,7 @@ const ToolBar = () => {
                   aria-hidden="true"
                 />
                 <span className={styles.label}>{item.label}</span>
-              </Link>
+              </TapScaleLink>
             </li>
           );
         })}
