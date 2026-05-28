@@ -1,45 +1,72 @@
 @use "@/app/styles/variables.scss";
 
 .toolBarWrapper {
-  height: variables.$mobile-toolbar-height;
+  height: calc(
+    #{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom)
+  );
   width: 100%;
   position: fixed;
   bottom: 0;
-  background-color: white;
+  left: 0;
+  right: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
   user-select: none;
+  z-index: 9999;
+}
 
+.tabList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: variables.$mobile-toolbar-height;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  justify-content: space-around;
+}
+
+.tabItem {
+  flex: 1 1 0;
+  display: flex;
+  align-items: stretch;
   justify-content: center;
 }
 
-.iconWrapper {
+.tab {
   position: relative;
-  height: 100%;
-  width: calc(100% - 2rem);
+  flex: 1;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 8px;
+  color: #354242;
+  transition: opacity 0.2s;
 }
 
-.iconBackground {
-  border-radius: 9999px;
-  flex: 1 1 0%;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-  cursor: pointer;
+.tabActive {
+  color: #009bb0;
 }
 
-.icon {
-  border-radius: 9999px;
-  width: 5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition-property: opacity;
-  transition-duration: 0.5s;
-  z-index: 1;
-  margin: auto;
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
+.activeIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: 28px;
+  height: 3px;
+  background-color: #009bb0;
+  border-radius: 0 0 4px 4px;
+}
+
+.label {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
 }

@@ -37,6 +37,14 @@ body {
   color: black;
   font-family: "Noto Sans TC", sans-serif;
   animation: 1s ease-out 0s 1 fadeIn;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 .wrap {
@@ -201,4 +209,39 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
+
+  /* Safe-area utilities (iOS notch / home indicator) */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pl-safe {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Transparent MdPreview backgrounds inside mobile post body */
+.mobile-post-body {
+  --md-bk-color: transparent;
+}
+
+.mobile-post-body .md-editor-preview-wrapper,
+.mobile-post-body .md-editor-preview,
+.mobile-post-body .md-editor,
+.mobile-post-body .md-editor-preview-only {
+  background-color: transparent !important;
+}
+
+.mobile-post-body .md-editor-preview pre,
+.mobile-post-body .md-editor-preview code {
+  /* Keep code blocks visually distinct on the translucent background */
+  background-color: rgba(0, 0, 0, 0.06) !important;
 }
