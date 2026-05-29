@@ -1,5 +1,54 @@
 [
   {
+    "version": "2.20.0",
+    "date": "2026-05-29",
+    "type": "feature",
+    "title": "手機介面大改版",
+    "summary": "全面翻新手機版貼文頁面與互動體驗，新增原生般的手勢操作與動畫效果",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "重新設計手機版貼文頁面，改為模組化元件架構（標題、內文、操作列、留言）"
+      },
+      {
+        "type": "feature",
+        "description": "新增 Toast 通知系統，取代原本的彈窗提示"
+      },
+      {
+        "type": "feature",
+        "description": "新增底部彈出面板，SIG 列表支援下拉拖曳關閉"
+      },
+      {
+        "type": "feature",
+        "description": "手機首頁新增下拉重新整理與點擊分頁回到頂部功能"
+      },
+      {
+        "type": "feature",
+        "description": "新增頁面切換動畫與按鈕點擊回饋效果"
+      },
+      {
+        "type": "improvement",
+        "description": "留言改為扁平式列表，與電腦版顯示一致"
+      },
+      {
+        "type": "improvement",
+        "description": "介面支援 iOS 安全區域，適配瀏海螢幕裝置"
+      },
+      {
+        "type": "improvement",
+        "description": "調整留言區塊間距，提升版面可讀性"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機貼文頁面返回鍵置中、橫向捲動與送出按鈕顯示問題"
+      },
+      {
+        "type": "fix",
+        "description": "統一頭像預設圖片，避免載入失敗時顯示破圖"
+      }
+    ]
+  },
+  {
     "version": "2.19.0",
     "date": "2026-04-06",
     "type": "security",
