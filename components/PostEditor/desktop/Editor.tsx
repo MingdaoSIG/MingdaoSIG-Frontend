@@ -59,7 +59,7 @@ import {
 } from "./markdownCommands";
 
 // Desktop Markdown editor: CodeMirror 6 source on the left, the same
-// renderer as the post page on the right (docs/redesign/desktop-v3.md §7).
+// renderer as the post page on the right (docs/redesign/redesign-2026.md §10).
 
 interface Props {
   data: TPostAPI;

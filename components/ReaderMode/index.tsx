@@ -3,7 +3,7 @@
 import { BookOpen, Minus, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-// Reader mode for the desktop post page (docs/redesign/desktop-v3.md §6).
+// Reader mode for the desktop post page (docs/redesign/redesign-2026.md §6).
 // State is reflected onto <html data-reader*> so pure CSS can hide the
 // surrounding chrome. Text size and tone are remembered; entering reader
 // mode itself is always an explicit choice.

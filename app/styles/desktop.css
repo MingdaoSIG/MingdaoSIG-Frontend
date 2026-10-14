@@ -1,9 +1,9 @@
 /*
- * Desktop v3 — styles that cannot be expressed as Tailwind utilities:
+ * Desktop (redesign 2026) — styles that cannot be expressed as Tailwind utilities:
  *   1. SIG colour as text
  *   2. Long-form reading typography (post body + editor preview)
  *   3. Reader mode
- * See docs/redesign/desktop-v3.md.
+ * See docs/redesign/redesign-2026.md.
  *
  * Rendered Markdown is plain HTML (modules/markdown), so it is styled by
  * element selectors under `.markdown` rather than utility classes.

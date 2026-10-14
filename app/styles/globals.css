@@ -19,7 +19,7 @@
   --color-scrollbar-track: rgba(0, 76, 100, 0.29);
 
   /* ------------------------------------------------------------ */
-  /* Desktop v3 design tokens — see docs/redesign/desktop-v3.md    */
+  /* Redesign 2026 tokens — see docs/redesign/redesign-2026.md    */
   /* ------------------------------------------------------------ */
   --color-canvas: #e9eef3;
   --color-surface: #ffffff;
@@ -296,7 +296,7 @@ body:has(.wrap :is(.layout-split, .layout-doc)) {
 }
 
 /*
- * Glass (desktop v3). Write only the standard `backdrop-filter`:
+ * Glass (redesign 2026). Write only the standard `backdrop-filter`:
  * Lightning CSS drops the unprefixed declaration when both forms are
  * hand-written with var() values, which disables blur in Chromium.
  * It adds the -webkit- prefix itself.

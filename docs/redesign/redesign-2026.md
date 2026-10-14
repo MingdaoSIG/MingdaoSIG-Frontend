@@ -1,4 +1,4 @@
-# MDSIG Desktop Redesign (v3)
+# MDSIG Redesign 2026
 
 | 項目 | 內容 |
 | --- | --- |

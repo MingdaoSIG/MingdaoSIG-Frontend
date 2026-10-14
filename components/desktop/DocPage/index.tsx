@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 // Single-column desktop page that scrolls with the document
-// (docs/redesign/desktop-v3.md §3). `.layout-doc` switches the shell
+// (docs/redesign/redesign-2026.md §3). `.layout-doc` switches the shell
 // out of fixed-height mode; see globals.css.
 
 export function DocPage({
