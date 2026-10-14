@@ -1,5 +1,6 @@
 "use client";
 
+import { ImagePlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -152,7 +153,7 @@ export default function MetaDataForm({
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card">
         {/* Cover Section */}
         <div className="mb-6">
-          <span className="mb-2 block font-semibold text-gray-700 text-lg">
+          <span className="mb-2 block font-semibold text-base text-ink-900">
             Cover
           </span>
 
@@ -161,7 +162,7 @@ export default function MetaDataForm({
               <label
                 htmlFor="file"
                 onClick={handleFileInputClick}
-                className="relative block h-full w-full cursor-pointer overflow-hidden rounded-lg bg-center bg-cover bg-no-repeat"
+                className="relative block h-full w-full cursor-pointer overflow-hidden rounded-control bg-center bg-cover bg-no-repeat"
                 style={{
                   backgroundImage: (data.cover.includes("http")
                     ? `url(${data.cover})`
@@ -201,22 +202,24 @@ export default function MetaDataForm({
             <label
               htmlFor="file"
               onClick={handleFileInputClick}
-              className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-8 transition-all ${
+              className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-control border-[1.5px] border-dashed p-6 transition-all ${
                 isDragging
-                  ? "scale-[0.98] border-[#4ab8e0] bg-blue-100"
-                  : "border-[#5FCDF5] bg-blue-50 hover:border-[#4ab8e0] hover:bg-blue-100"
+                  ? "scale-[0.98] border-brand-700 bg-brand-50"
+                  : "border-line-strong bg-field hover:border-brand-700/60 hover:bg-brand-50"
               }
               `}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <div className="text-5xl opacity-60">📷</div>
-              <div className="font-medium text-[#5FCDF5] text-sm">
+              <ImagePlus size={32} className="text-ink-400" aria-hidden />
+              <div className="font-medium text-brand-700 text-sm">
                 點擊上傳或拖拽圖片
               </div>
-              <div className="text-gray-500 text-xs">
-                支援 JPG、PNG、GIF 格式
+              <div className="text-center text-ink-500 text-xs leading-5">
+                支援 JPG、PNG、WebP、TIFF
+                <br />
+                檔案需小於 5MB
               </div>
             </label>
           )}
@@ -233,7 +236,7 @@ export default function MetaDataForm({
         {/* Hashtag Section */}
         <div className="flex flex-col gap-2">
           <label
-            className="font-semibold text-gray-700 text-lg"
+            className="font-semibold text-base text-ink-900"
             htmlFor="tagInput"
           >
             Hashtag
@@ -250,7 +253,7 @@ export default function MetaDataForm({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyPress={handleTagInputKeyPress}
               placeholder="新增標籤..."
-              className="min-w-0 max-w-xs rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-0"
+              className="min-w-0 flex-1 rounded-control border border-line bg-field px-3 py-2 text-ink-800 text-sm placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-700/30"
             />
             <button
               onClick={handleAddTag}
@@ -268,12 +271,13 @@ export default function MetaDataForm({
                 {tags.map((tag, _index) => (
                   <span
                     key={tag}
-                    className="inline-flex h-[1.5rem] items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-blue-600 text-sm"
+                    className="inline-flex h-7 items-center gap-1 rounded-chip bg-brand-50 py-1 pr-1.5 pl-2.5 font-medium text-brand-800 text-sm"
                   >
                     #{tag}
                     <button
+                      aria-label={`移除標籤 ${tag}`}
                       onClick={() => handleRemoveTag(tag)}
-                      className="flex h-4 w-4 items-center justify-center rounded-full transition-colors hover:bg-blue-200"
+                      className="flex size-5 cursor-pointer items-center justify-center rounded-chip transition-colors hover:bg-brand-700/15"
                       type="button"
                     >
                       ×

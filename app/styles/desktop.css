@@ -1,13 +1,12 @@
 /*
  * Desktop v3 — styles that cannot be expressed as Tailwind utilities:
  *   1. SIG colour as text
- *   2. Long-form reading typography (post body, rendered by md-editor-rt)
+ *   2. Long-form reading typography (post body + editor preview)
  *   3. Reader mode
  * See docs/redesign/desktop-v3.md.
  *
- * Note: md-editor-rt ships unlayered CSS, which beats Tailwind's layered
- * utilities regardless of specificity. Overrides for the rendered post
- * therefore live here, unlayered, scoped under `.post-body`.
+ * Rendered Markdown is plain HTML (modules/markdown), so it is styled by
+ * element selectors under `.markdown` rather than utility classes.
  */
 
 /* ================================================================== */
@@ -25,10 +24,12 @@
 /* ================================================================== */
 /* 2. Reading typography                                               */
 /* ================================================================== */
-.md-editor.post-body {
-  --md-bk-color: var(--color-paper);
-  --read-fg: #1f2a35;
-
+/*
+ * `.markdown` is the output of components/Markdown/MarkdownView, shared by
+ * the post page and the editor preview. `.post-body` is the paper card the
+ * post page puts around it.
+ */
+.post-body {
   padding: 2.5rem 2rem 3rem;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
@@ -36,21 +37,8 @@
   box-shadow: var(--shadow-card);
 }
 
-.post-body .md-editor-preview {
-  --md-theme-color: var(--read-fg);
-  --md-theme-link-color: var(--color-brand-700);
-  --md-theme-link-hover-color: var(--color-brand-800);
-  --md-theme-heading-bg-color: transparent;
-  --md-theme-quote-color: var(--color-ink-500);
-  --md-theme-quote-border: 3px solid var(--color-line-strong);
-  --md-theme-table-stripe-color: #f5f7f9;
-  --md-theme-table-tr-bg-color: transparent;
-  --md-theme-table-td-border-color: var(--color-line);
-  --md-theme-code-inline-color: var(--color-ink-800);
-  --md-theme-code-inline-bg-color: #edf1f4;
-  --md-theme-code-block-bg-color: #f4f6f8;
-  --md-theme-code-block-color: var(--color-ink-800);
-  --md-theme-code-block-radius: var(--radius-control);
+.markdown {
+  --read-fg: #1f2a35;
 
   /* ~40 CJK characters per line */
   max-width: 42rem;
@@ -59,54 +47,78 @@
   font-size: var(--read-size, 1.0625rem);
   line-height: 1.85;
   letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
   word-break: auto-phrase;
 }
 
-.post-body .md-editor-preview p,
-.post-body .md-editor-preview li {
-  line-height: 1.85;
+.markdown > :first-child {
+  margin-top: 0;
 }
 
-.post-body .md-editor-preview p {
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown :is(p, ul, ol, table, pre, blockquote, figure) {
   margin: 0 0 1.15em;
 }
 
-.post-body .md-editor-preview li + li {
+.markdown :is(ul, ol) {
+  padding-left: 1.6em;
+}
+
+.markdown ul {
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li > :is(ul, ol) {
+  margin-bottom: 0;
+}
+
+.markdown li + li {
   margin-top: 0.35em;
 }
 
-.post-body .md-editor-preview :is(h1, h2, h3, h4) {
+.markdown li.task-list-item {
+  list-style: none;
+}
+
+.markdown li.task-list-item input {
+  margin: 0 0.5em 0 -1.4em;
+  vertical-align: -0.1em;
+}
+
+.markdown :is(h1, h2, h3, h4, h5, h6) {
   margin: 2em 0 0.75em;
-  padding-bottom: 0;
-  border-bottom: 0;
   color: var(--color-ink-900);
   font-weight: 700;
   line-height: 1.45;
   letter-spacing: 0.01em;
 }
 
-.post-body .md-editor-preview > :first-child {
-  margin-top: 0;
-}
-
-.post-body .md-editor-preview h1 {
+.markdown h1 {
   font-size: 1.6rem;
 }
 
-.post-body .md-editor-preview h2 {
+.markdown h2 {
   font-size: 1.35rem;
 }
 
-.post-body .md-editor-preview h3 {
+.markdown h3 {
   font-size: 1.15rem;
 }
 
-.post-body .md-editor-preview h4 {
+.markdown :is(h4, h5, h6) {
   font-size: 1.0625rem;
 }
 
 /* Links: colour AND underline */
-.post-body .md-editor-preview a {
+.markdown a {
+  color: var(--color-brand-700);
   text-decoration: underline;
   text-decoration-color: color-mix(
     in srgb,
@@ -117,62 +129,176 @@
   text-underline-offset: 0.2em;
 }
 
-.post-body .md-editor-preview a:hover {
+.markdown a:hover {
+  color: var(--color-brand-800);
   text-decoration-color: currentColor;
 }
 
-.post-body .md-editor-preview strong {
+.markdown :is(strong, b) {
   color: var(--color-ink-900);
   font-weight: 700;
 }
 
-/* No italics: slanted CJK is hard to read */
-.post-body .md-editor-preview blockquote {
-  margin: 1.5em 0;
-  padding: 0.1em 1.1em;
-  font-style: normal;
+.markdown mark {
+  padding: 0 0.15em;
+  border-radius: 3px;
+  background: #fbf0c9;
+  color: inherit;
 }
 
-.post-body .md-editor-preview img {
+/* No italics on quotes: slanted CJK is hard to read */
+.markdown blockquote {
+  margin: 1.5em 0;
+  padding: 0.1em 1.1em;
+  border-left: 3px solid var(--color-line-strong);
+  color: var(--color-ink-500);
+}
+
+.markdown blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown :is(img, video) {
   display: block;
+  max-width: 100%;
+  height: auto;
   margin: 1.5em auto;
   border-radius: var(--radius-chip);
 }
 
-.post-body .md-editor-preview hr {
+.markdown figure {
+  margin: 1.5em 0;
+}
+
+.markdown figure img {
+  margin-block: 0;
+}
+
+.markdown figcaption {
+  margin-top: 0.6em;
+  color: var(--color-ink-500);
+  font-size: 0.875em;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.markdown hr {
   height: 1px;
   margin: 2.5em 0;
   border: 0;
   background: var(--color-line);
 }
 
-.post-body .md-editor-preview pre {
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-control);
+.markdown :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: #edf1f4;
+  color: var(--color-ink-800);
+  font-size: 0.875em;
 }
 
-.post-body .md-editor-preview pre code {
+/* line-height on <pre>: inline <code> inside it inherits the line box */
+.markdown pre {
+  overflow-x: auto;
+  padding: 1em 1.2em;
   font-size: 0.875rem;
   line-height: 1.65;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: #f4f6f8;
+}
+
+.markdown :is(code, pre) {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans TC", monospace;
+}
+
+.markdown pre code {
+  color: var(--color-ink-800);
+  font-size: inherit;
+  line-height: inherit;
   letter-spacing: 0;
 }
 
-.post-body .md-editor-preview iframe {
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375em;
+}
+
+.markdown :is(th, td) {
+  padding: 0.45em 0.9em;
+  border: 1px solid var(--color-line);
+}
+
+.markdown th {
+  background: #f5f7f9;
+  color: var(--color-ink-900);
+  font-weight: 600;
+}
+
+.markdown iframe {
+  display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
+  margin: 1.5em 0;
+  border: 0;
   border-radius: var(--radius-control);
+  aspect-ratio: 16 / 9;
+}
+
+.markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Code highlighting (rehype-highlight / highlight.js classes) */
+.markdown .hljs-comment,
+.markdown .hljs-quote {
+  color: #6a737d;
+}
+
+.markdown .hljs-keyword,
+.markdown .hljs-selector-tag,
+.markdown .hljs-built_in,
+.markdown .hljs-type {
+  color: #b42318;
+}
+
+.markdown .hljs-string,
+.markdown .hljs-regexp,
+.markdown .hljs-addition {
+  color: #1d6b46;
+}
+
+.markdown .hljs-number,
+.markdown .hljs-literal,
+.markdown .hljs-attr,
+.markdown .hljs-variable {
+  color: #0b5a83;
+}
+
+.markdown .hljs-title,
+.markdown .hljs-section,
+.markdown .hljs-function {
+  color: #6f42c1;
+}
+
+.markdown .hljs-deletion {
+  color: #b42318;
 }
 
 /*
  * A body heading that repeats the post title (≈40% of posts) is hidden.
  * Marked by components/ReaderMode/useDuplicateTitle.ts.
  */
-.post-body .md-editor-preview .dup-title {
+.post-body .markdown .dup-title {
   display: none;
 }
 
-.post-body .md-editor-preview .dup-title + * {
+.post-body .markdown .dup-title + * {
   margin-top: 0;
 }
 
@@ -242,7 +368,7 @@ html[data-reader-tone="sepia"] .wrap {
   --color-line-strong: rgba(74, 52, 24, 0.22);
 }
 
-html[data-reader-tone="sepia"] .post-body {
+html[data-reader-tone="sepia"] .post-body .markdown {
   --read-fg: #3a3027;
 }
 
@@ -282,7 +408,7 @@ html[data-reader] [data-reader-title] h1 {
   font-size: 2rem;
 }
 
-html[data-reader] .md-editor.post-body {
+html[data-reader] .post-body {
   padding: 2.25rem 0 0;
   border: 0;
   border-radius: 0;
@@ -290,7 +416,7 @@ html[data-reader] .md-editor.post-body {
   box-shadow: none;
 }
 
-html[data-reader] .post-body .md-editor-preview {
+html[data-reader] .post-body .markdown {
   max-width: none;
 }
 

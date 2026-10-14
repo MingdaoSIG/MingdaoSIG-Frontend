@@ -1,19 +1,14 @@
 "use client";
 
-import { MdPreview } from "md-editor-rt";
-
-import type { TThread } from "@/interfaces/Thread";
-
-import "md-editor-rt/lib/preview.css";
-import "md-editor-rt/lib/style.css";
-import "@/app/mdEditorConfig";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import ReaderMode from "@/components/ReaderMode";
 import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
+import type { TThread } from "@/interfaces/Thread";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
@@ -138,12 +133,9 @@ const Thread = ({ post }: { post: TThread }) => {
             {post.title}
           </h1>
         </div>
-        <MdPreview
-          language="en-US"
-          value={post.content}
-          className="post-body"
-          previewTheme="github"
-        />
+        <div className="post-body">
+          <MarkdownView markdown={post.content} />
+        </div>
       </article>
     );
   }
@@ -203,11 +195,9 @@ const Thread = ({ post }: { post: TThread }) => {
         </button>
       </div>
       <ReaderByline post={post} />
-      <MdPreview
-        value={post.content}
-        className="post-body"
-        previewTheme="github"
-      />
+      <div className="post-body">
+        <MarkdownView markdown={post.content} />
+      </div>
     </article>
   );
 };

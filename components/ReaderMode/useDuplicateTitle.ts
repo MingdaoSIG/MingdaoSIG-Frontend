@@ -20,7 +20,7 @@ export default function useDuplicateTitle(
     }
 
     const mark = () => {
-      const body = container.querySelector(".md-editor-preview");
+      const body = container.querySelector(".markdown");
       const first = body?.firstElementChild;
       if (!first) {
         return;

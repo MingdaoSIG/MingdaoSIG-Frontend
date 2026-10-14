@@ -9,8 +9,6 @@ import {
   useState,
 } from "react";
 
-// Components
-import SplitBlock from "@/app/(Layout)/splitBlockNew";
 // Types
 import type { TPostAPI } from "../types/postAPI";
 import MetaDataForm from "./MetaDataForm";
@@ -52,15 +50,20 @@ export default function NewPost({
     }
   }, [data]);
 
+  // App-mode workspace: fills the shell row between header and dock
   return (
-    <SplitBlock>
-      <Suspense fallback={null}>
-        <TitleSigForm
-          data={data}
-          handleFormEventFunction={handleFormEventFunction}
-        />
-        <Editor setPostData={setPostData} data={data} token={token} />
-      </Suspense>
+    <div className="mx-auto grid h-full min-h-0 w-[min(80rem,100%-4rem)] grid-cols-[minmax(0,1fr)_20rem] gap-6">
+      <div className="flex min-h-0 flex-col">
+        <Suspense fallback={null}>
+          <TitleSigForm
+            data={data}
+            handleFormEventFunction={handleFormEventFunction}
+          />
+          <div className="min-h-0 flex-1">
+            <Editor setPostData={setPostData} data={data} token={token} />
+          </div>
+        </Suspense>
+      </div>
       <MetaDataForm
         discardFunction={discardFunction}
         postFunction={postFunction}
@@ -70,6 +73,6 @@ export default function NewPost({
         handleFileChange={handleFileChange}
         isEdit={isEdit}
       />
-    </SplitBlock>
+    </div>
   );
 }

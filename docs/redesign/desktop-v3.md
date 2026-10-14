@@ -2,7 +2,7 @@
 
 | 項目 | 內容 |
 | --- | --- |
-| 狀態 | 定案，實作中（`feature/desktop-redesign`） |
+| 狀態 | 階段 1–3 已實作（`feature/desktop-redesign`，PR #278） |
 | 日期 | 2026-10-15 |
 | 範圍 | 桌機版（≥1024px）。行動版不在本次範圍 |
 | 視覺參考 | `explore/desktop-visual` 分支的 variant C（原型，不合併） |
@@ -160,9 +160,10 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 
 | 階段 | 內容 |
 | --- | --- |
-| **1（本分支）** | Tokens、毛玻璃、shell（header / dock / 容器）、兩欄頁整頁捲動、首頁、貼文頁、閱讀模式、個人 / SIG 頁；其他桌機頁換上新底色與表面 |
-| 2 | 其他桌機頁（資訊、Dashboard、資料、更新紀錄）改為整頁捲動與新元件 |
-| 3 | 編輯器重做（見 Markdown 檢討：渲染改 server 端 remark 處理鏈、編輯器保留「寫 + 預覽」操作） |
+| **1** ✅ | Tokens、毛玻璃、shell（header / dock / 容器）、兩欄頁整頁捲動、首頁、貼文頁、閱讀模式、個人 / SIG 頁；其他桌機頁換上新底色與表面 |
+| **2** ✅ | 資訊、Dashboard、資料、更新紀錄、`/confirm`、404 改為 `DocPage`（整頁捲動、80rem 容器） |
+| **3** ✅ | Markdown 渲染改為 unified 處理鏈（§9）；桌機編輯器改用 CodeMirror 6，保留「左寫右預覽」操作（§10） |
+| 3b | 貼文頁改 Server Component + SSR + `generateMetadata`（渲染模組已可在 Node 執行） |
 | 4 | 管理平台獨立後台版面 |
 | — | 行動版另案 |
 
@@ -174,11 +175,51 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 | --- | --- |
 | 刪除貼文不等 API 結果就顯示成功 | `app/post/[postID]/(post)/desktop/Thread.tsx` |
 | 封面上傳說明寫「JPG、PNG、GIF」，實際只收 webp / jpeg / png / tiff | `components/PostEditor/desktop/MetaDataForm.tsx` |
-| `handleEditorChange` 存進 localStorage 的是更新前的 `data` | `components/PostEditor/desktop/Editor.tsx` |
-| markdown-it-sub 把「1~2 點」中間誤判為下標 | md-editor-rt 預設設定 |
-| 編輯器 / 閱讀頁在執行時從 unpkg 載入 highlight.js 等資源 | md-editor-rt |
+| ~~markdown-it-sub 把「1~2 點」中間誤判為下標~~ | 桌機已修（§9）；行動版仍用 md-editor-rt |
+| ~~編輯器 / 閱讀頁在執行時從 unpkg 載入 highlight.js 等資源~~ | 桌機已不使用 md-editor-rt；行動版仍有 |
+| 行動版編輯器每次輸入都寫入 `editorContent` / `postData`，包含編輯既有貼文時，導致之後開「發文」載入的是被編輯的貼文 | `components/PostEditor/mobile/Editor.tsx`（桌機已修） |
 | 所有頁面 client-only、無 `generateMetadata`，分享連結都是同一張 banner | `app/**/page.tsx` |
 | `useIsMobile` 預設 `false`，手機會先閃一次桌機版 | `utils/useIsMobile` |
 | 62 處 SweetAlert2 modal（含成功訊息） | 全站 |
 
 本階段順手修正：`<html lang>` 改為 `zh-Hant-TW`；全域 `* { outline: none }` 改為只在非鍵盤焦點時移除；移除 `globals.css` 中無人使用且在 Chromium 無效的 `.panel-bg` / `.backdrop-blur-custom`；首頁封面圖不再全部 `priority`、`sizes` 改為有效值。
+
+---
+
+## 9. Markdown 渲染（階段 3）
+
+`modules/markdown`：`renderMarkdown(md) → Promise<string>`，貼文頁與編輯器預覽共用，瀏覽器與 Node 皆可執行。
+
+```
+remark-parse → remark-gfm (singleTilde: false) → remark-math → remark-breaks
+→ remark-rehype → rehype-raw → rehype-sanitize → 嵌入白名單 → figure → 連結/圖片屬性
+→ [lazy] rehype-katex → [lazy] rehype-highlight → rehype-stringify
+```
+
+**與舊渲染器（md-editor-rt / markdown-it `html, breaks, linkify`）相容的做法**
+
+| 行為 | 實作 |
+| --- | --- |
+| 單一換行 = 換行 | remark-breaks |
+| 裸網址自動連結 | GFM autolink；百分比編碼的網址在顯示時解碼 |
+| 單獨一張圖片 → `<figure>`；**title**（不是 alt）作為說明文字 | `rehypeFigures`（同 markdown-it-image-figures `figcaption: true`） |
+| `$…$` 行內數學 | remark-math ＋ `protectDollars`：沿用 markdown-it-katex / Pandoc 定界規則（開頭 `$` 後不可為空白；結尾 `$` 前不可為空白、後不可為數字），讓 `NT$300 … NT$500` 維持文字 |
+| `<u>`、YouTube / Vimeo `<iframe>` | rehype-raw ＋ sanitize 白名單；iframe 只保留 youtube.com / youtube-nocookie.com / player.vimeo.com，並加 `loading="lazy"` |
+| U+FEFF | 解析前移除（從 Word 貼上的 `**\ufeff二、…**` 會讓粗體失效） |
+
+**刻意不同**：`~text~` 不再是下標（修正「1~2 點」）；`^sup^`、`!!!` admonition、mermaid / echarts 不渲染。
+
+**相容性驗證**（748 篇，對照 markdown-it 設定）：圖片、figure、表格、iframe、粗體、標題、清單、引用元素數量完全一致。差異僅有：下標 12 篇與上標 2 篇（刻意）、連結 21 篇（`E24.no` 這類無協定網域不再自動連結；email 會連結）、1 篇段距（U+FEFF 空行）。
+
+**安全**：輸出經 rehype-sanitize（GitHub schema 延伸）後才進 DOM；`<script>`、事件屬性、`javascript:`、`style`、`<form>`、`<svg>`、非白名單 iframe 均被移除；KaTeX 使用預設 `trust: false`。
+
+**效能**：KaTeX 與 highlight.js 只在內容含公式 / 程式碼區塊時才動態載入。貼文頁桌機與行動元件改為 `next/dynamic`，首次載入 JS 由 98.7 kB 降至 16.4 kB。
+
+## 10. 桌機編輯器（階段 3）
+
+- CodeMirror 6 ＋ `@codemirror/lang-markdown`（語法高亮、清單自動延續），左右分割；右側預覽使用 §9 同一個渲染器，與發布後排版一致。
+- 工具列：粗體 / 斜體 / 底線 / 刪除線｜大標題 / 小標題 / 引用 / 項目 / 編號 / 待辦｜行內程式碼 / 程式碼區塊 / 連結 / 圖片 / 表格｜復原 / 重做｜預覽開關 / 全螢幕（Esc 離開）。移除使用率為 0 的 mermaid / katex 按鈕與 sub / sup。
+- 快捷鍵：⌘/Ctrl + B / I / U / K、Tab 縮排、⌘/Ctrl + Z / Shift+Z。
+- 圖片：工具列、貼上、拖曳皆可上傳（JPG / PNG / WebP / TIFF，5MB），完成後插入 `![](url)`。
+- 預覽與原始碼按比例同步捲動。底部顯示字數與 Markdown 教學連結。
+- 編輯器元件不再寫 localStorage；草稿只由「發文」頁儲存 `postData`。
