@@ -26,11 +26,9 @@ function Fallback() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-8">
       <div className="relative h-16 w-16">
-        <div className="absolute inset-0 animate-spin rounded-full border-4 border-gray-300 in-[.wrap]:border-line-strong border-t-white in-[.wrap]:border-t-brand-700"></div>
+        <div className="absolute inset-0 animate-spin rounded-full border-4 border-line-strong border-t-brand-700"></div>
       </div>
-      <h1 className="font-bold in-[.wrap]:text-ink-900 text-5xl text-white">
-        Confirming
-      </h1>
+      <h1 className="font-bold text-5xl text-ink-900">Confirming</h1>
     </div>
   );
 }

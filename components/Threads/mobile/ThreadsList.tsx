@@ -3,6 +3,7 @@ import type {
   InfiniteData,
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
+import { Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef } from "react";
@@ -51,16 +52,16 @@ const Thread = ({
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={`block cursor-pointer select-none overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm transition-all hover:bg-white/70 ${
-        isAnnouncement ? "bg-white" : ""
+      className={`block cursor-pointer select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow active:shadow-card-hover ${
+        isAnnouncement ? "shadow-[inset_3px_0_0_var(--color-warm-600)]" : ""
       }`}
     >
       {/* Cover Image */}
       {threadData.cover && (
-        <div className="relative h-48 w-full bg-gradient-to-b from-gray-100 to-gray-400">
+        <div className="relative h-48 w-full bg-field">
           <Image
             src={fixCoverUrl(threadData.cover)}
-            alt={threadData.title}
+            alt=""
             fill
             sizes="(max-width: 640px) 100vw, 50vw"
             priority={priority}
@@ -73,21 +74,14 @@ const Thread = ({
       <div className="flex min-h-[200px] flex-col p-4">
         {/* Header: User info and Date */}
         {!isAnnouncement && user && (
-          <div className="mb-3 flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-700 text-sm">
+          <div className="mb-2.5 flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="truncate text-[13px] text-ink-700">
                 {user?.name}
               </span>
-              <span
-                className="rounded-full px-3 py-1 font-medium text-white text-xs"
-                style={{
-                  backgroundColor: sigDefaultColors[sig._id ?? ""] || "#009BB0",
-                }}
-              >
-                {sig.name}
-              </span>
+              <SigChip sig={sig} />
             </div>
-            <div className="text-gray-500 text-sm">
+            <div className="shrink-0 text-[13px] text-ink-500">
               {
                 new Date(threadData.createdAt ?? "")
                   .toLocaleString("zh-TW")
@@ -98,14 +92,18 @@ const Thread = ({
         )}
 
         {/* Title */}
-        <h2 className="mb-2 line-clamp-1 font-semibold text-gray-900 text-xl">
-          {isAnnouncement && "🔔 公告 - "}
-          {threadData.title}
+        <h2 className="mb-1.5 flex min-w-0 items-center gap-2 font-semibold text-[1.125rem] text-ink-900 leading-snug">
+          {isAnnouncement && (
+            <span className="shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
+              公告
+            </span>
+          )}
+          <span className="line-clamp-1">{threadData.title}</span>
         </h2>
 
         {/* Content Preview - Dynamic lines based on hashtags */}
         <p
-          className={`mb-3 text-gray-700 text-sm leading-relaxed ${
+          className={`mb-3 text-[0.9375rem] text-ink-700 leading-[1.7] ${
             isAnnouncement
               ? "line-clamp-3"
               : threadData.hashtag && threadData.hashtag.length > 0
@@ -121,10 +119,10 @@ const Thread = ({
           threadData.hashtag.length > 0 &&
           !isAnnouncement && (
             <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1">
-              {threadData.hashtag.map((tag, _index) => (
+              {threadData.hashtag.map((tag) => (
                 <span
                   key={tag}
-                  className="flex-shrink-0 whitespace-nowrap rounded-full bg-[#5FCDF5] px-3 py-1 font-semibold text-white text-xs"
+                  className="flex-shrink-0 whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
                 >
                   #{tag}
                 </span>
@@ -135,29 +133,17 @@ const Thread = ({
         {/* Spacer to push footer to bottom */}
         <div className="flex-grow"></div>
 
-        {/* Footer: Likes and Comments - No border */}
+        {/* Footer: Likes and Comments */}
         {!isAnnouncement && (
-          <div className="mt-2 flex items-center gap-4 pt-2 text-gray-600">
-            <div className="flex items-center gap-1.5">
-              <Image
-                src="/icons/likes.svg"
-                alt="likes"
-                width={18}
-                height={18}
-                className="opacity-60"
-              />
-              <span className="font-medium text-sm">{threadData.likes}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Image
-                src="/icons/comments.svg"
-                alt="comments"
-                width={18}
-                height={18}
-                className="opacity-60"
-              />
-              <span className="font-medium text-sm">{threadData.comments}</span>
-            </div>
+          <div className="mt-1 flex items-center gap-4 pt-1 text-ink-500">
+            <span className="flex items-center gap-1.5 text-sm">
+              <Heart size={16} aria-label="likes" />
+              {threadData.likes}
+            </span>
+            <span className="flex items-center gap-1.5 text-sm">
+              <MessageCircle size={16} aria-label="comments" />
+              {threadData.comments}
+            </span>
           </div>
         )}
       </div>
@@ -165,32 +151,47 @@ const Thread = ({
   );
 };
 
+/** SIG name on a light tint of the SIG colour (raw colour as text is unreadable for pinks). */
+export const SigChip = ({
+  sig,
+  className = "",
+}: {
+  sig: Pick<Sig, "_id" | "name">;
+  className?: string;
+}) => (
+  <span
+    className={`sig-text shrink-0 rounded-chip bg-[color-mix(in_srgb,var(--sig-color)_12%,white)] px-2 py-0.5 font-semibold text-xs ${className}`}
+    style={{
+      ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""] || "#0b5a83",
+    }}
+  >
+    {sig.name}
+  </span>
+);
+
 const ThreadSkeleton = () => {
   return (
-    <div className="animate-pulse overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm">
-      {/* Cover Skeleton */}
-      <div className="h-48 w-full bg-gradient-to-b from-gray-200 to-gray-300" />
-
-      {/* Content Container */}
+    <div className="animate-pulse overflow-hidden rounded-card border border-line bg-surface shadow-card">
+      <div className="h-48 w-full bg-field" />
       <div className="p-4">
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-4 w-16 rounded bg-gray-300"></div>
-            <div className="h-6 w-20 rounded-full bg-gray-300"></div>
+            <div className="h-4 w-16 rounded-chip bg-field" />
+            <div className="h-5 w-20 rounded-chip bg-field" />
           </div>
-          <div className="h-4 w-20 rounded bg-gray-300"></div>
+          <div className="h-4 w-20 rounded-chip bg-field" />
         </div>
-        <div className="mb-2 h-6 w-3/4 rounded bg-gray-300"></div>
-        <div className="mb-1 h-4 w-full rounded bg-gray-300"></div>
-        <div className="mb-3 h-4 w-full rounded bg-gray-300"></div>
+        <div className="mb-2 h-6 w-3/4 rounded-chip bg-field" />
+        <div className="mb-1 h-4 w-full rounded-chip bg-field" />
+        <div className="mb-3 h-4 w-full rounded-chip bg-field" />
         <div className="mb-3 flex gap-2">
-          <div className="h-6 w-20 rounded-full bg-gray-300"></div>
-          <div className="h-6 w-16 rounded-full bg-gray-300"></div>
-          <div className="h-6 w-24 rounded-full bg-gray-300"></div>
+          <div className="h-6 w-20 rounded-chip bg-field" />
+          <div className="h-6 w-16 rounded-chip bg-field" />
+          <div className="h-6 w-24 rounded-chip bg-field" />
         </div>
         <div className="flex gap-4">
-          <div className="h-4 w-12 rounded bg-gray-300"></div>
-          <div className="h-4 w-12 rounded bg-gray-300"></div>
+          <div className="h-4 w-12 rounded-chip bg-field" />
+          <div className="h-4 w-12 rounded-chip bg-field" />
         </div>
       </div>
     </div>
@@ -305,7 +306,7 @@ export const InfinityThreadsList = ({
     </div>
   ) : (
     <div className="flex h-full w-full items-center justify-center">
-      <h1 className="text-2xl text-gray-600">No Post Yet</h1>
+      <h1 className="text-ink-500 text-lg">No Post Yet</h1>
     </div>
   );
 };

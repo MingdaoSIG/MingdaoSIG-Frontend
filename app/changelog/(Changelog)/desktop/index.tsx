@@ -32,7 +32,7 @@ function TypeTag({ type }: { type: ChangeType }) {
   const label = typeLabels[type];
   return (
     <span
-      className="inline-flex shrink-0 items-center rounded-chip px-2 py-0.5 font-semibold text-xs"
+      className="inline-flex shrink-0 items-center whitespace-nowrap rounded-chip px-2 py-0.5 font-semibold text-xs"
       style={{ color: label.fg, backgroundColor: label.bg }}
     >
       {label.text}
@@ -79,7 +79,7 @@ export default function Desktop() {
                 key={change.description}
                 className="flex items-start gap-2.5 text-[0.9375rem] text-ink-700 leading-[1.7]"
               >
-                <span className="mt-0.5">
+                <span className="mt-0.5 shrink-0">
                   <TypeTag type={change.type} />
                 </span>
                 <span>{change.description}</span>

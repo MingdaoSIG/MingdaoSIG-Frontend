@@ -9,7 +9,7 @@ export default function BackToHome() {
     <button
       type="button"
       onClick={() => router.replace("/")}
-      className="cursor-pointer select-none in-[.wrap]:rounded-control rounded-2xl bg-[rgb(0,145,189)] in-[.wrap]:bg-brand-700 in-[.wrap]:px-5 px-6 in-[.wrap]:py-3 py-4 font-semibold text-white transition-opacity hover:opacity-90"
+      className="cursor-pointer select-none rounded-control bg-brand-700 px-5 py-3 font-semibold text-white transition-colors hover:bg-brand-800"
     >
       Back To Home
     </button>
