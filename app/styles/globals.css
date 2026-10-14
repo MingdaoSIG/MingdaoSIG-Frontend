@@ -133,14 +133,11 @@ body:has(.wrap :is(.layout-split, .layout-doc)) {
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: linear-gradient(
-    127deg,
-    rgba(255, 217, 103, 1) 0%,
-    rgb(205, 205, 205) 25%,
-    rgba(116, 197, 233, 1) 50%,
-    rgba(13, 154, 217, 1) 75%,
-    rgba(81, 147, 224, 1) 100%
-  );
+  color: var(--color-ink-800);
+  /* Same flat canvas as desktop (redesign 2026). No gradient. */
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.15 0 0 0 0 0.22 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    var(--color-canvas);
 }
 
 /* Custom Scrollbar Styles */
@@ -180,20 +177,6 @@ body:has(.wrap :is(.layout-split, .layout-doc)) {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #9fb5dc;
-}
-
-/* Editor specific styles */
-.editor-wrapper > div {
-  border: none;
-  height: 100%;
-}
-
-.editor-wrapper > div > div:nth-child(1) {
-  padding: 0 15px;
-}
-
-.editor-wrapper > div > div:nth-child(6) {
-  padding: 0 15px;
 }
 
 /* Animations */
@@ -275,24 +258,6 @@ body:has(.wrap :is(.layout-split, .layout-doc)) {
   .pr-safe {
     padding-right: env(safe-area-inset-right);
   }
-}
-
-/* Transparent MdPreview backgrounds inside mobile post body */
-.mobile-post-body {
-  --md-bk-color: transparent;
-}
-
-.mobile-post-body .md-editor-preview-wrapper,
-.mobile-post-body .md-editor-preview,
-.mobile-post-body .md-editor,
-.mobile-post-body .md-editor-preview-only {
-  background-color: transparent !important;
-}
-
-.mobile-post-body .md-editor-preview pre,
-.mobile-post-body .md-editor-preview code {
-  /* Keep code blocks visually distinct on the translucent background */
-  background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
 /*

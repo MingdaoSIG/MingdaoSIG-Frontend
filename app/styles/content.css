@@ -1,8 +1,9 @@
 /*
- * Desktop (redesign 2026) — styles that cannot be expressed as Tailwind utilities:
- *   1. SIG colour as text
- *   2. Long-form reading typography (post body + editor preview)
- *   3. Reader mode
+ * Redesign 2026 — styles that cannot be expressed as Tailwind utilities:
+ *   1. SIG colour as text                     (desktop + mobile)
+ *   2. Long-form reading typography (.markdown: post body, editor preview;
+ *      desktop + mobile)
+ *   3. Reader mode                            (desktop)
  * See docs/redesign/redesign-2026.md.
  *
  * Rendered Markdown is plain HTML (modules/markdown), so it is styled by
@@ -40,7 +41,10 @@
 .markdown {
   --read-fg: #1f2a35;
 
-  /* ~40 CJK characters per line */
+  /* ~40 CJK characters per line. width: 100% keeps it filling its
+     container when that container is a flex column (auto margins would
+     otherwise shrink it to max-content). */
+  width: 100%;
   max-width: 42rem;
   margin-inline: auto;
   color: var(--read-fg);
@@ -294,11 +298,11 @@
  * A body heading that repeats the post title (≈40% of posts) is hidden.
  * Marked by components/ReaderMode/useDuplicateTitle.ts.
  */
-.post-body .markdown .dup-title {
+.markdown .dup-title {
   display: none;
 }
 
-.post-body .markdown .dup-title + * {
+.markdown .dup-title + * {
   margin-top: 0;
 }
 

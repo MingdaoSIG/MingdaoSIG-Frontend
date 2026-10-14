@@ -63,9 +63,11 @@ export const toast = {
 
 const typeStyles: Record<ToastType, { bg: string; icon: string; fg: string }> =
   {
-    success: { bg: "rgba(16, 185, 129, 0.95)", icon: "✓", fg: "#10b981" },
-    error: { bg: "rgba(239, 68, 68, 0.95)", icon: "!", fg: "#ef4444" },
-    info: { bg: "rgba(59, 130, 246, 0.95)", icon: "i", fg: "#3b82f6" },
+    // Neutral dark toast; the type is carried by the icon colour
+    // (white on saturated green/red/blue failed WCAG AA).
+    success: { bg: "rgba(29, 42, 55, 0.96)", icon: "✓", fg: "#3ccf8e" },
+    error: { bg: "rgba(29, 42, 55, 0.96)", icon: "!", fg: "#f87171" },
+    info: { bg: "rgba(29, 42, 55, 0.96)", icon: "i", fg: "#7cc4ea" },
   };
 
 function ToastItem({ toast: t }: { toast: ToastInternal }) {
@@ -96,10 +98,10 @@ function ToastItem({ toast: t }: { toast: ToastInternal }) {
         backgroundColor: styles.bg,
         color: "white",
         padding: "12px 16px",
-        borderRadius: 14,
-        fontSize: 13,
+        borderRadius: 10,
+        fontSize: 14,
         fontWeight: 500,
-        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
+        boxShadow: "0 10px 28px -10px rgba(17, 29, 41, 0.55)",
         display: "flex",
         alignItems: "center",
         gap: 10,
@@ -114,8 +116,8 @@ function ToastItem({ toast: t }: { toast: ToastInternal }) {
           width: 20,
           height: 20,
           borderRadius: "50%",
-          backgroundColor: "white",
-          color: styles.fg,
+          backgroundColor: styles.fg,
+          color: "#111d29",
           fontWeight: 700,
           display: "flex",
           alignItems: "center",
@@ -135,12 +137,12 @@ function ToastItem({ toast: t }: { toast: ToastInternal }) {
             remove(t.id);
           }}
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.25)",
+            backgroundColor: "rgba(255, 255, 255, 0.16)",
             border: "none",
             color: "white",
             padding: "4px 10px",
-            borderRadius: 8,
-            fontSize: 11,
+            borderRadius: 6,
+            fontSize: 12,
             fontWeight: 600,
             cursor: "pointer",
           }}

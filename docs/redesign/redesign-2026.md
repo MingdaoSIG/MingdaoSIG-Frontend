@@ -4,7 +4,7 @@
 | --- | --- |
 | 狀態 | 階段 1–3 已實作（`feature/desktop-redesign`，PR #278） |
 | 日期 | 2026-10-15 |
-| 範圍 | 桌機版（≥1024px）。行動版不在本次範圍 |
+| 範圍 | 桌機版（≥1024px，PR #278）＋行動版（§11，`feature/mobile-redesign`） |
 | 視覺參考 | `explore/desktop-visual` 分支的 variant C（原型，不合併） |
 
 ---
@@ -165,7 +165,7 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 | **3** ✅ | Markdown 渲染改為 unified 處理鏈（§9）；桌機編輯器改用 CodeMirror 6，保留「左寫右預覽」操作（§10） |
 | 3b | 貼文頁改 Server Component + SSR + `generateMetadata`（渲染模組已可在 Node 執行） |
 | 4 | 管理平台獨立後台版面 |
-| — | 行動版另案 |
+| **M** | 行動版套用同一設計語言、渲染器與編輯器核心（§11） |
 
 ---
 
@@ -175,9 +175,9 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 | --- | --- |
 | 刪除貼文不等 API 結果就顯示成功 | `app/post/[postID]/(post)/desktop/Thread.tsx` |
 | 封面上傳說明寫「JPG、PNG、GIF」，實際只收 webp / jpeg / png / tiff | `components/PostEditor/desktop/MetaDataForm.tsx` |
-| ~~markdown-it-sub 把「1~2 點」中間誤判為下標~~ | 桌機已修（§9）；行動版仍用 md-editor-rt |
-| ~~編輯器 / 閱讀頁在執行時從 unpkg 載入 highlight.js 等資源~~ | 桌機已不使用 md-editor-rt；行動版仍有 |
-| 行動版編輯器每次輸入都寫入 `editorContent` / `postData`，包含編輯既有貼文時，導致之後開「發文」載入的是被編輯的貼文 | `components/PostEditor/mobile/Editor.tsx`（桌機已修） |
+| ~~markdown-it-sub 把「1~2 點」中間誤判為下標~~ | 已修（§9），md-editor-rt 已移除 |
+| ~~編輯器 / 閱讀頁在執行時從 unpkg 載入 highlight.js 等資源~~ | 已修，md-editor-rt 已移除 |
+| ~~編輯器每次輸入都寫入 `editorContent` / `postData`（含編輯既有貼文），導致「發文」載入被編輯的貼文~~ | 已修（桌機 + 行動） |
 | 所有頁面 client-only、無 `generateMetadata`，分享連結都是同一張 banner | `app/**/page.tsx` |
 | `useIsMobile` 預設 `false`，手機會先閃一次桌機版 | `utils/useIsMobile` |
 | 62 處 SweetAlert2 modal（含成功訊息） | 全站 |
@@ -223,3 +223,26 @@ remark-parse → remark-gfm (singleTilde: false) → remark-math → remark-brea
 - 圖片：工具列、貼上、拖曳皆可上傳（JPG / PNG / WebP / TIFF，5MB），完成後插入 `![](url)`。
 - 預覽與原始碼按比例同步捲動。底部顯示字數與 Markdown 教學連結。
 - 編輯器元件不再寫 localStorage；草稿只由「發文」頁儲存 `postData`。
+- 核心（CodeMirror 設定、格式指令、圖片上傳、內容同步）在 `components/PostEditor/shared/useMarkdownEditor.ts`，桌機與行動只各自提供工具列與容器。
+
+## 11. 行動版
+
+**原則**：只換設計語言，不改操作。底部導覽（Home / You / Post / Info）、BottomSheet、下拉重新整理、頁面切換動畫、點選分頁回到頂端、各頁版面結構皆維持 v2.20.0 的樣子。
+
+| 項目 | 處理 |
+| --- | --- |
+| 背景 | `.wrapMobile` 與桌機同一個平塗 `canvas`，移除漸層 |
+| Header / 底部導覽 / 留言輸入列 | 毛玻璃 `glass-bar`（只寫標準 `backdrop-filter`） |
+| 卡片（貼文、作者、動作列、留言、個人 / SIG 資訊） | 實心 `surface`、1px `line`、`shadow-card`、`rounded-card` |
+| 貼文內文 | `MarkdownView` ＋ `.markdown` 閱讀排版（與桌機相同；`paper` 底） |
+| SIG 標籤 | 淡染分類色底（12%）＋ 加深的分類色文字（`SigChip`），取代白字實心膠囊（粉色系白字不可讀） |
+| SIG 方塊（BottomSheet） | 白底、1.5px 分類色邊框，與桌機首頁一致 |
+| Latest / Top、SIGs 按鈕 | `rounded-control` 分段控制，選中為 `brand-700` |
+| Toast | 深色中性底 ＋ 彩色圖示（原本白字壓在飽和綠 / 紅 / 藍上未達 WCAG AA） |
+| 更新紀錄 | 與桌機相同的低飽和類型標籤 |
+| 輸入框 | 字級 16px（小於 16px 時 iOS Safari 聚焦會自動放大） |
+| `/confirm`、404 | 兩端同底色後移除 `in-[.wrap]:` 權宜寫法 |
+
+**編輯器**：改用 §10 的共用核心。版面維持「上方編輯、下方預覽」；工具列改為手機用、可橫向捲動（40px 按鈕）；預覽不再是固定高度的內部捲動區，改為依內容延伸；編輯區字級 16px。CodeMirror 的輸入屬性維持預設（md-editor-rt 底層也是 CodeMirror 6，輸入行為相同）。
+
+**移除**：`md-editor-rt`、未使用的 `@vavt/md-editor-extension`、`app/mdEditorConfig.ts`、`config/editorToolbar.tsx`、`globals.css` 中的 `.editor-wrapper` / `.mobile-post-body` 修補樣式。

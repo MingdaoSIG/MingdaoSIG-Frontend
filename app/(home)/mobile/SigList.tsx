@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { BottomSheet } from "@/components/mobile/BottomSheet";
+import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
 // Modules
 import maxMatch from "@/modules/maxMatch";
@@ -13,14 +14,16 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
   return (
     <Link
-      className="group relative flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-[#6fa8ff] via-[#4a9dd4] to-[#30b4ac] p-2 transition-all duration-300 hover:rotate-3 hover:scale-110 hover:shadow-lg"
+      className="relative flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface p-2 transition duration-150 active:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
+      style={{
+        ["--sig-color" as string]: sigDefaultColors[child._id] ?? "#0b5a83",
+      }}
       href={`/@${child.customId}`}
     >
-      <div className="absolute inset-0 rounded-2xl bg-white/0 transition-colors duration-300 group-hover:bg-white/10" />
       {maxMatch(child.name).map((name) => (
         <p
           key={name}
-          className="relative z-10 text-center font-semibold text-white text-xs leading-3"
+          className="text-center font-semibold text-ink-800 text-xs leading-4"
         >
           {name}
         </p>
@@ -64,7 +67,7 @@ const SigList = ({ open, onClose }: SigListProps) => {
     >
       {isLoading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#6fa8ff] border-t-transparent" />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-line-strong border-t-brand-700" />
         </div>
       ) : (
         <>
@@ -83,7 +86,7 @@ const SigList = ({ open, onClose }: SigListProps) => {
               return null;
             })}
           </div>
-          <p className="mt-6 text-center text-gray-500 text-xs">
+          <p className="mt-6 text-center text-ink-500 text-xs">
             選擇一個 SIG 來探索更多內容
           </p>
         </>

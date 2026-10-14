@@ -12,7 +12,7 @@ import { Providers } from "./providers";
 // Styles
 import "@/app/styles/globals.css";
 import "@/app/styles/variables.scss";
-import "@/app/styles/desktop.css";
+import "@/app/styles/content.css";
 
 // Utils
 import { Device } from "./device";

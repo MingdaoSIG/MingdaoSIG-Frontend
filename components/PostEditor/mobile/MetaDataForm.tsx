@@ -35,12 +35,12 @@ export default function MetaDataForm({ data, handleFormEventFunction }: Props) {
         placeholder="請輸入標題......"
         value={data?.title}
         onChange={(e) => handleFormEventFunction(e)}
-        className="rounded-lg border border-gray-300 px-2 py-2"
+        className="rounded-control border border-line-strong bg-surface px-3 py-2.5 text-[16px] text-ink-900 placeholder:text-ink-400"
       />
-      <div className="w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-2 py-2 text-left">
+      <div className="w-full items-center justify-center rounded-control border border-line-strong bg-surface px-2 py-2 text-left">
         <select
           name="sig"
-          className="h-full w-full rounded-lg bg-white pr-2 text-base"
+          className="h-full w-full bg-surface pr-2 text-[16px] text-ink-800"
           value={data?.sig}
           onChange={(e) => {
             handleFormEventFunction(e);

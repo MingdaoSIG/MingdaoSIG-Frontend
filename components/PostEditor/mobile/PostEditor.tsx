@@ -1,3 +1,4 @@
+import { ImagePlus } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import type { Dispatch, SetStateAction } from "react";
@@ -55,7 +56,7 @@ export default function NewPostMobile({
       title: "需要登入",
       text: "請先登入才能上傳封面圖片",
       confirmButtonText: "確定",
-      confirmButtonColor: "#5FCDF5",
+      confirmButtonColor: "#0b5a83",
     });
   };
 
@@ -131,7 +132,7 @@ export default function NewPostMobile({
 
   return (
     <div className="h-[100dvh] overflow-x-hidden px-2 pt-[4.5rem] pb-[4.5rem]">
-      <div className="h-full overflow-hidden rounded-lg bg-white p-4 pr-2">
+      <div className="h-full overflow-hidden rounded-card border border-line bg-surface p-4 pr-2 shadow-card">
         <div className="small-scrollbar flex h-full flex-col items-center overflow-y-auto overflow-x-hidden pr-2">
           <div className="w-full max-w-full">
             <MetaDataForm
@@ -141,19 +142,19 @@ export default function NewPostMobile({
           </div>
 
           {/* Content Section */}
-          <h2 className="mt-6 mb-2 h-auto w-full text-left font-semibold text-gray-700 text-lg">
+          <h2 className="mt-6 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
             Content
           </h2>
-          <hr className="mb-3 h-px w-full border-gray-200" />
+          <hr className="mb-3 h-px w-full border-line" />
           <div className="mb-4 h-auto w-full max-w-full">
             <Editor setPostData={setPostData} data={data} token={token} />
           </div>
 
           {/* Hashtag Section */}
-          <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-gray-700 text-lg">
+          <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
             Hashtag
           </h2>
-          <hr className="mb-3 h-px w-full border-gray-200" />
+          <hr className="mb-3 h-px w-full border-line" />
           <div className="w-full max-w-full">
             {/* Tag Input */}
             <div className="mb-3 flex h-auto w-full gap-2">
@@ -163,12 +164,12 @@ export default function NewPostMobile({
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInputKeyPress}
                 placeholder="新增標籤..."
-                className="w-full flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm"
+                className="w-full flex-1 rounded-control border border-line-strong bg-surface px-3 py-2.5 text-[16px] text-ink-800 placeholder:text-ink-400"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="flex-none whitespace-nowrap rounded-lg bg-[#5FCDF5] px-5 py-2.5 font-medium text-sm text-white transition-colors"
+                className="flex-none whitespace-nowrap rounded-control bg-brand-700 px-5 py-2.5 font-semibold text-sm text-white transition-colors active:bg-brand-800"
               >
                 ADD
               </button>
@@ -176,17 +177,18 @@ export default function NewPostMobile({
 
             {/* Tags Display */}
             {tags.length > 0 && (
-              <div className="flex max-w-full flex-wrap gap-2 rounded-lg bg-gray-100 p-3">
+              <div className="flex max-w-full flex-wrap gap-2 rounded-control bg-field p-3">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1.5 break-all rounded-full bg-blue-100 px-3 py-1.5 font-medium text-blue-600 text-sm"
+                    className="inline-flex items-center gap-1 break-all rounded-chip bg-brand-50 py-1 pr-1 pl-2.5 font-medium text-brand-800 text-sm"
                   >
                     #{tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full transition-colors active:scale-90 active:bg-blue-200"
+                      aria-label={`移除標籤 ${tag}`}
+                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-chip transition-colors active:bg-brand-700/15"
                     >
                       ×
                     </button>
@@ -197,17 +199,17 @@ export default function NewPostMobile({
           </div>
 
           {/* Cover Section */}
-          <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-gray-700 text-lg">
+          <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
             Cover
           </h2>
-          <hr className="mb-3 h-px w-full border-gray-200" />
+          <hr className="mb-3 h-px w-full border-line" />
           <div className="w-full max-w-full">
             {data?.cover ? (
               <div className="relative min-h-[12rem] max-w-full">
                 <label
                   htmlFor="file"
                   onClick={handleFileInputClick}
-                  className="relative block min-h-[12rem] cursor-pointer overflow-hidden rounded-lg bg-center bg-cover bg-no-repeat"
+                  className="relative block min-h-[12rem] cursor-pointer overflow-hidden rounded-control bg-center bg-cover bg-no-repeat"
                   style={{
                     backgroundImage: (data.cover.includes("http")
                       ? `url(${data.cover})`
@@ -225,7 +227,7 @@ export default function NewPostMobile({
                 <button
                   type="button"
                   onClick={handleRemoveCover}
-                  className="absolute top-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-all duration-200 active:scale-90 active:bg-red-600"
+                  className="absolute top-2 right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-ink-900/70 text-white shadow-lg transition-all duration-200 active:scale-90"
                   title="移除封面"
                 >
                   <svg
@@ -247,14 +249,14 @@ export default function NewPostMobile({
               <label
                 htmlFor="file"
                 onClick={handleFileInputClick}
-                className="flex min-h-[12rem] cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-[#5FCDF5] border-dashed bg-blue-50 p-6 transition-all active:scale-[0.98] active:bg-blue-100"
+                className="flex min-h-[12rem] cursor-pointer flex-col items-center justify-center gap-2 rounded-control border-[1.5px] border-line-strong border-dashed bg-field p-6 transition-all active:scale-[0.98] active:bg-brand-50"
               >
-                <div className="text-6xl opacity-60">📷</div>
-                <div className="text-center font-medium text-[#5FCDF5] text-base">
+                <ImagePlus size={36} className="text-ink-400" aria-hidden />
+                <div className="text-center font-semibold text-base text-brand-700">
                   點擊上傳圖片
                 </div>
-                <div className="text-center text-gray-500 text-sm">
-                  支援 png、jpg、webp、tiff 格式
+                <div className="text-center text-ink-500 text-sm">
+                  支援 JPG、PNG、WebP、TIFF，5MB 以內
                 </div>
               </label>
             )}
@@ -269,7 +271,7 @@ export default function NewPostMobile({
           </div>
 
           {/* Bottom Spacing and Buttons */}
-          <div className="mt-6 mb-4 w-full border-gray-200 border-t"></div>
+          <div className="mt-6 mb-4 w-full border-line border-t"></div>
           <Button
             discardFunction={discardFunction}
             postFunction={postFunction}

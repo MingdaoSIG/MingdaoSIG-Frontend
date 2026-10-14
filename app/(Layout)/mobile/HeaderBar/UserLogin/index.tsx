@@ -8,7 +8,7 @@ export default function UserLogin() {
 
   if (isLoading) {
     return (
-      <div className={styles.loginUserPanelWrapper}>
+      <div className={`${styles.loginUserPanelWrapper} ${styles.secondary}`}>
         <div className={styles.loginUserPanel}>
           <p>Loading</p>
         </div>
@@ -28,7 +28,7 @@ export default function UserLogin() {
     <div className="flex items-center justify-center">
       {userData && userData.permission === 2 && (
         <div
-          className={`${styles.loginUserPanelWrapper} mr-2`}
+          className={`${styles.loginUserPanelWrapper} ${styles.secondary} mr-2`}
           onClick={() => window.open("/admin", "_self")}
         >
           <div className={styles.loginUserPanel}>

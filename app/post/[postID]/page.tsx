@@ -15,8 +15,8 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 import useIsMobile from "@/utils/useIsMobile";
 import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
-// Desktop and mobile render posts with different engines (unified pipeline
-// vs md-editor-rt); load only the one this device needs.
+// Desktop and mobile threads are separate component trees; load only the
+// one this device needs.
 const ThreadDesktop = dynamic(() => import("./(post)/desktop/Thread"));
 const ThreadMobile = dynamic(() => import("./(post)/mobile/Thread"));
 

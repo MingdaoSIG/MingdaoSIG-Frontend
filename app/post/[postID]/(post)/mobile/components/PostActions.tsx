@@ -65,7 +65,7 @@ export default function PostActions({ post, commentCount }: Props) {
   const isOwner = isLogin && post.user === userData?._id;
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl bg-white/70 px-3.5 py-2.5 backdrop-blur-md">
+    <div className="flex items-center gap-4 rounded-card border border-line bg-surface px-3.5 py-2.5 shadow-card">
       <TapScale
         onClick={onLike}
         className="flex cursor-pointer items-center gap-1.5 p-1"
@@ -83,19 +83,19 @@ export default function PostActions({ post, commentCount }: Props) {
         >
           <path
             d="M26.9399 6.38798C26.2047 5.64761 25.3304 5.05985 24.3673 4.65849C23.4042 4.25714 22.3713 4.05012 21.3279 4.04932C19.3543 4.04964 17.4528 4.79101 15.9999 6.12665C14.5471 4.79079 12.6455 4.04938 10.6719 4.04932C9.62728 4.0504 8.59319 4.25806 7.62914 4.66034C6.66509 5.06262 5.79011 5.65158 5.05456 6.39332C1.91723 9.54398 1.91856 14.472 5.05723 17.6093L15.9999 28.552L26.9426 17.6093C30.0812 14.472 30.0826 9.54398 26.9399 6.38798Z"
-            fill={liked ? "#EE5757" : "#BDBDBD"}
+            fill={liked ? "#e05252" : "#bdc4cc"}
           />
         </motion.svg>
         <span
           className="font-semibold text-sm"
-          style={{ color: liked ? "#EE5757" : "#354242" }}
+          style={{ color: liked ? "#d64545" : "#2f3d4b" }}
         >
           {likeCount}
         </span>
       </TapScale>
       <TapScale
         onClick={onCommentTap}
-        className="flex cursor-pointer items-center gap-1.5 p-1 text-md-dark-green"
+        className="flex cursor-pointer items-center gap-1.5 p-1 text-ink-700"
         whileTap={{ scale: 0.9 }}
         aria-label="跳至留言"
       >

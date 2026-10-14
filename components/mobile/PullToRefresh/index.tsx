@@ -124,8 +124,8 @@ export function PullToRefresh({
                 width: 32,
                 height: 32,
                 borderRadius: "50%",
-                border: "3px solid rgba(0, 76, 100, 0.2)",
-                borderTopColor: "#004c64",
+                border: "3px solid rgba(17, 29, 41, 0.12)",
+                borderTopColor: "#0b5a83",
                 rotate: isRefreshing ? undefined : rotation,
               }}
               animate={isRefreshing ? { rotate: 360 } : undefined}

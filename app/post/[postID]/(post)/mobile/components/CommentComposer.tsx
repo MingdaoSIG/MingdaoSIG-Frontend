@@ -86,7 +86,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
     <div className="sticky right-0 bottom-0 left-0 z-10">
       <form
         onSubmit={handleSend}
-        className="flex items-center gap-2 border-black/5 border-t bg-white/97 px-3 py-2 backdrop-blur-md"
+        className="glass-bar flex items-center gap-2 border-line border-t px-3 py-2"
       >
         <Image
           src={avatar}
@@ -107,14 +107,14 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
           placeholder="寫下你的想法…"
           aria-label="留言內容"
           rows={1}
-          className="min-h-[2rem] min-w-0 flex-1 resize-none rounded-2xl bg-[#f1f5f9] px-3.5 py-1.5 text-[13px] text-md-dark-green outline-none"
+          className="min-h-[2.25rem] min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"
         />
         <TapScale
           onClick={handleSend}
           className={
             canSend
-              ? "flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-md-light-green shadow-sm"
-              : "flex h-9 w-9 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-gray-200"
+              ? "flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-brand-700 shadow-sm"
+              : "flex h-9 w-9 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-control bg-field"
           }
           whileTap={canSend ? { scale: 0.9 } : undefined}
           aria-label="送出留言"
@@ -124,7 +124,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
             width="18"
             height="18"
             viewBox="0 0 24 24"
-            fill={canSend ? "#ffffff" : "#9ca3af"}
+            fill={canSend ? "#ffffff" : "#7a8694"}
           >
             <path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z" />
           </svg>
