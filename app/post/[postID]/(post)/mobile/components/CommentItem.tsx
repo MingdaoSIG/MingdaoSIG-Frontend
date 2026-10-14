@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Linkify from "react-linkify";
+import Linkify from "@/components/Linkify/Linkify";
 
 import { TapScaleLink } from "@/components/mobile/TapScale";
 import type { TComments } from "@/interfaces/comments";

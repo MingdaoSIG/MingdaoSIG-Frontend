@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Linkify from "react-linkify";
+import Linkify from "@/components/Linkify/Linkify";
 import { jumpOut } from "@/utils/jumpOut";
 
 // Styles
