@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { Sig } from "@/interfaces/Sig";
 
+import { BottomSheet } from "@/components/mobile/BottomSheet";
+import type { Sig } from "@/interfaces/Sig";
 // Modules
 import maxMatch from "@/modules/maxMatch";
 
@@ -28,95 +29,66 @@ const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
   );
 };
 
-const SigList = ({
-  sigListToggle,
-}: {
-  sigListToggle: (value: boolean) => void;
-}) => {
+type SigListProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+const SigList = ({ open, onClose }: SigListProps) => {
   const [sigs, setSigs] = useState<Sig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
     (async () => {
       try {
         const res = await (
-          await fetch(`${API_URL}/sig/list`, {
-            method: "GET",
-          })
+          await fetch(`${API_URL}/sig/list`, { method: "GET" })
         ).json();
-
         setSigs(res.data);
         setIsLoading(false);
       } catch (_error) {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [open]);
 
   return (
-    <div className="fixed top-0 left-0 z-[999999] grid h-screen w-screen animate-fadeIn place-items-center bg-black/70 backdrop-blur-sm">
-      {/* Outer overlay */}
-      <div
-        className="absolute top-0 left-0 h-full w-full"
-        onClick={() => sigListToggle(false)}
-      />
-
-      {/* Content */}
-      <div className="relative w-[90vw] max-w-md animate-slideUp overflow-hidden rounded-3xl bg-white/95 shadow-2xl backdrop-blur-xl">
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-br from-[#6fa8ff] to-[#30b4ac] px-6 py-4">
-          <h2 className="font-bold text-white text-xl">探索 SIGs</h2>
-          <button
-            type="button"
-            onClick={() => sigListToggle(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 transition-colors hover:bg-white/30"
-          >
-            <svg
-              aria-hidden="true"
-              className="h-5 w-5 text-white"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      title="探索 SIGs"
+      snapPoints={["60%", "90%"]}
+    >
+      {isLoading ? (
+        <div className="flex h-40 items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#6fa8ff] border-t-transparent" />
         </div>
-
-        {/* SIG Grid */}
-        <div className="custom-scrollbar max-h-[60vh] overflow-y-auto p-6">
-          {isLoading ? (
-            <div className="flex h-40 items-center justify-center">
-              <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#6fa8ff] border-t-transparent"></div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 place-items-center gap-4">
-              {sigs.map((item) => {
-                if (item._id !== "652d60b842cdf6a660c2b778") {
-                  return (
-                    <SIG
-                      _id={item._id}
-                      name={item.name}
-                      customId={item.customId}
-                      key={item._id}
-                    />
-                  );
-                }
-                return null;
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="sticky bottom-0 bg-gradient-to-t from-white/95 to-transparent px-6 py-3 text-center">
-          <p className="text-gray-500 text-xs">選擇一個 SIG 來探索更多內容</p>
-        </div>
-      </div>
-    </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 place-items-center gap-4">
+            {sigs.map((item) => {
+              if (item._id !== "652d60b842cdf6a660c2b778") {
+                return (
+                  <SIG
+                    _id={item._id}
+                    name={item.name}
+                    customId={item.customId}
+                    key={item._id}
+                  />
+                );
+              }
+              return null;
+            })}
+          </div>
+          <p className="mt-6 text-center text-gray-500 text-xs">
+            選擇一個 SIG 來探索更多內容
+          </p>
+        </>
+      )}
+    </BottomSheet>
   );
 };
 

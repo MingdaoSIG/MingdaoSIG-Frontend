@@ -177,7 +177,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex h-[calc(100%-42px-64px)] flex-col gap-[10px] overflow-x-hidden overflow-y-auto">
+      <div className="mt-5 flex h-[calc(100%-42px-64px)] flex-col gap-[10px] overflow-y-auto overflow-x-hidden">
         {comments.length !== 0 ? (
           comments.map((comment: TComments) => {
             return (
