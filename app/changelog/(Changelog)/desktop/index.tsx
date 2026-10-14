@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { DocPage } from "@/components/desktop/DocPage";
 import changelog from "../config/changelog.json";
 
 type ChangeType = "feature" | "improvement" | "fix" | "security";
@@ -19,111 +19,76 @@ interface ChangelogEntry {
   changes: Change[];
 }
 
-const typeLabels: Record<ChangeType, { text: string; color: string }> = {
-  feature: { text: "新功能", color: "#22c55e" },
-  improvement: { text: "優化", color: "#3b82f6" },
-  fix: { text: "修復", color: "#f59e0b" },
-  security: { text: "安全性", color: "#ef4444" },
-};
+// Muted semantic colours: readable text on a light tint (AA on white)
+const typeLabels: Record<ChangeType, { text: string; fg: string; bg: string }> =
+  {
+    feature: { text: "新功能", fg: "#1d6b46", bg: "#e6f3ec" },
+    improvement: { text: "優化", fg: "#0b5a83", bg: "#e5edf3" },
+    fix: { text: "修復", fg: "#85530a", bg: "#f8efdc" },
+    security: { text: "安全性", fg: "#b42318", bg: "#fbeceb" },
+  };
 
-// 版本標題純色背景
-const versionBgColors: Record<ChangeType, string> = {
-  feature: "#dcfce7",
-  improvement: "#dbeafe",
-  fix: "#fef3c7",
-  security: "#fee2e2",
-};
+function TypeTag({ type }: { type: ChangeType }) {
+  const label = typeLabels[type];
+  return (
+    <span
+      className="inline-flex shrink-0 items-center rounded-chip px-2 py-0.5 font-semibold text-xs"
+      style={{ color: label.fg, backgroundColor: label.bg }}
+    >
+      {label.text}
+    </span>
+  );
+}
 
 export default function Desktop() {
   const typedChangelog = changelog as ChangelogEntry[];
 
   return (
-    <>
-      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-card">
-        <div className="flex h-full flex-col overflow-hidden">
-          <div className="flex-1 overflow-hidden rounded-card border border-line bg-surface p-6 pr-3 shadow-card">
-            <div className="h-full flex-1 space-y-6 overflow-y-auto pr-3">
-              {typedChangelog.map((entry, index) => (
-                <Fragment key={entry.version}>
-                  <div className="relative">
-                    <div
-                      className="mb-3 flex items-center gap-3 rounded-lg p-3"
-                      style={{
-                        backgroundColor: versionBgColors[entry.type],
-                      }}
-                    >
-                      <span className="font-bold text-ink-900 text-xl">
-                        v{entry.version}
-                      </span>
-                      <span className="text-ink-900/70 text-sm">
-                        {formatDate(entry.date)}
-                      </span>
-                      <span
-                        className="ml-auto rounded-full px-2 py-1 text-xs"
-                        style={{
-                          backgroundColor: typeLabels[entry.type].color,
-                          color: "white",
-                        }}
-                      >
-                        {typeLabels[entry.type].text}
-                      </span>
-                    </div>
+    <DocPage
+      title="更新紀錄"
+      description="MDSIG 平台的版本與變更"
+      width="narrow"
+    >
+      {typedChangelog.map((entry) => (
+        <article
+          key={entry.version}
+          className="rounded-card border border-line bg-surface p-6 shadow-card"
+        >
+          <header className="flex items-center gap-3">
+            <span className="font-bold text-ink-900 text-xl tabular-nums">
+              v{entry.version}
+            </span>
+            <time className="text-ink-500 text-sm" dateTime={entry.date}>
+              {formatDate(entry.date)}
+            </time>
+            <span className="ml-auto">
+              <TypeTag type={entry.type} />
+            </span>
+          </header>
 
-                    {/* Title & Summary */}
-                    <h2 className="mb-1 font-medium text-ink-900 text-lg">
-                      {entry.title}
-                    </h2>
-                    <p className="mb-3 text-ink-900/70 text-sm">
-                      {entry.summary}
-                    </p>
+          <h2 className="mt-3 font-semibold text-ink-900 text-lg leading-7">
+            {entry.title}
+          </h2>
+          <p className="mt-1 text-[0.9375rem] text-ink-700 leading-[1.7]">
+            {entry.summary}
+          </p>
 
-                    {/* Changes List */}
-                    <ul className="space-y-2">
-                      {entry.changes.map((change) => (
-                        <li
-                          key={change.description}
-                          className="flex items-start gap-2 text-ink-900 text-sm"
-                        >
-                          <span
-                            className="mt-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{
-                              backgroundColor: typeLabels[change.type].color,
-                            }}
-                          />
-                          <span
-                            className="inline-block flex-shrink-0 rounded px-2 py-0.5 text-white text-xs"
-                            style={{
-                              backgroundColor: typeLabels[change.type].color,
-                            }}
-                          >
-                            {typeLabels[change.type].text}
-                          </span>
-                          <span>{change.description}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Divider */}
-                  {index < typedChangelog.length - 1 && (
-                    <hr className="border-[#003f47]/10" />
-                  )}
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </>
+          <ul className="mt-4 space-y-2 border-line border-t pt-4">
+            {entry.changes.map((change) => (
+              <li
+                key={change.description}
+                className="flex items-start gap-2.5 text-[0.9375rem] text-ink-700 leading-[1.7]"
+              >
+                <span className="mt-0.5">
+                  <TypeTag type={change.type} />
+                </span>
+                <span>{change.description}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </DocPage>
   );
 }
 

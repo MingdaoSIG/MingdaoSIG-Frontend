@@ -1,14 +1,11 @@
-import styles from "./index.module.scss";
+import { DocCard, DocPage } from "@/components/desktop/DocPage";
 
 export default function Desktop() {
   return (
-    <div>
-      <div className={styles.wrapper}>
-        <div className={styles.title}>
-          <h1>MDSIG 資料查詢系統</h1>
-        </div>
-        <div className={styles.content}></div>
-      </div>
-    </div>
+    <DocPage title="MDSIG 資料查詢系統">
+      <DocCard>
+        <p className="py-10 text-center text-ink-500">此功能尚在建置中</p>
+      </DocCard>
+    </DocPage>
   );
 }
