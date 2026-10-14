@@ -22,8 +22,6 @@ import Reply from "../components/Reply";
 
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
-// Styles
-import style from "./Thread.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -139,97 +137,107 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   }, [post]);
 
   return (
-    <div className={`${style.info} box-border`}>
-      <div className="relative mb-3 flex h-[64px] flex-initial items-center justify-between">
-        <div className={`${style.author} select-none`}>
-          <Image
-            src={user?.avatar || "/images/default-avatar.png"} // Make sure to add a default avatar image
-            width={64}
-            height={64}
-            alt="Avatar"
-            className="h-[64px] w-[64px] flex-initial rounded-full"
-          />
-
-          <div className="my-auto flex w-auto flex-initial flex-col items-start">
-            <div className="flex">
-              <div
-                className={`${style.name} flex`}
-                onClick={() => route.push(`/@${user?.customId}`)}
-              >
-                {user?.name || "Loading..."}
-              </div>
-              <p className={style.dot}>•</p>
-              <div
-                className={style.name}
-                style={{ color: sigDefaultColors[sig?._id ?? ""] }}
-                onClick={() => route.push(`/@${sig?.customId}`)}
-              >
-                {sig?.name || "Loading..."}
-              </div>
-            </div>
-            <div className={style.time}>
-              {
-                new Date(post?.createdAt ?? "")
-                  .toLocaleString("zh-TW")
-                  .split(" ")[0]
-              }
-            </div>
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      {/* Author */}
+      <div className="glass flex shrink-0 select-none items-center gap-3 rounded-card px-5 py-4">
+        <Image
+          src={user?.avatar || "/images/default-avatar.png"}
+          width={48}
+          height={48}
+          alt=""
+          className="size-12 shrink-0 rounded-full object-cover"
+        />
+        <div className="flex min-w-0 flex-col">
+          <div className="flex min-w-0 items-center gap-1.5 text-base">
+            <button
+              type="button"
+              className="cursor-pointer truncate font-bold text-ink-900 hover:underline"
+              onClick={() => route.push(`/@${user?.customId}`)}
+            >
+              {user?.name || "Loading..."}
+            </button>
+            <span aria-hidden className="text-ink-400">
+              •
+            </span>
+            <button
+              type="button"
+              className="sig-text shrink-0 cursor-pointer font-semibold hover:underline"
+              style={{
+                ["--sig-color" as string]: sigDefaultColors[sig?._id ?? ""],
+              }}
+              onClick={() => route.push(`/@${sig?.customId}`)}
+            >
+              {sig?.name || "Loading..."}
+            </button>
+          </div>
+          <div className="text-[13px] text-ink-500">
+            {
+              new Date(post?.createdAt ?? "")
+                .toLocaleString("zh-TW")
+                .split(" ")[0]
+            }
           </div>
         </div>
       </div>
-      <div className="mt-5 flex h-[calc(100%-42px-64px)] flex-col gap-[10px] overflow-y-auto overflow-x-hidden">
-        {comments.length !== 0 ? (
-          comments.map((comment: TComments) => {
-            return (
-              <Reply
-                key={comment._id}
-                overflow={false}
-                customId={comment.user.customId}
-                avatar={comment.user.avatar}
-                content={comment.content}
-                createdAt={
-                  new Date(comment.createdAt || "")
-                    .toLocaleString("zh-TW")
-                    .split(" ")[0]
-                }
-              />
-            );
-          })
-        ) : (
-          <p className="mx-auto my-auto font-medium text-[1.5rem]">
-            No comments
-          </p>
-        )}
-      </div>
-      <form
-        className="bottom-5 mt-5 flex h-[42px] w-full flex-none rounded-full border border-[#BDBDBD] bg-[#D5E5E8] pl-[12px]"
-        onSubmit={handleCommandSubmit}
-      >
-        <input
-          className="h-full w-full flex-1 bg-transparent px-3 focus-visible:outline-none disabled:cursor-not-allowed"
-          placeholder="Reply..."
-          onChange={(e) => {
-            e.target.value.length > 0 ? setTypeText(true) : setTypeText(false);
-            setTypeComments(e.target.value);
-          }}
-          value={typeComments}
-          // disabled
-        />
-        <button type="submit" className="h-full w-[40px] flex-none">
-          <Image
-            src={"/icons/bx-send.svg"}
-            height={24}
-            width={24}
-            alt="send"
-            className={
-              "mt-auto h-full" +
-              (typeText && isLogin
-                ? "cursor-pointer opacity-100"
-                : "cursor-not-allowed opacity-30")
-            }
+
+      {/* Comments: sized to content, scrolls when it runs out of room */}
+      <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">
+        <div className="custom-scrollbar flex min-h-12 flex-col gap-4 overflow-y-auto overflow-x-hidden">
+          {comments.length !== 0 ? (
+            comments.map((comment: TComments) => {
+              return (
+                <Reply
+                  key={comment._id}
+                  overflow={false}
+                  customId={comment.user.customId}
+                  avatar={comment.user.avatar}
+                  content={comment.content}
+                  createdAt={
+                    new Date(comment.createdAt || "")
+                      .toLocaleString("zh-TW")
+                      .split(" ")[0]
+                  }
+                />
+              );
+            })
+          ) : (
+            <p className="py-4 text-center text-ink-500 text-sm">No comments</p>
+          )}
+        </div>
+        <form
+          className="mt-4 flex h-10 w-full shrink-0 items-center rounded-control border border-line bg-field pl-1 focus-within:ring-2 focus-within:ring-brand-700/30"
+          onSubmit={handleCommandSubmit}
+        >
+          <input
+            className="h-full w-full flex-1 bg-transparent px-3 text-ink-800 text-sm placeholder:text-ink-400 focus-visible:outline-none disabled:cursor-not-allowed"
+            placeholder="Reply..."
+            onChange={(e) => {
+              e.target.value.length > 0
+                ? setTypeText(true)
+                : setTypeText(false);
+              setTypeComments(e.target.value);
+            }}
+            value={typeComments}
           />
-        </button>
-      </form>
+          <button
+            type="submit"
+            aria-label="送出留言"
+            className="flex h-full w-10 flex-none items-center justify-center"
+          >
+            <Image
+              src={"/icons/bx-send.svg"}
+              height={20}
+              width={20}
+              alt=""
+              className={
+                typeText && isLogin
+                  ? "cursor-pointer opacity-100"
+                  : "cursor-not-allowed opacity-30"
+              }
+            />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

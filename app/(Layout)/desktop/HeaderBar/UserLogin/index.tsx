@@ -7,43 +7,36 @@ export default function UserLogin() {
 
   if (isLoading) {
     return (
-      <div className="h-14 w-[15.75rem] cursor-pointer rounded-full bg-gradient-to-r from-[#6FA8FF] to-[#003F47] p-0.5">
-        <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-          <p className="font-medium text-[#004C64] text-[1.2rem]">
-            Loading ...
-          </p>
-        </div>
+      <div className="flex h-10 w-28 items-center justify-center rounded-control bg-field font-medium text-ink-500 text-sm">
+        Loading…
       </div>
     );
   }
   if (!isLogin) {
     return (
-      <div
-        className="h-14 w-[15.75rem] cursor-pointer rounded-full bg-gradient-to-r from-[#6FA8FF] to-[#003F47] p-0.5"
+      <button
+        type="button"
+        className="h-10 cursor-pointer rounded-control bg-brand-700 px-6 font-semibold text-sm text-white shadow-[0_6px_16px_-10px_rgba(11,90,131,0.9)] transition-colors hover:bg-brand-800"
         onClick={() => login()}
       >
-        <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-          <p className="font-medium text-[#004C64] text-[1.2rem]">Login</p>
-        </div>
-      </div>
+        Login
+      </button>
     );
   }
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center gap-2">
       {userData && userData.permission === 2 && (
-        <div
-          className="mr-2 h-14 w-[7.7rem] cursor-pointer rounded-full bg-gradient-to-r from-[#6FA8FF] to-[#003F47] p-[0.15rem]"
+        <button
+          type="button"
+          className="h-10 cursor-pointer rounded-control border border-line-strong bg-surface px-4 font-semibold text-brand-700 text-sm transition-colors hover:bg-field"
           onClick={() => window.open("/admin", "_self")}
         >
-          <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-            <p className="font-medium text-[#004C64] text-[1.25rem]">
-              管理平台
-            </p>
-          </div>
-        </div>
+          管理平台
+        </button>
       )}
-      <div
-        className="flex h-14 w-[15.75rem] cursor-pointer flex-row items-center rounded-full bg-white/80 p-1"
+      <button
+        type="button"
+        className="flex h-10 cursor-pointer items-center gap-2 rounded-control border border-line bg-surface py-1 pr-3.5 pl-1 text-left transition-colors hover:bg-field"
         onClick={() => confirmLogout(logout)}
       >
         <Image
@@ -51,20 +44,20 @@ export default function UserLogin() {
             userData?.avatar ||
             `${process.env.NEXT_PUBLIC_API_URL}/image/653299930b891d1f6b5b4458`
           }
-          width={50}
-          height={50}
-          alt="Avatar"
-          className="aspect-square h-full w-auto rounded-full"
+          width={32}
+          height={32}
+          alt=""
+          className="size-8 rounded-full object-cover"
         />
-        <div className="ml-[0.4rem] flex h-full flex-col items-start justify-evenly">
-          <p className="font-medium text-[1.2rem] leading-[1.2rem]">
+        <span className="flex flex-col">
+          <span className="font-semibold text-ink-900 text-sm leading-4">
             {userData?.name}
-          </p>
-          <p className="text-[#006180] text-[0.8rem] leading-[0.8rem]">
+          </span>
+          <span className="text-[11px] text-ink-500 leading-4">
             {userData?.email}
-          </p>
-        </div>
-      </div>
+          </span>
+        </span>
+      </button>
     </div>
   );
 }

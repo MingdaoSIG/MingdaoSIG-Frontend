@@ -1,23 +1,22 @@
 "use client";
 
-import { MdPreview } from "md-editor-rt";
-
-import type { TThread } from "@/interfaces/Thread";
-import style from "./Thread.module.scss";
-
-import "md-editor-rt/lib/preview.css";
-import "md-editor-rt/lib/style.css";
-import "@/app/mdEditorConfig";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { MarkdownView } from "@/components/Markdown/MarkdownView";
+import ReaderMode from "@/components/ReaderMode";
+import ReaderByline from "@/components/ReaderMode/Byline";
+import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
+import type { TThread } from "@/interfaces/Thread";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
 
   const [like, setLike] = useState<boolean>(false);
+  const rootRef = useRef<HTMLElement>(null);
+  useDuplicateTitle(rootRef, post.title);
 
   const route = useRouter();
 
@@ -119,56 +118,71 @@ const Thread = ({ post }: { post: TThread }) => {
     }
   }, [isLogin, post.like, userData?._id]);
 
+  const isOwner = isLogin && post.user === userData?._id;
+  const iconButton =
+    "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-control transition-colors hover:bg-field";
+
   if (post.sig === "652d60b842cdf6a660c2b778") {
     return (
-      <div className="max-h-[60dvh] py-[1rem]">
-        <div className={`${style.threadTitle} ${style.customTitle}`}>
-          <h1 className="my-auto">{post.title}</h1>
+      <article
+        ref={rootRef}
+        className="layout-doc mx-auto mt-6 flex w-[min(56rem,100%-4rem)] flex-col gap-4"
+      >
+        <div className="rounded-card border border-line bg-paper px-6 py-4 shadow-card">
+          <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
+            {post.title}
+          </h1>
         </div>
-        <MdPreview
-          language="en-US"
-          value={post.content}
-          className={`${style.threadContent} ${style.customThread}`}
-          previewTheme="github"
-        />
-      </div>
+        <div className="post-body">
+          <MarkdownView markdown={post.content} />
+        </div>
+      </article>
     );
   }
   return (
-    <div className={style.thread}>
-      <div className={`${style.threadTitle} relative flex`}>
-        <h1>{post.title}</h1>
-        {isLogin && post.user === userData?._id && (
-          <div
-            key="edit"
-            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+    <article ref={rootRef} className="flex flex-col gap-4">
+      <div
+        data-reader-title
+        className="flex items-center gap-2 rounded-card border border-line bg-paper py-4 pr-4 pl-6 shadow-card"
+      >
+        <h1 className="min-w-0 flex-1 font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
+          {post.title}
+        </h1>
+        <ReaderMode title={post.title} />
+        {isOwner && (
+          <button
+            type="button"
+            data-reader-hide
+            className={iconButton}
             onClick={onEdit}
+            aria-label="編輯貼文"
           >
-            <Image src="/icons/edit.svg" width={32} height={32} alt="delete" />
-          </div>
+            <Image src="/icons/edit.svg" width={26} height={26} alt="" />
+          </button>
         )}
-        {isLogin && post.user === userData?._id && (
-          <div
-            key="delete"
-            className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+        {isOwner && (
+          <button
+            type="button"
+            data-reader-hide
+            className={iconButton}
             onClick={onDelete}
+            aria-label="刪除貼文"
           >
-            <Image
-              src="/icons/delete.svg"
-              width={32}
-              height={32}
-              alt="delete"
-            />
-          </div>
+            <Image src="/icons/delete.svg" width={26} height={26} alt="" />
+          </button>
         )}
-        <div
-          className="top-0 right-[20px] bottom-0 my-auto flex max-h-[64px] cursor-pointer items-center justify-center"
+        <button
+          type="button"
+          data-reader-hide
+          className={iconButton}
           onClick={onLike}
+          aria-label={like ? "取消喜歡" : "喜歡"}
+          aria-pressed={like}
         >
           <svg
             aria-hidden="true"
-            width="32"
-            height="32"
+            width="26"
+            height="26"
             viewBox="0 0 32 32"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -178,14 +192,13 @@ const Thread = ({ post }: { post: TThread }) => {
               fill={like ? "#EE5757" : "#BDBDBD"}
             />
           </svg>
-        </div>
+        </button>
       </div>
-      <MdPreview
-        value={post.content}
-        className={style.threadContent}
-        previewTheme="github"
-      />
-    </div>
+      <ReaderByline post={post} />
+      <div className="post-body">
+        <MarkdownView markdown={post.content} />
+      </div>
+    </article>
   );
 };
 

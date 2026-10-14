@@ -1,7 +1,8 @@
 // Styles
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { DocCard, DocPage, docLink } from "@/components/desktop/DocPage";
 
 // data
 import data from "../config/data.json";
@@ -139,154 +140,113 @@ export default function Desktop() {
     return () => clearInterval(interval);
   }, [loading]);
 
+  const badges = [
+    {
+      label: "前端",
+      href: "https://sig.mingdao.edu.tw/ping",
+      src: "https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge",
+    },
+    {
+      label: "後端",
+      href: "https://sig-api.mingdao.edu.tw/ping",
+      src: "https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge",
+    },
+    {
+      label: "資料庫",
+      href: undefined,
+      src: "https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge",
+    },
+  ];
+
+  const versionPrefix = ping && Object.keys(ping).length !== 0 ? "v" : "";
+
   return (
-    <>
-      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-[1.2rem]">
-        <div className="flex h-full flex-col">
-          {/* Title Section */}
-          <div className="flex flex-shrink-0 items-center rounded-[1.2rem] bg-white/60 px-6 py-4 backdrop-blur">
-            <h1 className="scrollbar-hide overflow-x-auto whitespace-nowrap font-medium text-2xl text-[#003f47]">
-              MDSIG 平台資訊
-            </h1>
-          </div>
-
-          {/* Content Section */}
-          <div className="scrollbar-hide mt-4 flex-1 overflow-y-auto rounded-[1.2rem] bg-white/60 p-6 backdrop-blur">
-            <div className="space-y-1.5">
-              {/* Links from data */}
-              {data.map((item, index) => {
-                return (
-                  <Fragment key={item.name}>
-                    <h2
-                      className={`font-medium text-[#003f47] text-xl ${index === 0 ? "mb-1" : "mt-6 mb-1"}`}
-                    >
-                      {item.name}
-                    </h2>
-                    <div className="space-y-1">
-                      {item.children.map((child, _childIndex) => {
-                        return (
-                          <div key={child.name}>
-                            <Link
-                              href={child.url}
-                              target={
-                                child.url.includes("http") ? "_blank" : "_self"
-                              }
-                              className="text-base text-blue-500 transition-colors hover:text-blue-600"
-                            >
-                              {child.name}
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </Fragment>
-                );
-              })}
-
-              {/* Status Section */}
-              <div className="mt-6">
-                <h2 className="mb-3 font-medium text-[#003f47] text-xl">
-                  運行狀態
+    <DocPage title="MDSIG 平台資訊">
+      <div className="grid grid-cols-[minmax(0,1fr)_22.5rem] items-start gap-4">
+        <DocCard>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-7">
+            {data.map((item) => (
+              <div key={item.name}>
+                <h2 className="mb-2 font-bold text-base text-ink-900">
+                  {item.name}
                 </h2>
-
-                <div className="space-y-2 text-[#003f47] text-base">
-                  <p>
-                    前端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                    {ping?.frontend?.currentVersion}
-                  </p>
-                  <p>
-                    後端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
-                    {ping?.backend?.currentVersion}
-                  </p>
-                </div>
-
-                <div className="mt-4 space-y-2 text-[#003f47] text-base">
-                  <p>前端運行時間：{uptimeDisplay.frontend}</p>
-                  <p>後端運行時間：{uptimeDisplay.backend}</p>
-                </div>
-
-                <div className="mt-4 text-[#003f47] text-base">
-                  <p>
-                    訪問
-                    <Link
-                      href={"https://status.sig.school/"}
-                      target="_blank"
-                      className="mx-1 text-blue-500 transition-colors hover:text-blue-600"
-                    >
-                      狀態頁面
-                    </Link>
-                    獲取更多詳細信息
-                  </p>
-                </div>
+                <ul className="space-y-1.5">
+                  {item.children.map((child) => (
+                    <li key={child.name}>
+                      <Link
+                        href={child.url}
+                        target={child.url.includes("http") ? "_blank" : "_self"}
+                        className={docLink}
+                      >
+                        {child.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              {/* Status Badges */}
-              <div className="mt-6 space-y-4">
-                <div>
-                  <p className="mb-2 text-[#003f47] text-base">
-                    <Link
-                      href={"https://sig.mingdao.edu.tw/ping"}
-                      target="_blank"
-                      className="text-blue-500 transition-colors hover:text-blue-600"
-                    >
-                      前端
-                    </Link>
-                  </p>
-                  <Image
-                    src="https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge"
-                    alt="frontend-status"
-                    width={208}
-                    height={28}
-                    className="h-auto w-full max-w-[13rem]"
-                    unoptimized
-                  />
-                </div>
-
-                <div>
-                  <p className="mb-2 text-[#003f47] text-base">
-                    <Link
-                      href={"https://sig-api.mingdao.edu.tw/ping"}
-                      target="_blank"
-                      className="text-blue-500 transition-colors hover:text-blue-600"
-                    >
-                      後端
-                    </Link>
-                  </p>
-                  <Image
-                    src="https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge"
-                    alt="backend-status"
-                    width={208}
-                    height={28}
-                    className="h-auto w-full max-w-[13rem]"
-                    unoptimized
-                  />
-                </div>
-
-                <div>
-                  <p className="mb-2 text-[#003f47] text-base">資料庫</p>
-                  <Image
-                    src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge"
-                    alt="database-status"
-                    width={208}
-                    height={28}
-                    className="h-auto w-full max-w-[13rem]"
-                    unoptimized
-                  />
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
+        </DocCard>
+
+        <DocCard title="運行狀態">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+            <dt className="text-ink-500">前端版本</dt>
+            <dd className="text-ink-900">
+              {versionPrefix}
+              {ping?.frontend?.currentVersion}
+            </dd>
+            <dt className="text-ink-500">後端版本</dt>
+            <dd className="text-ink-900">
+              {versionPrefix}
+              {ping?.backend?.currentVersion}
+            </dd>
+            <dt className="text-ink-500">前端運行時間</dt>
+            <dd className="text-ink-900 tabular-nums">
+              {uptimeDisplay.frontend}
+            </dd>
+            <dt className="text-ink-500">後端運行時間</dt>
+            <dd className="text-ink-900 tabular-nums">
+              {uptimeDisplay.backend}
+            </dd>
+          </dl>
+
+          <div className="mt-5 space-y-3 border-line border-t pt-5">
+            {badges.map((badge) => (
+              <div key={badge.label}>
+                <p className="mb-1.5 text-ink-700 text-sm">
+                  {badge.href ? (
+                    <Link href={badge.href} target="_blank" className={docLink}>
+                      {badge.label}
+                    </Link>
+                  ) : (
+                    badge.label
+                  )}
+                </p>
+                <Image
+                  src={badge.src}
+                  alt={`${badge.label}-status`}
+                  width={208}
+                  height={28}
+                  className="h-auto w-full max-w-[13rem]"
+                  unoptimized
+                />
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-5 text-ink-700 text-sm">
+            訪問
+            <Link
+              href={"https://status.sig.school/"}
+              target="_blank"
+              className={`mx-1 ${docLink}`}
+            >
+              狀態頁面
+            </Link>
+            獲取更多詳細信息
+          </p>
+        </DocCard>
       </div>
-      <style jsx>{`
-      .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-      }
-      .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-    `}</style>
-    </>
+    </DocPage>
   );
 }

@@ -11,7 +11,9 @@ $badge-height: 1.3rem;
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: variables.$border-radius;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
@@ -55,8 +57,8 @@ $badge-height: 1.3rem;
   display: flex;
   gap: $badgeWrapper-padding;
 
-  background-color: rgb(200 240 255 / 55%);
-  border-radius: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-chip);
 }
 
 .badge {
@@ -73,12 +75,12 @@ $badge-height: 1.3rem;
   display: flex;
   flex-direction: column;
 
-  background-color: white;
+  background-color: var(--color-surface);
 }
 
 .content {
-  background-color: rgb(200 240 255 / 55%);
-  border-radius: calc(variables.$border-radius - 0.6rem);
+  background-color: var(--color-field);
+  border-radius: var(--radius-control);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -87,7 +89,7 @@ $badge-height: 1.3rem;
 
 .contentHR {
   height: 1px;
-  background-color: rgba(0,0,0,0.6);
+  background-color: var(--color-line-strong);
   border: none;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -101,11 +103,12 @@ $badge-height: 1.3rem;
 .name {
   width: auto;
   font-weight: bold;
+  color: var(--color-ink-900);
   font-size: 1.5rem;
   line-height: 1.5rem;
 
   >p {
-    color: #006180;
+    color: var(--color-brand-800);
     font-size: 0.9rem;
     font-weight: 400;
   }
@@ -124,11 +127,17 @@ $badge-height: 1.3rem;
   flex: initial;
   align-items: center;
   justify-content: end;
-  background-color: #5fcdf5;
+  background-color: var(--color-brand-700);
   color: white;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  border-radius: 0.5rem;
+  font-weight: 600;
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+  border-radius: var(--radius-control);
+  transition: background-color 150ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-brand-800);
+  }
 
   &:disabled {
     opacity: 60%;
@@ -144,7 +153,7 @@ $badge-height: 1.3rem;
 }
 
 .descriptionTitle {
-  color: black;
+  color: var(--color-ink-500);
   font-weight: bolder;
   letter-spacing: 0;
   font-size: small;
@@ -161,8 +170,9 @@ $badge-height: 1.3rem;
 
 .description {
   height: 100%;
-  color: rgba(0,0,0,0.75);
-  font-size: medium;
+  color: var(--color-ink-700);
+  font-size: 0.95rem;
+  line-height: 1.75;
   overflow-y: auto;
   padding-right: 0.25rem;
   cursor: auto;
@@ -170,7 +180,7 @@ $badge-height: 1.3rem;
   border-radius: 0.3rem;
 
   button {
-    color: #0070f3;
+    color: var(--color-brand-700);
     text-decoration: none;
     overflow-x: hidden;
   }

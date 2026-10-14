@@ -6,18 +6,24 @@ import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
   return (
-    <nav className="mx-auto flex h-[3.7rem] w-[85vw] cursor-default select-none flex-row items-center justify-between">
-      <Link href={"/"} className="my-auto cursor-pointer">
-        <Image
-          src="/images/logo.svg"
-          alt="Logo"
-          width={214}
-          height={46}
-          priority
-        />
-      </Link>
-      <UserLogin />
-    </nav>
+    <header
+      data-shell="header"
+      className="glass-bar sticky top-0 z-40 h-16 w-full cursor-default select-none border-line border-b"
+    >
+      <nav className="mx-auto flex h-full w-[min(80rem,100%-4rem)] items-center justify-between">
+        <Link href={"/"} className="cursor-pointer" aria-label="MDSIG 首頁">
+          <Image
+            src="/images/logo.svg"
+            alt="MDSIG"
+            width={149}
+            height={32}
+            className="h-8 w-auto"
+            priority
+          />
+        </Link>
+        <UserLogin />
+      </nav>
+    </header>
   );
 };
 

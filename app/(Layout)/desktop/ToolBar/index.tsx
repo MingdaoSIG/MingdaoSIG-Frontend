@@ -51,24 +51,28 @@ const ToolBar = () => {
     if (selected === -1) {
       return "0rem";
     }
-    // 23.5rem / 4 = 5.875rem per item
-    return `${selected * 5.875}rem`;
+    // 18.8rem / 4 = 4.7rem per item
+    return `${selected * 4.7}rem`;
   };
 
   return (
-    <div className="mx-auto flex h-20 w-[25rem] select-none items-center justify-center rounded-full border border-white/60 bg-white/50">
-      <div className="relative flex h-14 w-[23.5rem]">
+    <nav
+      data-shell="dock"
+      aria-label="主要導覽"
+      className="glass fixed bottom-5 left-1/2 z-40 flex h-16 w-80 -translate-x-1/2 select-none items-center justify-center rounded-[18px] bg-white/72"
+    >
+      <div className="relative flex h-12 w-[18.8rem]">
         {menu.map((item, index) => {
           return (
             <div
               key={item.name}
-              className="relative z-10 flex flex-1 items-center justify-center rounded-full"
+              className="relative z-10 flex flex-1 items-center justify-center rounded-xl"
             >
               <div
                 style={{
                   cursor: item.clickable ? "pointer" : "not-allowed",
                 }}
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0 rounded-xl"
               />
               <Link
                 href={item.route}
@@ -76,10 +80,11 @@ const ToolBar = () => {
                   opacity: item.clickable ? 1 : 0.5,
                   pointerEvents: item.clickable ? "auto" : "none",
                 }}
-                className="relative flex cursor-pointer items-center justify-center rounded-full transition-opacity duration-500"
+                className="relative flex cursor-pointer items-center justify-center rounded-xl transition-opacity duration-500"
                 onClick={() => setSelected(index)}
+                aria-label={item.name}
               >
-                <Image src={item.icon} height={32} width={32} alt={item.name} />
+                <Image src={item.icon} height={26} width={26} alt="" />
               </Link>
             </div>
           );
@@ -89,10 +94,10 @@ const ToolBar = () => {
             display: selected === -1 ? "none" : "block",
             left: getSelectedPosition(),
           }}
-          className="absolute h-full w-[5.875rem] rounded-full bg-slate-400/30 transition-all duration-300 ease-in-out"
+          className="absolute h-full w-[4.7rem] rounded-xl bg-brand-700/12 transition-all duration-300 ease-in-out"
         />
       </div>
-    </div>
+    </nav>
   );
 };
 

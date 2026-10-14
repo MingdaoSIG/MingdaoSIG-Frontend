@@ -18,6 +18,41 @@
   --color-scrollbar-thumb: #004c64;
   --color-scrollbar-track: rgba(0, 76, 100, 0.29);
 
+  /* ------------------------------------------------------------ */
+  /* Redesign 2026 tokens — see docs/redesign/redesign-2026.md    */
+  /* ------------------------------------------------------------ */
+  --color-canvas: #e9eef3;
+  --color-surface: #ffffff;
+  --color-paper: #fcfcfb;
+  --color-field: #f2f5f7;
+
+  --color-ink-900: #111d29;
+  --color-ink-800: #1d2a37;
+  --color-ink-700: #2f3d4b;
+  --color-ink-500: #586676;
+  --color-ink-400: #7a8694;
+  --color-line: rgba(17, 29, 41, 0.1);
+  --color-line-strong: rgba(17, 29, 41, 0.16);
+
+  --color-brand: #009cdb; /* logo only */
+  --color-brand-700: #0b5a83;
+  --color-brand-800: #094a6c;
+  --color-brand-50: #e5edf3;
+  --color-warm-600: #b9620f;
+  --color-danger-700: #b42318;
+
+  --radius-card: 10px;
+  --radius-control: 8px;
+  --radius-chip: 6px;
+
+  --shadow-card:
+    0 1px 2px rgba(17, 29, 41, 0.05), 0 8px 24px -16px rgba(17, 29, 41, 0.22);
+  --shadow-card-hover:
+    0 1px 2px rgba(17, 29, 41, 0.06), 0 14px 32px -16px rgba(17, 29, 41, 0.32);
+  --shadow-glass:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(17, 29, 41, 0.06),
+    0 12px 32px -18px rgba(17, 29, 41, 0.3);
+
   /* 自定義背景圖像 */
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
   --background-image-gradient-conic: conic-gradient(
@@ -28,6 +63,13 @@
 
 * {
   outline: none;
+}
+
+/* Desktop: keep a visible ring for keyboard users on interactive
+   elements (inputs keep their own focus styles). */
+.wrap :is(a, button, [role="button"], summary):focus-visible {
+  outline: 2px solid var(--color-brand-700);
+  outline-offset: 2px;
 }
 
 body {
@@ -47,23 +89,43 @@ a,
   touch-action: manipulation;
 }
 
+/*
+ * Desktop shell.
+ * - "app" mode (default): fixed-height grid, used by pages that manage
+ *   their own internal scrolling (editor, dashboard, info, admin…).
+ * - "document" mode: pages built on <SplitBlock> or marked .layout-doc
+ *   scroll with the page itself.
+ * The dock is position:fixed, so the last grid row is only a spacer.
+ */
 .wrap {
+  --dock-space: 7rem;
+
   position: absolute;
   top: 0;
   width: 100dvw;
   height: 100dvh;
-  background: linear-gradient(
-    127deg,
-    rgba(255, 217, 103, 1) 0%,
-    rgb(205, 205, 205) 25%,
-    rgba(116, 197, 233, 1) 50%,
-    rgba(13, 154, 217, 1) 75%,
-    rgba(81, 147, 224, 1) 100%
-  );
   display: grid;
-  grid-template-rows: minmax(4rem, auto) 1fr minmax(6rem, auto);
-  padding: 1.5rem 0;
-  gap: 2rem;
+  grid-template-rows: auto 1fr minmax(5.5rem, auto);
+  gap: 1.5rem;
+  color: var(--color-ink-800);
+  /* Flat cool neutral + very fine grain. No gradient. */
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.15 0 0 0 0 0.22 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    var(--color-canvas);
+}
+
+body:has(.wrap :is(.layout-split, .layout-doc)) {
+  max-height: none;
+  overflow-y: auto;
+}
+
+.wrap:has(:is(.layout-split, .layout-doc)) {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 100dvh;
+  padding-bottom: var(--dock-space);
 }
 
 .wrapMobile {
@@ -197,19 +259,6 @@ a,
     overflow: hidden;
   }
 
-  /* Custom backdrop blur */
-  .backdrop-blur-custom {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  /* Panel background */
-  .panel-bg {
-    background-color: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
   /* Safe-area utilities (iOS notch / home indicator) */
   .pt-safe {
     padding-top: env(safe-area-inset-top);
@@ -244,4 +293,30 @@ a,
 .mobile-post-body .md-editor-preview code {
   /* Keep code blocks visually distinct on the translucent background */
   background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/*
+ * Glass (redesign 2026). Write only the standard `backdrop-filter`:
+ * Lightning CSS drops the unprefixed declaration when both forms are
+ * hand-written with var() values, which disables blur in Chromium.
+ * It adds the -webkit- prefix itself.
+ */
+@utility glass {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(24px) saturate(180%);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: rgba(255, 255, 255, 0.94);
+  }
+}
+
+@utility glass-bar {
+  background: rgba(246, 249, 251, 0.8);
+  backdrop-filter: blur(24px) saturate(180%);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: rgba(246, 249, 251, 0.97);
+  }
 }

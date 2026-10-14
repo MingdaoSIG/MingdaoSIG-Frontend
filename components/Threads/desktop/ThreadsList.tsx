@@ -3,9 +3,10 @@ import type {
   InfiniteData,
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
+import { Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
@@ -18,9 +19,6 @@ import {
 } from "../configs/announcement";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
-import skeleton from "./Skeleton.module.scss";
-// Styles
-import style from "./ThreadsList.module.scss";
 
 function fixCoverUrl(cover: string) {
   if (cover.startsWith("http://") || cover.startsWith("https://")) {
@@ -38,74 +36,74 @@ function fixCoverUrl(cover: string) {
   return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
 }
 
-const Thread = ({ threadData }: { threadData: TThread }) => {
-  const user = threadData.user as User;
+const Thread = ({
+  threadData,
+  eager = false,
+}: {
+  threadData: TThread;
+  eager?: boolean;
+}) => {
+  const user = threadData.user as unknown as User;
   const sig = threadData.sig as unknown as Sig;
   const isAnnouncement = sig._id === announcementSigId;
+  const showMeta = Boolean(user) && !isAnnouncement;
+  const showCover = !isAnnouncement && Boolean(threadData.cover);
 
   return (
     <Link
       href={`/post/${threadData._id}`}
-      className={`${style.thread} cursor-pointer select-none`}
-      style={{
-        backgroundColor: isAnnouncement ? "white" : "",
-      }}
+      className={`flex h-48 cursor-pointer select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow duration-200 hover:shadow-card-hover ${
+        isAnnouncement ? "shadow-[inset_3px_0_0_var(--color-warm-600)]" : ""
+      }`}
     >
-      <div className={style.preview}>
-        <div
-          className={style.info}
-          style={{
-            display: !user || isAnnouncement ? "none" : "flex",
-          }}
-        >
-          <div className={style.user_sig}>
-            <p className={style.user}>{user?.name}</p>
-            <span>•</span>
-            <p style={{ color: sigDefaultColors[sig._id ?? ""] }}>{sig.name}</p>
-          </div>
-          <div className={style.statist}>
-            <p className={style.date}>
-              {
-                new Date(threadData.createdAt ?? "")
-                  .toLocaleString("zh-TW")
-                  .split(" ")[0]
-              }
+      <div className="flex min-w-0 flex-1 flex-col px-6 py-5">
+        {showMeta && (
+          <div className="flex items-center justify-between gap-4 text-[13px] text-ink-500">
+            <p className="flex min-w-0 items-center gap-1.5">
+              <span className="truncate">{user?.name}</span>
+              <span aria-hidden>•</span>
+              <span
+                className="sig-text shrink-0 font-semibold"
+                style={{
+                  ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""],
+                }}
+              >
+                {sig.name}
+              </span>
             </p>
-            <div className={style.likes}>
-              <Image
-                src="/icons/likes.svg"
-                alt="likes"
-                width={16}
-                height={16}
-                className="my-auto"
-              />
-              <p>{threadData.likes}</p>
-            </div>
-            <div className={style.comments}>
-              <Image
-                src="/icons/comments.svg"
-                alt="comments"
-                width={16}
-                height={16}
-                className="my-auto"
-              />
-              <p>{threadData.comments}</p>
+            <div className="flex shrink-0 items-center gap-3">
+              <span>
+                {
+                  new Date(threadData.createdAt ?? "")
+                    .toLocaleString("zh-TW")
+                    .split(" ")[0]
+                }
+              </span>
+              <span className="flex items-center gap-1">
+                <Heart size={14} aria-label="likes" />
+                {threadData.likes}
+              </span>
+              <span className="flex items-center gap-1">
+                <MessageCircle size={14} aria-label="comments" />
+                {threadData.comments}
+              </span>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className={style.title_bar}>
-          <h1 className={style.previewTitle}>
-            {isAnnouncement && "🔔 公告 - "}
-            {threadData.title}
-          </h1>
-        </div>
+        <h2 className="mt-1.5 flex min-w-0 items-center gap-2 font-semibold text-ink-900 text-lg leading-7 tracking-[0.01em]">
+          {isAnnouncement && (
+            <span className="shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
+              公告
+            </span>
+          )}
+          <span className="truncate">{threadData.title}</span>
+        </h2>
 
         <p
-          className={style.previewContent}
-          style={{
-            WebkitLineClamp: isAnnouncement ? "4" : "2",
-          }}
+          className={`mt-1 text-[0.9375rem] text-ink-700 leading-[1.7] tracking-[0.01em] ${
+            isAnnouncement ? "line-clamp-4" : "line-clamp-2"
+          }`}
         >
           {markdownToPlainText(threadData.content)}
         </p>
@@ -113,9 +111,12 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
         {threadData.hashtag &&
           threadData.hashtag.length > 0 &&
           !isAnnouncement && (
-            <div className={style.hashtags}>
-              {threadData.hashtag.slice(0, 3).map((tag, _index) => (
-                <span key={tag} className={style.hashtag}>
+            <div className="mt-auto flex flex-wrap gap-2 pt-2">
+              {threadData.hashtag.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
+                >
                   #{tag}
                 </span>
               ))}
@@ -123,58 +124,49 @@ const Thread = ({ threadData }: { threadData: TThread }) => {
           )}
       </div>
 
-      <div
-        className={style.cover}
-        style={{
-          display: isAnnouncement ? "none" : "",
-        }}
-      >
-        {threadData.cover && (
-          <Image
-            src={fixCoverUrl(threadData.cover)}
-            alt="cover image"
-            style={{ objectFit: "cover" }}
-            priority
-            sizes="100%"
-            fill
-          />
-        )}
-      </div>
+      {!isAnnouncement && (
+        <div className="relative hidden w-1/4 shrink-0 bg-field md:block">
+          {showCover && (
+            <Image
+              src={fixCoverUrl(threadData.cover)}
+              alt=""
+              className="object-cover"
+              priority={eager}
+              sizes="(min-width: 1024px) 20vw, 0px"
+              fill
+            />
+          )}
+        </div>
+      )}
     </Link>
   );
 };
 
 const ThreadSkeleton = () => {
   return (
-    <div className={skeleton.thread}>
-      <div className={skeleton.preview}>
-        <div className={skeleton.info}>
-          <p className={skeleton.user}></p>
-          <span>•</span>
-          <p className={skeleton.sig}></p>
-        </div>
-        <div className={skeleton.title}></div>
-        <p className={skeleton.content}></p>
-        <div className={skeleton.hashtags}>
-          <div className={skeleton.hashtag}></div>
-          <div className={skeleton.hashtag}></div>
-          <div className={skeleton.hashtag}></div>
+    <div className="flex h-48 overflow-hidden rounded-card border border-line bg-surface shadow-card">
+      <div className="flex flex-1 animate-pulse flex-col gap-3 px-6 py-5">
+        <div className="h-3.5 w-40 rounded-chip bg-field" />
+        <div className="h-6 w-1/2 rounded-chip bg-field" />
+        <div className="h-12 w-full rounded-chip bg-field" />
+        <div className="mt-auto flex gap-2">
+          <div className="h-6 w-14 rounded-chip bg-field" />
+          <div className="h-6 w-14 rounded-chip bg-field" />
+          <div className="h-6 w-14 rounded-chip bg-field" />
         </div>
       </div>
-      <div className={skeleton.cover}></div>
+      <div className="w-1/4 animate-pulse bg-field" />
     </div>
   );
 };
 
 export const InfinityThreadsList = ({
   data,
-  height,
   fetchNextPage,
   isFetchingNextPage,
   announcementData,
 }: {
   data: InfiniteData<TThread[], unknown> | undefined;
-  height?: string;
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
   ) => Promise<
@@ -183,77 +175,75 @@ export const InfinityThreadsList = ({
   isFetchingNextPage: boolean;
   announcementData?: InfiniteData<TThread[], unknown>;
 }) => {
-  const postList = useRef(null);
+  const sentinel = useRef<HTMLDivElement>(null);
 
-  const onScroll = useCallback(() => {
-    if (postList.current) {
-      const { scrollTop, scrollHeight, clientHeight } = postList.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
-
-      if (isNearBottom && !isFetchingNextPage) {
-        fetchNextPage();
-      }
+  // Load the next page when the end of the list comes within 600px of the
+  // viewport. Viewport-based, so it works with document scrolling.
+  useEffect(() => {
+    const target = sentinel.current;
+    if (!target) {
+      return;
     }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "0px 0px 600px 0px" },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
   }, [fetchNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    const listInnerElement = postList.current as HTMLElement | null;
+  if (!data || data.pages[0].length < 1) {
+    return (
+      <div className="flex h-64 items-center justify-center text-ink-500 text-lg">
+        No Post Yet
+      </div>
+    );
+  }
 
-    if (listInnerElement) {
-      listInnerElement.addEventListener("scroll", onScroll);
+  const announcement = announcementData?.pages[0]?.[0];
+  const showAnnouncement =
+    announcement &&
+    Math.floor(
+      (Date.now() - new Date(announcement.createdAt ?? "").getTime()) /
+        (1000 * 60 * 60 * 24),
+    ) < announcementStayTime;
 
-      return () => {
-        listInnerElement.removeEventListener("scroll", onScroll);
-      };
-    }
-  }, [onScroll]);
-  return data && data.pages[0].length >= 1 ? (
-    <div className={style.threads} style={{ height }} ref={postList}>
-      {announcementData &&
-        announcementData.pages[0].length >= 1 &&
-        announcementData.pages.map((page: TThread[], _index: number) => {
-          const currentDate = Date.now();
-          const postDate = new Date(page[0].createdAt ?? "").getTime();
-          const diffDays = Math.floor(
-            (currentDate - postDate) / (1000 * 60 * 60 * 24),
-          );
-
-          if (diffDays < announcementStayTime) {
-            return <Thread threadData={page[0]} key={page[0]._id} />;
-          }
-          return null;
-        })}
+  return (
+    <div className="flex flex-col gap-4">
+      {showAnnouncement && (
+        <Thread threadData={announcement} key={announcement._id} />
+      )}
       {data.pages.map((page: TThread[], pageIndex: number) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
         <Fragment key={`page-${pageIndex}`}>
-          {page.map((item) => {
+          {page.map((item, itemIndex) => {
             const sig = item.sig as unknown as Sig;
-            const isAnnouncement = sig._id === announcementSigId;
-            if (!isAnnouncement) {
-              return <Thread threadData={item} key={item._id} />;
+            if (sig._id === announcementSigId) {
+              return null;
             }
-            return null;
+            return (
+              <Thread
+                threadData={item}
+                key={item._id}
+                eager={pageIndex === 0 && itemIndex < 2}
+              />
+            );
           })}
         </Fragment>
       ))}
       {isFetchingNextPage && <ThreadSkeleton />}
-    </div>
-  ) : (
-    <div className={style.noPost}>
-      <h1>No Post Yet</h1>
+      <div ref={sentinel} aria-hidden className="h-px w-full" />
     </div>
   );
 };
 
-export const ThreadsListSkeleton = ({
-  repeat,
-  height,
-}: {
-  repeat: number;
-  height?: string;
-}) => {
+export const ThreadsListSkeleton = ({ repeat }: { repeat: number }) => {
   return (
-    <div className={style.threads} style={{ height }}>
+    <div className="flex flex-col gap-4">
       {[...Array(repeat)].map((_, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no unique identifier
         <ThreadSkeleton key={`skeleton-${index}`} />
