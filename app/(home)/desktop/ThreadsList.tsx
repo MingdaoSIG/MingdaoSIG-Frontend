@@ -20,13 +20,12 @@ const ThreadsList = () => {
   });
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden">
+    <div className="w-full">
       {isLoading ? (
-        <ThreadsListSkeleton repeat={10} height="auto" />
+        <ThreadsListSkeleton repeat={10} />
       ) : (
         <InfinityThreadsList
           data={data}
-          height="70dvh"
           fetchNextPage={fetchNextPage}
           isFetchingNextPage={isFetchingNextPage}
           announcementData={announcementData}

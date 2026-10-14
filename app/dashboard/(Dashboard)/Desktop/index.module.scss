@@ -23,8 +23,10 @@
 .itemWrapper {
   width: 12rem;
   height: 6rem;
-  background-color: variables.$panel-background-color;
-  border-radius: variables.$border-radius;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
 }
@@ -35,13 +37,13 @@
   h1 {
     font-size: 1rem;
     font-weight: bold;
-    color: variables.$dark-text;
+    color: var(--color-ink-900);
   }
 
   p {
     font-size: 1.5rem;
     font-weight: 600;
-    color: variables.$gray-text;
+    color: var(--color-ink-700);
   }
 }
 
@@ -49,8 +51,10 @@
   height: calc(70dvh - 7.2rem);
   width: 90dvw;
   max-width: 60rem;
-  background-color: variables.$panel-background-color;
-  border-radius: variables.$border-radius;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
   padding: 0.5rem;
   margin-top: 1.2rem;
   overflow-y: auto;

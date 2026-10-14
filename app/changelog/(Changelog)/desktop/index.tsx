@@ -39,9 +39,9 @@ export default function Desktop() {
 
   return (
     <>
-      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-[1.2rem]">
+      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-card">
         <div className="flex h-full flex-col overflow-hidden">
-          <div className="flex-1 overflow-hidden rounded-[1.2rem] bg-white p-6 pr-3">
+          <div className="flex-1 overflow-hidden rounded-card border border-line bg-surface p-6 pr-3 shadow-card">
             <div className="h-full flex-1 space-y-6 overflow-y-auto pr-3">
               {typedChangelog.map((entry, index) => (
                 <Fragment key={entry.version}>
@@ -52,10 +52,10 @@ export default function Desktop() {
                         backgroundColor: versionBgColors[entry.type],
                       }}
                     >
-                      <span className="font-bold text-[#003f47] text-xl">
+                      <span className="font-bold text-ink-900 text-xl">
                         v{entry.version}
                       </span>
-                      <span className="text-[#003f47]/70 text-sm">
+                      <span className="text-ink-900/70 text-sm">
                         {formatDate(entry.date)}
                       </span>
                       <span
@@ -70,10 +70,10 @@ export default function Desktop() {
                     </div>
 
                     {/* Title & Summary */}
-                    <h2 className="mb-1 font-medium text-[#003f47] text-lg">
+                    <h2 className="mb-1 font-medium text-ink-900 text-lg">
                       {entry.title}
                     </h2>
-                    <p className="mb-3 text-[#003f47]/70 text-sm">
+                    <p className="mb-3 text-ink-900/70 text-sm">
                       {entry.summary}
                     </p>
 
@@ -82,7 +82,7 @@ export default function Desktop() {
                       {entry.changes.map((change) => (
                         <li
                           key={change.description}
-                          className="flex items-start gap-2 text-[#003f47] text-sm"
+                          className="flex items-start gap-2 text-ink-900 text-sm"
                         >
                           <span
                             className="mt-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"

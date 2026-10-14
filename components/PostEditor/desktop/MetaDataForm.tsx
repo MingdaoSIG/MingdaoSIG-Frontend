@@ -149,7 +149,7 @@ export default function MetaDataForm({
   return (
     <div className="flex h-full flex-col gap-1">
       {/* 白色卡片 - 只有 Cover 和 Hashtag */}
-      <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto rounded-2xl bg-white p-4">
+      <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto rounded-card border border-line bg-surface p-5 shadow-card">
         {/* Cover Section */}
         <div className="mb-6">
           <span className="mb-2 block font-semibold text-gray-700 text-lg">
@@ -254,7 +254,7 @@ export default function MetaDataForm({
             />
             <button
               onClick={handleAddTag}
-              className="cursor-pointer whitespace-nowrap rounded-lg bg-[#5FCDF5] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[#4ab8e0]"
+              className="cursor-pointer whitespace-nowrap rounded-control bg-brand-700 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-brand-800"
               type="button"
             >
               ADD

@@ -96,7 +96,7 @@ export default function UserPage({
   ) : (
     <SplitBlock>
       {isLoading ? (
-        <ThreadsListSkeleton repeat={6} height="auto" />
+        <ThreadsListSkeleton repeat={6} />
       ) : dataType === "user" ? (
         <UserInfinityThreadList id={data?._id ?? ""} />
       ) : (
@@ -120,11 +120,10 @@ function UserInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={6} height="auto" />
+    <ThreadsListSkeleton repeat={6} />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="70dvh"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />
@@ -139,11 +138,10 @@ function SIGInfinityThreadList({ id }: { id: string }) {
   );
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={6} height="auto" />
+    <ThreadsListSkeleton repeat={6} />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="70dvh"
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
     />

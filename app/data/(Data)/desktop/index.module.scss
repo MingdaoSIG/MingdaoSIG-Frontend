@@ -6,8 +6,10 @@
 }
 
 .title {
-  background: variables.$panel-background-color;
-  border-radius: variables.$border-radius;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
   height: 3.8rem;
 
   padding-left: 1rem;
@@ -24,7 +26,7 @@
 
   h1 {
     width: 100%;
-    color: #003f47;
+    color: var(--color-ink-900);
     font-size: 2.1rem;
     font-style: normal;
     font-weight: 500;
@@ -41,8 +43,10 @@
 }
 
 .content {
-  background: variables.$panel-background-color;
-  border-radius: variables.$border-radius;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
 
   margin-top: 1.2em;
   margin-left: auto;
@@ -58,7 +62,7 @@
   width: 95dvw;
 
   &>div {
-    color: #003f47;
+    color: var(--color-ink-900);
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
@@ -72,7 +76,7 @@
 
     h1 {
       width: 100%;
-      color: #003f47;
+      color: var(--color-ink-900);
       font-size: 1.25rem;
       font-style: normal;
       font-weight: 500;
@@ -92,7 +96,7 @@
     }
 
     a {
-      color: #0070f3;
+      color: var(--color-brand-700);
       margin-top: 1rem;
       font-size: 1rem;
     }

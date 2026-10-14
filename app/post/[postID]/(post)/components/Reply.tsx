@@ -3,9 +3,6 @@ import { useRouter } from "next/navigation";
 import Linkify from "@/components/Linkify/Linkify";
 import { jumpOut } from "@/utils/jumpOut";
 
-// Styles
-import styles from "./Reply.module.scss";
-
 export default function Reply({
   customId,
   avatar,
@@ -23,50 +20,46 @@ export default function Reply({
 }) {
   const route = useRouter();
 
-  const JumpOut = jumpOut;
-
   return (
-    <div className={styles.reply}>
+    <div className="flex w-full cursor-default items-start gap-2.5 text-left">
       <Image
         src={avatar}
-        width={45}
-        height={45}
-        alt="Avatar"
-        className="rounded-full"
-      ></Image>
-      <div className={styles.content}>
-        <div className="info flex items-center gap-2">
-          <div
-            className={`font-semibold text-[12px] ${!first && styles.name}`}
+        width={36}
+        height={36}
+        alt=""
+        className="size-9 shrink-0 rounded-full object-cover"
+      />
+      <div className="flex min-w-0 flex-col">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className={`font-semibold text-[0.85rem] text-ink-900 ${
+              first ? "cursor-default" : "cursor-pointer hover:underline"
+            }`}
             onClick={() => {
               if (!first) {
                 route.push(`/@${customId}`);
               }
             }}
-            id="customId"
           >
             @{customId}
-          </div>
-          <div className="time font-extralight text-[#979797] text-[10px]">
-            {createdAt}
-          </div>
+          </button>
+          <span className="text-ink-500 text-xs">{createdAt}</span>
         </div>
         <p
-          className={
-            "break-words font-extralight text-[12px] text-md-dark-green" +
-            (overflow ? "w-[65dvw] truncate" : " ") +
-            styles.content
-          }
+          className={`mt-0.5 break-words text-[0.9rem] text-ink-700 leading-[1.65] ${
+            overflow ? "w-[65dvw] truncate" : ""
+          }`}
         >
           <Linkify
             componentDecorator={(decoratedHref, decoratedText, key) => (
               <button
                 type="button"
-                className={"break-words"}
+                className="break-all text-left text-brand-700 hover:underline"
                 key={key}
                 onClick={() => {
                   if (!first) {
-                    JumpOut(decoratedHref);
+                    jumpOut(decoratedHref);
                   }
                 }}
               >

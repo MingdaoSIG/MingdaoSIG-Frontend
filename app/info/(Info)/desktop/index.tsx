@@ -141,24 +141,24 @@ export default function Desktop() {
 
   return (
     <>
-      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-[1.2rem]">
+      <div className="mx-auto h-full w-[90vw] overflow-hidden rounded-card">
         <div className="flex h-full flex-col">
           {/* Title Section */}
-          <div className="flex flex-shrink-0 items-center rounded-[1.2rem] bg-white/60 px-6 py-4 backdrop-blur">
-            <h1 className="scrollbar-hide overflow-x-auto whitespace-nowrap font-medium text-2xl text-[#003f47]">
+          <div className="flex flex-shrink-0 items-center rounded-card border border-line bg-surface px-6 py-4 shadow-card">
+            <h1 className="scrollbar-hide overflow-x-auto whitespace-nowrap font-medium text-2xl text-ink-900">
               MDSIG 平台資訊
             </h1>
           </div>
 
           {/* Content Section */}
-          <div className="scrollbar-hide mt-4 flex-1 overflow-y-auto rounded-[1.2rem] bg-white/60 p-6 backdrop-blur">
+          <div className="scrollbar-hide mt-4 flex-1 overflow-y-auto rounded-card border border-line bg-surface p-6 shadow-card">
             <div className="space-y-1.5">
               {/* Links from data */}
               {data.map((item, index) => {
                 return (
                   <Fragment key={item.name}>
                     <h2
-                      className={`font-medium text-[#003f47] text-xl ${index === 0 ? "mb-1" : "mt-6 mb-1"}`}
+                      className={`font-medium text-ink-900 text-xl ${index === 0 ? "mb-1" : "mt-6 mb-1"}`}
                     >
                       {item.name}
                     </h2>
@@ -185,11 +185,11 @@ export default function Desktop() {
 
               {/* Status Section */}
               <div className="mt-6">
-                <h2 className="mb-3 font-medium text-[#003f47] text-xl">
+                <h2 className="mb-3 font-medium text-ink-900 text-xl">
                   運行狀態
                 </h2>
 
-                <div className="space-y-2 text-[#003f47] text-base">
+                <div className="space-y-2 text-base text-ink-900">
                   <p>
                     前端版本號：{ping && Object.keys(ping).length !== 0 && "v"}
                     {ping?.frontend?.currentVersion}
@@ -200,12 +200,12 @@ export default function Desktop() {
                   </p>
                 </div>
 
-                <div className="mt-4 space-y-2 text-[#003f47] text-base">
+                <div className="mt-4 space-y-2 text-base text-ink-900">
                   <p>前端運行時間：{uptimeDisplay.frontend}</p>
                   <p>後端運行時間：{uptimeDisplay.backend}</p>
                 </div>
 
-                <div className="mt-4 text-[#003f47] text-base">
+                <div className="mt-4 text-base text-ink-900">
                   <p>
                     訪問
                     <Link
@@ -223,7 +223,7 @@ export default function Desktop() {
               {/* Status Badges */}
               <div className="mt-6 space-y-4">
                 <div>
-                  <p className="mb-2 text-[#003f47] text-base">
+                  <p className="mb-2 text-base text-ink-900">
                     <Link
                       href={"https://sig.mingdao.edu.tw/ping"}
                       target="_blank"
@@ -243,7 +243,7 @@ export default function Desktop() {
                 </div>
 
                 <div>
-                  <p className="mb-2 text-[#003f47] text-base">
+                  <p className="mb-2 text-base text-ink-900">
                     <Link
                       href={"https://sig-api.mingdao.edu.tw/ping"}
                       target="_blank"
@@ -263,7 +263,7 @@ export default function Desktop() {
                 </div>
 
                 <div>
-                  <p className="mb-2 text-[#003f47] text-base">資料庫</p>
+                  <p className="mb-2 text-base text-ink-900">資料庫</p>
                   <Image
                     src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge"
                     alt="database-status"

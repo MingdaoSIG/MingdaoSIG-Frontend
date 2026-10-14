@@ -43,20 +43,20 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
   }, []);
 
   return (
-    <div className="mb-2 flex h-10 w-full items-center rounded-full">
+    <div className="mb-3 flex h-11 w-full items-center overflow-hidden rounded-control border border-line bg-surface shadow-card">
       <input
         type="text"
         name="title"
-        className="h-full flex-1 rounded-l-full border-gray-300 border-r bg-white pr-3 pl-5"
+        className="h-full flex-1 border-line border-r bg-surface pr-3 pl-4 text-ink-900 placeholder:text-ink-400 focus:outline-none"
         value={data?.title}
         placeholder="請輸入標題..."
         onChange={(e) => handleFormEventFunction(e)}
       />
-      <div className="h-full w-[10.5rem] items-center justify-center rounded-r-full bg-white text-left">
+      <div className="h-full w-[10.5rem] items-center justify-center bg-surface text-left">
         <select
           name="sig"
           value={data?.sig}
-          className="h-full rounded-r-full px-1 text-left"
+          className="h-full w-full px-2 text-left text-ink-800 focus:outline-none"
           onChange={(e) => {
             handleFormEventFunction(e);
           }}
