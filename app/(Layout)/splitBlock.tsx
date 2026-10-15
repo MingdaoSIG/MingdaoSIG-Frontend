@@ -1,16 +1,19 @@
 import React from "react";
 
+// Two-column desktop page (main + sticky side column). Pages using this
+// scroll with the document (see `.layout-split` in globals.css).
 const SplitBlock = ({ children }: { children: React.ReactNode }) => {
   const blocks = React.Children.toArray(children);
 
   return (
-    <div className="mx-auto grid h-full w-[90vw] grid-cols-10 gap-4 overflow-hidden rounded-[1.8rem]">
-      <div className="scrollbar-hide col-span-7 h-full max-w-[90vw] overflow-y-auto rounded-[1.2rem] bg-transparent md:col-span-5 lg:col-span-6 xl:col-span-7">
-        {blocks[0]}
-      </div>
-      <div className="col-span-3 h-full overflow-y-hidden md:col-span-5 lg:col-span-4 xl:col-span-3">
+    <div className="layout-split mx-auto mt-6 grid w-[min(80rem,100%-4rem)] grid-cols-[minmax(0,1fr)_22.5rem] items-start gap-6">
+      <div className="min-w-0">{blocks[0]}</div>
+      <aside
+        data-shell="aside"
+        className="sticky top-[5.5rem] flex h-[calc(100dvh-4rem-1.5rem-var(--dock-space))] min-h-[24rem] flex-col"
+      >
         {blocks[1]}
-      </div>
+      </aside>
     </div>
   );
 };

@@ -1,0 +1,581 @@
+/*
+ * Redesign 2026 — styles that cannot be expressed as Tailwind utilities:
+ *   1. SIG colour as text                     (desktop + mobile)
+ *   2. Long-form reading typography (.markdown: post body, editor preview;
+ *      desktop + mobile)
+ *   3. Reader mode                            (desktop)
+ * See docs/redesign/redesign-2026.md.
+ *
+ * Rendered Markdown is plain HTML (modules/markdown), so it is styled by
+ * element selectors under `.markdown` rather than utility classes.
+ */
+
+/* ================================================================== */
+/* 1. SIG colour as text                                               */
+/* ================================================================== */
+/* Raw SIG colours (e.g. pink) are unreadable on white; darken them. */
+.sig-text {
+  color: color-mix(
+    in srgb,
+    var(--sig-color, var(--color-brand-700)) 55%,
+    var(--color-ink-900)
+  );
+}
+
+/* ================================================================== */
+/* 2. Reading typography                                               */
+/* ================================================================== */
+/*
+ * `.markdown` is the output of components/Markdown/MarkdownView, shared by
+ * the post page and the editor preview. `.post-body` is the paper card the
+ * post page puts around it.
+ */
+.post-body {
+  padding: 2.5rem 2rem 3rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-card);
+}
+
+.markdown {
+  --read-fg: #1f2a35;
+
+  /* ~40 CJK characters per line. width: 100% keeps it filling its
+     container when that container is a flex column (auto margins would
+     otherwise shrink it to max-content). */
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  color: var(--read-fg);
+  font-size: var(--read-size, 1.0625rem);
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  word-break: auto-phrase;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown :is(p, ul, ol, table, pre, blockquote, figure) {
+  margin: 0 0 1.15em;
+}
+
+.markdown :is(ul, ol) {
+  padding-left: 1.6em;
+}
+
+.markdown ul {
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li > :is(ul, ol) {
+  margin-bottom: 0;
+}
+
+.markdown li + li {
+  margin-top: 0.35em;
+}
+
+.markdown li.task-list-item {
+  list-style: none;
+}
+
+.markdown li.task-list-item input {
+  margin: 0 0.5em 0 -1.4em;
+  vertical-align: -0.1em;
+}
+
+.markdown :is(h1, h2, h3, h4, h5, h6) {
+  margin: 2em 0 0.75em;
+  color: var(--color-ink-900);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+.markdown h1 {
+  font-size: 1.6rem;
+}
+
+.markdown h2 {
+  font-size: 1.35rem;
+}
+
+.markdown h3 {
+  font-size: 1.15rem;
+}
+
+.markdown :is(h4, h5, h6) {
+  font-size: 1.0625rem;
+}
+
+/* Links: colour AND underline */
+.markdown a {
+  color: var(--color-brand-700);
+  text-decoration: underline;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--color-brand-700) 35%,
+    transparent
+  );
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.markdown a:hover {
+  color: var(--color-brand-800);
+  text-decoration-color: currentColor;
+}
+
+.markdown :is(strong, b) {
+  color: var(--color-ink-900);
+  font-weight: 700;
+}
+
+.markdown mark {
+  padding: 0 0.15em;
+  border-radius: 3px;
+  background: #fbf0c9;
+  color: inherit;
+}
+
+/* No italics on quotes: slanted CJK is hard to read */
+.markdown blockquote {
+  margin: 1.5em 0;
+  padding: 0.1em 1.1em;
+  border-left: 3px solid var(--color-line-strong);
+  color: var(--color-ink-500);
+}
+
+.markdown blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown :is(img, video) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5em auto;
+  border-radius: var(--radius-chip);
+}
+
+.markdown figure {
+  margin: 1.5em 0;
+}
+
+.markdown figure img {
+  margin-block: 0;
+}
+
+.markdown figcaption {
+  margin-top: 0.6em;
+  color: var(--color-ink-500);
+  font-size: 0.875em;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.markdown hr {
+  height: 1px;
+  margin: 2.5em 0;
+  border: 0;
+  background: var(--color-line);
+}
+
+.markdown :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: #edf1f4;
+  color: var(--color-ink-800);
+  font-size: 0.875em;
+}
+
+/* line-height on <pre>: inline <code> inside it inherits the line box */
+.markdown pre {
+  overflow-x: auto;
+  padding: 1em 1.2em;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: #f4f6f8;
+}
+
+.markdown :is(code, pre) {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans TC", monospace;
+}
+
+.markdown pre code {
+  color: var(--color-ink-800);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: 0;
+}
+
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375em;
+}
+
+.markdown :is(th, td) {
+  padding: 0.45em 0.9em;
+  border: 1px solid var(--color-line);
+}
+
+.markdown th {
+  background: #f5f7f9;
+  color: var(--color-ink-900);
+  font-weight: 600;
+}
+
+.markdown iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.5em 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  aspect-ratio: 16 / 9;
+}
+
+.markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Code highlighting (rehype-highlight / highlight.js classes) */
+.markdown .hljs-comment,
+.markdown .hljs-quote {
+  color: #6a737d;
+}
+
+.markdown .hljs-keyword,
+.markdown .hljs-selector-tag,
+.markdown .hljs-built_in,
+.markdown .hljs-type {
+  color: #b42318;
+}
+
+.markdown .hljs-string,
+.markdown .hljs-regexp,
+.markdown .hljs-addition {
+  color: #1d6b46;
+}
+
+.markdown .hljs-number,
+.markdown .hljs-literal,
+.markdown .hljs-attr,
+.markdown .hljs-variable {
+  color: #0b5a83;
+}
+
+.markdown .hljs-title,
+.markdown .hljs-section,
+.markdown .hljs-function {
+  color: #6f42c1;
+}
+
+.markdown .hljs-deletion {
+  color: #b42318;
+}
+
+/*
+ * A body heading that repeats the post title (≈40% of posts) is hidden.
+ * Marked by components/ReaderMode/useDuplicateTitle.ts.
+ */
+.markdown .dup-title {
+  display: none;
+}
+
+.markdown .dup-title + * {
+  margin-top: 0;
+}
+
+/* ================================================================== */
+/* 3. Reader mode                                                      */
+/* ================================================================== */
+/*
+ * State lives on <html data-reader data-reader-size data-reader-tone>
+ * (components/ReaderMode). Header, dock, side column and post actions
+ * step aside; the viewport becomes the page.
+ */
+
+/* --- Entry button (post title bar) ------------------------------- */
+.reader-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-control);
+  color: var(--color-ink-700);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.reader-toggle:hover {
+  background: var(--color-field);
+  color: var(--color-ink-900);
+}
+
+.reader-bar,
+.reader-byline {
+  display: none;
+}
+
+/* --- Preferences -------------------------------------------------- */
+html[data-reader-size="s"] {
+  --read-size: 1rem;
+}
+
+html[data-reader-size="m"] {
+  --read-size: 1.0625rem;
+}
+
+html[data-reader-size="l"] {
+  --read-size: 1.1875rem;
+}
+
+html[data-reader] .wrap {
+  --reader-bg: var(--color-paper);
+}
+
+html[data-reader-tone="sepia"] .wrap {
+  --reader-bg: #f6f0e4;
+  --color-paper: #f6f0e4;
+  --color-ink-900: #2a2118;
+  --color-ink-700: #4a3e31;
+  --color-ink-500: #7a6a58;
+  --color-line: rgba(74, 52, 24, 0.14);
+  --color-line-strong: rgba(74, 52, 24, 0.22);
+}
+
+html[data-reader-tone="sepia"] .post-body .markdown {
+  --read-fg: #3a3027;
+}
+
+/* --- Chrome that steps aside --------------------------------------- */
+html[data-reader] [data-shell="header"],
+html[data-reader] [data-shell="dock"],
+html[data-reader] [data-shell="aside"],
+html[data-reader] [data-reader-hide],
+html[data-reader] .reader-toggle {
+  display: none;
+}
+
+/* --- The viewport becomes the page --------------------------------- */
+html[data-reader] .wrap {
+  /* padding, not margin: with the header hidden a margin would collapse
+     through .wrap and expose the body background */
+  padding-top: calc(3.25rem + 3rem);
+  padding-bottom: 8rem;
+  background: var(--reader-bg);
+}
+
+html[data-reader] .layout-split {
+  grid-template-columns: minmax(0, 1fr);
+  width: min(44rem, 100% - 3rem);
+  margin-top: 0;
+}
+
+html[data-reader] [data-reader-title] {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-reader] [data-reader-title] h1 {
+  font-size: 2rem;
+}
+
+html[data-reader] .post-body {
+  padding: 2.25rem 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-reader] .post-body .markdown {
+  max-width: none;
+}
+
+/* The parent <article> has gap-4; tuck the byline under the title */
+html[data-reader] .reader-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0;
+  align-items: center;
+  margin-top: -0.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink-500);
+  font-size: 0.875rem;
+}
+
+html[data-reader]
+  .reader-byline
+  > *
+  + *:not(.reader-byline-author)::before {
+  /* inline-block keeps link hover underlines off the separator */
+  display: inline-block;
+  margin-inline: 0.6rem;
+  color: var(--color-ink-400);
+  content: "·";
+}
+
+html[data-reader] .reader-byline-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.55rem;
+  border-radius: 999px;
+}
+
+html[data-reader] .reader-byline-author {
+  color: var(--color-ink-900);
+  font-weight: 600;
+}
+
+html[data-reader] .reader-byline a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* --- Reader bar ------------------------------------------------------ */
+html[data-reader] .reader-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 45;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.25rem;
+  padding-inline: max(1.5rem, calc((100% - 60rem) / 2));
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--reader-bg) 94%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  color: var(--color-ink-700);
+  font-size: 0.85rem;
+}
+
+html[data-reader] .reader-exit {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 0.4rem;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-control);
+  color: var(--color-ink-700);
+  cursor: pointer;
+}
+
+html[data-reader] .reader-exit:hover,
+html[data-reader] .reader-group button:hover {
+  background: color-mix(in srgb, var(--color-ink-900) 6%, transparent);
+  color: var(--color-ink-900);
+}
+
+html[data-reader] .reader-exit kbd {
+  padding: 0 0.3rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 4px;
+  color: var(--color-ink-500);
+  font-family: inherit;
+  font-size: 0.7rem;
+}
+
+html[data-reader] .reader-title {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--color-ink-500);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-reader] .reader-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+html[data-reader] .reader-group {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 2px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-control);
+}
+
+html[data-reader] .reader-group button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.6rem;
+  padding: 0 0.45rem;
+  border-radius: 6px;
+  color: var(--color-ink-700);
+  cursor: pointer;
+}
+
+html[data-reader] .reader-group button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+html[data-reader] .reader-group button[aria-pressed="true"] {
+  background: var(--color-ink-900);
+  color: var(--reader-bg);
+}
+
+html[data-reader] .reader-size-label {
+  min-width: 1.5rem;
+  color: var(--color-ink-900);
+  font-weight: 600;
+  text-align: center;
+}
+
+html[data-reader] .reader-progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--color-brand-700);
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-reader] .reader-progress {
+    transition: transform 80ms linear;
+  }
+}

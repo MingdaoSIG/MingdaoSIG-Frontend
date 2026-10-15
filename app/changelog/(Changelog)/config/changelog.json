@@ -1,5 +1,74 @@
 [
   {
+    "version": "2.21.0",
+    "date": "2026-10-15",
+    "type": "feature",
+    "title": "全站視覺改版與全新編輯器",
+    "summary": "電腦版與手機版換上更沉穩、易讀的新設計；文章排版與編輯器全面更新，編輯時的預覽與發布後完全一致",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "全新視覺設計：移除大面積漸層背景，改用沉穩配色、較小的圓角與更精緻的毛玻璃介面"
+      },
+      {
+        "type": "feature",
+        "description": "新增閱讀模式：隱藏周邊介面專心閱讀，可調整字級與白／米色底，並顯示閱讀進度"
+      },
+      {
+        "type": "feature",
+        "description": "全新文章編輯器：支援快捷鍵、貼上或拖曳上傳圖片，預覽與發布後的文章排版完全一致"
+      },
+      {
+        "type": "improvement",
+        "description": "重新設計文章排版，調整字級、行高與每行字數，長文閱讀更舒適"
+      },
+      {
+        "type": "improvement",
+        "description": "電腦版改為整頁捲動，返回上一頁時會回到原本的位置"
+      },
+      {
+        "type": "improvement",
+        "description": "首頁與文章頁的右側資訊拆成獨立卡片，留言區依內容調整高度"
+      },
+      {
+        "type": "improvement",
+        "description": "SIG 標籤與方塊改用各 SIG 代表色，各分類都清楚可讀"
+      },
+      {
+        "type": "improvement",
+        "description": "文章開頭與標題重複的段落標題會自動隱藏"
+      },
+      {
+        "type": "improvement",
+        "description": "平台資訊、更新紀錄與平台數據頁面改版"
+      },
+      {
+        "type": "improvement",
+        "description": "文章頁載入速度大幅提升，且不再從外部 CDN 載入程式碼"
+      },
+      {
+        "type": "fix",
+        "description": "修正「1~2 點」等範圍寫法被誤顯示為下標的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正編輯既有文章後，「發文」頁的草稿被覆蓋成該篇文章的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正毛玻璃效果在 Chrome 上沒有作用的問題"
+      },
+      {
+        "type": "security",
+        "description": "文章內容改用更嚴格的安全過濾，嵌入影片僅允許 YouTube 與 Vimeo"
+      },
+      {
+        "type": "security",
+        "description": "更新相依套件並替換不再維護的套件，修補已知安全性漏洞"
+      }
+    ]
+  },
+  {
     "version": "2.20.0",
     "date": "2026-05-29",
     "type": "feature",

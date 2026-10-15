@@ -4,8 +4,6 @@ import dynamic from "next/dynamic";
 
 // Modules
 import { useEffect, useState } from "react";
-// Styles
-import styles from "./index.module.scss";
 import "chart.js/auto";
 
 // Configs
@@ -13,6 +11,7 @@ import {
   sigDefaultBorderColors,
   sigDefaultColors,
 } from "@/app/dashboard/(Dashboard)/config/sigDefaultColors";
+import { DocCard, DocPage } from "@/components/desktop/DocPage";
 
 type SigCountItem = {
   name: string;
@@ -35,6 +34,7 @@ const Bar = dynamic(() => import("react-chartjs-2").then((mod) => mod.Bar), {
 
 const sigPostBarOption = {
   responsive: true,
+  aspectRatio: 3,
   plugins: {
     legend: {
       display: false,
@@ -42,12 +42,16 @@ const sigPostBarOption = {
     title: {
       display: true,
       text: "各 SIG 發文數量",
+      color: "#111d29",
+      font: { size: 15, weight: "bold" as const },
+      padding: { bottom: 16 },
     },
   },
 };
 
 const sigUserBarOption = {
   responsive: true,
+  aspectRatio: 3,
   plugins: {
     legend: {
       display: false,
@@ -55,6 +59,9 @@ const sigUserBarOption = {
     title: {
       display: true,
       text: "各 SIG 人員數量",
+      color: "#111d29",
+      font: { size: 15, weight: "bold" as const },
+      padding: { bottom: 16 },
     },
   },
 };
@@ -327,60 +334,34 @@ export default function Desktop() {
     };
   }, [validPostCount, userCount, postUserCount, likeCount, date]);
 
+  const stats = [
+    { label: "使用者", value: userCount },
+    { label: "平台按讚數", value: likeCount },
+    { label: "發文人數", value: postUserCount },
+    { label: "有效貼文", value: validPostCount },
+  ];
+
   return (
-    <div>
-      <div className={styles.wrapper}>
-        <div className={styles.statics}>
-          <div className={styles.staticsItem}>
-            <div className={styles.itemWrapper}>
-              <div className={styles.itemFlex}>
-                <h1>使用者</h1>
-                <p>{userCount || 0}</p>
-              </div>
-            </div>
+    <DocPage title="平台數據" description="MDSIG 使用狀況總覽">
+      <div className="grid grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-card border border-line bg-surface px-6 py-5 shadow-card"
+          >
+            <p className="text-ink-500 text-sm">{stat.label}</p>
+            <p className="mt-1 font-bold text-3xl text-ink-900 tabular-nums">
+              {(stat.value || 0).toLocaleString("zh-TW")}
+            </p>
           </div>
-          <div className={styles.staticsItem}>
-            <div className={styles.itemWrapper}>
-              <div className={styles.itemFlex}>
-                <h1>平台按讚數</h1>
-                <p>{likeCount || 0}</p>
-              </div>
-            </div>
-          </div>
-          <div className={styles.staticsItem}>
-            <div className={styles.itemWrapper}>
-              <div className={styles.itemFlex}>
-                <h1>發文人數</h1>
-                <p>{postUserCount || 0}</p>
-              </div>
-            </div>
-          </div>
-          <div className={styles.staticsItem}>
-            <div className={styles.itemWrapper}>
-              <div className={styles.itemFlex}>
-                <h1>有效貼文</h1>
-                <p>{validPostCount || 0}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={styles.sigChart}>
-          <div className={styles.chartScroll}>
-            <Bar
-              className={styles.chartBar}
-              data={sigPostCountFinalData}
-              options={sigPostBarOption}
-            />
-            <br />
-            <br />
-            <Bar
-              className={styles.chartBar}
-              data={sigUserCountFinalData}
-              options={sigUserBarOption}
-            />
-          </div>
-        </div>
+        ))}
       </div>
-    </div>
+      <DocCard>
+        <Bar data={sigPostCountFinalData} options={sigPostBarOption} />
+      </DocCard>
+      <DocCard>
+        <Bar data={sigUserCountFinalData} options={sigUserBarOption} />
+      </DocCard>
+    </DocPage>
   );
 }

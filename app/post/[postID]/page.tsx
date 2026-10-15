@@ -1,11 +1,10 @@
 "use client";
+import dynamic from "next/dynamic";
 import { use, useEffect, useState } from "react";
 
 // Layout
 import SplitBlock from "@/app/(Layout)/splitBlock";
 
-// Desktop-Side Component
-import ThreadDesktop from "@/app/post/[postID]/(post)/desktop/Thread";
 import { NotFound } from "@/components/NotFound";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
@@ -15,8 +14,11 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import ThreadInfo from "./(post)/desktop/ThreadInfo";
-// Mobile-Side Component
-import ThreadMobile from "./(post)/mobile/Thread";
+
+// Desktop and mobile threads are separate component trees; load only the
+// one this device needs.
+const ThreadDesktop = dynamic(() => import("./(post)/desktop/Thread"));
+const ThreadMobile = dynamic(() => import("./(post)/mobile/Thread"));
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

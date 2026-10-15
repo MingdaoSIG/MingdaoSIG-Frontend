@@ -3,3 +3,6 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - sharp
   - unrs-resolver
+
+overrides:
+  next>postcss: 8.5.30

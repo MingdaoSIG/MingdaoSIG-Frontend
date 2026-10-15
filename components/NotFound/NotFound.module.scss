@@ -15,6 +15,7 @@
 
   >div {
     text-align: center;
+    color: var(--color-ink-900);
 
     >h2 {
       font-size: variables.$info-code-font-size;
@@ -41,6 +42,7 @@
 
   >div {
     text-align: center;
+    color: var(--color-ink-900);
 
     >h2 {
       font-size: 3rem;
@@ -56,9 +58,10 @@
 
 .mobileBackToHome {
   color: white;
-  font-size: medium;
-  background-color: rgb(0, 145, 189);
-  border-radius: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--color-brand-700);
+  border-radius: var(--radius-control);
   padding: 0.75rem 1.25rem;
   user-select: none;
 }
@@ -66,9 +69,15 @@
 
 .backToHome {
   color: white;
-  font-size: large;
-  background-color: rgb(0, 145, 189);
-  border-radius: 1rem;
-  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--color-brand-700);
+  border-radius: var(--radius-control);
+  padding: 0.75rem 1.25rem;
+  transition: background-color 150ms ease;
+
+  &:hover {
+    background-color: var(--color-brand-800);
+  }
   user-select: none;
 }

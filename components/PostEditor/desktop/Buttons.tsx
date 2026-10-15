@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CloudUpload, Trash2 } from "lucide-react";
 
 interface Props {
   discardFunction: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -17,30 +17,24 @@ export default function Buttons({
     <div className="mt-4 grid h-12 grid-cols-2 gap-4">
       <button
         type="button"
-        className="flex flex-row items-center justify-center gap-1 rounded-full bg-[#dc0032] text-center font-bold text-lg text-white transition-colors hover:bg-[#b8002a]"
+        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-control border border-line-strong bg-surface font-bold text-base text-danger-700 shadow-card transition-colors hover:bg-[#fdf1f0]"
         onClick={(e) => discardFunction(e)}
       >
-        <Image src="/icons/trash.svg" width={22} height={22} alt="trash" />
+        <Trash2 size={20} aria-hidden />
         {isEdit ? "UNDO" : "DISCARD"}
       </button>
 
       <button
         type="button"
-        className={`flex flex-row items-center justify-center gap-1 rounded-full text-center font-bold text-lg transition-colors ${
+        className={`flex flex-row items-center justify-center gap-2 rounded-control font-bold text-base transition-colors ${
           postButtonDisable
-            ? "cursor-not-allowed bg-gray-300 text-gray-500"
-            : "bg-white text-[#5fcdf5] hover:bg-gray-50"
-        }
-        `}
+            ? "cursor-not-allowed bg-ink-900/10 text-ink-400"
+            : "cursor-pointer bg-brand-700 text-white shadow-[0_6px_16px_-10px_rgba(11,90,131,0.9)] hover:bg-brand-800"
+        }`}
         onClick={async () => await postFunction()}
         disabled={postButtonDisable}
       >
-        <Image
-          src="/icons/cloud-upload.svg"
-          width={28}
-          height={28}
-          alt="cloud-upload"
-        />
+        <CloudUpload size={22} aria-hidden />
         POST
       </button>
     </div>

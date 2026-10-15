@@ -12,6 +12,7 @@ import { Providers } from "./providers";
 // Styles
 import "@/app/styles/globals.css";
 import "@/app/styles/variables.scss";
+import "@/app/styles/content.css";
 
 // Utils
 import { Device } from "./device";
@@ -22,7 +23,7 @@ const noto = Noto_Sans_TC({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={noto.className}>
+    <html lang="zh-Hant-TW" className={noto.className}>
       <body>
         {/* GTM 必須放 body 內 */}
         <GoogleTagManager gtmId="GTM-NGM7R8S8" />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
+import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
 
@@ -65,15 +66,15 @@ function SectionHeader({
 }) {
   const Icon = icon === "heart" ? HeartIcon : UsersIcon;
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <span className="inline-flex items-center justify-center rounded-xl bg-[#e9f1ff] p-2">
-          <Icon className="h-4 w-4 text-[#3c69b4]" aria-hidden />
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="inline-flex items-center justify-center rounded-chip bg-brand-50 p-2 text-brand-700">
+          <Icon className="h-4 w-4" aria-hidden />
         </span>
-        <h2 className="font-bold text-[#3c69b4] text-lg leading-[1.8rem]">
+        <h2 className="font-bold text-base text-ink-900 leading-7">
           {title}
           {typeof count !== "undefined" && (
-            <span className="ml-2 font-medium text-gray-400 text-sm">
+            <span className="ml-2 font-medium text-ink-400 text-sm">
               {count}
             </span>
           )}
@@ -88,14 +89,13 @@ function TopPostRow({ _id, title, likes }: MinimalThread) {
   return (
     <Link
       href={`/post/${_id}`}
-      className="group flex items-center justify-between gap-4 rounded-xl px-2 py-1.5 ring-1 ring-transparent transition hover:ring-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3c69b4]"
+      className="group flex items-center justify-between gap-4 rounded-chip px-2 py-1.5 ring-1 ring-transparent transition hover:bg-white/60 hover:ring-line"
       aria-label={`Open post: ${title}`}
     >
-      <h3 className="relative flex-1 overflow-hidden text-ellipsis whitespace-nowrap pb-1 font-medium text-base">
+      <h3 className="flex-1 truncate font-medium text-[0.95rem] text-ink-800">
         {title}
-        <span className="absolute bottom-0 left-0 h-0.5 w-0 origin-right bg-black transition-all duration-200 group-hover:w-full group-hover:origin-left" />
       </h3>
-      <span className="flex flex-shrink-0 items-center gap-1 whitespace-nowrap text-gray-500 text-xs">
+      <span className="flex flex-shrink-0 items-center gap-1 whitespace-nowrap text-ink-500 text-xs">
         <HeartIcon className="h-3.5 w-3.5" aria-hidden />
         {likes}
       </span>
@@ -104,28 +104,20 @@ function TopPostRow({ _id, title, likes }: MinimalThread) {
 }
 
 function SigCard({ sig }: { sig: Sig }) {
-  // Stable single-element double-background border; avoid arbitrary sizes for Tailwind < v3
-  const RADIUS = 16;
   return (
     <Link
       href={`/@${sig.customId}`}
-      className="block h-20 w-20 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+      className="block size-20 shrink-0 rounded-control"
       aria-label={`Open SIG: ${sig.name}`}
     >
       <div
-        className="flex h-full w-full flex-col items-center justify-center rounded-2xl px-1 text-center text-[11px] text-white leading-tight"
+        className="flex size-full flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[11px] text-ink-800 leading-tight transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
         style={{
-          borderRadius: RADIUS,
-          background:
-            "linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)) padding-box, linear-gradient(90deg, #6fa8ff, #30b4ac) border-box",
-          border: "2px solid transparent",
+          ["--sig-color" as string]: sigDefaultColors[sig._id] ?? "#0b5a83",
         }}
       >
         {maxMatch(sig.name).map((name) => (
-          <span
-            key={name}
-            className="break-words drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]"
-          >
+          <span key={name} className="break-words">
             {name}
           </span>
         ))}
@@ -221,85 +213,84 @@ export default function Information() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto overflow-x-hidden">
-      <div className="relative h-full overflow-hidden rounded-[1.2rem] bg-panel-bg p-6">
-        <div className="flex h-full w-full flex-col gap-6">
-          {/* Top Posts */}
-          <section>
-            <SectionHeader icon="heart" title="Top 3 Posts" />
-            <div className="mt-2 flex flex-col divide-y divide-gray-100">
-              {postsError && (
-                <p className="text-red-500 text-sm">
-                  Failed to load posts. Please try again later.
-                </p>
-              )}
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      {/* Top Posts */}
+      <section className="glass shrink-0 rounded-card p-5">
+        <SectionHeader icon="heart" title="Top 3 Posts" />
+        <div className="mt-2">
+          {postsError && (
+            <p className="text-danger-700 text-sm">
+              Failed to load posts. Please try again later.
+            </p>
+          )}
 
-              {!postsError && posts.length === 0 && (
-                <p className="text-gray-500 text-sm">
-                  No posts yet. Check back soon!
-                </p>
-              )}
+          {!postsError && posts.length === 0 && (
+            <p className="text-ink-500 text-sm">
+              No posts yet. Check back soon!
+            </p>
+          )}
 
-              {!postsError && posts.length > 0 && (
-                <ul className="flex flex-col gap-1">
-                  {posts.map((p) => (
-                    <li key={p._id}>
-                      <TopPostRow _id={p._id} title={p.title} likes={p.likes} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </section>
-
-          {/* SIGs */}
-          <section className="relative min-h-0 flex-grow">
-            <SectionHeader
-              icon="users"
-              title="SIGs"
-              count={filteredSigs.length}
-              action={
-                <div className="relative">
-                  <label htmlFor="sig-search" className="sr-only">
-                    Search SIGs
-                  </label>
-                  <input
-                    id="sig-search"
-                    value={sigQuery}
-                    onChange={(e) => setSigQuery(e.target.value)}
-                    placeholder="Search SIGs..."
-                    className="rounded-lg bg-white py-1.5 pr-3 pl-3 text-sm ring-1 ring-gray-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3c69b4]"
-                  />
-                </div>
-              }
-            />
-
-            <div className="custom-scrollbar absolute top-[2.6rem] right-0 bottom-0 left-0 mt-2 overflow-y-auto">
-              {sigsError && (
-                <p className="px-0.5 text-red-500 text-sm">{sigsError}</p>
-              )}
-
-              {!sigsError && (
-                <ul className="flex flex-wrap items-start justify-center gap-4 px-0.5">
-                  {filteredSigs.map((sig) => (
-                    <li key={sig._id} className="list-none">
-                      <SigCard sig={sig} />
-                    </li>
-                  ))}
-
-                  {filteredSigs.length === 0 && (
-                    <li className="col-span-full">
-                      <div className="rounded-xl border border-gray-200 border-dashed p-6 text-center text-gray-500 text-sm">
-                        No SIGs match your search.
-                      </div>
-                    </li>
-                  )}
-                </ul>
-              )}
-            </div>
-          </section>
+          {!postsError && posts.length > 0 && (
+            <ul className="flex flex-col gap-1">
+              {posts.map((p) => (
+                <li key={p._id}>
+                  <TopPostRow _id={p._id} title={p.title} likes={p.likes} />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </div>
+      </section>
+
+      {/* SIGs */}
+      <section className="glass flex min-h-0 flex-1 flex-col rounded-card p-5">
+        <SectionHeader
+          icon="users"
+          title="SIGs"
+          count={filteredSigs.length}
+          action={
+            <div className="min-w-0 flex-[0_1_10.5rem]">
+              <label htmlFor="sig-search" className="sr-only">
+                Search SIGs
+              </label>
+              {/* Explicit width: the default (size=20) is wider in Firefox
+                  and Safari than in Chrome and overflowed the card. */}
+              <input
+                id="sig-search"
+                value={sigQuery}
+                onChange={(e) => setSigQuery(e.target.value)}
+                placeholder="Search SIGs..."
+                className="w-full min-w-0 rounded-control bg-field px-3 py-1.5 text-ink-800 text-sm ring-1 ring-line placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-700/40"
+              />
+            </div>
+          }
+        />
+
+        {/* py-1 leaves room so hovered tiles are not clipped by the scroller */}
+        <div className="custom-scrollbar mt-3 min-h-0 flex-1 overflow-y-auto">
+          {sigsError && (
+            <p className="px-0.5 text-danger-700 text-sm">{sigsError}</p>
+          )}
+
+          {!sigsError && (
+            <ul className="flex flex-wrap items-start justify-center gap-4 px-0.5 py-1">
+              {filteredSigs.map((sig) => (
+                <li key={sig._id} className="list-none">
+                  <SigCard sig={sig} />
+                </li>
+              ))}
+
+              {filteredSigs.length === 0 && (
+                <li className="w-full">
+                  <div className="rounded-control border border-line border-dashed p-6 text-center text-ink-500 text-sm">
+                    No SIGs match your search.
+                  </div>
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

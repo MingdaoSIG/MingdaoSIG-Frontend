@@ -89,7 +89,7 @@ export function BottomSheet({
             style={{
               position: "fixed",
               inset: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(17, 29, 41, 0.45)",
               zIndex: 999998,
             }}
           />
@@ -107,10 +107,9 @@ export function BottomSheet({
               bottom: 0,
               height,
               maxHeight: "95dvh",
-              backgroundColor: "rgba(255, 255, 255, 0.97)",
-              backdropFilter: "blur(10px)",
-              borderRadius: "20px 20px 0 0",
-              boxShadow: "0 -8px 24px rgba(0, 0, 0, 0.15)",
+              backgroundColor: "#ffffff",
+              borderRadius: "14px 14px 0 0",
+              boxShadow: "0 -10px 32px -12px rgba(17, 29, 41, 0.35)",
               zIndex: 999999,
               display: "flex",
               flexDirection: "column",
@@ -137,7 +136,7 @@ export function BottomSheet({
                 style={{
                   width: 36,
                   height: 4,
-                  backgroundColor: "#cbd5e1",
+                  backgroundColor: "rgba(17, 29, 41, 0.18)",
                   borderRadius: 2,
                 }}
               />
@@ -146,7 +145,7 @@ export function BottomSheet({
               <div
                 style={{
                   padding: "0 20px 12px",
-                  borderBottom: "1px solid #f1f5f9",
+                  borderBottom: "1px solid rgba(17, 29, 41, 0.1)",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -155,9 +154,9 @@ export function BottomSheet({
                 <h2
                   style={{
                     margin: 0,
-                    fontWeight: 600,
-                    fontSize: 18,
-                    color: "#0f172a",
+                    fontWeight: 700,
+                    fontSize: 17,
+                    color: "#111d29",
                   }}
                 >
                   {title}
@@ -170,10 +169,10 @@ export function BottomSheet({
                   style={{
                     width: 32,
                     height: 32,
-                    borderRadius: "50%",
-                    backgroundColor: "#f1f5f9",
+                    borderRadius: 8,
+                    backgroundColor: "#f2f5f7",
                     border: "none",
-                    color: "#64748b",
+                    color: "#586676",
                     cursor: "pointer",
                     fontSize: 18,
                     display: "flex",

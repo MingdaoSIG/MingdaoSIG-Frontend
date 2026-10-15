@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import ReactDOMServer from "react-dom/server";
-import Linkify from "react-linkify";
 import { Tooltip } from "react-tooltip";
 import Swal from "sweetalert2";
 // APIs
@@ -17,6 +16,7 @@ import {
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import Linkify from "@/components/Linkify/Linkify";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";

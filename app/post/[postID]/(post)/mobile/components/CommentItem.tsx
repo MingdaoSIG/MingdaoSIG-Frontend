@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Linkify from "react-linkify";
+import Linkify from "@/components/Linkify/Linkify";
 
 import { TapScaleLink } from "@/components/mobile/TapScale";
 import type { TComments } from "@/interfaces/comments";
@@ -16,7 +16,7 @@ type Props = {
 
 export default function CommentItem({ comment }: Props) {
   return (
-    <div className="flex gap-2.5 rounded-2xl bg-white/70 p-3 backdrop-blur-md">
+    <div className="flex gap-2.5 rounded-card border border-line bg-surface p-3">
       <TapScaleLink
         href={`/@${comment.user.customId}`}
         className="flex-shrink-0"
@@ -38,22 +38,22 @@ export default function CommentItem({ comment }: Props) {
         <div className="flex items-baseline gap-1.5">
           <TapScaleLink
             href={`/@${comment.user.customId}`}
-            className="font-semibold text-[13px] text-md-dark-green"
+            className="font-semibold text-ink-900 text-sm"
             whileTap={{ scale: 0.96 }}
           >
             @{comment.user.customId}
           </TapScaleLink>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-ink-500 text-xs">
             {relativeTime(comment.createdAt ?? "")}
           </span>
         </div>
-        <p className="mt-0.5 break-words text-[#354242] text-[13px] leading-relaxed">
+        <p className="mt-0.5 break-words text-[0.9375rem] text-ink-700 leading-[1.65]">
           <Linkify
             componentDecorator={(decoratedHref, decoratedText, key) => (
               <button
                 type="button"
                 key={key}
-                className="break-words text-[#0070f3] underline-offset-2 hover:underline"
+                className="break-all text-left text-brand-700 underline decoration-brand-700/30 underline-offset-2"
                 onClick={() => jumpOut(decoratedHref)}
               >
                 {decoratedText}
