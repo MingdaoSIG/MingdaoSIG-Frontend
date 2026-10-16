@@ -1,5 +1,6 @@
 "use client";
 
+import { PageTitle } from "@/components/mobile/PageTitle";
 import changelog from "../config/changelog.json";
 import styles from "./index.module.scss";
 
@@ -46,7 +47,8 @@ export default function Mobile() {
   return (
     <div className={styles.mobileView}>
       <div className={styles.wrapper}>
-        <div className="scrollbar-hide h-[83dvh] w-full space-y-3 overflow-auto">
+        <PageTitle title="更新紀錄" />
+        <div className="scrollbar-hide mt-2 h-[calc(83dvh-3.5rem)] w-full space-y-3 overflow-auto">
           {typedChangelog.map((entry) => (
             <article
               key={entry.version}
