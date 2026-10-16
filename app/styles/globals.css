@@ -91,10 +91,12 @@ a,
 
 /*
  * Desktop shell.
- * - "app" mode (default): fixed-height grid, used by pages that manage
- *   their own internal scrolling (editor, dashboard, info, admin…).
- * - "document" mode: pages built on <SplitBlock> or marked .layout-doc
- *   scroll with the page itself.
+ * - "app" mode (default): fixed-height grid; pages manage their own
+ *   internal scrolling. <SplitBlock> (.layout-split) and <DocPage>
+ *   (.layout-doc) fill the content row and scroll inside their blocks, so
+ *   every page ends at the same line above the dock.
+ * - "document" mode: only reader mode (.layout-split), which scrolls with
+ *   the page itself.
  * The dock is position:fixed, so the last grid row is only a spacer.
  */
 .wrap {
@@ -114,12 +116,18 @@ a,
     var(--color-canvas);
 }
 
-body:has(.wrap :is(.layout-split, .layout-doc)) {
+/* Keep the content row at its 1fr share so the blocks scroll instead of
+   stretching the row. */
+.wrap:has(:is(.layout-split, .layout-doc)) {
+  grid-template-rows: auto minmax(0, 1fr) minmax(5.5rem, auto);
+}
+
+html[data-reader] body:has(.wrap .layout-split) {
   max-height: none;
   overflow-y: auto;
 }
 
-.wrap:has(:is(.layout-split, .layout-doc)) {
+html[data-reader] .wrap:has(.layout-split) {
   position: relative;
   display: block;
   width: 100%;

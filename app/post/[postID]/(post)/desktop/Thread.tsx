@@ -126,21 +126,21 @@ const Thread = ({ post }: { post: TThread }) => {
     return (
       <article
         ref={rootRef}
-        className="layout-doc mx-auto mt-6 flex w-[min(56rem,100%-4rem)] flex-col gap-4"
+        className="layout-doc mx-auto flex h-full min-h-0 w-[min(56rem,100%-4rem)] flex-col gap-4"
       >
         <div className="rounded-card border border-line bg-paper px-6 py-4 shadow-card">
           <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
             {post.title}
           </h1>
         </div>
-        <div className="post-body">
+        <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
           <MarkdownView markdown={post.content} />
         </div>
       </article>
     );
   }
   return (
-    <article ref={rootRef} className="flex flex-col gap-4">
+    <article ref={rootRef} className="flex min-h-0 flex-1 flex-col gap-4">
       <div
         data-reader-title
         className="flex items-center gap-2 rounded-card border border-line bg-paper py-4 pr-4 pl-6 shadow-card"
@@ -195,7 +195,7 @@ const Thread = ({ post }: { post: TThread }) => {
         </button>
       </div>
       <ReaderByline post={post} />
-      <div className="post-body">
+      <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
         <MarkdownView markdown={post.content} />
       </div>
     </article>

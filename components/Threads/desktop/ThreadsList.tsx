@@ -178,7 +178,7 @@ export const InfinityThreadsList = ({
   const sentinel = useRef<HTMLDivElement>(null);
 
   // Load the next page when the end of the list comes within 600px of the
-  // viewport. Viewport-based, so it works with document scrolling.
+  // scroll container: the SplitBlock column, or the viewport elsewhere.
   useEffect(() => {
     const target = sentinel.current;
     if (!target) {
@@ -190,7 +190,10 @@ export const InfinityThreadsList = ({
           fetchNextPage();
         }
       },
-      { rootMargin: "0px 0px 600px 0px" },
+      {
+        root: target.closest("[data-split-main]"),
+        rootMargin: "0px 0px 600px 0px",
+      },
     );
     observer.observe(target);
     return () => observer.disconnect();
