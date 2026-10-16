@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://sig.mingdao.edu"),
   title: "MDSIG 2.0",
   description:
-    "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
+    "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、經濟管科、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
   applicationName: "MDSIG 2.0",
   authors: [{ name: "OnCloud, HACO, Lazp, Meru" }],
   keywords: ["MDSIG", "SIG", "MD", "Mingdao", "2.0", "MDSIG 2.0"],
@@ -54,13 +54,13 @@ export const metadata: Metadata = {
     url: "https://sig.mingdao.edu.tw",
     title: "MDSIG - 讓學習不再有時空的限制",
     description:
-      "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
+      "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、經濟管科、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
     images: [{ url: "https://sig.mingdao.edu.tw/images/banner.png" }],
   },
   twitter: {
     title: "MDSIG - 讓學習不再有時空的限制",
     description:
-      "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、財經管理、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
+      "MDSIG 分享平台讓學習不再有時空的限制，透過平台交流前瞻趨勢、時事議題，迸發更多學習火花。平台提供科技、醫療、經濟管科、藝術人文及心理等社會時事的討論eg. AI、量子電腦、大歷史、新能源...，期待你(妳)的參與!",
     card: "summary_large_image",
     images: "https://sig.mingdao.edu.tw/images/banner.png",
   },
