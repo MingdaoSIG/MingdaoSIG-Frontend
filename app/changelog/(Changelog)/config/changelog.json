@@ -1,5 +1,50 @@
 [
   {
+    "version": "2.22.0",
+    "date": "2026-10-16",
+    "type": "feature",
+    "title": "SIG 調整與版面高度修正",
+    "summary": "新增模擬聯合國與數學 SIG，整併資安與財經；電腦版各頁改為在區塊內捲動，所有頁面底部對齊",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "新增模擬聯合國與數學 SIG"
+      },
+      {
+        "type": "improvement",
+        "description": "資安 SIG 的文章併入資訊程式設計、財經 SIG 的文章併入經濟管科，並移除這兩個 SIG"
+      },
+      {
+        "type": "improvement",
+        "description": "「經濟與管理管科」更名為「經濟管科」"
+      },
+      {
+        "type": "improvement",
+        "description": "電腦版首頁、文章頁、個人與 SIG 頁改為在區塊內捲動，左右兩欄高度一致"
+      },
+      {
+        "type": "improvement",
+        "description": "文章頁的標題固定，只有文章內容在區塊內捲動"
+      },
+      {
+        "type": "improvement",
+        "description": "平台資訊、平台數據、更新紀錄等頁面的標題固定，內容在區塊內捲動，左右卡片高度一致"
+      },
+      {
+        "type": "improvement",
+        "description": "手機版平台數據與更新紀錄頁加上與其他頁一致的標題"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機版首頁列表底部被工具列遮住的問題"
+      },
+      {
+        "type": "fix",
+        "description": "平台數據圖表不再顯示已移除的 SIG"
+      }
+    ]
+  },
+  {
     "version": "2.21.0",
     "date": "2026-10-15",
     "type": "feature",
