@@ -397,7 +397,15 @@ html[data-reader] .wrap {
 html[data-reader] .layout-split {
   grid-template-columns: minmax(0, 1fr);
   width: min(44rem, 100% - 3rem);
+  height: auto;
   margin-top: 0;
+}
+
+/* Outside reader mode the split columns and the post body scroll on their
+   own; reader mode hands scrolling back to the document. */
+html[data-reader] [data-split-main],
+html[data-reader] .post-body {
+  overflow: visible;
 }
 
 html[data-reader] [data-reader-title] {

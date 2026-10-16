@@ -93,10 +93,10 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 
 ### 3.2 兩欄頁（首頁、貼文頁、個人 / SIG 頁）
 
-- **整頁原生捲動**（取代 `body { overflow: hidden }` + 內部捲動 + 寫死的 `70dvh`）。返回上一頁保留捲動位置、空白鍵翻頁、頁面任何位置的滾輪都能用。
+- **區塊內捲動**（v2.22.0 起，取代原本的整頁捲動）：`SplitBlock` 填滿 header 與 dock 之間的內容列，主欄與側欄各自捲動，頁面本身不捲動，所有頁面的底邊都對齊在 dock 上方。貼文頁的標題卡固定，只有內文卡片捲動。閱讀模式例外，仍為整頁捲動。
 - 主欄 `minmax(0,1fr)`、側欄 `22.5rem`，間距 1.5rem。
-- 側欄 `position: sticky`，高度 = 視窗 − header − dock 空間。
-- 無限捲動改用 `IntersectionObserver` 觀察列表尾端的 sentinel（`rootMargin` 600px），不依賴特定捲動容器。
+- 主欄與側欄同高 = 視窗 − header − dock 空間（shell 內容列用 `minmax(0, 1fr)`）。
+- 無限捲動改用 `IntersectionObserver` 觀察列表尾端的 sentinel（`rootMargin` 600px），`root` 為 `[data-split-main]` 主欄捲動容器。
 
 ### 3.3 其他頁（資訊、Dashboard、資料、更新紀錄、編輯器、管理平台）
 
@@ -161,7 +161,7 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 | 階段 | 內容 |
 | --- | --- |
 | **1** ✅ | Tokens、毛玻璃、shell（header / dock / 容器）、兩欄頁整頁捲動、首頁、貼文頁、閱讀模式、個人 / SIG 頁；其他桌機頁換上新底色與表面 |
-| **2** ✅ | 資訊、Dashboard、資料、更新紀錄、`/confirm`、404 改為 `DocPage`（整頁捲動、80rem 容器） |
+| **2** ✅ | 資訊、Dashboard、資料、更新紀錄、`/confirm`、404 改為 `DocPage`（80rem 容器；v2.22.0 起標題卡固定、下方內容區塊內捲動，與兩欄頁同一底邊） |
 | **3** ✅ | Markdown 渲染改為 unified 處理鏈（§9）；桌機編輯器改用 CodeMirror 6，保留「左寫右預覽」操作（§10） |
 | 3b | 貼文頁改 Server Component + SSR + `generateMetadata`（渲染模組已可在 Node 執行） |
 | 4 | 管理平台獨立後台版面 |

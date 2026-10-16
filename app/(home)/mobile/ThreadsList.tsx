@@ -67,7 +67,7 @@ const ThreadsList = () => {
       ) : (
         <InfinityThreadsList
           data={data}
-          height="calc(100dvh - 12rem)"
+          height="calc(100dvh - 12.5rem)"
           fetchNextPage={fetchNextPage}
           isFetchingNextPage={isFetchingNextPage}
           announcementData={announcementData}

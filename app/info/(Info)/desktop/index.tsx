@@ -162,7 +162,7 @@ export default function Desktop() {
 
   return (
     <DocPage title="MDSIG 平台資訊">
-      <div className="grid grid-cols-[minmax(0,1fr)_22.5rem] items-start gap-4">
+      <div className="grid flex-1 grid-cols-[minmax(0,1fr)_22.5rem] gap-4">
         <DocCard>
           <div className="grid grid-cols-2 gap-x-8 gap-y-7">
             {data.map((item) => (

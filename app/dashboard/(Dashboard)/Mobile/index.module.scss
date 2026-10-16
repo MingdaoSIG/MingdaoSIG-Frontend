@@ -17,6 +17,7 @@
 }
 
 .statics {
+  margin-top: 0.5rem;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -58,7 +59,7 @@
 }
 
 .sigChart {
-  height: calc(100dvh - 20.2rem);
+  height: calc(100dvh - 23.7rem);
   width: 100%;
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);

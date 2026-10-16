@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-// Single-column desktop page that scrolls with the document
-// (docs/redesign/redesign-2026.md §3). `.layout-doc` switches the shell
-// out of fixed-height mode; see globals.css.
+// Single-column desktop page (docs/redesign/redesign-2026.md §3). Like
+// <SplitBlock> it fills the shell's content row: the header card stays put
+// and the content below scrolls on its own (see `.layout-doc` in globals.css).
 
 export function DocPage({
   title,
@@ -19,13 +19,13 @@ export function DocPage({
 }) {
   return (
     <main
-      className={`layout-doc mx-auto mt-6 flex flex-col gap-4 ${
+      className={`layout-doc mx-auto flex h-full min-h-0 flex-col gap-4 ${
         width === "wide"
           ? "w-[min(80rem,100%-4rem)]"
           : "w-[min(56rem,100%-4rem)]"
       }`}
     >
-      <header className="flex items-center gap-4 rounded-card border border-line bg-surface px-6 py-5 shadow-card">
+      <header className="flex shrink-0 items-center gap-4 rounded-card border border-line bg-surface px-6 py-5 shadow-card">
         <div className="min-w-0 flex-1">
           <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
             {title}
@@ -36,7 +36,9 @@ export function DocPage({
         </div>
         {actions}
       </header>
-      {children}
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
+        {children}
+      </div>
     </main>
   );
 }

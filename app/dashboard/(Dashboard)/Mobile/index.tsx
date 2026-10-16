@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 // Modules
 import { useEffect, useState } from "react";
 // Styles
+import { PageTitle } from "@/components/mobile/PageTitle";
 import styles from "./index.module.scss";
 import "chart.js/auto";
 
@@ -330,6 +331,7 @@ export default function Mobile() {
   return (
     <div className={styles.mobileView}>
       <div className={styles.wrapper}>
+        <PageTitle title="平台數據" />
         <div className={styles.statics}>
           <div className={styles.staticsItem}>
             <div className={styles.itemWrapper}>
