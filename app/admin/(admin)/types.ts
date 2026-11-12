@@ -93,6 +93,8 @@ export type AdminSig = {
   leaders: UserRef[];
   moderators: UserRef[];
   pendingJoinRequests?: number;
+  /** A Discord webhook is set (contract v4 §3.6); never the URL itself. */
+  discordWebhookSet?: boolean;
 };
 
 export type JoinState = "pending" | "accepted" | "rejected";

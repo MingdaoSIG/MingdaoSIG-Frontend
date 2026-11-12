@@ -17,15 +17,18 @@ import {
 import { canManageSig, useAdmin } from "../../(admin)/context";
 import { formatCount } from "../../(admin)/format";
 import { AnalyticsTab } from "../../(admin)/sig/AnalyticsTab";
+import { DiscordSetting } from "../../(admin)/sig/DiscordSetting";
 import { EventsTab } from "../../(admin)/sig/EventsTab";
 import { InfoTab } from "../../(admin)/sig/InfoTab";
 import { MembersTab } from "../../(admin)/sig/MembersTab";
+import { ShowcasePicker } from "../../(admin)/sig/ShowcasePicker";
 import { StaffTab } from "../../(admin)/sig/StaffTab";
 import { useSigDetail } from "../../(admin)/sig/useSigDetail";
 import { oneOf, useQueryState } from "../../(admin)/useQueryState";
 
-// One SIG, everything in one place (?tab=): 基本資料, 幹部與老師, 成員,
-// 入社申請, 活動, 數據. Leaders and 指導老師 reach only their own SIGs.
+// One SIG, everything in one place (?tab=): 基本資料 (with 精選成果 and
+// Discord 通知), 幹部與老師, 成員, 入社申請, 活動, 數據. Leaders and
+// 指導老師 reach only their own SIGs.
 
 const TABS = [
   "info",
@@ -194,7 +197,13 @@ export default function AdminSigPage() {
         })}
       </nav>
 
-      {tab === "info" && <InfoTab sig={sig} />}
+      {tab === "info" && (
+        <div className="flex flex-col gap-4">
+          <InfoTab sig={sig} />
+          <ShowcasePicker sig={sig} />
+          <DiscordSetting sig={sig} />
+        </div>
+      )}
       {tab === "staff" && <StaffTab sig={sig} />}
       {tab === "members" && <MembersTab sig={sig} />}
       {tab === "requests" && <JoinRequestList fixedSig={sig._id} />}
