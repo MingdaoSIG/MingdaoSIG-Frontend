@@ -94,11 +94,14 @@ export function NotificationItem({
   notification,
   onOpen,
   compact = false,
+  actions,
 }: {
   notification: TNotification;
   onOpen: (notification: TNotification) => void;
   /** The bell dropdown: tighter spacing. */
   compact?: boolean;
+  /** Buttons under the text (e.g. 同意 / 拒絕 on a join request). */
+  actions?: React.ReactNode;
 }) {
   const text = describeNotification(notification);
   const href = safeNotificationLink(notification.link);
@@ -190,6 +193,15 @@ export function NotificationItem({
         >
           {content}
         </button>
+      )}
+      {actions && (
+        <div
+          className={`pb-3 pl-[4.25rem] ${compact ? "pr-4" : "pr-4 sm:pr-5"} ${
+            unread ? "bg-brand-50/55" : ""
+          }`}
+        >
+          {actions}
+        </div>
       )}
     </li>
   );

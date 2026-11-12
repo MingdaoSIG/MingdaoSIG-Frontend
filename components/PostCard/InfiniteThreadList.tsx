@@ -55,6 +55,8 @@ type CommonProps = {
   skeletons?: number;
   /** Hide the SIG on the default cards (lists of one SIG). */
   hideSig?: boolean;
+  /** Mark these words on the default cards (search results). */
+  highlight?: string;
   /** Accessible name of the feed. */
   label?: string;
   className?: string;
@@ -178,6 +180,7 @@ function ThreadListView({
   endText = "沒有更多貼文了",
   skeletons = 4,
   hideSig = false,
+  highlight,
   label = "貼文列表",
   className = "",
 }: CommonProps & { query: ThreadListQuery }) {
@@ -261,9 +264,32 @@ function ThreadListView({
         post={post}
         eager={index < 2}
         hideSig={hideSig}
+        highlight={highlight}
       />
     ));
 
+  const pinnedCards = pinnedPosts.map((post, index) =>
+    renderItem ? (
+      renderItem(post, index)
+    ) : (
+      <PostCard
+        key={`pinned-${post._id}`}
+        post={post}
+        variant="featured"
+        pinned
+        eager={index < 1}
+        hideSig={hideSig}
+      />
+    ),
+  );
+  const emptyState = empty ?? (
+    <p className="rounded-card border border-line border-dashed px-6 py-12 text-center text-ink-500 text-sm">
+      還沒有貼文
+    </p>
+  );
+
+  // Pinned posts are not the list: an empty list still shows `empty`
+  // (under the pinned posts).
   let body: ReactNode;
   if (loading) {
     body = (
@@ -274,13 +300,18 @@ function ThreadListView({
         ))}
       </div>
     );
-  } else if (total === 0 && failed) {
-    body = <ListError error={error} onRetry={() => void refetch()} />;
-  } else if (total === 0) {
-    body = empty ?? (
-      <p className="rounded-card border border-line border-dashed px-6 py-12 text-center text-ink-500 text-sm">
-        還沒有貼文
-      </p>
+  } else if (posts.length === 0) {
+    body = (
+      <>
+        {pinnedCards.length > 0 && (
+          <div className="flex flex-col gap-3">{pinnedCards}</div>
+        )}
+        {failed ? (
+          <ListError error={error} onRetry={() => void refetch()} />
+        ) : (
+          emptyState
+        )}
+      </>
     );
   } else {
     body = (
@@ -290,20 +321,7 @@ function ThreadListView({
         aria-busy={isFetchingNextPage}
         className="flex flex-col gap-3"
       >
-        {pinnedPosts.map((post, index) =>
-          renderItem ? (
-            renderItem(post, index)
-          ) : (
-            <PostCard
-              key={`pinned-${post._id}`}
-              post={post}
-              variant="featured"
-              pinned
-              eager={index < 1}
-              hideSig={hideSig}
-            />
-          ),
-        )}
+        {pinnedCards}
         {posts.map((post, index) => render(post, pinnedPosts.length + index))}
         {isFetchingNextPage && <PostCardSkeleton />}
         {failed && !isFetchingNextPage && (

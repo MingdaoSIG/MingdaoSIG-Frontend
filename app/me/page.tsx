@@ -3,7 +3,7 @@ import { SITE_TITLE_SUFFIX } from "@/modules/site";
 import MePage from "./MePage";
 
 export const metadata: Metadata = {
-  title: `我的${SITE_TITLE_SUFFIX}`,
+  title: `個人專區${SITE_TITLE_SUFFIX}`,
   robots: { index: false, follow: false },
 };
 

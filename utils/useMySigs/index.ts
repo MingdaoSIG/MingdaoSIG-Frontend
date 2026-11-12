@@ -1,9 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import type { Sig } from "@/interfaces/Sig";
+import { apiRequest } from "@/modules/api/client";
 import { markSigSeen } from "@/modules/sigSeen";
+import { storageGetJSON, storageSet } from "@/utils/safeStorage";
 import { ANNOUNCEMENT_SIG_ID, useSigDirectory } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -56,12 +58,97 @@ export function mySigsOf(
     .map(({ sig }) => sig);
 }
 
-/** The user's SIGs; empty when logged out. */
+// ---- The user's own order (drag to reorder in the side rail) ----------
+
+const ORDER_KEY = (userId: string) => `mdsig:sigOrder:${userId}`;
+const SAVE_DELAY = 500;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function isIdList(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
+
+/**
+ * The saved order: the server's `sigOrder` when it has one, else the copy
+ * kept on this device (written on every save, so an order survives a
+ * reload even before the backend stores it).
+ */
+export function savedSigOrder(
+  user: { _id?: string; sigOrder?: unknown } | null,
+): string[] {
+  if (isIdList(user?.sigOrder) && user.sigOrder.length > 0) {
+    return user.sigOrder;
+  }
+  if (!user?._id) {
+    return [];
+  }
+  const local = storageGetJSON<unknown>(ORDER_KEY(user._id));
+  return isIdList(local) ? local : [];
+}
+
+/** `sigs` in the saved order; SIGs not in it keep their place, at the end. */
+export function orderSigs<T extends { _id: string }>(
+  sigs: T[],
+  order: string[],
+): T[] {
+  const position = new Map(order.map((id, index) => [id, index]));
+  const ordered = sigs.filter((sig) => position.has(sig._id));
+  ordered.sort(
+    (a, b) => (position.get(a._id) ?? 0) - (position.get(b._id) ?? 0),
+  );
+  return [...ordered, ...sigs.filter((sig) => !position.has(sig._id))];
+}
+
+/**
+ * Saves a new order: at once in the profile and on this device, and to the
+ * server 500 ms after the last change (`POST /user { sigOrder }`).
+ */
+export function useSaveSigOrder() {
+  const { userData, updateUser } = useUserAccount();
+  const userId = userData?._id ?? "";
+  return useCallback(
+    (ids: string[]) => {
+      if (!userId) {
+        return;
+      }
+      const order = [...new Set(ids)].slice(0, 100);
+      updateUser({ sigOrder: order });
+      storageSet(ORDER_KEY(userId), JSON.stringify(order));
+      if (saveTimer) {
+        clearTimeout(saveTimer);
+      }
+      saveTimer = setTimeout(() => {
+        saveTimer = null;
+        void apiRequest("/user", {
+          method: "POST",
+          body: { sigOrder: order },
+          auth: true,
+        }).then((result) => {
+          if (!result.ok) {
+            // The order stays on this device; the next change retries.
+            console.warn("sigOrder was not saved:", result.message);
+          }
+        });
+      }, SAVE_DELAY);
+    },
+    [userId, updateUser],
+  );
+}
+
+/** The user's SIGs, in their own order; empty when logged out. */
 export function useMySigs() {
   const { isLogin, isLoading, userData } = useUserAccount();
   const directory = useSigDirectory();
   const sigs = useMemo(
-    () => (isLogin ? mySigsOf(directory.data ?? [], userData) : []),
+    () =>
+      isLogin
+        ? orderSigs(
+            mySigsOf(directory.data ?? [], userData),
+            savedSigOrder(userData),
+          )
+        : [],
     [isLogin, directory.data, userData],
   );
   return {
