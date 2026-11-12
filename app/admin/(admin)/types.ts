@@ -5,7 +5,8 @@
 import type { Identity } from "@/interfaces/User";
 import type { Suspension } from "@/modules/suspension";
 
-export type BadgeId = "developer" | "10.21_user" | "bug_hunter";
+/** A badge key (contract v4 §5.9: any key of the badge collection). */
+export type BadgeId = string;
 
 export type UserRef = {
   _id: string;
@@ -73,6 +74,8 @@ export type UserRole = "user" | "moderator" | "admin";
 
 export type AdminUserDetail = AdminUser & {
   description?: string;
+  displayName?: string;
+  previousCustomIds?: string[];
   postCount?: number;
   commentCount?: number;
   managedSigs?: { _id: string; name: string; role: "leader" | "moderator" }[];
@@ -103,6 +106,13 @@ export type AdminSig = {
   leaders: UserRef[];
   moderators: UserRef[];
   pendingJoinRequests?: number;
+  /** `#rrggbb` (contract v4 §3.7). */
+  color?: string;
+  /** Image id of the default post cover. */
+  defaultCover?: string;
+  /** Listed by `?archived=1`. */
+  archived?: boolean;
+  previousCustomIds?: string[];
   /** A Discord webhook is set (contract v4 §3.6); never the URL itself. */
   discordWebhookSet?: boolean;
 };
@@ -121,6 +131,10 @@ export type JoinRequest = {
   q1?: string;
   q2?: string;
   q3?: string;
+  /** Labelled answers (contract v4 §5.6); older requests get q1..q3. */
+  answers?: { question: string; answer: string }[];
+  /** Why the platform decided it (e.g. a SIG merge). */
+  note?: string;
   state: JoinState;
   createdAt?: string;
   updatedAt?: string;
@@ -143,6 +157,11 @@ export type AuditAction =
   | "sig.member.remove"
   | "join.accept"
   | "join.reject"
+  | "post.move"
+  | "sig.merge"
+  | "rollover.apply"
+  | "user.update"
+  | "badge.update"
   | "user.suspend"
   | "user.unsuspend"
   | "banner.update"
@@ -155,6 +174,8 @@ export type AuditTargetKind =
   | "user"
   | "sig"
   | "join"
+  | "badge"
+  | "site"
   | "banner"
   | "broadcast"
   | "setting";
@@ -226,3 +247,82 @@ export type SigMember = {
 };
 
 export type ListPage<T> = { items: T[]; total: number };
+
+// ---- SIG administration (contract v4 §5.7–§5.9) ---------------------------
+
+export type SigRef = { _id: string; name?: string; customId?: string };
+
+/** `POST /admin/posts/move` (dry run or applied). */
+export type MovePostsResult = {
+  dryRun: boolean;
+  /** Posts that move (dry run) or moved. */
+  count: number;
+  /** Of those, posts whose old default cover becomes the target's. */
+  covers?: number;
+  from?: string | string[];
+  to: string;
+};
+
+/** `POST /admin/sigs/:id/merge` (dry run or applied). */
+export type MergeResult = {
+  dryRun: boolean;
+  source: SigRef;
+  into: SigRef;
+  posts: number;
+  covers?: number;
+  members: {
+    added: number;
+    alreadyInTarget: number;
+    removedFromSource: number;
+  };
+  joinRequests: { moved: number; rejected: number };
+  previousCustomIds: string[];
+  /** Reported, not moved. */
+  leaders: UserRef[];
+  moderators: UserRef[];
+  archived?: boolean;
+};
+
+export type RolloverPerson = UserRef & { class?: string };
+
+/** `GET /admin/rollover/preview`. */
+export type RolloverPreview = {
+  alumniMembers: {
+    users: number;
+    memberships: number;
+    bySig: { sig: SigRef & { archived?: boolean }; count: number }[];
+    list: (RolloverPerson & { sigs: string[] })[];
+  };
+  alumniManagers: {
+    user: RolloverPerson;
+    sig: SigRef;
+    role: "leader" | "moderator";
+  }[];
+};
+
+/** `POST /admin/rollover/apply`. */
+export type RolloverResult = {
+  dryRun: boolean;
+  removeAlumniFromSigs: boolean;
+  removeAlumniLeaders: boolean;
+  users: number;
+  memberships: number;
+  leadersRemoved: number;
+  moderatorsRemoved: number;
+};
+
+/** One SIG of `POST /admin/sigs/leaders/batch`. */
+export type LeaderBatchItem = {
+  sig: string;
+  added: UserRef[];
+  removed: UserRef[];
+  leaders: UserRef[];
+  applied: boolean;
+};
+
+export type LeaderBatchResult = {
+  dryRun: boolean;
+  added: number;
+  removed: number;
+  results: LeaderBatchItem[];
+};

@@ -1,17 +1,13 @@
 "use client";
 
 import { ExternalLink, History } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { badgeList } from "@/app/[userID]/(User)/config/badge";
-import { toast } from "@/components/mobile/Toast";
+import { useBadges } from "@/modules/badges";
 import {
   adminKeys,
   errorText,
-  failureMessage,
   PAGE_SIZE,
-  send,
   useInvalidate,
   usePatchList,
   useSigNames,
@@ -35,7 +31,6 @@ import { Pagination, pageCount } from "../(admin)/components/Pagination";
 import {
   Avatar,
   Badge,
-  Button,
   buttonClass,
   InfoRow,
   linkClass,
@@ -44,7 +39,7 @@ import {
 import { useAdmin } from "../(admin)/context";
 import { formatCount, formatDate, IDENTITY_LABEL } from "../(admin)/format";
 import { roleOf } from "../(admin)/moderationApi";
-import type { AdminUser, AdminUserDetail, BadgeId } from "../(admin)/types";
+import type { AdminUser, AdminUserDetail } from "../(admin)/types";
 import { oneOf, useQueryState } from "../(admin)/useQueryState";
 import { LoginSection } from "../(admin)/user/LoginSection";
 import { RoleBadge, RoleSection } from "../(admin)/user/RoleSection";
@@ -52,32 +47,17 @@ import {
   SuspensionBadge,
   SuspensionSection,
 } from "../(admin)/user/SuspensionSection";
+import { BadgeIcon, UserBadgeEditor } from "../(admin)/user/UserBadgeEditor";
+import { UserEditSection } from "../(admin)/user/UserEditSection";
 
 // 使用者: find people by name, account id, email or student number, see
-// their SIGs and activity, set their role (一般使用者／內容管理員／管理員),
-// mute or ban them, see their logins and give badges.
+// their SIGs and activity, edit their account id, display name and 關於我
+// (編輯資料), set their role (一般使用者／內容管理員／管理員), mute or ban
+// them, see their logins and give badges.
 // Content moderators (contract v4 §5.2) read, and mute; nothing else.
 
 const ROLES = ["all", "admin", "moderator"] as const;
 const STATES = ["all", "suspended"] as const;
-
-const BADGES: { id: BadgeId; label: string; icon: string }[] = [
-  {
-    id: "developer",
-    label: "開發者（Developer）",
-    icon: badgeList.developer.icon,
-  },
-  {
-    id: "10.21_user",
-    label: "10/21 活動參與者",
-    icon: badgeList["10.21_user"].icon,
-  },
-  {
-    id: "bug_hunter",
-    label: "抓蟲高手（Bug Hunter）",
-    icon: badgeList.bug_hunter.icon,
-  },
-];
 
 export default function AdminUsersPage() {
   const { get, set, page } = useQueryState();
@@ -302,6 +282,7 @@ function UserFlags({
   /** A table cell shows 「—」 when there is nothing to show. */
   dash?: boolean;
 }) {
+  const { byKey } = useBadges();
   const badges = user.badge ?? [];
   const role = roleOf(user);
   const suspended = Boolean(user.suspension);
@@ -311,17 +292,12 @@ function UserFlags({
       {role === "moderator" && <Badge tone="ok">內容管理員</Badge>}
       <SuspensionBadge suspension={user.suspension} />
       {badges.map((id) => {
-        const badge = BADGES.find((b) => b.id === id);
+        const badge = byKey.get(id);
         return badge ? (
-          <Image
-            key={id}
-            src={badge.icon}
-            alt={badge.label}
-            title={badge.label}
-            width={16}
-            height={16}
-            className="size-4"
-          />
+          <span key={id} title={badge.name} className="inline-flex">
+            <BadgeIcon badge={badge} size={16} />
+            <span className="sr-only">{badge.name}</span>
+          </span>
         ) : null;
       })}
       {dash && role === "user" && !suspended && badges.length === 0 && (
@@ -342,15 +318,11 @@ function UserDrawer({
   const detail = useUserDetail(user._id);
   // What this drawer changed, until the refetch catches up (the user may
   // also drop out of the filtered list, e.g. after removing admin).
-  const [changed, setChanged] = useState<Partial<AdminUser>>({});
+  const [changed, setChanged] = useState<Partial<AdminUserDetail>>({});
   const full: AdminUserDetail = { ...user, ...detail.data, ...changed };
   const isSelf = user._id === admin.userId;
   const invalidate = useInvalidate();
   const patch = usePatchList<AdminUser>(adminKeys.users);
-  const [busy, setBusy] = useState<"badges" | null>(null);
-  const [badges, setBadges] = useState<BadgeId[]>(full.badge ?? []);
-  const savedBadges = (full.badge ?? []).slice().sort().join(",");
-  const badgesChanged = badges.slice().sort().join(",") !== savedBadges;
   // Content moderators may open SIG pages only for the SIGs they manage.
   const sigHref = (sigId: string, tab?: string) =>
     admin.isAdmin || admin.managedSigIds.includes(sigId)
@@ -360,31 +332,6 @@ function UserDrawer({
   useEffect(() => {
     setChanged({});
   }, [user._id]);
-
-  // Another user, or fresh data: start from what is saved.
-  useEffect(() => {
-    setBadges(full.badge ?? []);
-  }, [user._id, savedBadges]);
-
-  const saveBadges = async () => {
-    setBusy("badges");
-    const result = await send<{ badge?: BadgeId[] }>(
-      `/admin/users/${user._id}/badges`,
-      { body: { badges } },
-    );
-    setBusy(null);
-    if (!result.ok) {
-      toast.error(failureMessage(result));
-      return;
-    }
-    const badge = Array.isArray(result.data?.badge)
-      ? result.data.badge
-      : badges;
-    patch(user._id, { badge });
-    setChanged((prev) => ({ ...prev, badge }));
-    toast.success("已更新徽章");
-    await invalidate(adminKeys.users);
-  };
 
   return (
     <Drawer
@@ -462,6 +409,23 @@ function UserDrawer({
         <p role="alert" className="mt-1 text-danger-700 text-xs">
           部分資料載入失敗：{errorText(detail.error)}
         </p>
+      )}
+
+      {admin.isAdmin && (
+        <Section title="編輯資料">
+          {detail.isPending ? (
+            <Spinner />
+          ) : (
+            <UserEditSection
+              user={full}
+              onSaved={(saved) => {
+                patch(user._id, { customId: saved.customId });
+                setChanged((prev) => ({ ...prev, ...saved }));
+                void invalidate(adminKeys.users);
+              }}
+            />
+          )}
+        </Section>
       )}
 
       <Section title="加入的 SIG">
@@ -570,48 +534,15 @@ function UserDrawer({
 
       {admin.isAdmin && (
         <Section title="徽章">
-          <fieldset>
-            <legend className="sr-only">徽章</legend>
-            <div className="flex flex-col gap-1">
-              {BADGES.map((badge) => (
-                <label
-                  key={badge.id}
-                  className="flex cursor-pointer items-center gap-2 rounded-control px-1 py-1 text-ink-800 text-sm hover:bg-field"
-                >
-                  <input
-                    type="checkbox"
-                    checked={badges.includes(badge.id)}
-                    onChange={(event) =>
-                      setBadges((prev) =>
-                        event.target.checked
-                          ? [...prev, badge.id]
-                          : prev.filter((id) => id !== badge.id),
-                      )
-                    }
-                    className="size-4 cursor-pointer accent-brand-700"
-                  />
-                  <Image
-                    src={badge.icon}
-                    alt=""
-                    width={18}
-                    height={18}
-                    className="size-[18px]"
-                  />
-                  {badge.label}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          <Button
-            size="sm"
-            variant="primary"
-            className="mt-2"
-            onClick={saveBadges}
-            disabled={!badgesChanged}
-            loading={busy === "badges"}
-          >
-            儲存徽章
-          </Button>
+          <UserBadgeEditor
+            userId={user._id}
+            saved={full.badge ?? []}
+            onSaved={(badge) => {
+              patch(user._id, { badge });
+              setChanged((prev) => ({ ...prev, badge }));
+              void invalidate(adminKeys.users);
+            }}
+          />
         </Section>
       )}
     </Drawer>

@@ -68,6 +68,27 @@ function applicant(request: JoinRequest) {
   return request.user?.name || "已刪除的使用者";
 }
 
+/**
+ * The answers with their questions (contract v4 §5.6). Requests from
+ * before custom questions have only q1..q3: the default questions.
+ */
+export function answersOf(request: JoinRequest) {
+  const labelled = (request.answers ?? []).filter(
+    (item) => item && typeof item.question === "string",
+  );
+  if (labelled.length > 0) {
+    return labelled.map((item) => ({
+      question: item.question || "（題目）",
+      answer: typeof item.answer === "string" ? item.answer : "",
+    }));
+  }
+  const old = [request.q1, request.q2, request.q3];
+  return JOIN_QUESTIONS.map((question, index) => ({
+    question: question.label,
+    answer: old[index] ?? "",
+  }));
+}
+
 function useJoinDecision() {
   const invalidate = useInvalidate();
   const patch = usePatchList<JoinRequest>(adminKeys.joinRequests);
@@ -237,11 +258,18 @@ export function JoinRequestList({
     {
       key: "answer",
       optional: true,
-      header: "自我介紹",
+      header: "回答",
       className: "w-[26%]",
-      cell: (request) => (
-        <Truncate className="text-ink-500">{request.q1 || "—"}</Truncate>
-      ),
+      cell: (request) => {
+        const first = answersOf(request).find((item) => item.answer);
+        return first ? (
+          <Truncate className="text-ink-500">
+            {`${first.question}：${first.answer}`}
+          </Truncate>
+        ) : (
+          <span className="text-ink-400">—</span>
+        );
+      },
     },
     {
       key: "date",
@@ -378,7 +406,7 @@ export function JoinRequestList({
 }
 
 function JoinRequestDetail({ request }: { request: JoinRequest }) {
-  const answers = [request.q1, request.q2, request.q3];
+  const answers = answersOf(request);
   return (
     <>
       <div className="mb-3 flex items-center gap-2">
@@ -389,10 +417,15 @@ function JoinRequestDetail({ request }: { request: JoinRequest }) {
           </span>
         )}
       </div>
+      {request.note && (
+        <p className="mb-3 rounded-control bg-field px-3 py-2 text-ink-700 text-sm">
+          {request.note}
+        </p>
+      )}
       <div className="flex flex-col gap-3">
-        {JOIN_QUESTIONS.map((question, index) => (
-          <Answer key={question.id} label={question.label}>
-            {answers[index] || "（未填寫）"}
+        {answers.map((item, index) => (
+          <Answer key={`${index}-${item.question}`} label={item.question}>
+            {item.answer || "（未填寫）"}
           </Answer>
         ))}
       </div>

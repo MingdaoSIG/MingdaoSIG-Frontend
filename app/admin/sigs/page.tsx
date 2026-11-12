@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ANNOUNCEMENT_SIG_ID } from "@/utils/useAdminAccess";
 import { errorText, useAdminSigs } from "../(admin)/api";
 import { PageHeader } from "../(admin)/components/AdminShell";
 import {
@@ -14,16 +16,25 @@ import {
   SelectFilter,
 } from "../(admin)/components/Filters";
 import { ListCard } from "../(admin)/components/ListCard";
-import { Avatar, Badge } from "../(admin)/components/ui";
+import { Avatar, Badge, Button } from "../(admin)/components/ui";
 import { useAdmin } from "../(admin)/context";
 import { formatCount } from "../(admin)/format";
+import { CreateSigDialog } from "../(admin)/sig/CreateSigDialog";
+import { useArchivedSigs } from "../(admin)/sigAdminApi";
 import type { AdminSig, UserRef } from "../(admin)/types";
 import { oneOf, useQueryState } from "../(admin)/useQueryState";
 
 // SIG: every SIG (admins) or the caller's own, with member counts and a
 // warning for SIGs that have no leader or 指導老師. Opens the SIG page.
+// Admins also create SIGs here and see the archived ones (已封存).
 
-const FILTERS = ["all", "no-leader", "no-moderator", "pending"] as const;
+const FILTERS = [
+  "all",
+  "no-leader",
+  "no-moderator",
+  "pending",
+  "archived",
+] as const;
 
 function names(people: UserRef[]) {
   return people.map((p) => p.name || p.customId || "（未命名）").join("、");
@@ -33,8 +44,14 @@ export default function AdminSigsPage() {
   const admin = useAdmin();
   const { get, set } = useQueryState();
   const q = get("q");
-  const filter = oneOf(get("filter"), FILTERS, "all");
-  const sigs = useAdminSigs();
+  const requested = oneOf(get("filter"), FILTERS, "all");
+  // Only admins may list archived SIGs.
+  const filter = requested === "archived" && !admin.isAdmin ? "all" : requested;
+  const showArchived = filter === "archived";
+  const active = useAdminSigs();
+  const archivedSigs = useArchivedSigs(showArchived);
+  const sigs = showArchived ? archivedSigs : active;
+  const [creating, setCreating] = useState(false);
 
   const all = sigs.data ?? [];
   const rows = useMemo(() => {
@@ -60,7 +77,7 @@ export default function AdminSigsPage() {
     });
   }, [all, q, filter]);
 
-  const missing = all.filter(
+  const missing = (active.data ?? []).filter(
     (sig) => sig.leaders.length === 0 || sig.moderators.length === 0,
   ).length;
 
@@ -73,7 +90,12 @@ export default function AdminSigsPage() {
         <span className="flex min-w-0 items-center gap-2.5">
           <Avatar src={sig.avatar} name={sig.name} size={28} square />
           <span className="min-w-0">
-            <Truncate className="font-medium text-ink-900">{sig.name}</Truncate>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <Truncate className="font-medium text-ink-900">
+                {sig.name}
+              </Truncate>
+              <ArchivedBadge sig={sig} />
+            </span>
             <Truncate className="text-ink-500 text-xs">
               {sig.customId ? `@${sig.customId}` : "—"}
             </Truncate>
@@ -129,13 +151,26 @@ export default function AdminSigsPage() {
       <PageHeader
         title="SIG"
         description={
-          sigs.data
-            ? admin.isAdmin
-              ? `共 ${all.length} 個 SIG${missing > 0 ? `，${missing} 個缺少幹部或指導老師` : ""}`
-              : `你管理 ${all.length} 個 SIG`
-            : "載入中…"
+          !sigs.data
+            ? "載入中…"
+            : showArchived
+              ? `已封存 ${all.filter((sig) => sig._id !== ANNOUNCEMENT_SIG_ID).length} 個 SIG`
+              : admin.isAdmin
+                ? `共 ${all.length} 個 SIG${missing > 0 ? `，${missing} 個缺少幹部或指導老師` : ""}`
+                : `你管理 ${all.length} 個 SIG`
+        }
+        actions={
+          admin.isAdmin && (
+            <Button variant="primary" onClick={() => setCreating(true)}>
+              <Plus aria-hidden className="size-4" />
+              新增 SIG
+            </Button>
+          )
         }
       />
+      {admin.isAdmin && (
+        <CreateSigDialog open={creating} onClose={() => setCreating(false)} />
+      )}
       <ListCard
         toolbar={
           <FilterBar>
@@ -154,6 +189,9 @@ export default function AdminSigsPage() {
                 { value: "no-leader", label: "尚未設定幹部" },
                 { value: "no-moderator", label: "尚未設定指導老師" },
                 { value: "pending", label: "有待審申請" },
+                ...(admin.isAdmin
+                  ? [{ value: "archived", label: "已封存" }]
+                  : []),
               ]}
               onChange={(next) => set({ filter: next === "all" ? null : next })}
               className="sm:w-44"
@@ -171,8 +209,11 @@ export default function AdminSigsPage() {
             <span className="flex items-center gap-3">
               <Avatar src={sig.avatar} name={sig.name} size={40} square />
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-semibold text-ink-900 text-sm">
-                  {sig.name}
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <span className="truncate font-semibold text-ink-900 text-sm">
+                    {sig.name}
+                  </span>
+                  <ArchivedBadge sig={sig} />
                 </span>
                 <span className="block truncate text-ink-500 text-xs">
                   {formatCount(sig.memberCount)} 位成員 · 幹部{" "}
@@ -203,9 +244,27 @@ export default function AdminSigsPage() {
           fetching={sigs.isFetching && !sigs.isPending}
           error={sigs.isError ? errorText(sigs.error) : null}
           onRetry={() => sigs.refetch()}
-          empty={q || filter !== "all" ? "沒有符合條件的 SIG" : "沒有 SIG"}
+          empty={
+            showArchived && !q
+              ? "沒有已封存的 SIG"
+              : q || filter !== "all"
+                ? "沒有符合條件的 SIG"
+                : "沒有 SIG"
+          }
         />
       </ListCard>
     </>
+  );
+}
+
+/** 已封存, or for the announcement SIG (stored as archived) 使用中. */
+function ArchivedBadge({ sig }: { sig: AdminSig }) {
+  if (!sig.archived) {
+    return null;
+  }
+  return sig._id === ANNOUNCEMENT_SIG_ID ? (
+    <Badge tone="info">固定封存・使用中</Badge>
+  ) : (
+    <Badge tone="mute">已封存</Badge>
   );
 }

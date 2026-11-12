@@ -37,7 +37,8 @@ export type User = {
   displayName?: string; // 顯示名稱
   description?: string; // 描述
   avatar?: string; // 大頭貼
-  badge?: ("developer" | "10.21_user" | "bug_hunter")[]; // 徽章
+  /** Badge keys (contract v4 §5.9: any key of `GET /badge/list`). */
+  badge?: string[]; // 徽章
   follower?: string[]; // 追隨者
   permission?: Permission; // 權限
   /** Email me when someone comments (only on /user/me and /login). */
@@ -47,6 +48,8 @@ export type User = {
    * keys mean the defaults; see modules/notifications/settings.
    */
   notificationSettings?: NotificationSettingsPatch;
+  /** Set when `/user/@:id` matched an old customId: the current one. */
+  redirectTo?: string;
   /**
    * A mute or ban in force (only on /user/me and /login, contract v4
    * §5.1); absent otherwise.

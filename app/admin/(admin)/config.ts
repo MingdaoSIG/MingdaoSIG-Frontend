@@ -1,7 +1,9 @@
 import {
+  Award,
   Download,
   FileText,
   Flag,
+  GraduationCap,
   History,
   Inbox,
   LayoutDashboard,
@@ -30,6 +32,8 @@ export type AdminSectionId =
   | "sigs"
   | "join-requests"
   | "users"
+  | "rollover"
+  | "badges"
   | "banners"
   | "broadcast"
   | "exports"
@@ -110,6 +114,22 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Users,
     // Content moderators: read and mute only (contract v4 §5.2).
     roles: ["admin", "moderator"],
+  },
+  {
+    id: "rollover",
+    label: "學年交接",
+    href: "/admin/rollover",
+    group: "社群",
+    icon: GraduationCap,
+    roles: ["admin"],
+  },
+  {
+    id: "badges",
+    label: "徽章",
+    href: "/admin/badges",
+    group: "社群",
+    icon: Award,
+    roles: ["admin"],
   },
   {
     id: "banners",

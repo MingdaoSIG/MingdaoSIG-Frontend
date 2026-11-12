@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ExternalLink,
+  FolderInput,
   MessageSquare,
   Pin,
   PinOff,
@@ -45,7 +46,12 @@ import {
   InfoRow,
   linkClass,
 } from "../(admin)/components/ui";
+import { canManageSig, useAdmin } from "../(admin)/context";
 import { formatCount, formatDate, formatDateTime } from "../(admin)/format";
+import {
+  MovePostsDialog,
+  type MoveSelection,
+} from "../(admin)/posts/MovePostsDialog";
 import type {
   AdminPost,
   ListPage,
@@ -84,6 +90,7 @@ const BATCH_DONE: Record<PostBatchAction, string> = {
 type PostState = { _id: string; pinned?: boolean; removed?: boolean };
 
 export default function AdminPostsPage() {
+  const admin = useAdmin();
   const { get, set, page } = useQueryState();
   const q = get("q");
   const sig = get("sig");
@@ -107,6 +114,7 @@ export default function AdminPostsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<AdminPost | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [moving, setMoving] = useState<MoveSelection | null>(null);
 
   const items = posts.data?.items ?? [];
   const total = posts.data?.total ?? 0;
@@ -397,6 +405,17 @@ export default function AdminPostsPage() {
                     >
                       復原
                     </Button>
+                    {/* Moving posts is admin-only (contract v4 §5.7). */}
+                    {admin.isAdmin && (
+                      <Button
+                        size="sm"
+                        onClick={() => setMoving({ ids: Array.from(selected) })}
+                        disabled={busy === "batch"}
+                      >
+                        <FolderInput aria-hidden className="size-3.5" />
+                        搬移到其他 SIG
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="ghost"
@@ -406,8 +425,27 @@ export default function AdminPostsPage() {
                     </Button>
                   </div>
                 ) : (
-                  <span className="hidden text-ink-500 text-xs sm:inline">
-                    勾選貼文可以一次置頂、下架或復原
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="hidden text-ink-500 text-xs sm:inline">
+                      {admin.isAdmin
+                        ? "勾選貼文可以一次置頂、下架、復原或搬移"
+                        : "勾選貼文可以一次置頂、下架或復原"}
+                    </span>
+                    {admin.isAdmin && sig && total > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          setMoving({
+                            fromSig: sig,
+                            fromName: names.get(sig) ?? "這個 SIG",
+                          })
+                        }
+                      >
+                        <FolderInput aria-hidden className="size-3.5" />
+                        搬移 {names.get(sig) ?? "這個 SIG"} 的全部貼文
+                      </Button>
+                    )}
                   </span>
                 )}
                 <div className="sm:ml-auto">
@@ -463,6 +501,11 @@ export default function AdminPostsPage() {
           </ListCard>
         </div>
 
+        <MovePostsDialog
+          selection={moving}
+          onClose={() => setMoving(null)}
+          onMoved={() => setSelected(new Set())}
+        />
         <Drawer
           open={Boolean(current)}
           onClose={() => setOpen(null)}
@@ -550,12 +593,16 @@ export default function AdminPostsPage() {
                   )}
                 </InfoRow>
                 <InfoRow label="SIG">
-                  <Link
-                    href={`/admin/sigs/${current.sig}`}
-                    className={linkClass}
-                  >
-                    {names.get(current.sig) ?? current.sig}
-                  </Link>
+                  {canManageSig(admin, current.sig) ? (
+                    <Link
+                      href={`/admin/sigs/${current.sig}`}
+                      className={linkClass}
+                    >
+                      {names.get(current.sig) ?? current.sig}
+                    </Link>
+                  ) : (
+                    (names.get(current.sig) ?? current.sig)
+                  )}
                 </InfoRow>
                 <InfoRow label="作者">
                   {current.user ? (
