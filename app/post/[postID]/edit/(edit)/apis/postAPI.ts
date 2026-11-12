@@ -1,4 +1,6 @@
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
+import type { TThread } from "@/interfaces/Thread";
+import { apiRequest } from "@/modules/api/client";
 
 const sigDefaultCover: { [key: string]: string } = {
   "6529ed87df4ae96f279cd5e3": "653299ff0b891d1f6b5b4460", // 資訊程式設計
@@ -24,37 +26,24 @@ const sigDefaultCover: { [key: string]: string } = {
   "6ad18a858a01ead1f9d558a9": "6ad18a858a01ead1f9d558aa", // 數學
 };
 
-export async function getPostAPI(postId: string) {
-  try {
-    const res = await (
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${postId}`, {
-        method: "GET",
-      })
-    ).json();
-    return res;
-  } catch (_error) {
-    // Silently ignore - caller handles missing data
-  }
+export function getPostAPI(postId: string, signal?: AbortSignal) {
+  return apiRequest<TThread>(`/post/${postId}`, { signal });
 }
 
-export async function editPostAPI(
+export function editPostAPI(
   { title, sig, hashtag, content, cover }: TPostAPI,
   postId: string,
   token: string,
 ) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${postId}`, {
+  return apiRequest<TThread>(`/post/${postId}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
+    token,
+    body: {
       title: title,
       sig: sig,
       hashtag: hashtag,
       content: content,
       cover: cover || sigDefaultCover[sig],
-    }),
+    },
   });
-  return await res.json();
 }

@@ -11,6 +11,7 @@ import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
 import { isValidObjectId } from "@/modules/validation";
+import { storageGet, storageRemove, storageSet } from "@/utils/safeStorage";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -117,7 +118,7 @@ export default function NewPostPage() {
       (data.content !== markdownGuide && data.content !== "");
 
     if (hasContent) {
-      localStorage.setItem("postData", JSON.stringify(data));
+      storageSet("postData", JSON.stringify(data));
     }
     // ⚠️ 不要在這裡刪除 postData，讓用戶手動 discard
   }, [data, isInitialized]);
@@ -128,8 +129,9 @@ export default function NewPostPage() {
       return;
     }
 
-    const storedContent = localStorage?.getItem("editorContent");
-    const storedData = localStorage?.getItem("postData");
+    // Blocked storage (Safari "Block all cookies") reads as empty
+    const storedContent = storageGet("editorContent");
+    const storedData = storageGet("postData");
 
     let loadedData: Partial<TPostAPI> = {};
 
@@ -146,7 +148,7 @@ export default function NewPostPage() {
       } catch (error) {
         console.error("Failed to parse stored post data:", error);
         // 如果解析失敗，清除 localStorage 中的無效資料
-        localStorage.removeItem("postData");
+        storageRemove("postData");
       }
     }
 
@@ -180,35 +182,33 @@ export default function NewPostPage() {
       );
     }
 
-    try {
-      if (!data || !token) {
-        throw new Error("Missing data or token");
-      }
-      const res = await postAPI(data, token);
-
-      if (res.status === 2000) {
-        return Swal.fire(alertMessageConfigs.Success).then(() => {
-          setPostButtonDisable(false);
-          // ✅ 成功發布後才清除
-          localStorage.removeItem("editorContent");
-          localStorage.removeItem("postData");
-          hasLoadedFromStorage.current = false; // 重置標記
-          route.push(`/post/${res.data._id}`);
-        });
-      }
-      if (res.status === 4001) {
-        Swal.fire(alertMessageConfigs.PermissionError).then(() =>
-          setPostButtonDisable(false),
-        );
-      } else {
-        setPostButtonDisable(false);
-        throw new Error("Unexpected error");
-      }
-    } catch (_error) {
-      Swal.fire(alertMessageConfigs.OthersError).then(() =>
+    if (!token) {
+      return Swal.fire(alertMessageConfigs.OthersError).then(() =>
         setPostButtonDisable(false),
       );
     }
+    const res = await postAPI(data, token);
+
+    if (res.ok) {
+      return Swal.fire(alertMessageConfigs.Success).then(() => {
+        setPostButtonDisable(false);
+        // ✅ 成功發布後才清除
+        storageRemove("editorContent");
+        storageRemove("postData");
+        hasLoadedFromStorage.current = false; // 重置標記
+        route.push(res.data?._id ? `/post/${res.data._id}` : "/");
+      });
+    }
+    if (res.status === 4001) {
+      return Swal.fire(alertMessageConfigs.PermissionError).then(() =>
+        setPostButtonDisable(false),
+      );
+    }
+    // 429, too large, server down…: say what happened; the draft is kept.
+    return Swal.fire({
+      ...alertMessageConfigs.OthersError,
+      text: res.message,
+    }).then(() => setPostButtonDisable(false));
   }
 
   function discard(e: React.MouseEvent<HTMLButtonElement>) {
@@ -231,8 +231,8 @@ export default function NewPostPage() {
           cover: "",
           hashtag: [],
         });
-        localStorage.removeItem("editorContent");
-        localStorage.removeItem("postData");
+        storageRemove("editorContent");
+        storageRemove("postData");
         hasLoadedFromStorage.current = false;
       }
     });
@@ -272,6 +272,9 @@ export default function NewPostPage() {
     try {
       const imageUploadAPIResponse = await imageUpload(file, token);
       const imageUploadResponseJson = await imageUploadAPIResponse.json();
+      if (!imageUploadResponseJson?.id) {
+        throw new Error("Upload returned no id");
+      }
       setPostData(
         (prev: TPostAPI) =>
           ({

@@ -1,37 +1,21 @@
 import type { TJoinSigAPI } from "@/app/[userID]/(User)/types/joinSigAPI";
+import { apiRequest } from "@/modules/api/client";
 
-export async function JoinSigAPI(
-  { sig, q1, q2, q3 }: TJoinSigAPI,
-  token: string,
-) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/sig/${sig}/join`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        q1: q1,
-        q2: q2,
-        q3: q3,
-      }),
-    },
-  );
-  return await res.json();
+export function JoinSigAPI({ sig, q1, q2, q3 }: TJoinSigAPI, token: string) {
+  return apiRequest(`/sig/${sig}/join`, {
+    method: "POST",
+    token,
+    body: { q1, q2, q3 },
+  });
 }
 
-export async function ReadJoinSigAPI(sig: string, token: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/sig/${sig}/join`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-    },
-  );
-  return await res.json();
+export function ReadJoinSigAPI(
+  sig: string,
+  token: string,
+  signal?: AbortSignal,
+) {
+  return apiRequest<{ state?: string }>(`/sig/${sig}/join`, {
+    token,
+    signal,
+  });
 }

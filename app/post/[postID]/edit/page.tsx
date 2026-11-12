@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type ChangeEvent, use, useEffect, useState } from "react";
+import { type ChangeEvent, use, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 // APIs Request Function
 import {
@@ -15,11 +15,38 @@ import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 // Types
 import type { TThread } from "@/interfaces/Thread";
+import type { User } from "@/interfaces/User";
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
+
+const EMPTY_FORM: TPostAPI = {
+  title: "",
+  sig: "",
+  content: "",
+  cover: "",
+  hashtag: [],
+};
+
+function toForm(post: TThread): TPostAPI {
+  return {
+    title: post.title ?? "",
+    sig: typeof post.sig === "string" ? post.sig : "",
+    content: post.content ?? "",
+    cover: post.cover ?? "",
+    hashtag: Array.isArray(post.hashtag) ? post.hashtag : [],
+  };
+}
+
+function ownerOf(post: TThread) {
+  const user: unknown = post.user;
+  if (typeof user === "string") {
+    return user;
+  }
+  return (user as User | null)?._id;
+}
 
 export default function EditPostPage({
   params,
@@ -31,14 +58,14 @@ export default function EditPostPage({
   const isMobile = useIsMobile();
   const { isLogin, token, userData, isLoading } = useUserAccount();
 
-  const [oldPostData, setOldPostData] = useState<TThread>({} as TThread);
-  const [currentPostData, setCurrentPostData] = useState<TPostAPI>({
-    title: oldPostData.title,
-    sig: oldPostData.sig,
-    content: oldPostData.content,
-    cover: oldPostData.cover,
-    hashtag: oldPostData.hashtag,
-  });
+  const [oldPostData, setOldPostData] = useState<TThread | null>(null);
+  const [currentPostData, setCurrentPostData] = useState<TPostAPI>(EMPTY_FORM);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [saving, setSaving] = useState(false);
+  // The form is seeded from the loaded post once. Emptying a field later
+  // (removing the cover, clearing the title) is an edit, not a reset.
+  const seeded = useRef(false);
 
   function handleFormChange(e: {
     target: { name: string; value: string | string[] };
@@ -52,118 +79,95 @@ export default function EditPostPage({
     );
   }
 
-  const [editButtonDisable, setEditButtonDisable] = useState<boolean>(false);
-
+  // `attempt` re-runs the load when the user presses retry.
   useEffect(() => {
-    if (
-      (!isLoading && !isLogin) ||
-      (!isLoading && oldPostData?.user !== userData?._id)
-    ) {
+    if (seeded.current) {
+      return;
+    }
+    const controller = new AbortController();
+    (async () => {
+      const res = await getPostAPI(postID, controller.signal);
+      if (controller.signal.aborted || seeded.current) {
+        return;
+      }
+      if (res.ok && typeof res.data?._id === "string") {
+        seeded.current = true;
+        setOldPostData(res.data);
+        setCurrentPostData(toForm(res.data));
+        setLoadError(null);
+      } else if (!res.ok && res.kind === "not-found") {
+        route.push("/");
+      } else {
+        setLoadError(res.ok ? "伺服器暫時無法回應，請稍後再試" : res.message);
+      }
+    })();
+    return () => controller.abort();
+  }, [postID, attempt]);
+
+  // Only judge ownership once both the post and the login are known;
+  // deciding earlier bounced the real owner whenever /login answered first.
+  useEffect(() => {
+    if (isLoading || !oldPostData) {
+      return;
+    }
+    if (!isLogin || ownerOf(oldPostData) !== userData?._id) {
       route.push(`/post/${postID}`);
     }
   }, [oldPostData, userData, isLoading, isLogin, route, postID]);
 
-  useEffect(() => {
-    if (postID && currentPostData.content === oldPostData.content) {
-      (async () => {
-        const res = await getPostAPI(postID);
-        if (res.status !== 2000) {
-          route.push("/");
-        } else {
-          setOldPostData(res.data);
-        }
-      })();
-    }
-  }, [currentPostData.content, oldPostData.content, postID, route]);
-
-  useEffect(() => {
-    if (
-      !currentPostData.title ||
-      !currentPostData.content ||
-      !currentPostData.sig ||
-      !currentPostData.cover
-    ) {
-      setCurrentPostData(
-        (prev: TPostAPI) =>
-          ({
-            ...prev,
-            title: oldPostData.title,
-            sig: oldPostData.sig,
-            content: oldPostData.content,
-            cover: oldPostData.cover,
-            hashtag: oldPostData.hashtag,
-          }) as TPostAPI,
-      );
-    }
-  }, [
-    currentPostData.content,
-    currentPostData.cover,
-    currentPostData.sig,
-    currentPostData.title,
-    oldPostData.content,
-    oldPostData.cover,
-    oldPostData.hashtag,
-    oldPostData.sig,
-    oldPostData.title,
-  ]);
-
-  useEffect(() => {
-    if (
-      oldPostData.content === currentPostData.content &&
-      oldPostData.title === currentPostData.title &&
-      oldPostData.sig === currentPostData.sig &&
-      oldPostData.cover === currentPostData.cover &&
-      oldPostData.hashtag?.toString() === currentPostData.hashtag?.toString()
-    ) {
-      setEditButtonDisable(true);
-    } else if (
-      currentPostData.content === "" ||
-      currentPostData.title === "" ||
-      currentPostData.sig === ""
-    ) {
-      setEditButtonDisable(true);
-    } else {
-      setEditButtonDisable(false);
-    }
-  }, [currentPostData, oldPostData]);
+  const baseline = oldPostData ? toForm(oldPostData) : null;
+  const unchanged =
+    baseline !== null &&
+    baseline.content === currentPostData.content &&
+    baseline.title === currentPostData.title &&
+    baseline.sig === currentPostData.sig &&
+    baseline.cover === currentPostData.cover &&
+    baseline.hashtag?.toString() === currentPostData.hashtag?.toString();
+  const editButtonDisable =
+    !baseline ||
+    saving ||
+    unchanged ||
+    !currentPostData.content ||
+    !currentPostData.title ||
+    !currentPostData.sig;
 
   function undo() {
-    setCurrentPostData({
-      title: oldPostData.title,
-      sig: oldPostData.sig,
-      content: oldPostData.content,
-      cover: oldPostData.cover,
-      hashtag: oldPostData.hashtag,
-    });
+    if (oldPostData) {
+      setCurrentPostData(toForm(oldPostData));
+    }
   }
 
-  function sendEdit() {
-    Swal.fire({
+  async function sendEdit() {
+    const result = await Swal.fire({
       title: "Warning",
       text: "Are you sure to edit this post?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Confirm",
       cancelButtonText: "Cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await editPostAPI(currentPostData, postID, token ?? "");
-        if (res.status === 2000) {
-          Swal.fire({
-            title: "Success Edit",
-            icon: "success",
-            confirmButtonText: "View Post",
-          }).then(() => {
-            route.push(`/post/${postID}`);
-          });
-        } else {
-          Swal.fire({
-            title: "Something Wrong",
-            icon: "error",
-            confirmButtonText: "Confirm",
-          });
-        }
-      }
+    });
+    if (!result.isConfirmed) {
+      return;
+    }
+    setSaving(true);
+    const res = await editPostAPI(currentPostData, postID, token ?? "");
+    setSaving(false);
+    if (res.ok) {
+      Swal.fire({
+        title: "Success Edit",
+        icon: "success",
+        confirmButtonText: "View Post",
+      }).then(() => {
+        route.push(`/post/${postID}`);
+      });
+      return;
+    }
+    // The edits stay in the form, so the user can try again.
+    Swal.fire({
+      title: "Something Wrong",
+      text: res.message,
+      icon: "error",
+      confirmButtonText: "Confirm",
     });
   }
 
@@ -201,6 +205,9 @@ export default function EditPostPage({
     try {
       const imageUploadAPIResponse = await imageUpload(file, token);
       const imageUploadResponseJson = await imageUploadAPIResponse.json();
+      if (!imageUploadResponseJson?.id) {
+        throw new Error("Upload returned no id");
+      }
       setCurrentPostData(
         (prev: TPostAPI) =>
           ({
@@ -221,7 +228,30 @@ export default function EditPostPage({
     }
   }
 
-  if (isLoading || !userData || oldPostData.user !== userData?._id) {
+  if (loadError) {
+    return (
+      <div
+        role="alert"
+        className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-ink-700"
+      >
+        <p>{loadError}</p>
+        <button
+          type="button"
+          className="cursor-pointer rounded-control border border-line bg-surface px-4 py-2 text-sm hover:bg-field"
+          onClick={() => setAttempt((n) => n + 1)}
+        >
+          重試
+        </button>
+      </div>
+    );
+  }
+
+  if (
+    isLoading ||
+    !oldPostData ||
+    !userData ||
+    ownerOf(oldPostData) !== userData._id
+  ) {
     return <div></div>;
   }
 
