@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type FocusEvent, type MouseEvent, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAppBadge } from "@/components/Notifications/NotificationBell";
 import { formatUnread } from "@/modules/notifications/describe";
 import { hasNewPosts, useSigSeen } from "@/modules/sigSeen";
@@ -28,7 +29,12 @@ function useTip() {
   const [tip, setTip] = useState<Tip>(null);
   const show = (label: string) => (event: MouseEvent | FocusEvent) => {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    setTip({ label, top: rect.top + rect.height / 2 });
+    // Centred on the square, and never past the top or bottom edge.
+    const centre = rect.top + rect.height / 2;
+    setTip({
+      label,
+      top: Math.min(Math.max(centre, 16), window.innerHeight - 16),
+    });
   };
   const hide = () => setTip(null);
   return { tip, show, hide };
@@ -237,15 +243,20 @@ export default function SideRail() {
         <Plus size={22} aria-hidden strokeWidth={2.4} />
       </Link>
 
-      {tip && (
-        <span
-          role="tooltip"
-          className="pointer-events-none fixed z-50 max-w-60 -translate-y-1/2 truncate rounded-chip bg-ink-900 px-2 py-1 font-medium text-white text-xs shadow-card"
-          style={{ left: RAIL_WIDTH + 6, top: tip.top }}
-        >
-          {tip.label}
-        </span>
-      )}
+      {/* In <body>: the rail's backdrop-filter would make it the
+          containing block of a fixed tooltip and shift it down. */}
+      {tip &&
+        createPortal(
+          <span
+            role="tooltip"
+            data-rail-tooltip
+            className="pointer-events-none fixed z-50 max-w-60 -translate-y-1/2 truncate rounded-chip bg-ink-900 px-2 py-1 font-medium text-white text-xs shadow-card"
+            style={{ left: RAIL_WIDTH + 6, top: tip.top }}
+          >
+            {tip.label}
+          </span>,
+          document.body,
+        )}
     </nav>
   );
 }

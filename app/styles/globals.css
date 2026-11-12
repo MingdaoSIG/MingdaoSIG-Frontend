@@ -66,6 +66,17 @@
   );
 }
 
+/* Desktop shell offsets (owner decision 2026-11-13: the page scrolls).
+   --shell-header-h: the sticky header. --shell-top: the `top` of every
+   sticky side panel and rail column; it also clears the site notices
+   (`--site-notices-h`, published by components/SiteBanner/SiteNotices). */
+:root {
+  --shell-header-h: 4rem;
+  --shell-top: calc(
+    var(--shell-header-h) + var(--site-notices-h, 0px) + 1.5rem
+  );
+}
+
 * {
   outline: none;
 }
@@ -92,13 +103,18 @@
 
 body {
   max-width: 100dvw;
-  max-height: 100dvh;
-  overflow: hidden;
   color: black;
   font-family: "Noto Sans TC", sans-serif;
   animation: 1s ease-out 0s 1 fadeIn;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Phones and the admin panel are fixed-height app shells whose areas
+   scroll on their own; the rest of the desktop site scrolls the page. */
+body:has(:is(.wrapMobile, .layout-admin)) {
+  max-height: 100dvh;
+  overflow: hidden;
 }
 
 button,
@@ -109,28 +125,26 @@ a,
 
 /*
  * Desktop shell (2026 user-side redesign, decision 2).
- * - Row 1: the header with the site notices under it, full width.
+ * - Row 1: the header with the site notices under it, full width, sticky
+ *   at the top (`[data-shell="top"]`).
  * - Row 2: the side rail (58px, `[data-shell="rail"]`, left out in the
- *   admin panel) and the page.
- * - "app" mode (default): fixed-height grid; pages manage their own
- *   internal scrolling. <SplitBlock> (.layout-split) and <DocPage>
- *   (.layout-doc) fill the content row and scroll inside their blocks.
- * - "document" mode: only reader mode (.layout-split), which scrolls with
- *   the page itself.
- * There is no floating dock any more; the page ends 1.5rem above the
- * bottom of the window.
+ *   admin panel), sticky under the header, and the page.
+ * - The window scrolls (owner decision 2026-11-13): page columns never
+ *   have their own scrollbar or a fixed height. <SplitBlock>'s side column
+ *   and other side panels are `position: sticky; top: var(--shell-top)`;
+ *   post lists grow with the page.
+ * - The admin panel keeps its fixed-height layout (`.layout-admin`).
+ * - Reader mode (.layout-split) hides the header and the rail.
  */
 .wrap {
   --dock-space: 7rem;
 
-  position: absolute;
-  top: 0;
-  width: 100dvw;
-  height: 100dvh;
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 1.5rem;
-  padding-bottom: 1.5rem;
   color: var(--color-ink-800);
   /* Flat cool neutral + very fine grain. No gradient. */
   background:
@@ -138,10 +152,17 @@ a,
     var(--color-canvas);
 }
 
-/* Keep the content row at its 1fr share so the blocks scroll instead of
-   stretching the row. */
-.wrap:has(:is(.layout-split, .layout-doc)) {
-  grid-template-rows: auto minmax(0, 1fr);
+.wrap > [data-shell="top"] {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+/* Space under the page as a margin, not as .wrap padding: the rail's grid
+   area then reaches the bottom, so the sticky rail is never pushed up at
+   the end of a page. */
+.wrap > :not([data-shell]) {
+  margin-bottom: 1.5rem;
 }
 
 /* With the side rail: the rail in the first column, every page element in
@@ -162,10 +183,12 @@ a,
 .wrap[data-rail] > [data-shell="rail"] {
   grid-column: 1;
   grid-row: 2 / -1;
-  /* From the header down to the bottom edge, across the row gap and the
-     bottom padding. */
+  align-self: start;
+  position: sticky;
+  top: calc(var(--shell-header-h) + var(--site-notices-h, 0px));
+  height: calc(100dvh - var(--shell-header-h) - var(--site-notices-h, 0px));
+  /* Right under the header, across the row gap. */
   margin-top: -1.5rem;
-  margin-bottom: -1.5rem;
 }
 
 /* Admin panel: a visible keyboard focus ring on desktop and mobile alike
@@ -195,17 +218,17 @@ a,
   outline-offset: 2px;
 }
 
-/* Admin panel (/admin): no rail. The sidebar and the main area fill the
-   rest of the viewport and scroll on their own. */
+/* Admin panel (/admin): no rail, and a fixed-height app layout. The
+   sidebar and the main area fill the rest of the viewport and scroll on
+   their own. */
 .wrap:has(.layout-admin) {
+  height: 100dvh;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 0;
-  padding-bottom: 0;
 }
 
-html[data-reader] body:has(.wrap .layout-split) {
-  max-height: none;
-  overflow-y: auto;
+.wrap:has(.layout-admin) > :not([data-shell]) {
+  margin-bottom: 0;
 }
 
 html[data-reader] .wrap:has(.layout-split) {
@@ -229,43 +252,79 @@ html[data-reader] .wrap:has(.layout-split) {
     var(--color-canvas);
 }
 
-/* Custom Scrollbar Styles */
+/* Scrollbars (owner feedback 2026-11-13): thin, a transparent track, and
+   a thumb that stays faint until the area is hovered or focused. The
+   thumb keeps a few px away from the content (a transparent border,
+   background-clip: padding-box). WebKit / Blink use the pseudo-elements;
+   Firefox, which has no ::-webkit-scrollbar, gets scrollbar-width and
+   scrollbar-color (setting those in Chromium would switch the
+   pseudo-elements off). */
 ::-webkit-scrollbar {
-  width: 10px;
-  margin-left: 5px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(0, 76, 100, 0.29);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: #004c64;
-}
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #b7c8e6 transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-color: rgba(17, 29, 41, 0.22);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(17, 29, 41, 0.36);
+}
+
+/* Inner scroll areas (side panels, dropdowns, drawers, tables). */
+.custom-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #b7c8e6;
-  border-radius: 9999px;
+  border: 0 solid transparent;
+  background-color: rgba(17, 29, 41, 0.08);
+  transition: background-color 0.2s;
+}
+
+/* 6px thumb, 4px from the content. */
+.custom-scrollbar::-webkit-scrollbar-thumb:vertical {
+  border-left-width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:horizontal {
+  border-top-width: 4px;
+}
+
+.custom-scrollbar:is(:hover, :focus-within)::-webkit-scrollbar-thumb {
+  background-color: rgba(17, 29, 41, 0.3);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9fb5dc;
+  background-color: rgba(17, 29, 41, 0.42);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: rgba(17, 29, 41, 0.3) transparent;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(17, 29, 41, 0.1) transparent;
+  }
+
+  .custom-scrollbar:is(:hover, :focus-within) {
+    scrollbar-color: rgba(17, 29, 41, 0.32) transparent;
+  }
 }
 
 /* Animations */
