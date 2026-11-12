@@ -78,7 +78,7 @@ function Card({
 }
 
 /** A leader or advisor, with a link to their profile. */
-function Person({ id, role }: { id: string; role: string }) {
+function Person({ id, title }: { id: string; title: string }) {
   const { data: user } = useUser(id);
   const body = (
     <>
@@ -94,7 +94,7 @@ function Person({ id, role }: { id: string; role: string }) {
         <span className="block truncate font-semibold text-ink-800 text-sm">
           {user?.name || (user?.customId ? `@${user.customId}` : "…")}
         </span>
-        <span className="block text-ink-500 text-xs">{role}</span>
+        <span className="block text-ink-500 text-xs">{title}</span>
       </span>
     </>
   );
@@ -120,12 +120,12 @@ export function SigPeople({ sig }: { sig: Sig }) {
     <ul className="flex flex-col">
       {leaders.map((id) => (
         <li key={`l-${id}`}>
-          <Person id={id} role="幹部" />
+          <Person id={id} title="幹部" />
         </li>
       ))}
       {advisors.map((id) => (
         <li key={`m-${id}`}>
-          <Person id={id} role="指導老師" />
+          <Person id={id} title="指導老師" />
         </li>
       ))}
     </ul>
