@@ -2,19 +2,16 @@ import { Pencil } from "lucide-react";
 import Image from "next/image";
 import {
   type Dispatch,
-  Fragment,
   type SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { Tooltip } from "react-tooltip";
-// Config
-import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import { ProfileBadges } from "@/components/Badges/ProfileBadges";
 import { toast } from "@/components/mobile/Toast";
+import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
 import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
-import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -129,7 +126,11 @@ export default function Info({
                   {joinSig.label}
                 </button>
               ))}
-            {accountData?.badge ? <BadgeList userData={accountData} /> : null}
+            <ProfileBadges
+              keys={accountData?.badge}
+              className={styles.badgeWrapper}
+              badgeClassName={styles.badge}
+            />
           </div>
           {isSig && (joinSig.notice || joinSig.isMember) && (
             <p className={styles.joinNotice}>
@@ -279,42 +280,4 @@ function BioEditor({
       </div>
     </form>
   );
-}
-
-function BadgeList({ userData }: { userData: User | null }) {
-  const chosenBadge = userData?.badge;
-
-  if (userData && chosenBadge && chosenBadge.length > 0) {
-    return (
-      <div className={styles.badgeWrapper}>
-        {chosenBadge.sort().map((badge) => {
-          if (badgeList[badge] === undefined) {
-            return <Fragment key={badge} />;
-          }
-          return (
-            <Fragment key={badge}>
-              <Image
-                src={badgeList[badge].icon}
-                height={24}
-                width={24}
-                alt={badgeList[badge].name}
-                className={styles.badge}
-                data-tooltip-id={badgeList[badge].name}
-                data-tooltip-content={badgeList[badge].content}
-                data-tooltip-place="top"
-              />
-              <Tooltip
-                id={badgeList[badge].name}
-                style={{
-                  padding: "0.2rem 0.4rem",
-                  backgroundColor: "rgb(50, 50, 50)",
-                }}
-              />
-            </Fragment>
-          );
-        })}
-      </div>
-    );
-  }
-  return null;
 }

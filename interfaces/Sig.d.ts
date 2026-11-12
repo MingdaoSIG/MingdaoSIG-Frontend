@@ -21,7 +21,7 @@ export type Sig = {
   moderator?: string[]; // 管理者
   leader?: string[]; // 領導者
   removed?: boolean; // 刪除
-  badge?: ("developer" | "10.21_user" | "bug_hunter")[]; // 徽章
+  badge?: string[]; // 徽章
   /** Accent colour `#rrggbb` (contract v4 §3.7). */
   color?: string;
   /** Image id of the cover for posts without one. */

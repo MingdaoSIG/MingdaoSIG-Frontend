@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import type { Sig } from "@/interfaces/Sig";
 import type { ApiFailure } from "@/modules/api/client";
+import { BADGE_LIST_QUERY_KEY, type Badge, isBadge } from "@/modules/badges";
 import { CustomStatus } from "@/modules/customStatusCode";
 import { forgetSigDirectory } from "@/modules/sigTheme";
 import { SIG_LIST_QUERY_KEY } from "@/utils/useAdminAccess";
@@ -17,8 +18,8 @@ import {
 import type { AdminSig, RolloverPreview } from "./types";
 
 // Reads and helpers for SIG administration (contract v4 §3.7, §5.6–§5.9):
-// archived SIGs, a SIG's join form settings and the year rollover
-// preview. Writes go through `send` in ./api.
+// archived SIGs, a SIG's join form settings, the year rollover preview
+// and the badge collection. Writes go through `send` in ./api.
 
 export const sigAdminKeys = {
   archived: ["admin", "sigs", "archived"] as const,
@@ -96,6 +97,23 @@ export function useRolloverPreview(enabled: boolean = true) {
   });
 }
 
+export type AdminBadge = Badge & { userCount?: number };
+
+/** Every badge, retired ones too, with how many users have it. */
+export function useAdminBadges(enabled: boolean = true) {
+  return useQuery({
+    queryKey: sigAdminKeys.badges,
+    queryFn: async ({ signal }) => {
+      const list = await getData<unknown[]>("/admin/badges", undefined, signal);
+      if (!Array.isArray(list)) {
+        return [];
+      }
+      return list.filter(isBadge) as AdminBadge[];
+    },
+    enabled,
+  });
+}
+
 /**
  * After a SIG changed: every list that shows SIGs (admin lists, the shared
  * `/sig/list` cache for colours, the SIG's own reads, the editors' cache).
@@ -112,6 +130,16 @@ export function useRefreshSigs() {
         ...(sigId ? [["sig", sigId]] : []),
       );
     },
+    [invalidate],
+  );
+}
+
+/** After a badge changed: the admin list and the public one. */
+export function useRefreshBadges() {
+  const invalidate = useInvalidate();
+  return useCallback(
+    () =>
+      invalidate(sigAdminKeys.badges, BADGE_LIST_QUERY_KEY, adminKeys.users),
     [invalidate],
   );
 }

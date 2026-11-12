@@ -1,4 +1,5 @@
 import {
+  Award,
   Download,
   FileText,
   GraduationCap,
@@ -24,6 +25,7 @@ export type AdminSectionId =
   | "join-requests"
   | "users"
   | "rollover"
+  | "badges"
   | "exports"
   | "audit";
 
@@ -91,6 +93,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/rollover",
     group: "社群",
     icon: GraduationCap,
+    roles: ["admin"],
+  },
+  {
+    id: "badges",
+    label: "徽章",
+    href: "/admin/badges",
+    group: "社群",
+    icon: Award,
     roles: ["admin"],
   },
   {
