@@ -38,13 +38,12 @@ app/                      # Next.js App Router
 ├── api/                 # Next.js API Routes
 │   ├── auth/            # NextAuth routes
 │   └── version/         # Version check endpoint
-├── changelog/           # Changelog page
+├── about/               # 關於 MDSIG (info, dashboard, changelog, status)
+├── changelog/           # changelog.json only (shown on /about)
 ├── confirm/             # Email confirmation page
-├── dashboard/           # User dashboard
-├── data/                # Data statistics
+├── events/              # 活動 (site-wide events)
 ├── explore/             # 探索
-├── info/                # Info page
-├── me/                  # 我的 hub
+├── me/                  # 我的 hub, me/drafts
 ├── new/                 # New post page
 ├── post/[postID]/       # Post detail
 │   ├── (post)/          # Post content components
