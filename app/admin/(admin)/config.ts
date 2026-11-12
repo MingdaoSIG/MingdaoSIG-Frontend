@@ -5,33 +5,42 @@ import {
   History,
   Inbox,
   LayoutDashboard,
+  ListFilter,
+  LogIn,
   type LucideIcon,
+  Megaphone,
   MessageSquare,
+  PanelTop,
   Shapes,
   Users,
 } from "lucide-react";
 import type { AdminRole } from "@/utils/useAdminAccess";
 
-// The admin panel's sections, in sidebar order. Managers (SIG leaders and
-// 指導老師) see only the sections listed for "manager", scoped to their
-// SIGs by the backend.
+// The admin panel's sections, in sidebar order. Content moderators
+// (permission 3) see the "moderator" sections; managers (SIG leaders and
+// 指導老師) the "manager" ones, scoped to their SIGs by the backend. A
+// content moderator who also manages a SIG sees both.
 
 export type AdminSectionId =
   | "overview"
   | "posts"
   | "comments"
   | "reports"
+  | "keyword-filter"
   | "sigs"
   | "join-requests"
   | "users"
+  | "banners"
+  | "broadcast"
   | "exports"
-  | "audit";
+  | "audit"
+  | "logins";
 
 export type AdminSection = {
   id: AdminSectionId;
   label: string;
   href: string;
-  group: "" | "內容" | "社群" | "其他";
+  group: "" | "內容" | "社群" | "溝通" | "其他";
   icon: LucideIcon;
   roles: AdminRole[];
 };
@@ -43,7 +52,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin",
     group: "",
     icon: LayoutDashboard,
-    roles: ["admin", "manager"],
+    roles: ["admin", "moderator", "manager"],
   },
   {
     id: "posts",
@@ -51,7 +60,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/posts",
     group: "內容",
     icon: FileText,
-    roles: ["admin"],
+    roles: ["admin", "moderator"],
   },
   {
     id: "comments",
@@ -59,7 +68,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/comments",
     group: "內容",
     icon: MessageSquare,
-    roles: ["admin"],
+    roles: ["admin", "moderator"],
   },
   {
     id: "reports",
@@ -67,6 +76,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/reports",
     group: "內容",
     icon: Flag,
+    roles: ["admin", "moderator"],
+  },
+  {
+    id: "keyword-filter",
+    label: "關鍵字過濾",
+    href: "/admin/keyword-filter",
+    group: "內容",
+    icon: ListFilter,
     roles: ["admin"],
   },
   {
@@ -91,7 +108,25 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/users",
     group: "社群",
     icon: Users,
+    // Content moderators: read and mute only (contract v4 §5.2).
+    roles: ["admin", "moderator"],
+  },
+  {
+    id: "banners",
+    label: "公告橫幅",
+    href: "/admin/banners",
+    group: "溝通",
+    icon: PanelTop,
     roles: ["admin"],
+  },
+  {
+    id: "broadcast",
+    label: "廣播通知",
+    href: "/admin/broadcast",
+    group: "溝通",
+    icon: Megaphone,
+    // Managers send to the SIGs they manage (contract v4 §5.5).
+    roles: ["admin", "manager"],
   },
   {
     id: "exports",
@@ -109,10 +144,23 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: History,
     roles: ["admin"],
   },
+  {
+    id: "logins",
+    label: "登入紀錄",
+    href: "/admin/logins",
+    group: "其他",
+    icon: LogIn,
+    roles: ["admin"],
+  },
 ];
 
-export function sectionsFor(role: AdminRole) {
-  return ADMIN_SECTIONS.filter((section) => section.roles.includes(role));
+/** Whether any of the caller's roles may open the section. */
+export function canSeeSection(section: AdminSection, roles: AdminRole[]) {
+  return section.roles.some((role) => roles.includes(role));
+}
+
+export function sectionsFor(roles: AdminRole[]) {
+  return ADMIN_SECTIONS.filter((section) => canSeeSection(section, roles));
 }
 
 /** The section a path belongs to, or null for an unknown /admin path. */

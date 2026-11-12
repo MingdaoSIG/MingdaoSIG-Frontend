@@ -13,13 +13,18 @@ import {
 } from "react";
 import NotFoundPage from "@/app/not-found";
 import { ToastProvider } from "@/components/mobile/Toast";
-import { type AdminRole, useAdminAccess } from "@/utils/useAdminAccess";
+import {
+  type AdminRole,
+  useAdminAccess,
+  viewerRoles,
+} from "@/utils/useAdminAccess";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { useOpenReportCount, usePendingCount } from "../api";
 import {
   type AdminSection,
   type AdminSectionId,
+  canSeeSection,
   sectionForPath,
   sectionsFor,
 } from "../config";
@@ -29,8 +34,9 @@ import { ErrorState, Spinner } from "./ui";
 
 // The admin panel's frame: works out the caller's role first (nothing is
 // fetched before that), then shows the sidebar on desktop or the section
-// switcher on phones, and the page. Admins see every section; SIG managers
-// see 總覽, SIG and 入社申請; anyone else gets the 404 page.
+// switcher on phones, and the page. Admins see every section; content
+// moderators 總覽, 貼文, 留言, 檢舉 and 使用者; SIG managers 總覽, SIG,
+// 入社申請 and 廣播通知; anyone else gets the 404 page.
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const access = useAdminAccess();
@@ -39,12 +45,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
 
   const context = useMemo<AdminContextValue | null>(() => {
-    if (access.status !== "admin" && access.status !== "manager") {
+    if (
+      access.status !== "admin" &&
+      access.status !== "moderator" &&
+      access.status !== "manager"
+    ) {
       return null;
     }
     return {
       role: access.status,
+      roles: viewerRoles(access.status, access.managedSigIds),
       isAdmin: access.status === "admin",
+      isModerator: access.status === "admin" || access.status === "moderator",
       userId: access.userId,
       managedSigIds: access.managedSigIds,
       token,
@@ -71,7 +83,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   const section = sectionForPath(pathname);
-  const allowed = section?.roles.includes(context.role) ?? false;
+  const allowed = section ? canSeeSection(section, context.roles) : false;
   const content = allowed ? (
     <Suspense fallback={<Spinner />}>{children}</Suspense>
   ) : (
@@ -84,7 +96,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {isMobile ? (
           <div className="layout-admin custom-scrollbar h-full overflow-y-auto pt-[calc(4rem+env(safe-area-inset-top))]">
             <div className="sticky top-0 z-30 bg-canvas px-4 pt-3 pb-2">
-              <SectionSwitcher role={context.role} current={section} />
+              <SectionSwitcher roles={context.roles} current={section} />
             </div>
             <main
               id="admin-main"
@@ -95,7 +107,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         ) : (
           <div className="layout-admin flex h-full min-h-0">
-            <Sidebar role={context.role} current={section} />
+            <Sidebar roles={context.roles} current={section} />
             <main
               id="admin-main"
               className="custom-scrollbar min-w-0 flex-1 overflow-y-auto"
@@ -113,9 +125,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   );
 }
 
-function groupSections(role: AdminRole) {
+function groupSections(roles: AdminRole[]) {
   const groups: { name: string; items: AdminSection[] }[] = [];
-  for (const section of sectionsFor(role)) {
+  for (const section of sectionsFor(roles)) {
     const last = groups[groups.length - 1];
     if (last && last.name === section.group) {
       last.items.push(section);
@@ -128,6 +140,7 @@ function groupSections(role: AdminRole) {
 
 const ROLE_LABEL: Record<AdminRole, string> = {
   admin: "管理員",
+  moderator: "內容管理員",
   manager: "SIG 幹部／指導老師",
 };
 
@@ -139,15 +152,18 @@ const BADGE_TONE: Record<NavBadge["tone"], string> = {
 };
 
 /**
- * Counts waiting in the sidebar: join requests for everyone who sees the
- * section, open reports for admins only (the route is admin-only).
+ * Counts waiting in the sidebar, each only for those who may read it:
+ * join requests for admins and managers, open reports for admins and
+ * content moderators.
  */
-function useNavCounts(role: AdminRole) {
-  const pending = usePendingCount();
-  const reports = useOpenReportCount(role === "admin");
+function useNavCounts(roles: AdminRole[]) {
+  const canDecide = roles.includes("admin") || roles.includes("manager");
+  const canModerate = roles.includes("admin") || roles.includes("moderator");
+  const pending = usePendingCount(canDecide);
+  const reports = useOpenReportCount(canModerate);
   return {
-    pending: pending.data ?? 0,
-    reports: role === "admin" ? (reports.data ?? 0) : 0,
+    pending: canDecide ? (pending.data ?? 0) : 0,
+    reports: canModerate ? (reports.data ?? 0) : 0,
   };
 }
 
@@ -169,14 +185,14 @@ function badgeText(count: number) {
 }
 
 function Sidebar({
-  role,
+  roles,
   current,
 }: {
-  role: AdminRole;
+  roles: AdminRole[];
   current: AdminSection | null;
 }) {
-  const counts = useNavCounts(role);
-  const groups = groupSections(role);
+  const counts = useNavCounts(roles);
+  const groups = groupSections(roles);
 
   return (
     <nav
@@ -201,7 +217,7 @@ function Sidebar({
         </div>
       ))}
       <p className="mx-2.5 mt-auto pt-6 text-[11px] text-ink-400">
-        身分：{ROLE_LABEL[role]}
+        身分：{roles.map((item) => ROLE_LABEL[item]).join("、")}
       </p>
     </nav>
   );
@@ -249,18 +265,18 @@ function NavItem({
 
 /** Phones: the sidebar folds into one menu button above the page. */
 function SectionSwitcher({
-  role,
+  roles,
   current,
 }: {
-  role: AdminRole;
+  roles: AdminRole[];
   current: AdminSection | null;
 }) {
   const [open, setOpen] = useState(false);
-  const counts = useNavCounts(role);
+  const counts = useNavCounts(roles);
   const pathname = usePathname();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const groups = groupSections(role);
+  const groups = groupSections(roles);
 
   useEffect(() => {
     setOpen(false);

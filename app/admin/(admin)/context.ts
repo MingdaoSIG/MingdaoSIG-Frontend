@@ -5,7 +5,15 @@ import type { AdminRole } from "@/utils/useAdminAccess";
 
 export type AdminContextValue = {
   role: AdminRole;
+  /** Every role whose sections the caller sees (see viewerRoles). */
+  roles: AdminRole[];
   isAdmin: boolean;
+  /**
+   * May moderate content (contract v4 §5.2): admins and content
+   * moderators. Content moderators may only mute, never ban, and change
+   * no roles or badges.
+   */
+  isModerator: boolean;
   userId: string;
   /** SIGs the caller leads or advises; empty for admins. */
   managedSigIds: string[];
