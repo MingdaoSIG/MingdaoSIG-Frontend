@@ -90,7 +90,7 @@ export default function Mobile() {
                     </div>
                     <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-left text-sm">
                       <dt className="text-ink-500">簡介</dt>
-                      <dd className="whitespace-pre-line text-ink-800">
+                      <dd className="whitespace-pre-line text-ink-800 [word-break:normal]">
                         {sigData.description || "尚未填寫"}
                       </dd>
                       <dt className="text-ink-500">指導老師</dt>
