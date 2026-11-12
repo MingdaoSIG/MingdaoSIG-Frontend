@@ -99,17 +99,49 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
 ## Home
 
-- Pinned posts (`/post/list/pinned`) open the feed with 「置頂」
-- 熱門貼文 (desktop card, mobile 熱門 tab): most liked of the last 30 days;
+- Tabs 最新 / 熱門 / 我的 SIG on desktop and mobile (`app/(home)/useHomeFeed.ts`,
+  remembered per browser tab in sessionStorage). 我的 SIG needs a login
+  (`useMySigPost`, `GET /post/list/mysig`); with no SIG it shows an empty
+  state that leads to the SIGs.
+- Pinned posts (`/post/list/pinned`) open the 最新 and 熱門 feeds with 「置頂」
+- 熱門貼文 (desktop card, 熱門 tab): most liked of the last 30 days;
   fewer than 3 liked posts widens to 180 days, then all time (`useTopPost`,
   `useHotPostList`)
 
+## Notifications, web push and PWA
+
+Contract: `design/api-contract-v4.md` §2.
+
+- Bell next to the user menu (`components/Notifications/NotificationBell.tsx`):
+  unread count from `GET /notification/unread-count`, every 60 s while the
+  tab is visible, when it becomes visible and on window focus
+  (`utils/useNotifications`). Desktop opens a dropdown with the newest 8;
+  phones go to `/notifications`.
+- `/notifications`: 全部 / 未讀, opening one marks it read, 全部標為已讀,
+  and 「通知設定」. Sentences are built from type, actor and target in
+  `modules/notifications/describe.ts`; only same-site `link`s are followed.
+- Settings (`NotificationSettings.tsx`): a 「通知設定」 row on your own
+  profile opens a dialog (also `#notification-settings` on the profile and
+  `/notifications?settings=1`). Push per type, the comment email
+  (`notificationSettings.email.comment`, the old `notifyComments`) and the
+  weekly digest, which is off unless turned on. Each switch saves at once
+  through `POST /user`.
+- Web push (`modules/push`): `public/sw.js` only shows pushes and opens
+  their link; it has no fetch handler and caches nothing. It is registered
+  in production builds only, scope `/`. Subscribing always starts from the
+  「開啟手機通知」 (desktop: 「開啟瀏覽器通知」) button. iPhone / iPad
+  outside the home-screen app get install steps instead. Logging out
+  removes this browser's subscription.
+- PWA: `app/manifest.ts`, icons in `public/icons/pwa-*.png` (made from
+  `public/images/logo.svg` and `logo_mobile_v2.svg`). The install prompt
+  (`beforeinstallprompt`, `modules/push/install.ts`) is kept, never shown
+  by itself, and offered in the settings and once on `/notifications`.
+
 ## Profile and SIG pages
 
-- Your own profile: 「有人留言時寄信通知我」 (`notifyComments`), the
-  tabs 貼文 / 按讚過的貼文 / 收藏 / 系列 / 我的數據 (`?tab=` opens one),
-  and on mobile 「關於我」 editing. Someone else's profile shows 貼文 / 系列
-  when they have a series
+- Your own profile: 「通知設定」 (see above), the tabs 貼文 / 按讚過的貼文 /
+  收藏 / 系列 / 我的數據 (`?tab=` opens one), and on mobile 「關於我」
+  editing. Someone else's profile shows 貼文 / 系列 when they have a series
 - SIG pages: 「編輯 SIG」 (description and avatar) for that SIG's leaders,
   指導老師 and admins; 「退出 SIG」 for members
 - Image fields may be a URL, `/image/<id>` or a bare image id; render them

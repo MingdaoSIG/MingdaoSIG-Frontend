@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { type ReactNode, useState } from "react";
+import { PwaSetup } from "@/components/Pwa/PwaSetup";
 import { ApiError } from "@/modules/api/client";
 import { AuthProvider } from "@/utils/useUserAccount/AuthProvider";
 
@@ -34,6 +35,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <SessionProvider>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
+          <PwaSetup />
           {children}
         </QueryClientProvider>
       </AuthProvider>

@@ -4,6 +4,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 // Third-Party Package
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC } from "next/font/google";
+import Script from "next/script";
 import type { ReactNode } from "react";
 
 // Providers
@@ -27,6 +28,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         {/* GTM 必須放 body 內 */}
         <GoogleTagManager gtmId="GTM-NGM7R8S8" />
+        {/* Keeps an install prompt fired before the app loads, for the
+            install buttons (modules/push/install.ts), and stops the
+            browser's own install banner: it is never a popup on load. */}
+        <Script id="pwa-install-capture" strategy="beforeInteractive">
+          {`window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__mdsigInstallPrompt=e;});`}
+        </Script>
         <Providers>
           <Device>{children}</Device>
         </Providers>
@@ -47,8 +54,15 @@ export const metadata: Metadata = {
   publisher: "Mingdao High School",
   icons: [
     { rel: "icon", url: "https://sig.mingdao.edu.tw/favicon.ico" },
-    { rel: "apple-touch-icon", url: "https://sig.mingdao.edu.tw/favicon.ico" },
+    { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
   ],
+  // Added to the iOS home screen: opens full screen as 「MDSIG」, which is
+  // what web push needs on iOS (16.4+).
+  appleWebApp: {
+    capable: true,
+    title: "MDSIG",
+    statusBarStyle: "default",
+  },
   openGraph: {
     type: "website",
     url: "https://sig.mingdao.edu.tw",
