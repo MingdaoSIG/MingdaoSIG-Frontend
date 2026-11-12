@@ -139,3 +139,26 @@ $badge-height: 1rem;
   flex: initial;
   font-size: 0.75rem;
 }
+
+/* 「退出 SIG」: secondary, so it is not mistaken for the main action */
+.leaveBtn {
+  width: auto;
+  /* 44px tap target */
+  height: 2.75rem;
+  white-space: nowrap;
+  display: flex;
+  flex: initial;
+  align-items: center;
+  background-color: var(--color-surface);
+  color: var(--color-ink-700);
+  border: 1px solid var(--color-line-strong);
+  font-weight: 600;
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+  border-radius: var(--radius-control);
+
+  &:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}

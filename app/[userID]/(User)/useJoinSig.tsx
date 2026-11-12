@@ -119,6 +119,12 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
           : "加入 SIG";
   const disabled = state === "" || state === "pending" || state === "accepted";
   const notice = state === "rejected" ? "上次的申請未通過，可以再次申請" : null;
+  const member = state === "accepted";
+
+  /** After leaving the SIG: the user may apply again. */
+  function markLeft() {
+    setRequest("none");
+  }
 
   function join() {
     if (!sigId) {
@@ -192,5 +198,5 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
     });
   }
 
-  return { label, disabled, notice, join };
+  return { label, disabled, notice, join, isMember: member, markLeft };
 }
