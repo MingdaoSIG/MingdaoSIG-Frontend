@@ -15,6 +15,7 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+import { PostSkeleton } from "./(post)/components/PostSkeleton";
 import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
 // Desktop and mobile threads are separate component trees; load only the
@@ -73,7 +74,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   }, [PostID, attempt]);
 
   if (status === "loading") {
-    return <div></div>;
+    return <PostSkeleton isMobile={isMobile} />;
   }
   if (status === "error" || (status === "success" && !post)) {
     return (

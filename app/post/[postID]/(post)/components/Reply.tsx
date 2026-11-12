@@ -5,6 +5,7 @@ import { jumpOut } from "@/utils/jumpOut";
 
 export default function Reply({
   customId,
+  name,
   avatar,
   content,
   createdAt,
@@ -12,6 +13,8 @@ export default function Reply({
   first,
 }: {
   customId?: string;
+  /** Shown first when the API includes it; @customId stays as secondary. */
+  name?: string;
   avatar?: string;
   content: string;
   createdAt: string;
@@ -43,14 +46,17 @@ export default function Reply({
                 }
               }}
             >
-              @{customId}
+              {name || `@${customId}`}
             </button>
           ) : (
             <span className="font-semibold text-[0.85rem] text-ink-500">
               已刪除的使用者
             </span>
           )}
-          <span className="text-ink-500 text-xs">{createdAt}</span>
+          {customId && name && (
+            <span className="truncate text-ink-500 text-xs">@{customId}</span>
+          )}
+          <span className="shrink-0 text-ink-500 text-xs">{createdAt}</span>
         </div>
         <p
           className={`mt-0.5 break-words text-[0.9rem] text-ink-700 leading-[1.65] ${

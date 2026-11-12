@@ -125,7 +125,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
           placeholder={isLogin ? "寫下你的想法…" : "登入後即可留言"}
           aria-label="留言內容"
           rows={1}
-          className="min-h-[2.25rem] min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"
+          className="min-h-11 min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"
         />
         {text.length > 0 && (
           <span
@@ -141,8 +141,8 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
           onClick={handleSend}
           className={
             canSend
-              ? "flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-brand-700 shadow-sm"
-              : "flex h-9 w-9 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-control bg-field"
+              ? "flex size-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-brand-700 shadow-sm"
+              : "flex size-11 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-control bg-field"
           }
           whileTap={canSend ? { scale: 0.9 } : undefined}
           aria-label="送出留言"

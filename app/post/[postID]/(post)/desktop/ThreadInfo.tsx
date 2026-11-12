@@ -39,8 +39,8 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const [loginHint, setLoginHint] = useState(false);
   const { token, isLogin, isLoading: authLoading, login } = useUserAccount();
   const { showAlert } = useAlert();
-  const { data: user } = useUser(post.user);
-  const { data: sig } = useSig(post.sig);
+  const { data: user, isLoading: userLoading } = useUser(post.user);
+  const { data: sig, isLoading: sigLoading } = useSig(post.sig);
   const composing = useRef(false);
 
   const route = useRouter();
@@ -125,7 +125,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               disabled={!user?.customId}
               onClick={() => user?.customId && route.push(`/@${user.customId}`)}
             >
-              {user?.name || "Loading..."}
+              {user?.name ||
+                (user?.customId ? `@${user.customId}` : null) ||
+                (userLoading ? "載入中…" : "未知的使用者")}
             </button>
             <span aria-hidden className="text-ink-400">
               •
@@ -139,15 +141,25 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               disabled={!sig?.customId}
               onClick={() => sig?.customId && route.push(`/@${sig.customId}`)}
             >
-              {sig?.name || "Loading..."}
+              {sig?.name || (sigLoading ? "載入中…" : "未知的 SIG")}
             </button>
           </div>
-          <div className="text-[13px] text-ink-500">
-            {
-              new Date(post?.createdAt ?? "")
-                .toLocaleString("zh-TW")
-                .split(" ")[0]
-            }
+          <div className="flex min-w-0 items-center gap-1.5 text-[13px] text-ink-500">
+            {user?.name && user.customId && (
+              <>
+                <span className="truncate">@{user.customId}</span>
+                <span aria-hidden className="text-ink-400">
+                  ·
+                </span>
+              </>
+            )}
+            <span className="shrink-0">
+              {
+                new Date(post?.createdAt ?? "")
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
+            </span>
           </div>
         </div>
       </div>
@@ -176,6 +188,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
                   key={comment._id}
                   overflow={false}
                   customId={comment.user?.customId}
+                  name={comment.user?.name}
                   avatar={comment.user?.avatar}
                   content={comment.content}
                   createdAt={

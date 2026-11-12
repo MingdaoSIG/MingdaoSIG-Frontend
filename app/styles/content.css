@@ -183,6 +183,13 @@
   border-radius: var(--radius-chip);
 }
 
+/* Space held by an image until it loads (components/Markdown/MarkdownView) */
+.markdown img.md-img-pending {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--color-field);
+}
+
 .markdown figure {
   margin: 1.5em 0;
 }
