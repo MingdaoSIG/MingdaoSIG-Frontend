@@ -15,6 +15,7 @@ import useIsMobile from "@/utils/useIsMobile";
 import { useSigPost, useUserLikedPost, useUserPost } from "@/utils/usePost";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { type ProfileTab, ProfileTabs } from "./components/ProfileTabs";
+import { SigSections } from "./components/SigSections";
 import Info from "./desktop/Info";
 import ProfileMobile from "./mobile";
 
@@ -121,7 +122,10 @@ export default function UserPage({ accountId }: { accountId: string }) {
           ) : dataType === "user" ? (
             <UserInfinityThreadList id={id} />
           ) : (
-            <SIGInfinityThreadList id={id} />
+            <SigSections
+              sig={data as Sig}
+              posts={<SIGInfinityThreadList id={id} />}
+            />
           )}
         </SectionErrorBoundary>
       </div>
