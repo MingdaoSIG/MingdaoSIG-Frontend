@@ -138,13 +138,13 @@ export default function CommentComposer({
   return (
     <div data-comment-composer>
       {replyTarget && (
-        <div className="glass-bar border-line border-t">
+        <div className="border-line border-t bg-surface/95 backdrop-blur-md">
           <ReplyBanner controller={controller} variant="mobile" />
         </div>
       )}
       <form
         onSubmit={handleSend}
-        className="glass-bar flex items-center gap-2 border-line border-t px-3 py-2"
+        className="flex items-center gap-2 border-line border-t bg-surface/95 px-3 py-2 shadow-[0_-4px_12px_-8px_rgba(17,29,41,0.25)] backdrop-blur-md"
       >
         {onCollapse && (
           <button

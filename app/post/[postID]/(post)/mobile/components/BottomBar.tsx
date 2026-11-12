@@ -51,7 +51,7 @@ export default function BottomBar({
   return (
     <nav
       aria-label="貼文動作"
-      className="glass-bar flex items-center gap-1 border-line border-t px-2 py-1"
+      className="flex items-center gap-1 border-line border-t bg-surface/95 px-2 py-1 shadow-[0_-4px_12px_-8px_rgba(17,29,41,0.25)] backdrop-blur-md"
       data-post-bar
     >
       {!isAnnouncement && (
