@@ -14,7 +14,8 @@ import Info from "./info";
 // Styles
 import styles from "./mobile.module.scss";
 
-const LIST_HEIGHT = "calc(100dvh - 21rem)";
+const LIST_HEIGHT =
+  "calc(100dvh - 21rem - env(safe-area-inset-top) - env(safe-area-inset-bottom))";
 
 // Renders the profile the page already fetched (it used to fetch it a
 // second time and, on failure, render a post list for an empty id).

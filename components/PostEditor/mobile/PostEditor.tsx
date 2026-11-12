@@ -138,7 +138,7 @@ export default function NewPostMobile({
   };
 
   return (
-    <div className="h-[100dvh] overflow-x-hidden px-2 pt-[4.5rem] pb-[4.5rem]">
+    <div className="h-[100dvh] overflow-x-hidden px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
       <div className="h-full overflow-hidden rounded-card border border-line bg-surface p-4 pr-2 shadow-card">
         <div className="small-scrollbar flex h-full flex-col items-center overflow-y-auto overflow-x-hidden pr-2">
           <div className="w-full max-w-full">
