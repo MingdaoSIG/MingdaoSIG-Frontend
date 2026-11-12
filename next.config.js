@@ -3,6 +3,16 @@
 
 const path = require("node:path");
 
+// Hosts whose images go through next/image (/_next/image). Anything else
+// is rejected, so the optimizer cannot be used as an open image proxy.
+// Images inside post content are plain <img> tags and are not affected.
+const apiOrigins = [
+  "https://sig-api.mingdao.edu.tw",
+  "https://api.sig.school",
+  "https://api-beta.sig.school",
+  process.env.NEXT_PUBLIC_API_URL,
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
@@ -11,14 +21,20 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
+      // Post covers and SIG avatars
+      ...apiOrigins
+        .filter((origin) => origin)
+        .map((origin) => new URL("/image/**", origin)),
+      // Google account avatars
       {
         protocol: "https",
-        hostname: "**",
-        pathname: "/**",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/a/**",
       },
+      // One existing post cover links to a Tenor GIF
       {
-        protocol: "http",
-        hostname: "**",
+        protocol: "https",
+        hostname: "media.tenor.com",
         pathname: "/**",
       },
     ],
