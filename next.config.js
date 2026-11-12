@@ -38,6 +38,10 @@ const nextConfig = {
     ];
   },
 
+  // next dev writes a managed block into AGENTS.md when it detects an AI
+  // agent. This repo keeps AGENTS.md by hand, so leave it alone.
+  agentRules: false,
+
   turbopack: {
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },

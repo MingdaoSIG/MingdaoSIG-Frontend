@@ -86,4 +86,3 @@ export const dynamicParams = false;
 export const revalidate = false;
 export const fetchCache = "auto";
 export const runtime = "nodejs";
-export const preferredRegion = "auto";
