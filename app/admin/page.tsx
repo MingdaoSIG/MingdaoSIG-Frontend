@@ -26,7 +26,7 @@ export default function AdminPage() {
   }
 
   return isMobile ? (
-    <div className="h-[calc(100dvh-8rem)] w-full overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 px-4 pt-4 pb-4">
+    <div className="h-[100dvh] w-full overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md">
         {/* Header Card */}
         <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-lg">

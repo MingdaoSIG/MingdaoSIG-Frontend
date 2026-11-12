@@ -144,7 +144,7 @@ export default function ManageSIGMembers({
   const handleBack = () => router.push("/admin/sig-members");
 
   return isMobile ? (
-    <div className="h-full w-full overflow-y-auto bg-gradient-to-br from-green-50 to-emerald-50 px-4 pt-4 pb-20">
+    <div className="h-[100dvh] w-full overflow-y-auto bg-gradient-to-br from-green-50 to-emerald-50 px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md">
         {/* Header */}
         <div className="mb-4 flex items-center gap-3">

@@ -12,14 +12,13 @@ import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
-// Modules
-import markdownToPlainText from "@/modules/markdownToPlainText";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+import { postSummary } from "../postSummary";
 
 /** Populated object, or null for a missing / unpopulated reference. */
 function asObject<T>(value: unknown): T | null {
@@ -128,7 +127,7 @@ const Thread = ({
             isAnnouncement ? "line-clamp-4" : "line-clamp-2"
           }`}
         >
-          {markdownToPlainText(threadData.content ?? "")}
+          {postSummary(threadData)}
         </p>
 
         {hashtags.length > 0 && !isAnnouncement && (
