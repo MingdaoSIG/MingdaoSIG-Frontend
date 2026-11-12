@@ -6,10 +6,21 @@ import * as XLSX from "xlsx";
 import NotFoundPage from "@/app/not-found";
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
-import { apiRequest } from "@/modules/api/client";
+import { type ApiFailure, apiRequest } from "@/modules/api/client";
+import { CustomStatus } from "@/modules/customStatusCode";
 import sigAPI from "@/modules/sigAPI";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
+
+function rangeFailureMessage(failure: ApiFailure) {
+  if (failure.kind === "unauthorized") {
+    return "登入已過期，請重新登入後再查詢";
+  }
+  if (failure.httpStatus === 403 || failure.status === CustomStatus.FORBIDDEN) {
+    return "這個帳號沒有管理員權限，無法查詢區間貼文";
+  }
+  return failure.message;
+}
 
 export default function Page() {
   const [startDate, setStartDate] = useState<string>(
@@ -48,15 +59,19 @@ export default function Page() {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      params.set("start", startDate);
-      params.set("end", endDate);
-      const result = await apiRequest<TThread[]>(
-        `/post/list/range?${params.toString()}`,
-      );
+      // Admin only: the backend answers 401 without a valid JWT and 403
+      // (4001) for a non-admin account.
+      const result = await apiRequest<TThread[]>("/post/list/range", {
+        token: userAccount.token,
+        query: { start: startDate, end: endDate },
+      });
       if (!result.ok) {
         setResults([]);
-        Swal.fire({ title: "查詢失敗", text: result.message, icon: "error" });
+        Swal.fire({
+          title: "查詢失敗",
+          text: rangeFailureMessage(result),
+          icon: "error",
+        });
         return;
       }
       const data = Array.isArray(result.data) ? result.data : [];
@@ -110,7 +125,7 @@ export default function Page() {
 
   if (isMobile) {
     return (
-      <div className="h-full w-full overflow-y-auto bg-gradient-to-br from-cyan-50 to-blue-50 px-4 pt-4 pb-20">
+      <div className="h-[100dvh] w-full overflow-y-auto bg-gradient-to-br from-cyan-50 to-blue-50 px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <div className="mx-auto max-w-md">
           {/* Header */}
           <div className="mb-4 flex items-center gap-3">

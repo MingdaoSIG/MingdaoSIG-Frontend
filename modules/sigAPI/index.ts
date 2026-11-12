@@ -1,5 +1,4 @@
 import getFullUserData from "./function/getFullUserData";
-import getPostList from "./function/getPostList";
 import getSigData from "./function/getSigData";
 import getSigList from "./function/getSigList";
 import getSigMembers from "./function/getSigMembers";
@@ -10,7 +9,6 @@ const sigAPI = {
   getFullUserData,
   getSigData,
   getSigList,
-  getPostList,
   getSigMembers,
 };
 export default sigAPI;

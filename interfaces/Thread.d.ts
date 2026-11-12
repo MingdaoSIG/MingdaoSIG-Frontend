@@ -4,6 +4,8 @@ export type TThread = {
   title: string;
   cover: string;
   content: string;
+  /** Plain-text summary (~200 chars) the backend adds to list items. */
+  excerpt?: string;
   user: string;
   hashtag?: string[];
   like?: string[];
