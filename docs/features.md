@@ -21,7 +21,8 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 - Package: `md-editor-rt`
 - Preview theme: `github`
 - Must be loaded with `dynamic(..., { ssr: false })` (client-only)
-- Editor auto-saves content to `localStorage` keys: `editorContent`, `postData`
+- Logged out, the editor auto-saves to `localStorage` (`editorContent`,
+  `postData`); signed in, it saves cloud drafts instead (see below)
 
 ## Session Management
 
@@ -54,7 +55,8 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
   「管理平台」 to admins and managers.
 - Sections: `/admin` 總覽, `/admin/posts`, `/admin/comments`,
   `/admin/sigs`, `/admin/sigs/[sigId]?tab=info|staff|members|requests`,
-  `/admin/join-requests`, `/admin/users`, `/admin/exports`, `/admin/audit`.
+  `/admin/join-requests`, `/admin/users`, `/admin/exports`, `/admin/audit`,
+  `/admin/reports` (檢舉, admins only).
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -137,12 +139,47 @@ Contract: `design/api-contract-v4.md` §2.
 
 ## Profile and SIG pages
 
-- Your own profile: 「通知設定」 (see above), a 「按讚過的貼文」 tab, and on
-  mobile 「關於我」 editing
+- Your own profile: 「通知設定」 (see above), the tabs 貼文 / 按讚過的貼文 /
+  收藏 / 系列 / 我的數據 (`?tab=` opens one), and on mobile 「關於我」
+  editing. Someone else's profile shows 貼文 / 系列 when they have a series
 - SIG pages: 「編輯 SIG」 (description and avatar) for that SIG's leaders,
   指導老師 and admins; 「退出 SIG」 for members
 - Image fields may be a URL, `/image/<id>` or a bare image id; render them
   through `imageUrl()` (`modules/imageUrl`)
+
+## Reading and creation (contract v4 §4)
+
+- **Views**: cards, the post page and the series page show `views`
+  (`modules/views` formats 1.2 萬). `GET /post/:id` waits for the login and
+  sends the JWT, so a signed-in reader counts once per person.
+- **Bookmarks** (`utils/useBookmarks`): one `GET /user/me/bookmarks/ids`
+  fills every `BookmarkButton` (cards, post page); toggling updates that
+  cache at once and rolls back on failure. Own profile tab 收藏 lists
+  `GET /user/me/bookmarks`.
+- **Author stats**: own profile tab 我的數據 (`StatsTab.tsx`, loaded on
+  demand): totals, a chart.js line of daily views (近 7 / 30 / 90 天) and a
+  sortable per-post table (cards on phones).
+- **Series** (`modules/series`): the post page shows a box per series
+  (`components/Series/SeriesNav.tsx`: position, 上一篇 / 下一篇, the full
+  list on demand); `/series/[id]` lists the posts in order; own profile tab
+  系列 creates, renames, deletes, adds / removes and reorders posts; the
+  editor's 「加入系列」 appends the post after publishing or updating.
+- **Cloud drafts** (`components/PostEditor/shared/useCloudDraft.ts`,
+  `DraftBar.tsx`, `modules/drafts`): signed in, `/new` and the edit page
+  save to `POST /draft` 3 s after the last change, on window blur / hidden
+  tab, and with a keepalive request on leaving; a failed save says so and
+  retries (10 s, 20 s, 40 s, 60 s); 4026 means the 20 drafts are used up.
+  The draft being written is remembered per user (`mdsig-cloud-draft:<id>`)
+  so a reload resumes it; 「草稿」 lists, resumes and deletes drafts. A draft
+  kept on this device (logged-out writing) is offered once for upload
+  (`mdsig-local-draft-offered:<id>`). Publishing or updating deletes the
+  draft; the edit page offers 「載入草稿」 for an earlier draft of the post.
+- **Reports**: 「檢舉」 in the post menu (desktop 「⋯」, mobile sheet) and
+  on comments by others opens `components/Report/ReportDialog.tsx` (reason
+  + note ≤ 300). 4029 → already reported, 4001 → your own content. Admins
+  handle them in `/admin/reports` (table + drawer, 移除內容 / 不處理 with an
+  optional note to the reporter); the sidebar shows the open count and the
+  overview a 待處理檢舉 card.
 
 ## Data & Info Pages
 

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import SplitBlock from "@/app/(Layout)/splitBlock";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
@@ -12,11 +13,45 @@ import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
 import { apiRequest } from "@/modules/api/client";
 import useIsMobile from "@/utils/useIsMobile";
-import { useSigPost, useUserLikedPost, useUserPost } from "@/utils/usePost";
+import {
+  useBookmarkedPost,
+  useSigPost,
+  useUserLikedPost,
+  useUserPost,
+} from "@/utils/usePost";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { type ProfileTab, ProfileTabs } from "./components/ProfileTabs";
+import {
+  isProfileTab,
+  type ProfileTab,
+  ProfileTabs,
+  useProfileTabs,
+} from "./components/ProfileTabs";
 import Info from "./desktop/Info";
 import ProfileMobile from "./mobile";
+
+// Charts and the series manager load only when their tab opens.
+const StatsTab = dynamic(() => import("./components/StatsTab"));
+const SeriesTab = dynamic(() => import("./components/SeriesTab"));
+
+/** `?tab=` picks the first tab, so a link can open 系列 or 收藏. */
+function initialTab(): ProfileTab {
+  if (typeof window === "undefined") {
+    return "posts";
+  }
+  const value = new URLSearchParams(window.location.search).get("tab");
+  return isProfileTab(value) ? value : "posts";
+}
+
+/** Keeps `?tab=` in the address bar without a navigation. */
+function rememberTab(tab: ProfileTab) {
+  const url = new URL(window.location.href);
+  if (tab === "posts") {
+    url.searchParams.delete("tab");
+  } else {
+    url.searchParams.set("tab", tab);
+  }
+  window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+}
 
 type AccountData = {
   data: User | Sig | null;
@@ -28,7 +63,11 @@ type AccountData = {
 export default function UserPage({ accountId }: { accountId: string }) {
   const isMobile = useIsMobile();
   const { userData } = useUserAccount();
-  const [tab, setTab] = useState<ProfileTab>("posts");
+  const [tab, setTabState] = useState<ProfileTab>(initialTab);
+  const setTab = (next: ProfileTab) => {
+    setTabState(next);
+    rememberTab(next);
+  };
 
   const [isLoading, setIsLoading] = useState(true);
   const [dataType, setDataType] = useState<"user" | "sig" | null>(null);
@@ -105,26 +144,20 @@ export default function UserPage({ accountId }: { accountId: string }) {
     );
   }
 
-  const id = data?._id ?? "";
-  // Only your own profile has the 「按讚過的貼文」 tab.
-  const isOwn = dataType === "user" && Boolean(id) && userData?._id === id;
-  const showLiked = isOwn && tab === "liked";
   return (
     <SplitBlock>
-      <div className="flex flex-col gap-4">
-        {isOwn && <ProfileTabs value={tab} onChange={setTab} />}
-        <SectionErrorBoundary label="貼文列表">
-          {isLoading || !id ? (
-            <ThreadsListSkeleton repeat={6} />
-          ) : showLiked ? (
-            <LikedInfinityThreadList id={id} />
-          ) : dataType === "user" ? (
-            <UserInfinityThreadList id={id} />
-          ) : (
-            <SIGInfinityThreadList id={id} />
-          )}
-        </SectionErrorBoundary>
-      </div>
+      <DesktopProfileMain
+        id={data?._id ?? ""}
+        dataType={dataType}
+        isLoading={isLoading}
+        isOwn={
+          dataType === "user" &&
+          Boolean(data?._id) &&
+          userData?._id === data?._id
+        }
+        tab={tab}
+        setTab={setTab}
+      />
       <Info
         user={data}
         isLoading={isLoading}
@@ -132,6 +165,68 @@ export default function UserPage({ accountId }: { accountId: string }) {
         setInfo={setData}
       />
     </SplitBlock>
+  );
+}
+
+function DesktopProfileMain({
+  id,
+  dataType,
+  isLoading,
+  isOwn,
+  tab,
+  setTab,
+}: {
+  id: string;
+  dataType: "user" | "sig" | null;
+  isLoading: boolean;
+  isOwn: boolean;
+  tab: ProfileTab;
+  setTab: (tab: ProfileTab) => void;
+}) {
+  const tabs = useProfileTabs(dataType, id, isOwn);
+  const current = tabs.includes(tab) ? tab : "posts";
+  return (
+    <div className="flex flex-col gap-4">
+      {tabs.length > 0 && (
+        <ProfileTabs value={current} onChange={setTab} tabs={tabs} />
+      )}
+      <SectionErrorBoundary label="貼文列表">
+        {isLoading || !id ? (
+          <ThreadsListSkeleton repeat={6} />
+        ) : current === "liked" ? (
+          <LikedInfinityThreadList id={id} />
+        ) : current === "bookmarks" ? (
+          <BookmarkInfinityThreadList id={id} />
+        ) : current === "series" ? (
+          <SeriesTab userId={id} isOwn={isOwn} />
+        ) : current === "stats" ? (
+          <StatsTab />
+        ) : dataType === "user" ? (
+          <UserInfinityThreadList id={id} />
+        ) : (
+          <SIGInfinityThreadList id={id} />
+        )}
+      </SectionErrorBoundary>
+    </div>
+  );
+}
+
+function BookmarkInfinityThreadList({ id }: { id: string }) {
+  const pageSize = 10;
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
+    useBookmarkedPost(id, { pageSize });
+
+  return isLoading ? (
+    <ThreadsListSkeleton repeat={6} />
+  ) : (
+    <InfinityThreadsList
+      data={data}
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      error={error}
+      onRetry={() => refetch()}
+      emptyText="還沒有收藏的貼文。在貼文上按書籤圖示即可收藏。"
+    />
   );
 }
 

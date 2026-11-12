@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import {
   type Dispatch,
+  type ReactNode,
   type SetStateAction,
   Suspense,
   useEffect,
@@ -30,6 +31,10 @@ interface Props {
   isEdit?: boolean;
   /** Edit mode: the SIG the post is already in. */
   originalSig?: string;
+  /** Above the editor: cloud-draft status, drafts list, notices. */
+  topBar?: ReactNode;
+  /** In the side card under 標籤 (「加入系列」). */
+  metaExtra?: ReactNode;
 }
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
@@ -45,6 +50,8 @@ export default function NewPost({
   handleFileChange,
   isEdit,
   originalSig,
+  topBar,
+  metaExtra,
 }: Props) {
   const [_hashtag, setHashtag] = useState<string[]>([]);
 
@@ -59,6 +66,7 @@ export default function NewPost({
   return (
     <div className="mx-auto flex h-full min-h-0 w-[min(80rem,100%-4rem)] flex-col gap-3">
       {!isEdit && <LoginBanner className="shrink-0" />}
+      {topBar && <div className="flex shrink-0 flex-col gap-2">{topBar}</div>}
       <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_20rem] gap-6">
         <div className="flex min-h-0 flex-col">
           <Suspense fallback={null}>
@@ -82,6 +90,7 @@ export default function NewPost({
           postButtonDisable={postButtonDisable}
           handleFileChange={handleFileChange}
           isEdit={isEdit}
+          extra={metaExtra}
         />
       </div>
     </div>

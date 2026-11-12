@@ -4,10 +4,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { useReport } from "@/components/Report/ReportDialog";
+import { SeriesNav } from "@/components/Series/SeriesNav";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
 import { CustomStatus } from "@/modules/customStatusCode";
+import { formatViews } from "@/modules/views";
 import { isSubmitEnter } from "@/utils/keyboard";
 import { promptLogin } from "@/utils/loginPrompt";
 // Custom Hooks
@@ -70,6 +73,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   );
   const controller = useComments(post, notify);
   const { comments, replyTarget } = controller;
+  const report = useReport();
 
   const route = useRouter();
 
@@ -180,9 +184,26 @@ export default function ThreadInfo({ post }: { post: TThread }) {
                   .split(" ")[0]
               }
             </span>
+            {typeof post.views === "number" && (
+              <>
+                <span aria-hidden className="text-ink-400">
+                  ·
+                </span>
+                <span className="shrink-0" data-views>
+                  {formatViews(post.views)} 次瀏覽
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      <SeriesNav
+        series={post.series}
+        postId={post._id ?? ""}
+        variant="desktop"
+        className="shrink-0"
+      />
 
       {/* Comments: sized to content, scrolls when it runs out of room */}
       <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">
@@ -208,6 +229,12 @@ export default function ThreadInfo({ post }: { post: TThread }) {
                 comment={comment}
                 controller={{ ...controller, startReply }}
                 variant="desktop"
+                onReport={(target) =>
+                  report.open(
+                    { kind: "comment", id: target._id },
+                    target.content,
+                  )
+                }
               />
             ))
           ) : (
@@ -300,6 +327,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           </div>
         )}
       </div>
+      {report.dialog}
     </div>
   );
 }

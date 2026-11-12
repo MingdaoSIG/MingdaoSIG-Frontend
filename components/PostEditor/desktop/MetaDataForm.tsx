@@ -2,7 +2,7 @@
 
 import { ImagePlus } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 import { isSubmitEnter } from "@/utils/keyboard";
@@ -21,6 +21,8 @@ interface Props {
   postButtonDisable: boolean;
   handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
+  /** Under 標籤 (「加入系列」). */
+  extra?: ReactNode;
 }
 
 export default function MetaDataForm({
@@ -31,6 +33,7 @@ export default function MetaDataForm({
   postButtonDisable,
   handleFileChange,
   isEdit,
+  extra,
 }: Props) {
   const { status } = useSession();
   const { isLogin, login } = useUserAccount();
@@ -289,6 +292,7 @@ export default function MetaDataForm({
             </div>
           )}
         </div>
+        {extra && <div className="mt-6">{extra}</div>}
       </div>
 
       {/* 按鈕區域 - 獨立在下方 */}

@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
 import { TapScale, TapScaleLink } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
 import { SigChip } from "@/components/Threads/mobile/ThreadsList";
 import type { TThread } from "@/interfaces/Thread";
 import relativeTime from "@/modules/relativeTime";
+import { formatViews } from "@/modules/views";
 import useSig from "@/utils/useSig";
 import useUser from "@/utils/useUser";
 
@@ -121,6 +121,11 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
           <span className="text-ink-500 text-xs">
             {relativeTime(post.createdAt ?? "")}
           </span>
+          {typeof post.views === "number" && (
+            <span className="text-ink-500 text-xs" data-views>
+              · {formatViews(post.views)} 次瀏覽
+            </span>
+          )}
         </div>
       </div>
       <TapScale
