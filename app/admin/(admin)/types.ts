@@ -3,6 +3,7 @@
 // and the pages show a placeholder instead of failing.
 
 import type { Identity } from "@/interfaces/User";
+import type { Suspension } from "@/modules/suspension";
 
 export type BadgeId = "developer" | "10.21_user" | "bug_hunter";
 
@@ -58,10 +59,17 @@ export type AdminUser = {
   identity?: Identity;
   avatar?: string;
   permission?: number;
+  /** From the permission (contract v4 §5.2); older backends leave it out. */
+  role?: UserRole;
   badge?: BadgeId[];
   sig?: string[];
+  /** A mute or ban in force, else null or absent (contract v4 §5.1). */
+  suspension?: Suspension | null;
   createdAt?: string;
 };
+
+/** `permission` 1, 3 and 2 (contract v4 §5.2). */
+export type UserRole = "user" | "moderator" | "admin";
 
 export type AdminUserDetail = AdminUser & {
   description?: string;
@@ -132,9 +140,22 @@ export type AuditAction =
   | "sig.moderator.remove"
   | "sig.member.remove"
   | "join.accept"
-  | "join.reject";
+  | "join.reject"
+  | "user.suspend"
+  | "user.unsuspend"
+  | "banner.update"
+  | "broadcast.send"
+  | "keyword.update";
 
-export type AuditTargetKind = "post" | "comment" | "user" | "sig" | "join";
+export type AuditTargetKind =
+  | "post"
+  | "comment"
+  | "user"
+  | "sig"
+  | "join"
+  | "banner"
+  | "broadcast"
+  | "setting";
 
 export type AuditEntry = {
   _id: string;
@@ -173,7 +194,11 @@ export type ReportTarget = {
 /** A report as `GET /admin/reports` returns it (contract v4 §4.6). */
 export type AdminReport = {
   _id: string;
-  reporter: UserRef | null;
+  /**
+   * Who reported it; the keyword filter (contract v4 §5.11) files them as
+   * `"system"` (or `{ _id: "system" }`).
+   */
+  reporter: UserRef | "system" | null;
   target: ReportTarget;
   reason: ReportReason | string;
   note?: string;
