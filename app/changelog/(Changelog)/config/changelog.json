@@ -1,5 +1,18 @@
 [
   {
+    "version": "2.26.1",
+    "date": "2026-11-12",
+    "type": "fix",
+    "title": "修正 SIG 頁按鈕顯示",
+    "summary": "修正電腦版 SIG 頁的「加入 SIG」按鈕被擠成直排的問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修正電腦版 SIG 頁名稱或 ID 較長時，「加入 SIG」「退出 SIG」按鈕被擠成直排的問題"
+      }
+    ]
+  },
+  {
     "version": "2.26.0",
     "date": "2026-11-12",
     "type": "feature",
