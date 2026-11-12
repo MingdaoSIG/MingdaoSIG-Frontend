@@ -297,14 +297,19 @@ export default function EventsPage() {
 
   if (sideBySide) {
     return (
-      <main className="flex w-full flex-col gap-4 px-6">
+      // The list keeps the 52rem reading measure and the month takes the
+      // rest, up to 40rem; the pair is centred on very wide screens.
+      <main className="mx-auto flex w-full max-w-[calc(52rem+40rem+1.5rem+3rem)] flex-col gap-4 px-6">
         <header className="rounded-card border border-line bg-surface px-6 py-5 shadow-card">
           <h1 className="font-bold text-2xl text-ink-900 leading-[1.4]">
             活動
           </h1>
           <p className="mt-1 text-ink-500 text-sm">各 SIG 接下來的活動與社課</p>
         </header>
-        <div className="grid grid-cols-[minmax(0,3fr)_minmax(22rem,2fr)] items-start gap-6">
+        <div
+          data-events-columns
+          className="grid grid-cols-[minmax(0,52rem)_minmax(22rem,1fr)] items-start gap-6"
+        >
           <div className="flex min-w-0 flex-col gap-4">
             <Segmented
               label="顯示哪些活動"
