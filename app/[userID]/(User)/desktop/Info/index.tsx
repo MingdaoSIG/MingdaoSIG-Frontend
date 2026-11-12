@@ -8,6 +8,7 @@ import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
+import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -210,6 +211,8 @@ export default function Info({
             <>
               <hr className={styles.contentHR} />
               <NotificationSettingsEntry />
+              <hr className={styles.contentHR} />
+              <PortfolioEntry />
             </>
           )}
         </div>

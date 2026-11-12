@@ -6,6 +6,7 @@ import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBou
 import { toast } from "@/components/mobile/Toast";
 import { useReport } from "@/components/Report/ReportDialog";
 import { SeriesNav } from "@/components/Series/SeriesNav";
+import { TeacherFeedback } from "@/components/TeacherFeedback/TeacherFeedback";
 import type { TThread } from "@/interfaces/Thread";
 
 import { type CommentNotify, useComments } from "../components/useComments";
@@ -92,6 +93,9 @@ export default function Thread({ post, isAnnouncement }: Props) {
       </div>
       {!isAnnouncement && bodyReady && (
         <>
+          <div className="min-w-0 px-2 pt-2 empty:hidden">
+            <TeacherFeedback post={post} variant="mobile" />
+          </div>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
             <SectionErrorBoundary label="留言">
               <CommentList

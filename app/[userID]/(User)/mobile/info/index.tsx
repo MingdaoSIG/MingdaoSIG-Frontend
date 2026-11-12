@@ -13,6 +13,7 @@ import { Tooltip } from "react-tooltip";
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
 import { toast } from "@/components/mobile/Toast";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
+import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -153,6 +154,8 @@ export default function Info({
             <>
               <hr className={styles.contentHR} />
               <NotificationSettingsEntry mobile />
+              <hr className={styles.contentHR} />
+              <PortfolioEntry mobile />
             </>
           )}
         </div>

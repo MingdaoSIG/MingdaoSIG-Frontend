@@ -1,3 +1,5 @@
+import type { TFeaturedPost } from "./Engagement";
+
 export type Sig = {
   _id: string; // ID
   name: string; // sig 名稱
@@ -9,4 +11,9 @@ export type Sig = {
   leader?: string[]; // 領導者
   removed?: boolean; // 刪除
   badge?: ("developer" | "10.21_user" | "bug_hunter")[]; // 徽章
+  /**
+   * 精選成果 (contract v4 §3.4): resolved posts from `GET /sig/:id` and
+   * `/sig/@:customId`; plain ids from `/sig/list` and `POST /sig/:id`.
+   */
+  featuredPosts?: (TFeaturedPost | string)[];
 };
