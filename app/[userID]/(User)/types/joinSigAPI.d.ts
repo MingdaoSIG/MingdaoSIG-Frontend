@@ -1,16 +1,14 @@
 /**
- * type for Join SIG API Body Needs.
- *
- * @interface TPostAPI
- * @property {string} sig - The sig ID.
- * @property {string} q1 - The answer to the first question.
- * @property {string} q2 - The answer to the second question.
- * @property {string} q3 - The answer to the third question
+ * Body of `POST /sig/:id/join` (contract v4 §5.6): one answer per question
+ * of the SIG's join form, in order, labelled with the question. The
+ * backend keeps q1..q3 filled for the email template.
  */
+export type TJoinAnswer = {
+  question: string;
+  answer: string;
+};
 
 export type TJoinSigAPI = {
   sig: string;
-  q1: string;
-  q2: string;
-  q3: string;
+  answers: TJoinAnswer[];
 };

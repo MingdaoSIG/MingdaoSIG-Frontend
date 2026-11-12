@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
+import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
@@ -186,6 +188,18 @@ export default function Info({
               {joinSig.isMember ? "你是這個 SIG 的成員" : joinSig.notice}
             </p>
           )}
+          {isSig &&
+            accountData?._id !== "652d60b842cdf6a660c2b778" &&
+            !joinSig.isMember && (
+              <RecruitingStatus
+                recruiting={
+                  joinSig.recruiting
+                    ? (accountData as Sig).recruiting
+                    : { ...(accountData as Sig).recruiting, open: false }
+                }
+                className="mt-2"
+              />
+            )}
           <hr className={styles.contentHR} />
           {isInput ? (
             <>
@@ -214,6 +228,9 @@ export default function Info({
           )}
         </div>
       </div>
+      {isSig && accountData && (
+        <JoinSigDialog sig={accountData as Sig} {...joinSig.dialog} />
+      )}
       {isSig && accountData && manager.canManage && (
         <EditSigDialog
           sig={accountData as Sig}

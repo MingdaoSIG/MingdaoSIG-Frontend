@@ -31,6 +31,8 @@ export const CustomStatus = {
   NOT_MODERATOR: 4035,
   INVALID_SESSION: 4036,
   INVALID_TIME_RANGE: 4037,
+  /** Joining a SIG that is not recruiting (contract v4 §5.6). */
+  NOT_RECRUITING: 4040,
   TOO_MANY_REQUESTS: 4290,
 
   ERROR_READING_USER_FROM_DB: 4100,
