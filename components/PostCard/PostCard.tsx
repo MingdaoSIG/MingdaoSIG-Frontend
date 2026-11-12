@@ -179,7 +179,11 @@ export function PostCard({
               <Link
                 href={`/post/${post._id}`}
                 title={post.title}
-                className="line-clamp-2 min-h-[2lh] [overflow-wrap:anywhere] after:absolute after:inset-0 after:content-[''] lg:line-clamp-1 lg:min-h-0"
+                className={`[overflow-wrap:anywhere] after:absolute after:inset-0 after:content-[''] ${
+                  // Not a lg: variant: globals.css's own .line-clamp-2
+                  // comes later and would win over it.
+                  isMobile ? "line-clamp-2 min-h-[2lh]" : "line-clamp-1"
+                }`}
               >
                 <Highlight text={post.title} query={highlight} />
               </Link>
@@ -211,7 +215,7 @@ export function PostCard({
               {sigInfo.customId ? (
                 <Link
                   href={`/@${sigInfo.customId}`}
-                  className="sig-text relative z-[1] min-w-0 max-w-[45%] shrink truncate font-semibold hover:underline"
+                  className="sig-text relative z-[1] min-w-0 max-w-[45%] shrink-0 truncate font-semibold hover:underline"
                   style={{
                     ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
                   }}
@@ -220,7 +224,7 @@ export function PostCard({
                 </Link>
               ) : (
                 <span
-                  className="sig-text min-w-0 max-w-[45%] shrink truncate font-semibold"
+                  className="sig-text min-w-0 max-w-[45%] shrink-0 truncate font-semibold"
                   style={{
                     ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
                   }}

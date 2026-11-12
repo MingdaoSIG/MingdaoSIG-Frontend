@@ -24,12 +24,21 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   the last visit (`modules/sigSeen`, localStorage
   `mdsig-sig-seen:<userId>`; a SIG seen for the first time starts as
   seen; `useTrackSigVisits` in `app/device.tsx` records visits to
-  `/@<sig>`). The header has the logo, the search box and the avatar menu
-  (the 我的 hub, `UserMenu.tsx`); 管理平台 stays for admins and managers.
+  `/@<sig>`). The SIG squares show the SIG avatar (the coloured initial
+  when there is none or it fails), a pill in the SIG colour on the left
+  edge for the current SIG and on hover, and the user's own order
+  (`RailSigs.tsx`): drag with the mouse, or Space / ↑ ↓ / Space (Esc
+  cancels) with an aria-live announcement. The order is saved with
+  `POST /user { sigOrder }` 500 ms after a drop and mirrored in
+  localStorage `mdsig:sigOrder:<userId>` (`useSaveSigOrder`,
+  `savedSigOrder`: the server's order first); SIGs not in it go last. The
+  個人專區 list uses the same order. The header has the logo, the search
+  box and the avatar button (name and email from 1100px) that opens the
+  個人專區 menu (`UserMenu.tsx`); 管理平台 is only the header button.
   The admin panel has no rail.
 - Which entry is current: `navSection()` in `app/(Layout)/nav.ts`. The 我的
   hub entries (`hubGroups()`) are shared by the avatar menu and `/me`.
-- `/me` (我的, decision 7B): profile link, 我的 SIG (managed / member /
+- `/me` (個人專區, decision 7B; the tab bar says 我的): profile link, 我的 SIG (managed / member /
   followed), 活動報名 (`/events?scope=rsvped`, with the count), 草稿
   (`/me/drafts`, with the count; the editor's draft list), 收藏 / 按讚 / 系列
   (own profile `?tab=`), 學習歷程, 數據, 通知設定, 平台資訊 (`/about`), 管理平台,
@@ -37,8 +46,31 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 - The site banner and the suspension notice (`SiteNotices`) sit under the
   header on both shells.
 
+## Desktop widths (owner pick 1B, 2026-11-13)
+
+- The frame is full width; reading columns keep a measure (52rem) and
+  extra width becomes side columns: `app/(Layout)/pageColumns.tsx`
+  (`wideLeft` / `wideRight` from 1600px, `oneSide` at 1280–1600px, main
+  only below; `utils/useMinWidth`). Side columns are sticky at
+  `--shell-top` and render only where they show. Tailwind has `3xl`
+  (1600px) for this.
+- Home (2A): left 近期活動 + 熱門標籤, right 熱門貼文 + 正在招生; one right
+  column (近期活動, 熱門貼文, 正在招生, 熱門標籤) at 1280–1600.
+- 活動 (5B): from 1280px the list (grouped by day) and the month
+  (`EventCalendar variant="side"`, days tinted in SIG colours) sit side by
+  side; choosing a day scrolls the list there and highlights it.
+- 探索 grids and search results use `repeat(auto-fill, minmax(…))`; search
+  puts SIG and tag matches in a right column from 1600px (全部 tab).
+- 關於 MDSIG: sticky table of contents, text sections at 52rem, 平台數據 and
+  運行狀態 across the width.
+
 ## Post cards and infinite lists
 
+- Every compact card has the same height (owner 2026-11-13): title 1 line
+  on desktop (full title in `title`) and 2 reserved lines on phones, the
+  excerpt always reserves 2 lines, the top row is at least the thumbnail's
+  height, the meta and counts rows have fixed heights and hidden tag
+  overflow. Featured cards add a fixed-height image, so they match too.
 - `components/PostCard/PostCard.tsx` (decision 4B): text first (title,
   two-line excerpt, SIG colour dot + SIG name, author, time, likes /
   comments / views, up to four tags, bookmark) with a small thumbnail on
