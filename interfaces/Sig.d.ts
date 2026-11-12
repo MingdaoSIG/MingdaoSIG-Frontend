@@ -40,4 +40,12 @@ export type Sig = {
    * `/sig/@:customId`; plain ids from `/sig/list` and `POST /sig/:id`.
    */
   featuredPosts?: (TFeaturedPost | string)[];
+  /** Members (contract v4 §6.5–§6.6: `/sig/list`, `/sig/:id`). */
+  memberCount?: number;
+  /** Followers; who they are is private (§6.6). */
+  followerCount?: number;
+  /** The newest non-removed post (ISO), or null when there is none. */
+  latestPostAt?: string | null;
+  /** `GET /sig/:id` with a JWT: whether the viewer follows the SIG. */
+  followedByMe?: boolean;
 };
