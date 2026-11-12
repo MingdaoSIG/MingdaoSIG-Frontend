@@ -1,3 +1,4 @@
+import { formatSuspensionUntil } from "@/modules/suspension";
 import type { BadgeTone } from "./components/ui";
 import type { AuditAction, AuditEntry, AuditTargetKind } from "./types";
 
@@ -24,6 +25,11 @@ export const AUDIT_ACTIONS: {
   { id: "sig.member.remove", label: "移除 SIG 成員", tone: "danger" },
   { id: "join.accept", label: "同意入社申請", tone: "ok" },
   { id: "join.reject", label: "拒絕入社申請", tone: "mute" },
+  { id: "user.suspend", label: "停權／禁言", tone: "danger" },
+  { id: "user.unsuspend", label: "解除停權／禁言", tone: "ok" },
+  { id: "banner.update", label: "編輯公告橫幅", tone: "info" },
+  { id: "broadcast.send", label: "廣播通知", tone: "info" },
+  { id: "keyword.update", label: "更新關鍵字過濾", tone: "info" },
 ];
 
 const BY_ID = new Map(AUDIT_ACTIONS.map((action) => [action.id, action]));
@@ -34,12 +40,20 @@ export const TARGET_KINDS: { id: AuditTargetKind; label: string }[] = [
   { id: "user", label: "使用者" },
   { id: "sig", label: "SIG" },
   { id: "join", label: "入社申請" },
+  { id: "banner", label: "公告橫幅" },
+  { id: "broadcast", label: "廣播" },
+  { id: "setting", label: "設定" },
 ];
 
 const FIELD_LABEL: Record<string, string> = {
   name: "名稱",
   description: "簡介",
   avatar: "頭像",
+  message: "內容",
+  link: "連結",
+  level: "樣式",
+  startAt: "開始時間",
+  endAt: "結束時間",
 };
 
 const BADGE_LABEL: Record<string, string> = {
@@ -48,19 +62,45 @@ const BADGE_LABEL: Record<string, string> = {
   bug_hunter: "抓蟲高手",
 };
 
+const ROLE_ACTION: Record<string, string> = {
+  admin: "設為管理員",
+  moderator: "設為內容管理員",
+  user: "設為一般使用者",
+};
+
 export function actionLabel(entry: AuditEntry) {
+  const role = entry.meta?.role;
+  if (entry.action === "user.permission" && typeof role === "string") {
+    return ROLE_ACTION[role] ?? "變更角色";
+  }
   if (
     entry.action === "user.permission" &&
     typeof entry.meta?.admin === "boolean"
   ) {
     return entry.meta.admin ? "設為管理員" : "移除管理員權限";
   }
+  if (entry.action === "user.suspend" || entry.action === "user.unsuspend") {
+    const type =
+      entry.meta?.type === "ban"
+        ? "停權"
+        : entry.meta?.type === "mute"
+          ? "禁言"
+          : "停權／禁言";
+    return entry.action === "user.suspend" ? type : `解除${type}`;
+  }
   return BY_ID.get(entry.action as AuditAction)?.label ?? entry.action;
 }
 
 export function actionTone(entry: AuditEntry): BadgeTone {
-  if (entry.action === "user.permission" && entry.meta?.admin === false) {
+  if (
+    entry.action === "user.permission" &&
+    (entry.meta?.role === "user" ||
+      (entry.meta?.role === undefined && entry.meta?.admin === false))
+  ) {
     return "danger";
+  }
+  if (entry.action === "user.suspend" && entry.meta?.type === "mute") {
+    return "warn";
   }
   return BY_ID.get(entry.action as AuditAction)?.tone ?? "mute";
 }
@@ -92,6 +132,36 @@ export function auditDetail(entry: AuditEntry) {
   const ids = list(meta.ids);
   if (ids.length > 1) {
     parts.push(`批次 ${ids.length} 篇`);
+  }
+  if (entry.action === "user.suspend") {
+    const until =
+      typeof meta.until === "string" ? formatSuspensionUntil(meta.until) : "";
+    parts.push(until ? `至 ${until}` : "無限期");
+    if (typeof meta.reason === "string" && meta.reason) {
+      parts.push(`原因：${meta.reason}`);
+    }
+  }
+  if (entry.action === "broadcast.send") {
+    const audience = meta.audience as { type?: string } | undefined;
+    parts.push(audience?.type === "sig" ? "SIG 成員" : "全站");
+    if (typeof meta.recipients === "number") {
+      parts.push(`${meta.recipients} 位`);
+    }
+    if (meta.push === true) {
+      parts.push("推播");
+    }
+  }
+  if (entry.action === "keyword.update" && typeof meta.count === "number") {
+    parts.push(
+      `共 ${meta.count} 個（新增 ${Number(meta.added ?? 0)}、移除 ${Number(meta.removed ?? 0)}）`,
+    );
+  }
+  if (entry.action === "banner.update") {
+    if (meta.created === true) {
+      parts.push("新增");
+    } else if (meta.removed === true) {
+      parts.push("刪除");
+    }
   }
   return parts.join(" · ");
 }
@@ -141,6 +211,12 @@ export function targetHref(entry: AuditEntry) {
       return label
         ? `/admin/comments?status=all&q=${encodeURIComponent(label.slice(0, 100))}`
         : null;
+    case "banner":
+      return "/admin/banners";
+    case "broadcast":
+      return "/admin/broadcast";
+    case "setting":
+      return entry.action === "keyword.update" ? "/admin/keyword-filter" : null;
     default:
       return null;
   }
