@@ -10,8 +10,10 @@ import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import ReaderMode from "@/components/ReaderMode";
 import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
+import { HashtagLinks } from "@/components/Threads/desktop/ThreadsList";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
+import { postTags } from "@/modules/hashtag";
 import { promptLogin } from "@/utils/loginPrompt";
 import useUser from "@/utils/useUser";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -100,6 +102,7 @@ const Thread = ({ post }: { post: TThread }) => {
   }, [isLogin, post.like, userData?._id]);
 
   const { canEdit, canDelete } = usePostPermissions(post);
+  const tags = postTags(post.hashtag);
   const iconButton =
     "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-control transition-colors hover:bg-field";
 
@@ -158,9 +161,19 @@ const Thread = ({ post }: { post: TThread }) => {
         data-reader-title
         className="flex items-center gap-2 rounded-card border border-line bg-paper py-4 pr-4 pl-6 shadow-card"
       >
-        <h1 className="min-w-0 flex-1 font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
-          {post.title}
-        </h1>
+        <div className="min-w-0 flex-1">
+          <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
+            {post.title}
+          </h1>
+          {tags.length > 0 && (
+            <div data-reader-hide>
+              <HashtagLinks
+                tags={tags}
+                className="mt-2 flex flex-wrap gap-1.5"
+              />
+            </div>
+          )}
+        </div>
         <ReaderMode title={post.title} />
         {editButton}
         {deleteButton}

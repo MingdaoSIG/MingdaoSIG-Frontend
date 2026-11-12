@@ -4,7 +4,9 @@ import { useRef } from "react";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
+import { HashtagLinks } from "@/components/Threads/desktop/ThreadsList";
 import type { TThread } from "@/interfaces/Thread";
+import { postTags } from "@/modules/hashtag";
 
 type Props = {
   post: TThread;
@@ -14,7 +16,7 @@ type Props = {
 };
 
 export default function PostBody({ post, isAnnouncement, onReady }: Props) {
-  const hashtags = Array.isArray(post.hashtag) ? post.hashtag : [];
+  const hashtags = postTags(post.hashtag);
   const showHashtags = !isAnnouncement && hashtags.length > 0;
   const rootRef = useRef<HTMLDivElement>(null);
   useDuplicateTitle(rootRef, post.title);
@@ -28,16 +30,11 @@ export default function PostBody({ post, isAnnouncement, onReady }: Props) {
         {post.title}
       </h1>
       {showHashtags && (
-        <div className="flex flex-wrap gap-1.5">
-          {hashtags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-chip bg-brand-50 px-2 py-0.5 font-medium text-brand-800 text-xs"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
+        <HashtagLinks
+          tags={hashtags}
+          className="flex flex-wrap gap-1.5"
+          chipClassName="py-1.5"
+        />
       )}
       <div className="my-1 h-px w-full bg-line" />
       <SectionErrorBoundary label="文章內容">
