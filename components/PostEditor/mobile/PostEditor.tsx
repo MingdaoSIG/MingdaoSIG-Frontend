@@ -25,6 +25,8 @@ interface Props {
   postButtonDisable: boolean;
   isEdit?: boolean;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Edit mode: the SIG the post is already in. */
+  originalSig?: string;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -41,6 +43,7 @@ export default function NewPostMobile({
   postButtonDisable,
   isEdit,
   handleFileChange,
+  originalSig,
 }: Props) {
   const { isLogin, login } = useUserAccount();
   const [tagInput, setTagInput] = useState("");
@@ -135,6 +138,7 @@ export default function NewPostMobile({
             <MetaDataForm
               data={data}
               handleFormEventFunction={handleFormEventFunction}
+              originalSig={originalSig}
             />
           </div>
 

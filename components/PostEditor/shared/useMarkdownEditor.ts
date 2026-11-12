@@ -233,7 +233,9 @@ export function useMarkdownEditor({
           markdown({ base: markdownLanguage }),
           syntaxHighlighting(highlight),
           EditorView.lineWrapping,
-          placeholder("開始寫作…支援 Markdown 語法"),
+          placeholder(
+            "開始寫作…支援 Markdown 語法，不熟悉的話可以參考下方的「Markdown 教學」",
+          ),
           editorTheme(fontSize, padding),
           keymap.of([
             { key: "Mod-b", run: (v) => wrap(v, "**") },

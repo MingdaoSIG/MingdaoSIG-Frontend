@@ -18,7 +18,10 @@ import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
-import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
+import {
+  isDefaultContent,
+  markdownGuide,
+} from "../../components/PostEditor/config/markdownGuide";
 // Types
 import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 // APIs Request Function
@@ -116,7 +119,7 @@ export default function NewPostPage() {
       data.title !== "" ||
       data.sig !== "" ||
       (data.hashtag && data.hashtag.length > 0) ||
-      (data.content !== markdownGuide && data.content !== "");
+      !isDefaultContent(data.content);
 
     if (hasContent) {
       storageSet("postData", JSON.stringify(data));
@@ -136,7 +139,7 @@ export default function NewPostPage() {
 
     let loadedData: Partial<TPostAPI> = {};
 
-    if (storedContent) {
+    if (storedContent && !isDefaultContent(storedContent)) {
       loadedData.content = storedContent;
     }
 
@@ -145,6 +148,10 @@ export default function NewPostPage() {
         const parsed = JSON.parse(storedData);
         // 驗證並清理資料
         const validatedData = validateStoredData(parsed);
+        if (isDefaultContent(validatedData.content)) {
+          // Drafts from older versions still hold the English sample.
+          validatedData.content = markdownGuide;
+        }
         loadedData = { ...loadedData, ...validatedData };
       } catch (error) {
         console.error("Failed to parse stored post data:", error);

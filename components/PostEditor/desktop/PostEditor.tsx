@@ -28,6 +28,8 @@ interface Props {
   postButtonDisable: boolean;
   handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
+  /** Edit mode: the SIG the post is already in. */
+  originalSig?: string;
 }
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
@@ -42,6 +44,7 @@ export default function NewPost({
   postButtonDisable,
   handleFileChange,
   isEdit,
+  originalSig,
 }: Props) {
   const [_hashtag, setHashtag] = useState<string[]>([]);
 
@@ -62,6 +65,7 @@ export default function NewPost({
             <TitleSigForm
               data={data}
               handleFormEventFunction={handleFormEventFunction}
+              originalSig={originalSig}
             />
             <div className="min-h-0 flex-1">
               <EditorErrorBoundary data={data} setPostData={setPostData}>

@@ -255,6 +255,7 @@ export default function EditPostPage({
       handleFormEventFunction={handleFormChange}
       handleFileChange={handleFileChange}
       isEdit
+      originalSig={baseline?.sig}
     ></PostEditorMobile>
   ) : (
     <PostEditorDesktop
@@ -267,6 +268,7 @@ export default function EditPostPage({
       handleFormEventFunction={handleFormChange}
       handleFileChange={handleFileChange}
       isEdit
+      originalSig={baseline?.sig}
     />
   );
 }
