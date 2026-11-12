@@ -1,25 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
-const useIsMobile = (): boolean => {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+// Desktop and mobile are separate component trees. Reading the width
+// synchronously (instead of starting at `false` and correcting in an
+// effect) means a component mounted on the client renders the right tree
+// first, so a phone never mounts the desktop tree and fetches twice.
+// The server cannot know the width; <Device> waits for hydration before
+// rendering pages (see useHydrated), so pages never hydrate a guess.
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
+const BREAKPOINT = 1024;
 
-    handleResize();
+function subscribe(onChange: () => void) {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
 
-    window.addEventListener("resize", handleResize);
+function getSnapshot() {
+  return window.innerWidth < BREAKPOINT;
+}
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+function getServerSnapshot() {
+  return false;
+}
 
-  return isMobile;
-};
+const useIsMobile = (): boolean =>
+  useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
 export default useIsMobile;
