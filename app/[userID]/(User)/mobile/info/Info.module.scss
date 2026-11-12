@@ -115,6 +115,14 @@ $badge-height: 1rem;
   }
 }
 
+.joinNotice {
+  margin-top: 0.5rem;
+  color: var(--color-ink-500);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
 .descriptionTitleWrapper {
   display: flex;
   flex-direction: row;

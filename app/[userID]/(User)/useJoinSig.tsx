@@ -62,10 +62,16 @@ function joinErrorMessage(result: ApiFailure) {
  * State and action of the 「加入 SIG」 button on a SIG page, shared by the
  * desktop and mobile profile cards. Logged-out visitors get an enabled
  * button that explains joining needs an account and offers to log in.
+ *
+ * The state is the user's newest join request (the backend returns that
+ * one): pending → 審核中, a member → 已加入, rejected → the user may apply
+ * again, with a notice that the last one was declined.
  */
 export function useJoinSig(account: User | Sig | null, isSig: boolean) {
   const { token, userData, isLoading: authLoading, login } = useUserAccount();
-  // "" = not known yet; "none" = no request, may apply.
+  // "" = not known yet; "none" = no request, may apply; "joined" = the
+  // server said the user is already a member (4028).
+  // Otherwise the newest request's state: pending, accepted or rejected.
   const [request, setRequest] = useState("");
   const sigId = isSig ? account?._id : undefined;
 
@@ -89,15 +95,23 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
 
   // Members added by a leader have no join request; their profile says so.
   const isMember = Boolean(sigId && token && userData?.sig?.includes(sigId));
-  const state = isMember ? "accepted" : request;
+  // An accepted request from someone the profile no longer lists as a
+  // member (taken out of the SIG later): they may apply again. Without a
+  // profile, trust the request.
+  const leftSig = request === "accepted" && Boolean(userData) && !isMember;
+  const state =
+    isMember || request === "joined" ? "accepted" : leftSig ? "none" : request;
 
   const label =
     state === "pending"
       ? "審核中"
       : state === "accepted"
         ? "已加入"
-        : "加入 SIG";
+        : state === "rejected"
+          ? "再次申請"
+          : "加入 SIG";
   const disabled = state === "" || state === "pending" || state === "accepted";
+  const notice = state === "rejected" ? "上次的申請未通過，可以再次申請" : null;
 
   function join() {
     if (!sigId) {
@@ -153,6 +167,12 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
             confirmButtonColor: "#0b5a83",
           });
         } else {
+          // Another tab or device got there first: show what the server has.
+          if (res.status === CustomStatus.ALREADY_APPLIED) {
+            setRequest("pending");
+          } else if (res.status === CustomStatus.ALREADY_JOINED) {
+            setRequest("joined");
+          }
           Swal.fire({
             title: "申請失敗",
             text: joinErrorMessage(res),
@@ -165,5 +185,5 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
     });
   }
 
-  return { label, disabled, join };
+  return { label, disabled, notice, join };
 }

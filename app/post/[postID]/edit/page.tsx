@@ -22,6 +22,8 @@ import { imageUpload } from "@/modules/imageUploadAPI";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 
+const ADMIN_PERMISSION = 2;
+
 const EMPTY_FORM: TPostAPI = {
   title: "",
   sig: "",
@@ -104,16 +106,24 @@ export default function EditPostPage({
     return () => controller.abort();
   }, [postID, attempt]);
 
+  // The author, or an admin (the backend lets admins edit any post).
+  const mayEdit = Boolean(
+    oldPostData &&
+      userData &&
+      (ownerOf(oldPostData) === userData._id ||
+        userData.permission === ADMIN_PERMISSION),
+  );
+
   // Only judge ownership once both the post and the login are known;
   // deciding earlier bounced the real owner whenever /login answered first.
   useEffect(() => {
     if (isLoading || !oldPostData) {
       return;
     }
-    if (!isLogin || ownerOf(oldPostData) !== userData?._id) {
+    if (!isLogin || !mayEdit) {
       route.push(`/post/${postID}`);
     }
-  }, [oldPostData, userData, isLoading, isLogin, route, postID]);
+  }, [oldPostData, isLoading, isLogin, mayEdit, route, postID]);
 
   const baseline = oldPostData ? toForm(oldPostData) : null;
   const unchanged =
@@ -235,12 +245,7 @@ export default function EditPostPage({
     );
   }
 
-  if (
-    isLoading ||
-    !oldPostData ||
-    !userData ||
-    ownerOf(oldPostData) !== userData._id
-  ) {
+  if (isLoading || !oldPostData || !mayEdit) {
     return <div></div>;
   }
 
