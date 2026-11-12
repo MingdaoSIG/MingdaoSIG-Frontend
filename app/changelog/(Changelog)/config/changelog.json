@@ -1,5 +1,62 @@
 [
   {
+    "version": "2.24.0",
+    "date": "2026-11-12",
+    "type": "improvement",
+    "title": "介面中文化與使用體驗改善",
+    "summary": "介面全面中文化，未登入時的操作會提示登入，並修正 iPhone 上內容被遮住等多個版面問題",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "介面全面中文化，按鈕、提示與錯誤訊息改為中文"
+      },
+      {
+        "type": "improvement",
+        "description": "未登入時，發文頁會提示先登入，草稿會保存在這台裝置；留言、按讚與加入 SIG 也會提示登入"
+      },
+      {
+        "type": "improvement",
+        "description": "發文時的 SIG 選單會把可以發文的 SIG 排在前面，未加入的 SIG 會標示「（未加入）」"
+      },
+      {
+        "type": "improvement",
+        "description": "留言與文章作者改為顯示姓名"
+      },
+      {
+        "type": "improvement",
+        "description": "文章載入時顯示預覽框架，頁面不再跳動"
+      },
+      {
+        "type": "improvement",
+        "description": "平台數據頁載入更快，載入中不再顯示 0"
+      },
+      {
+        "type": "improvement",
+        "description": "個人簡介過長時可以「顯示更多」"
+      },
+      {
+        "type": "improvement",
+        "description": "手機版按鈕加大，更容易點擊；卡片標題可顯示兩行"
+      },
+      {
+        "type": "fix",
+        "description": "修正 iPhone 上部分頁面的內容與按鈕被上下工具列遮住的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正平台資訊頁聯絡信箱的網址錯誤"
+      },
+      {
+        "type": "fix",
+        "description": "修正文章第一個標題上方多出空白的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正瀏覽 SIG 或他人頁面時，下方「個人」按鈕也會被選取的問題"
+      }
+    ]
+  },
+  {
     "version": "2.23.0",
     "date": "2026-11-12",
     "type": "improvement",
