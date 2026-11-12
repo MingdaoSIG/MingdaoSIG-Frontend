@@ -82,6 +82,24 @@ export default function Info({
     }
   }
 
+  const heading = (
+    <>
+      <h2 className={styles.descriptionTitle}>
+        {isSig ? "SIG 簡介" : "關於我"}
+      </h2>
+      {userData && userData.customId === accountData?.customId && (
+        <button
+          type="button"
+          className={styles.descriptionEditButton}
+          onClick={EditDescriptionButtonHandle}
+          aria-label={isInput ? "完成編輯" : "編輯自我介紹"}
+        >
+          <Image src={"/icons/edit.svg"} width={20} height={20} alt="" />
+        </button>
+      )}
+    </>
+  );
+
   return (
     <div className={styles.info}>
       <div
@@ -127,30 +145,24 @@ export default function Info({
             )}
           </div>
           <hr className={styles.contentHR} />
-          <div className={styles.descriptionTitleWrapper}>
-            <h2 className={styles.descriptionTitle}>
-              {isSig ? "SIG 簡介" : "關於我"}
-            </h2>
-            {userData && userData.customId === accountData?.customId && (
-              <button
-                type="button"
-                className={styles.descriptionEditButton}
-                onClick={EditDescriptionButtonHandle}
-                aria-label={isInput ? "完成編輯" : "編輯自我介紹"}
-              >
-                <Image src={"/icons/edit.svg"} width={20} height={20} alt="" />
-              </button>
-            )}
-          </div>
           {isInput ? (
-            <textarea
-              className={styles.description}
-              onChange={OnEditDescription}
-              defaultValue={accountData?.description}
-              aria-label="自我介紹"
-            />
+            <>
+              <div className={styles.descriptionTitleWrapper}>{heading}</div>
+              <textarea
+                className={styles.description}
+                onChange={OnEditDescription}
+                defaultValue={accountData?.description}
+                aria-label="自我介紹"
+              />
+            </>
           ) : (
-            accountData && <Description text={accountData.description} fill />
+            accountData && (
+              <Description
+                heading={heading}
+                text={accountData.description}
+                fill
+              />
+            )
           )}
         </div>
       </div>

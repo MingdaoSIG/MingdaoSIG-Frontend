@@ -63,12 +63,16 @@ export default function Info({
             {accountData?.badge ? <BadgeList userData={accountData} /> : null}
           </div>
           <hr className={styles.contentHR} />
-          <div className={styles.descriptionTitleWrapper}>
-            <h2 className={styles.descriptionTitle}>
-              {isSig ? "SIG 簡介" : "關於我"}
-            </h2>
-          </div>
-          {accountData && <Description text={accountData.description} />}
+          {accountData && (
+            <Description
+              heading={
+                <h2 className={styles.descriptionTitle}>
+                  {isSig ? "SIG 簡介" : "關於我"}
+                </h2>
+              }
+              text={accountData.description}
+            />
+          )}
         </div>
       </div>
     </div>
