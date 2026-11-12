@@ -24,6 +24,11 @@ export const AUDIT_ACTIONS: {
   { id: "sig.member.remove", label: "移除 SIG 成員", tone: "danger" },
   { id: "join.accept", label: "同意入社申請", tone: "ok" },
   { id: "join.reject", label: "拒絕入社申請", tone: "mute" },
+  { id: "post.move", label: "搬移貼文", tone: "info" },
+  { id: "sig.merge", label: "合併 SIG", tone: "warn" },
+  { id: "rollover.apply", label: "學年交接", tone: "warn" },
+  { id: "user.update", label: "編輯使用者資料", tone: "info" },
+  { id: "badge.update", label: "編輯徽章", tone: "info" },
 ];
 
 const BY_ID = new Map(AUDIT_ACTIONS.map((action) => [action.id, action]));
@@ -34,12 +39,22 @@ export const TARGET_KINDS: { id: AuditTargetKind; label: string }[] = [
   { id: "user", label: "使用者" },
   { id: "sig", label: "SIG" },
   { id: "join", label: "入社申請" },
+  { id: "badge", label: "徽章" },
+  { id: "site", label: "全站" },
 ];
 
 const FIELD_LABEL: Record<string, string> = {
   name: "名稱",
   description: "簡介",
   avatar: "頭像",
+  customId: "ID",
+  color: "代表色",
+  defaultCover: "預設封面",
+  removed: "封存狀態",
+  joinQuestions: "申請題目",
+  recruiting: "招生設定",
+  displayName: "顯示名稱",
+  icon: "圖示",
 };
 
 const BADGE_LABEL: Record<string, string> = {
@@ -93,6 +108,26 @@ export function auditDetail(entry: AuditEntry) {
   if (ids.length > 1) {
     parts.push(`批次 ${ids.length} 篇`);
   }
+  if (typeof meta.from === "string" && typeof meta.to === "string") {
+    parts.push(`@${meta.from} → @${meta.to}`);
+  }
+  if (meta.created === true) {
+    parts.push("新增");
+  }
+  if (typeof meta.removed === "boolean" && entry.action === "sig.update") {
+    parts.push(meta.removed ? "封存" : "恢復");
+  }
+  if (entry.action === "post.move" && typeof meta.count === "number") {
+    parts.push(`${meta.count} 篇`);
+  }
+  if (entry.action === "sig.merge" && typeof meta.posts === "number") {
+    parts.push(`${meta.posts} 篇貼文、${meta.membersAdded ?? 0} 位成員`);
+  }
+  if (entry.action === "rollover.apply") {
+    parts.push(
+      `移出 ${meta.users ?? 0} 位校友、移除 ${Number(meta.leadersRemoved ?? 0) + Number(meta.moderatorsRemoved ?? 0)} 筆幹部／老師`,
+    );
+  }
   return parts.join(" · ");
 }
 
@@ -137,6 +172,10 @@ export function targetHref(entry: AuditEntry) {
       return `/admin/users?q=${encodeURIComponent(label ?? "")}`;
     case "join":
       return sig ? `/admin/sigs/${sig}?tab=requests&status=all` : null;
+    case "badge":
+      return "/admin/badges";
+    case "site":
+      return entry.action === "rollover.apply" ? "/admin/rollover" : null;
     case "comment":
       return label
         ? `/admin/comments?status=all&q=${encodeURIComponent(label.slice(0, 100))}`
