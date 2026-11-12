@@ -28,7 +28,8 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   when there is none or it fails), a pill in the SIG colour on the left
   edge for the current SIG and on hover, and the user's own order
   (`RailSigs.tsx`): drag with the mouse, or Space / ↑ ↓ / Space (Esc
-  cancels) with an aria-live announcement. The order is saved with
+  cancels) with an aria-live announcement. A list taller than the window
+  scrolls while a drag nears its top or bottom edge. The order is saved with
   `POST /user { sigOrder }` 500 ms after a drop and mirrored in
   localStorage `mdsig:sigOrder:<userId>` (`useSaveSigOrder`,
   `savedSigOrder`: the server's order first); SIGs not in it go last. The
@@ -56,8 +57,9 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   (1600px) for this.
 - Home (2A): left 近期活動 + 熱門標籤, right 熱門貼文 + 正在招生; one right
   column (近期活動, 熱門貼文, 正在招生, 熱門標籤) at 1280–1600.
-- 活動 (5B): from 1280px the list (grouped by day) and the month
-  (`EventCalendar variant="side"`, days tinted in SIG colours) sit side by
+- 活動 (5B): from 1280px the list (grouped by day, at most 52rem) and the
+  month (`EventCalendar variant="side"`, days tinted in SIG colours, at
+  most 40rem; the pair is centred on very wide screens) sit side by
   side; choosing a day scrolls the list there and highlights it.
 - 探索 grids and search results use `repeat(auto-fill, minmax(…))`; search
   puts SIG and tag matches in a right column from 1600px (全部 tab).

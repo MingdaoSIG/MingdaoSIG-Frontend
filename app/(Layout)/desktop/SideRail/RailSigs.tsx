@@ -25,6 +25,10 @@ import { type MySig, useSaveSigOrder } from "@/utils/useMySigs";
 // cancels) from the keyboard. The order is saved by useSaveSigOrder.
 
 const DRAG_THRESHOLD = 4;
+/** Auto-scroll while dragging within this many px of the list's edge. */
+const EDGE = 40;
+/** The fastest auto-scroll, in px per frame (right at the edge). */
+const MAX_SPEED = 12;
 
 function firstLetter(name: string) {
   const [first = "?"] = Array.from(name.trim());
@@ -150,10 +154,60 @@ export function RailSigs({
     });
   }
 
+  // Auto-scroll: while a drag is near the top or bottom of a list taller
+  // than the window, scroll it a little every frame and re-aim the drop.
+  const pointerY = useRef(0);
+  const scrollFrame = useRef<number | null>(null);
+
+  function stopAutoScroll() {
+    if (scrollFrame.current !== null) {
+      cancelAnimationFrame(scrollFrame.current);
+      scrollFrame.current = null;
+    }
+  }
+
+  function autoScroll(draggedId: string) {
+    const box = listRef.current?.closest<HTMLElement>("[data-rail-sigs]");
+    if (!box || box.scrollHeight <= box.clientHeight) {
+      return;
+    }
+    const step = () => {
+      const rect = box.getBoundingClientRect();
+      const y = pointerY.current;
+      let speed = 0;
+      if (y < rect.top + EDGE) {
+        speed = -Math.ceil(((rect.top + EDGE - y) / EDGE) * MAX_SPEED);
+      } else if (y > rect.bottom - EDGE) {
+        speed = Math.ceil(((y - (rect.bottom - EDGE)) / EDGE) * MAX_SPEED);
+      }
+      speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, speed));
+      if (speed === 0) {
+        scrollFrame.current = null;
+        return;
+      }
+      const before = box.scrollTop;
+      box.scrollTop = before + speed;
+      if (box.scrollTop !== before) {
+        setDrag((current) =>
+          current?.moving
+            ? { ...current, target: targetAt(y, draggedId) }
+            : current,
+        );
+      }
+      scrollFrame.current = requestAnimationFrame(step);
+    };
+    if (scrollFrame.current === null) {
+      scrollFrame.current = requestAnimationFrame(step);
+    }
+  }
+
+  useEffect(() => stopAutoScroll, []);
+
   function onPointerMove(event: PointerEvent<HTMLLIElement>) {
     if (!drag || event.pointerId !== drag.pointerId) {
       return;
     }
+    pointerY.current = event.clientY;
     if (!drag.moving) {
       if (Math.abs(event.clientY - drag.startY) < DRAG_THRESHOLD) {
         return;
@@ -166,12 +220,14 @@ export function RailSigs({
       moving: true,
       target: targetAt(event.clientY, drag.id),
     });
+    autoScroll(drag.id);
   }
 
   function finishDrag(event: PointerEvent<HTMLLIElement>, drop: boolean) {
     if (!drag || event.pointerId !== drag.pointerId) {
       return;
     }
+    stopAutoScroll();
     if (drag.moving) {
       // The click that follows the release must not open the SIG.
       suppressClick.current = true;
@@ -196,6 +252,7 @@ export function RailSigs({
     const onKey = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") {
         suppressClick.current = true;
+        stopAutoScroll();
         setDrag(null);
       }
     };
@@ -259,9 +316,12 @@ export function RailSigs({
     if (!focusId) {
       return;
     }
-    listRef.current
-      ?.querySelector<HTMLElement>(`[data-rail-sig="${focusId}"]`)
-      ?.focus({ preventScroll: true });
+    const item = listRef.current?.querySelector<HTMLElement>(
+      `[data-rail-sig="${focusId}"]`,
+    );
+    item?.focus({ preventScroll: true });
+    // A long list: keep the moved SIG in view.
+    item?.scrollIntoView({ block: "nearest" });
   }, [focusId, preview]);
 
   const dragging = drag?.moving ? drag : null;
