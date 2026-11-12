@@ -46,7 +46,7 @@ const MdEditorSync = ({ data, setPostData, token }: Props) => {
       setPostData,
       token,
       fontSize: "16px",
-      padding: "0.875rem",
+      padding: "1rem",
     });
 
   return (

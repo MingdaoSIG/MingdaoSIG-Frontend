@@ -16,6 +16,8 @@ const SIZES = {
   toolbar: { box: "size-9", icon: 20 },
   /** Mobile post action bar: 44px touch target. */
   touch: { box: "size-11", icon: 22 },
+  /** Mobile post bottom bar: icon and 「收藏」 side by side. */
+  bar: { box: "h-11 gap-1.5 px-3 font-semibold text-sm", icon: 20 },
 };
 
 /**
@@ -86,6 +88,7 @@ export function BookmarkButton({
         strokeWidth={2}
         fill={saved ? "currentColor" : "none"}
       />
+      {size === "bar" && <span aria-hidden>{saved ? "已收藏" : "收藏"}</span>}
     </button>
   );
 }

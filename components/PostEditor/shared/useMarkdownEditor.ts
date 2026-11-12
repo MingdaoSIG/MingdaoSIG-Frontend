@@ -115,7 +115,14 @@ function editorTheme(fontSize: string, padding: string) {
     },
     ".cm-content": { padding: `0 ${padding}`, caretColor: "#0b5a83" },
     ".cm-line": { padding: "0" },
-    ".cm-placeholder": { color: "#7a8694" },
+    ".cm-placeholder": {
+      color: "#7a8694",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      maxWidth: "100%",
+      verticalAlign: "top",
+    },
     ".cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection":
       { backgroundColor: "rgba(11, 90, 131, 0.16) !important" },
     ".cm-cursor": { borderLeftColor: "#0b5a83", borderLeftWidth: "2px" },
@@ -233,9 +240,9 @@ export function useMarkdownEditor({
           markdown({ base: markdownLanguage }),
           syntaxHighlighting(highlight),
           EditorView.lineWrapping,
-          placeholder(
-            "開始寫作…支援 Markdown 語法，不熟悉的話可以參考下方的「Markdown 教學」",
-          ),
+          // One short line: a wrapping placeholder made the empty caret
+          // two lines tall. Markdown help is the 「Markdown 教學」 link.
+          placeholder("開始寫作…"),
           editorTheme(fontSize, padding),
           keymap.of([
             { key: "Mod-b", run: (v) => wrap(v, "**") },

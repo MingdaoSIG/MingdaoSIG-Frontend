@@ -1,8 +1,15 @@
 "use client";
 
+import { Flag, Link2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { TapScale, TapScaleLink } from "@/components/mobile/TapScale";
+import { useState } from "react";
+import { BottomSheet } from "@/components/mobile/BottomSheet";
+import {
+  TapScale,
+  TapScaleButton,
+  TapScaleLink,
+} from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
 import { SigChip } from "@/components/Threads/mobile/ThreadsList";
 import type { TThread } from "@/interfaces/Thread";
@@ -10,16 +17,33 @@ import relativeTime from "@/modules/relativeTime";
 import { formatViews } from "@/modules/views";
 import useSig from "@/utils/useSig";
 import useUser from "@/utils/useUser";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { confirmDeletePost } from "../../components/confirmDeletePost";
+import { usePostPermissions } from "../../components/usePostPermissions";
 
 const DEFAULT_AVATAR = "/images/default-avatar.png";
 
 type Props = {
   post: TThread;
   isAnnouncement?: boolean;
+  /** 檢舉 this post (not offered on your own post). */
+  onReport?: () => void;
 };
 
-export default function PostHeader({ post, isAnnouncement }: Props) {
+// Top of the mobile post page: back, the author, and 「⋯」 with 編輯 /
+// 刪除 (author and managers), 複製連結 and 檢舉. 讚 / 留言 / 收藏 / 分享
+// are in the bottom bar.
+
+export default function PostHeader({ post, isAnnouncement, onReport }: Props) {
   const router = useRouter();
+  const { isLogin, userData, token } = useUserAccount();
+  const { canEdit, canDelete } = usePostPermissions(post);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const authorId =
+    typeof post.user === "string"
+      ? post.user
+      : (post.user as { _id?: string } | null)?._id;
+  const isOwnPost = isLogin && Boolean(authorId) && authorId === userData?._id;
   const { data: user } = useUser(post.user);
   const { data: sig, isLoading: sigLoading } = useSig(post.sig);
 
@@ -31,18 +55,10 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
     ? "公告"
     : (sig?.name ?? (sigLoading ? "…" : "未知的 SIG"));
 
-  const handleShare = async () => {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      try {
-        await navigator.share({ url, title: post.title });
-        return;
-      } catch (_err) {
-        // user cancelled or share failed; fall through to clipboard
-      }
-    }
+  const copyLink = async () => {
+    setMoreOpen(false);
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(window.location.href.split("#")[0]);
       toast.info("已複製連結");
     } catch (_err) {
       toast.error("無法複製連結");
@@ -74,6 +90,7 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
       {customId ? (
         <TapScaleLink
           href={`/@${customId}`}
+          aria-label={`${user?.name || `@${customId}`} 的個人頁`}
           className="flex-shrink-0"
           whileTap={{ scale: 0.9 }}
         >
@@ -107,7 +124,7 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
             <span className="inline-block h-3.5 w-24 animate-pulse rounded-chip bg-field align-middle" />
           )}
         </div>
-        <div className="mt-0.5 flex items-center gap-1.5">
+        <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
           {isAnnouncement ? (
             <span className="rounded-chip bg-warm-600/10 px-1.5 py-0.5 font-semibold text-[11px] text-warm-600">
               {sigName}
@@ -115,41 +132,88 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
           ) : (
             <SigChip
               sig={{ _id: sigId, name: sigName }}
-              className="!px-1.5 !text-[11px]"
+              className="!px-1.5 !text-[11px] max-w-full truncate"
             />
           )}
-          <span className="text-ink-500 text-xs">
-            {relativeTime(post.createdAt ?? "")}
-          </span>
-          {typeof post.views === "number" && (
-            <span className="text-ink-500 text-xs" data-views>
-              · {formatViews(post.views)} 次瀏覽
+          {post.pinned && (
+            <span className="shrink-0 rounded-chip bg-brand-50 px-1.5 py-0.5 font-semibold text-[11px] text-brand-800">
+              置頂
             </span>
           )}
+          <span className="shrink-0 whitespace-nowrap text-ink-500 text-xs">
+            {relativeTime(post.createdAt ?? "")}
+            {typeof post.views === "number" && (
+              <span data-views> · {formatViews(post.views)} 次瀏覽</span>
+            )}
+          </span>
         </div>
       </div>
-      <TapScale
-        onClick={handleShare}
+      <TapScaleButton
+        type="button"
+        onClick={() => setMoreOpen(true)}
         className="flex size-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-field text-ink-700"
         whileTap={{ scale: 0.9 }}
-        aria-label="分享貼文"
+        aria-label="更多動作"
+        aria-haspopup="dialog"
       >
-        <svg
-          aria-hidden="true"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-          <polyline points="16 6 12 2 8 6" />
-          <line x1="12" y1="2" x2="12" y2="15" />
-        </svg>
-      </TapScale>
+        <MoreHorizontal aria-hidden className="size-5" />
+      </TapScaleButton>
+      <BottomSheet
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        title="更多動作"
+        snapPoints={["auto"]}
+      >
+        <div className="flex flex-col gap-2 pb-2">
+          {canEdit && (
+            <button
+              type="button"
+              className="flex h-12 w-full cursor-pointer items-center gap-3 rounded-control border border-line bg-surface px-3 font-semibold text-ink-800"
+              onClick={() => {
+                setMoreOpen(false);
+                router.push(`/post/${post._id}/edit`);
+              }}
+            >
+              <Pencil aria-hidden className="size-5 text-ink-500" />
+              編輯貼文
+            </button>
+          )}
+          {canDelete && (
+            <button
+              type="button"
+              className="flex h-12 w-full cursor-pointer items-center gap-3 rounded-control border border-line bg-surface px-3 font-semibold text-danger-700"
+              onClick={() => {
+                setMoreOpen(false);
+                confirmDeletePost(post._id, token, (href) => router.push(href));
+              }}
+            >
+              <Trash2 aria-hidden className="size-5" />
+              刪除貼文
+            </button>
+          )}
+          <button
+            type="button"
+            className="flex h-12 w-full cursor-pointer items-center gap-3 rounded-control border border-line bg-surface px-3 font-semibold text-ink-800"
+            onClick={copyLink}
+          >
+            <Link2 aria-hidden className="size-5 text-ink-500" />
+            複製連結
+          </button>
+          {onReport && !isOwnPost && (
+            <button
+              type="button"
+              className="flex h-12 w-full cursor-pointer items-center gap-3 rounded-control border border-line bg-surface px-3 font-semibold text-danger-700"
+              onClick={() => {
+                setMoreOpen(false);
+                onReport();
+              }}
+            >
+              <Flag aria-hidden className="size-5" />
+              檢舉這篇貼文
+            </button>
+          )}
+        </div>
+      </BottomSheet>
     </div>
   );
 }
