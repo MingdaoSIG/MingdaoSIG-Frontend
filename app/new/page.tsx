@@ -11,6 +11,7 @@ import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
 import { isValidObjectId } from "@/modules/validation";
+import { promptLogin } from "@/utils/loginPrompt";
 import { storageGet, storageRemove, storageSet } from "@/utils/safeStorage";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
@@ -76,7 +77,7 @@ function validateStoredData(data: unknown): Partial<TPostAPI> {
 
 export default function NewPostPage() {
   const { status } = useSession();
-  const { token } = useUserAccount();
+  const { token, isLoading: authLoading, login } = useUserAccount();
   const route = useRouter();
   const isMobile = useIsMobile();
 
@@ -165,11 +166,19 @@ export default function NewPostPage() {
   }, []); // 空依賴，只執行一次
 
   async function NewPostAPI() {
-    setPostButtonDisable(true);
-
-    if (!data) {
+    if (!data || authLoading) {
       return;
     }
+    // Logged out: say so (and offer to log in) instead of a generic error.
+    // The draft is already saved on this device.
+    if (!token) {
+      return promptLogin(login, {
+        title: "請先登入再發文",
+        text: "草稿已自動保存在這台裝置，登入後就能發布。",
+      });
+    }
+
+    setPostButtonDisable(true);
 
     if (data?.title === "") {
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
@@ -182,11 +191,6 @@ export default function NewPostPage() {
       );
     }
 
-    if (!token) {
-      return Swal.fire(alertMessageConfigs.OthersError).then(() =>
-        setPostButtonDisable(false),
-      );
-    }
     const res = await postAPI(data, token);
 
     if (res.ok) {

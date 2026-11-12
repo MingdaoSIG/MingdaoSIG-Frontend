@@ -43,6 +43,8 @@ import {
 import Swal from "sweetalert2";
 import type { IImageUpload } from "@/interfaces/Image.interface";
 import { imageUpload } from "@/modules/imageUploadAPI";
+import { promptLogin } from "@/utils/loginPrompt";
+import { useUserAccount } from "@/utils/useUserAccount";
 import type { TPostAPI } from "../types/postAPI";
 import {
   insertCodeBlock,
@@ -161,8 +163,11 @@ export function useMarkdownEditor({
   const tokenRef = useRef(token);
   const onScrollRef = useRef(onScroll);
   const [uploading, setUploading] = useState(0);
+  const { login } = useUserAccount();
+  const loginRef = useRef(login);
 
   tokenRef.current = token;
+  loginRef.current = login;
   onScrollRef.current = onScroll;
   const content = data?.content ?? "";
 
@@ -171,6 +176,11 @@ export function useMarkdownEditor({
     const view = viewRef.current;
     const images = files.filter((file) => file.type.startsWith("image/"));
     if (!view || images.length === 0) {
+      return;
+    }
+    // Logged out: the upload would only fail with a generic error.
+    if (!tokenRef.current) {
+      promptLogin(loginRef.current, { text: "登入後才能上傳圖片" });
       return;
     }
     const valid = images.filter(validateImage);

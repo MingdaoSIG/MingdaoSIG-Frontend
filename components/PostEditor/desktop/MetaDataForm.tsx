@@ -3,10 +3,11 @@
 import { ImagePlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 import { isSubmitEnter } from "@/utils/keyboard";
+import { promptLogin } from "@/utils/loginPrompt";
+import { useUserAccount } from "@/utils/useUserAccount";
 // Components
 import Buttons from "./Buttons";
 
@@ -32,6 +33,7 @@ export default function MetaDataForm({
   isEdit,
 }: Props) {
   const { status } = useSession();
+  const { isLogin, login } = useUserAccount();
   const [isDragging, setIsDragging] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -42,20 +44,13 @@ export default function MetaDataForm({
     }
   }, [data?.hashtag]);
 
-  const showLoginAlert = () => {
-    Swal.fire({
-      icon: "warning",
-      title: "需要登入",
-      text: "請先登入才能上傳封面圖片",
-      confirmButtonText: "確定",
-      confirmButtonColor: "#5FCDF5",
-    });
-  };
+  const showLoginAlert = () =>
+    promptLogin(login, { text: "登入後才能上傳封面圖片" });
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (status !== "authenticated") {
+    if (!isLogin) {
       return;
     }
     setIsDragging(true);
@@ -72,7 +67,7 @@ export default function MetaDataForm({
     e.stopPropagation();
     setIsDragging(false);
 
-    if (status !== "authenticated") {
+    if (!isLogin) {
       showLoginAlert();
       return;
     }
@@ -86,7 +81,7 @@ export default function MetaDataForm({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (status !== "authenticated") {
+    if (!isLogin) {
       showLoginAlert();
       e.target.value = "";
       return;
@@ -97,7 +92,7 @@ export default function MetaDataForm({
   };
 
   const handleFileInputClick = (e: React.MouseEvent<HTMLLabelElement>) => {
-    if (status !== "authenticated") {
+    if (!isLogin) {
       e.preventDefault();
       showLoginAlert();
     }

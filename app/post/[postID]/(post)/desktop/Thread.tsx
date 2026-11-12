@@ -11,10 +11,11 @@ import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
+import { promptLogin } from "@/utils/loginPrompt";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
-  const { isLogin, isLoading, token, userData } = useUserAccount();
+  const { isLogin, isLoading, token, userData, login } = useUserAccount();
 
   const [like, setLike] = useState<boolean>(false);
   const [liking, setLiking] = useState(false);
@@ -28,12 +29,7 @@ const Thread = ({ post }: { post: TThread }) => {
       return;
     }
     if (!isLogin) {
-      Swal.fire({
-        title: "Please login first",
-        text: "You must login to like someone's post",
-        icon: "warning",
-        confirmButtonText: "Confirm",
-      });
+      promptLogin(login, { text: "登入後即可按讚" });
       return;
     }
     // Show the change at once, and undo it if the server refuses.

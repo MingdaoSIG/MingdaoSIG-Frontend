@@ -8,15 +8,6 @@ export const alertMessageConfigs: TAlertMessageConfigs = {
     confirmButtonText: "好",
     confirmButtonColor: "#0b5a83",
   },
-  noLogin: {
-    title: "請先登入",
-    text: "登入後即可留言",
-    icon: "info",
-    confirmButtonText: "登入",
-    confirmButtonColor: "#0b5a83",
-    showCancelButton: true,
-    cancelButtonText: "取消",
-  },
   commentSuccess: {
     title: "留言成功",
     icon: "success",

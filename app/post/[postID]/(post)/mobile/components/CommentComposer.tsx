@@ -20,6 +20,7 @@ import {
   commentErrorMessage,
   PostCommentAPI,
 } from "../../apis/CommentAPI";
+import { useCommentDraft } from "../../components/useCommentDraft";
 
 const DEFAULT_AVATAR = "/images/default-avatar.png";
 
@@ -30,7 +31,7 @@ type Props = {
 
 export default function CommentComposer({ postId, onSubmitted }: Props) {
   const { isLogin, isLoading, userData, token, login } = useUserAccount();
-  const [text, setText] = useState("");
+  const [text, setText] = useCommentDraft(postId);
   const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -47,6 +48,13 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
     el.style.height = `${Math.min(el.scrollHeight, 72)}px`;
   }, [text]);
 
+  const askToLogin = () => {
+    toast.info("登入後即可留言，輸入的內容會保留", {
+      key: "login",
+      action: { label: "登入", onClick: () => login() },
+    });
+  };
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
@@ -57,9 +65,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
       return;
     }
     if (!isLogin) {
-      toast.info("登入後即可留言", {
-        action: { label: "登入", onClick: () => login() },
-      });
+      askToLogin();
       return;
     }
     if (tooLong) {
@@ -111,7 +117,12 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
           value={text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="寫下你的想法…"
+          onFocus={() => {
+            if (!isLogin && !isLoading) {
+              askToLogin();
+            }
+          }}
+          placeholder={isLogin ? "寫下你的想法…" : "登入後即可留言"}
           aria-label="留言內容"
           rows={1}
           className="min-h-[2.25rem] min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"

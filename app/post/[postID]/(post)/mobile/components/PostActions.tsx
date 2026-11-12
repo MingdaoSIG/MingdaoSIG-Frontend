@@ -18,7 +18,7 @@ type Props = {
 
 export default function PostActions({ post, commentCount }: Props) {
   const router = useRouter();
-  const { isLogin, isLoading, token, userData } = useUserAccount();
+  const { isLogin, isLoading, token, userData, login } = useUserAccount();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [liking, setLiking] = useState(false);
@@ -34,7 +34,10 @@ export default function PostActions({ post, commentCount }: Props) {
       return;
     }
     if (!isLogin) {
-      toast.info("登入後即可按讚");
+      toast.info("登入後即可按讚", {
+        key: "login",
+        action: { label: "登入", onClick: () => login() },
+      });
       return;
     }
     if (liking) {

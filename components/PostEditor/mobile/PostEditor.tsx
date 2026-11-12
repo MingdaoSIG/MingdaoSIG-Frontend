@@ -1,11 +1,12 @@
 import { ImagePlus } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useSession } from "next-auth/react";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { isSubmitEnter } from "@/utils/keyboard";
+import { promptLogin } from "@/utils/loginPrompt";
+import { useUserAccount } from "@/utils/useUserAccount";
 import { EditorErrorBoundary } from "../shared/EditorErrorBoundary";
+import { LoginBanner } from "../shared/LoginBanner";
 // Types
 import type { TPostAPI } from "../types/postAPI";
 import Button from "./Buttons";
@@ -41,7 +42,7 @@ export default function NewPostMobile({
   isEdit,
   handleFileChange,
 }: Props) {
-  const { status } = useSession();
+  const { isLogin, login } = useUserAccount();
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
@@ -52,36 +53,24 @@ export default function NewPostMobile({
     }
   }, [data?.hashtag]);
 
-  const showLoginAlert = () => {
-    Swal.fire({
-      icon: "warning",
-      title: "需要登入",
-      text: "請先登入才能上傳封面圖片",
-      confirmButtonText: "確定",
-      confirmButtonColor: "#0b5a83",
-    });
-  };
+  const showLoginAlert = () =>
+    promptLogin(login, { text: "登入後才能上傳封面圖片" });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 檢查登入狀態
-    if (status !== "authenticated") {
+    if (!isLogin) {
       showLoginAlert();
-      e.target.value = ""; // 清空 input
+      e.target.value = "";
       return;
     }
-
-    // console.log("File input changed:", e.target.files);
     if (handleFileChange) {
       handleFileChange(e);
     }
   };
 
   const handleFileInputClick = (e: React.MouseEvent<HTMLLabelElement>) => {
-    // 檢查登入狀態
-    if (status !== "authenticated") {
+    if (!isLogin) {
       e.preventDefault();
       showLoginAlert();
-      return;
     }
   };
 
@@ -141,6 +130,7 @@ export default function NewPostMobile({
     <div className="h-[100dvh] overflow-x-hidden px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
       <div className="h-full overflow-hidden rounded-card border border-line bg-surface p-4 pr-2 shadow-card">
         <div className="small-scrollbar flex h-full flex-col items-center overflow-y-auto overflow-x-hidden pr-2">
+          {!isEdit && <LoginBanner className="mb-3 w-full" />}
           <div className="w-full max-w-full">
             <MetaDataForm
               data={data}
