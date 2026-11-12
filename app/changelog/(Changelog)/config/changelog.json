@@ -1,5 +1,74 @@
 [
   {
+    "version": "2.23.0",
+    "date": "2026-11-12",
+    "type": "improvement",
+    "title": "穩定性與效能更新",
+    "summary": "修正多個會出現錯誤畫面的問題、登入一小時後被登出的問題，並升級至 Next.js 16 提升載入速度",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修正 API 暫時異常時，首頁、文章、個人頁、SIG 清單與資料查詢會出現錯誤畫面的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正編輯文章時，移除封面或清空標題會讓其他修改被還原的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正登入約一小時後會被自動登出的問題，並大幅減少重複登入"
+      },
+      {
+        "type": "fix",
+        "description": "修正 ID 含「.」的使用者與「文史哲」SIG 的頁面顯示找不到的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正使用注音或拼音輸入時，按 Enter 選字會直接送出留言的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正同時登入時可能建立重複帳號的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正數學式顯示比例錯誤的問題"
+      },
+      {
+        "type": "improvement",
+        "description": "留言加上 250 字上限與字數提示"
+      },
+      {
+        "type": "improvement",
+        "description": "按讚或刪除失敗時會還原並提示原因"
+      },
+      {
+        "type": "improvement",
+        "description": "加入 SIG 的審核頁改為按下「同意」或「拒絕」才送出"
+      },
+      {
+        "type": "improvement",
+        "description": "手機版不再重複載入資料，頁面開啟更快"
+      },
+      {
+        "type": "improvement",
+        "description": "升級至 Next.js 16，網站檔案可被瀏覽器快取，再次造訪更快"
+      },
+      {
+        "type": "improvement",
+        "description": "上傳的圖片會自動縮小至適當尺寸"
+      },
+      {
+        "type": "security",
+        "description": "上傳的圖片會移除拍攝地點等隱私資訊"
+      },
+      {
+        "type": "security",
+        "description": "修補相依套件的安全性漏洞"
+      }
+    ]
+  },
+  {
     "version": "2.22.1",
     "date": "2026-11-12",
     "type": "fix",
