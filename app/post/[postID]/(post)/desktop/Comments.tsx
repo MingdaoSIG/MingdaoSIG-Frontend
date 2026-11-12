@@ -142,7 +142,7 @@ export function Comments({ post }: { post: TThread }) {
       ref={sectionRef}
       id="comments-section"
       aria-labelledby="comments-heading"
-      className="scroll-mt-4 rounded-card border border-line bg-surface shadow-card"
+      className="scroll-mt-[var(--shell-top,5.5rem)] rounded-card border border-line bg-surface shadow-card"
       data-comments
     >
       <h2

@@ -327,9 +327,10 @@
 }
 
 /* Keep these last in the section: see the note above the block rules. */
-/* Table-of-contents targets (post page) land a little below the top. */
+/* Table-of-contents targets (post page) land just under the sticky
+   header. */
 .post-body .markdown :is(h1, h2, h3) {
-  scroll-margin-top: 1.5rem;
+  scroll-margin-top: calc(var(--shell-top, 5.5rem) + 0.5rem);
 }
 
 .markdown > :first-child {

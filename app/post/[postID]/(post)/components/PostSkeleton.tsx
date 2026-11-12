@@ -52,33 +52,31 @@ export function PostSkeleton({ isMobile }: { isMobile: boolean }) {
   }
 
   return (
-    <div className="h-full min-h-0 overflow-hidden">
-      <div
-        aria-busy="true"
-        className="mx-auto grid w-[min(74rem,100%-4rem)] animate-pulse grid-cols-[minmax(0,1fr)_17.5rem] items-start gap-8"
-      >
-        <span className="sr-only">載入中…</span>
-        <div className="post-body">
-          <div className="mx-auto flex max-w-[42rem] flex-col gap-3">
-            <div className="h-8 w-3/5 rounded-chip bg-ink-900/8" />
-            <div className="h-3.5 w-40 rounded-chip bg-ink-900/8" />
-            <div className="h-11 border-line border-y" />
-          </div>
-          <div className="markdown mt-8">
-            <Lines />
-          </div>
+    <div
+      aria-busy="true"
+      className="layout-split mx-auto grid w-[min(74rem,100%-4rem)] animate-pulse grid-cols-[minmax(0,1fr)_17.5rem] items-start gap-8"
+    >
+      <span className="sr-only">載入中…</span>
+      <div className="post-body">
+        <div className="mx-auto flex max-w-[42rem] flex-col gap-3">
+          <div className="h-8 w-3/5 rounded-chip bg-ink-900/8" />
+          <div className="h-3.5 w-40 rounded-chip bg-ink-900/8" />
+          <div className="h-11 border-line border-y" />
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-card">
-            <div className="flex items-center gap-3">
-              <div className="size-12 shrink-0 rounded-full bg-field" />
-              <div className="flex flex-1 flex-col gap-2">
-                <div className="h-4 w-28 rounded-chip bg-field" />
-                <div className="h-3 w-20 rounded-chip bg-field" />
-              </div>
+        <div className="markdown mt-8">
+          <Lines />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-card">
+          <div className="flex items-center gap-3">
+            <div className="size-12 shrink-0 rounded-full bg-field" />
+            <div className="flex flex-1 flex-col gap-2">
+              <div className="h-4 w-28 rounded-chip bg-field" />
+              <div className="h-3 w-20 rounded-chip bg-field" />
             </div>
-            <div className="h-9 rounded-control bg-field" />
           </div>
+          <div className="h-9 rounded-control bg-field" />
         </div>
       </div>
     </div>

@@ -300,12 +300,14 @@ export default function PortfolioPage() {
   return (
     <main
       data-portfolio
-      className="layout-doc mx-auto grid h-full min-h-0 w-[min(80rem,100%-4rem)] grid-cols-[20rem_minmax(0,1fr)] gap-6"
+      className="mx-auto grid w-[min(80rem,100%-4rem)] grid-cols-[20rem_minmax(0,1fr)] items-start gap-6"
     >
+      {/* Sticks under the header while the sheets scroll with the page;
+          scrolls on its own only when taller than the window. */}
       <aside
         data-print-hide
         aria-label="收錄內容"
-        className="custom-scrollbar flex min-h-0 flex-col gap-4 overflow-y-auto rounded-card border border-line bg-surface p-4 shadow-card"
+        className="custom-scrollbar sticky top-[var(--shell-top,5.5rem)] flex max-h-[calc(100dvh-var(--shell-top,5.5rem)-1.5rem)] flex-col gap-4 overflow-y-auto rounded-card border border-line bg-surface p-4 shadow-card"
       >
         <header className="px-2">
           <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
@@ -322,7 +324,7 @@ export default function PortfolioPage() {
       <div
         ref={fit.ref}
         data-print-scroll
-        className="custom-scrollbar min-h-0 overflow-y-auto rounded-card bg-ink-900/8 py-6"
+        className="rounded-card bg-ink-900/8 py-6"
       >
         {notice ? <div className="px-6">{notice}</div> : sheets}
       </div>
