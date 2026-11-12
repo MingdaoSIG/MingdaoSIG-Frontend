@@ -53,8 +53,10 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
   page. Nothing is fetched before the role is known. The header shows
   「管理平台」 to admins and managers.
 - Sections: `/admin` 總覽, `/admin/posts`, `/admin/comments`,
-  `/admin/sigs`, `/admin/sigs/[sigId]?tab=info|staff|members|requests`,
-  `/admin/join-requests`, `/admin/users`, `/admin/exports`, `/admin/audit`.
+  `/admin/sigs`,
+  `/admin/sigs/[sigId]?tab=info|staff|members|requests|recruiting`,
+  `/admin/join-requests`, `/admin/users`, `/admin/rollover`,
+  `/admin/badges`, `/admin/exports`, `/admin/audit`.
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -64,6 +66,43 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
   page in the URL query).
 - Excel exports (`xlsx`, loaded on demand): member lists per SIG and the
   date-range post export (`GET /post/list/range`).
+
+## SIG administration
+
+Contract: `design/api-contract-v4.md` §3.7, §5.6–§5.9.
+
+- SIG colours and default covers are data. `modules/sigTheme` resolves a
+  colour from the SIG object, then the shared `/sig/list` cache
+  (`useSigColor`), then the old table in
+  `components/Threads/configs/sigDefaultColors.ts` (the dashboard looks
+  SIGs up by name). The editors' `postAPI` use `sigDefaultCover()`:
+  `defaultCover` from `/sig/list` (`/sig/:id` for 公告), else
+  `modules/sigTheme/fallbackCovers.ts`.
+- `/@<old id>` of a SIG or a user answers `redirectTo`; `UserPage`
+  replaces the URL (keeping `?tab=` and `#…`).
+- Admin SIG detail 基本資料 adds 網址與外觀 (customId with the URL warning,
+  colour, default cover; `sig/SigAdminSettings.tsx`) and 封存與合併
+  (`sig/SigLifecycle.tsx`, `sig/MergeSigDialog.tsx`; 公告 cannot be
+  archived or merged). The SIG list has 新增 SIG
+  (`sig/CreateSigDialog.tsx`) and a 已封存 filter (`?archived=1`).
+- Recruiting: `components/Sig/RecruitingStatus.tsx` (招生中／暫停招生,
+  message, closing time; `inline` or `card`) and
+  `components/Sig/JoinSigDialog.tsx` (the SIG's own questions, 必填／選填,
+  `{ answers }`, 4040 = not recruiting) are self-contained for the SIG
+  page redesign; `useJoinSig` returns the dialog's props. Managers edit
+  both in the 招生設定 tab (`sig/RecruitingTab.tsx`, with a preview made
+  of the same components). Join request lists show labelled `answers`
+  (q1..q3 with the default labels for old requests).
+- 學年交接 (`/admin/rollover`): alumni preview → apply (dry run, then
+  confirm), next year's leaders in one batch (dry run first; SIGs changed
+  meanwhile are reported), and links to merge and move. 貼文 has
+  「搬移到其他 SIG」 for the selection or a whole SIG
+  (`posts/MovePostsDialog.tsx`).
+- The user drawer has 編輯資料 (account id, display name, 關於我;
+  name, class and code come from the school system) and a badge editor
+  listing `/admin/badges`. 徽章 (`/admin/badges`) creates, edits and
+  retires badges; profiles render `GET /badge/list` with the old
+  `config/badge.ts` as the fallback (`components/Badges/ProfileBadges.tsx`).
 
 ## Comments
 
