@@ -5,19 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-// Desktop Components
-import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
-// Mobile Components
-import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
+import PostEditor from "@/components/PostEditor/PostEditor";
+import { addPostToSeries } from "@/components/PostEditor/shared/addPostToSeries";
 import {
   DraftBar,
   DraftsDialog,
   LocalDraftOffer,
 } from "@/components/PostEditor/shared/DraftBar";
-import {
-  addPostToSeries,
-  SeriesSelect,
-} from "@/components/PostEditor/shared/SeriesSelect";
 import {
   draftFields,
   useCloudDraft,
@@ -568,12 +562,6 @@ export default function NewPostPage() {
             mobile={isMobile}
           />
         )}
-        <DraftBar
-          status={cloud.status}
-          onRetry={cloud.retry}
-          onOpenList={() => setDraftsOpen(true)}
-          mobile={isMobile}
-        />
         <DraftsDialog
           open={draftsOpen}
           onClose={() => setDraftsOpen(false)}
@@ -586,13 +574,18 @@ export default function NewPostPage() {
         />
       </>
     ) : null;
-  const metaExtra =
+  const statusBar =
     mode === "cloud" ? (
-      <SeriesSelect value={seriesId} onChange={setSeriesId} mobile={isMobile} />
+      <DraftBar
+        status={cloud.status}
+        onRetry={cloud.retry}
+        onOpenList={() => setDraftsOpen(true)}
+        mobile={isMobile}
+      />
     ) : null;
 
-  return isMobile ? (
-    <PostEditorMobile
+  return (
+    <PostEditor
       data={data}
       setPostData={setPostData}
       token={token ?? ""}
@@ -602,20 +595,12 @@ export default function NewPostPage() {
       postButtonDisable={postButtonDisable}
       handleFileChange={handleFileChange}
       topBar={topBar}
-      metaExtra={metaExtra}
-    />
-  ) : (
-    <PostEditorDesktop
-      data={data}
-      setPostData={setPostData}
-      discardFunction={discard}
-      postFunction={NewPostAPI}
-      token={token ?? ""}
-      handleFormEventFunction={handleFormChange}
-      postButtonDisable={postButtonDisable}
-      handleFileChange={handleFileChange}
-      topBar={topBar}
-      metaExtra={metaExtra}
+      statusBar={statusBar}
+      series={
+        mode === "cloud"
+          ? { value: seriesId, onChange: setSeriesId }
+          : undefined
+      }
     />
   );
 }
