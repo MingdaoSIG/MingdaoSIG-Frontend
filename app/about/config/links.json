@@ -43,11 +43,15 @@
     ]
   },
   {
-    "name": "統計資料",
+    "name": "常用資料",
     "children": [
       {
         "name": "平台數據",
-        "url": "/dashboard"
+        "url": "/about#dashboard"
+      },
+      {
+        "name": "更新紀錄",
+        "url": "/about#changelog"
       }
     ]
   },

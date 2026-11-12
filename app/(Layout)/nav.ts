@@ -45,8 +45,8 @@ export const NAV_ITEMS: Record<Exclude<NavSection, "new">, NavItem> = {
   me: { section: "me", label: "我的", href: "/me", icon: UserRound },
 };
 
-const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/data", "/events"];
-const ME_PATHS = ["/me", "/portfolio", "/info", "/changelog", "/dashboard"];
+const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/events"];
+const ME_PATHS = ["/me", "/portfolio", "/about"];
 
 function under(path: string, base: string) {
   return path === base || path.startsWith(`${base}/`);

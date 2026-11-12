@@ -7,7 +7,7 @@ import { useSigColorByName } from "@/modules/sigTheme/useSigColor";
 import {
   sigDefaultBorderColors,
   sigDefaultColors,
-} from "./config/sigDefaultColors";
+} from "./sigDefaultColors";
 
 type SigCountItem = {
   name: string;
