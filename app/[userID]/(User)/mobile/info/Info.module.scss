@@ -40,7 +40,6 @@ $badge-height: 1rem;
 }
 
 .contentWrapper {
-  max-height: 24rem;
   position: relative;
   margin: $margin;
 
@@ -94,7 +93,9 @@ $badge-height: 1rem;
 
 .joinBtn {
   width: auto;
-  height: 2rem;
+  /* 44px tap target */
+  height: 2.75rem;
+  white-space: nowrap;
   display: flex;
   flex: initial;
   align-items: center;
@@ -127,44 +128,4 @@ $badge-height: 1rem;
   width: auto;
   flex: initial;
   font-size: 0.75rem;
-}
-
-.descriptionEditButton {
-  margin-left: 0.3rem;
-  cursor: pointer;
-  height: 1.2rem;
-  width: 1.2rem;
-}
-
-.description {
-  height: 5rem;
-  color: var(--color-ink-700);
-  line-height: 1.7;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-  cursor: auto;
-  resize: none;
-  border-radius: 0.3rem;
-  font-size: 0.9375rem;
-
-  button {
-    color: var(--color-brand-700);
-    text-decoration: none;
-    overflow-x: hidden;
-  }
-
-  button:hover {
-    text-decoration: underline;
-  }
-}
-
-.description::-webkit-scrollbar {
-  width: 0.3rem;
-}
-
-.JoinSIGFormInput {
-  padding: 0 !important;
-  padding-left: 0.3rem !important;
-  padding-right: 0.3rem !important;
-  margin-top: 0.1rem !important;
 }
