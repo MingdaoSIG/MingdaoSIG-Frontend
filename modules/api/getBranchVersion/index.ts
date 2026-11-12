@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export async function getBranchVersion(branch: string): Promise<string> {
   try {
     const apiUrl = `https://raw.githubusercontent.com/MingdaoSIG/MingdaoSIG-Frontend/${branch}/package.json`;
@@ -13,12 +11,18 @@ export async function getBranchVersion(branch: string): Promise<string> {
       headers.Authorization = `token ${githubToken}`;
     }
 
-    const response = await axios.get(apiUrl, {
+    const response = await fetch(apiUrl, {
       headers,
-      timeout: 10000,
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
     });
 
-    const version = response.data?.version;
+    if (!response.ok) {
+      throw new Error(`GitHub responded with ${response.status}`);
+    }
+
+    const data: { version?: string } = await response.json();
+    const version = data?.version;
     if (!version) {
       return "Unknown";
     }

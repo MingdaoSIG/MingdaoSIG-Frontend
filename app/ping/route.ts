@@ -1,4 +1,3 @@
-import axios from "axios";
 import { NextResponse } from "next/server";
 import { getBranchVersion } from "@/modules/api/getBranchVersion";
 import ReadableTime from "@/modules/api/ReadableTime";
@@ -26,16 +25,23 @@ export async function GET() {
   const [mainVersion, developmentVersion, apiResponse] = await Promise.all([
     getBranchVersion("main"),
     getBranchVersion("development"),
-    axios.get<BackendData>(apiUrl).catch((error) => {
-      console.error(
-        `[Ping] Failed to fetch backend data from ${apiUrl}:`,
-        error.message,
-      );
-      return null;
-    }),
+    fetch(apiUrl, { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json() as Promise<BackendData>;
+      })
+      .catch((error) => {
+        console.error(
+          `[Ping] Failed to fetch backend data from ${apiUrl}:`,
+          error.message,
+        );
+        return null;
+      }),
   ]);
 
-  const apiData = apiResponse?.data || {};
+  const apiData = apiResponse || {};
 
   if (!apiResponse) {
     console.warn(`[Ping] Backend API not available at ${apiUrl}`);
@@ -80,4 +86,3 @@ export const dynamicParams = false;
 export const revalidate = false;
 export const fetchCache = "auto";
 export const runtime = "nodejs";
-export const preferredRegion = "auto";
