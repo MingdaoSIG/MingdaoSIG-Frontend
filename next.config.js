@@ -40,6 +40,26 @@ const nextConfig = {
     ],
   },
 
+  // The admin panel was reorganised (v3): old bookmarks land on the new
+  // home of each page. Temporary, so the old paths stay free to reuse.
+  async redirects() {
+    const moved = [
+      ["/admin/post", "/admin/posts"],
+      ["/admin/post-query", "/admin/exports"],
+      ["/admin/sig-members", "/admin/exports"],
+      ["/admin/sig-leader", "/admin/sigs"],
+      ["/admin/sig-advisor", "/admin/sigs"],
+      ["/admin/sig-leader/:sigId", "/admin/sigs/:sigId?tab=staff"],
+      ["/admin/sig-advisor/:sigId", "/admin/sigs/:sigId?tab=staff"],
+      ["/admin/sig-members/:sigId", "/admin/sigs/:sigId?tab=members"],
+    ];
+    return moved.map(([source, destination]) => ({
+      source,
+      destination,
+      permanent: false,
+    }));
+  },
+
   async headers() {
     return [
       {

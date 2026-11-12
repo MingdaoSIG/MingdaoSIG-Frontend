@@ -40,6 +40,11 @@
   --color-brand-50: #e5edf3;
   --color-warm-600: #b9620f;
   --color-danger-700: #b42318;
+  /* Status tints (admin panel): pale backgrounds for badges and notices */
+  --color-ok-700: #1d7a46;
+  --color-ok-50: #e4f3ea;
+  --color-warm-50: #fbefe3;
+  --color-danger-50: #fbe9e7;
 
   --radius-card: 10px;
   --radius-control: 8px;
@@ -133,6 +138,40 @@ a,
    stretching the row. */
 .wrap:has(:is(.layout-split, .layout-doc)) {
   grid-template-rows: auto minmax(0, 1fr) minmax(5.5rem, auto);
+}
+
+/* Admin panel: a visible keyboard focus ring on desktop and mobile alike
+   (`* { outline: none }` above is unlayered, so utilities cannot add one). */
+.layout-admin
+  :is(
+    a,
+    button,
+    summary,
+    [role="button"],
+    [tabindex]:not([tabindex="-1"]),
+    input[type="checkbox"]
+  ) {
+  outline-color: var(--color-brand-700);
+}
+
+.layout-admin
+  :is(
+    a,
+    button,
+    summary,
+    [role="button"],
+    [tabindex]:not([tabindex="-1"]),
+    input[type="checkbox"]
+  ):focus-visible {
+  outline: 2px solid var(--color-brand-700);
+  outline-offset: 2px;
+}
+
+/* Admin panel (/admin): no dock, so no spacer row. The sidebar and the
+   main area fill the rest of the viewport and scroll on their own. */
+.wrap:has(.layout-admin) {
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0;
 }
 
 html[data-reader] body:has(.wrap .layout-split) {

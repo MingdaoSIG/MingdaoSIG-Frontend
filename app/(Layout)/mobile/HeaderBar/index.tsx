@@ -4,12 +4,14 @@ import { Search } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { TapScaleLink } from "@/components/mobile/TapScale";
+import { useAdminChrome } from "@/utils/useAdminAccess";
 import styles from "./HeaderBar.module.scss";
 import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
   const router = useRouter();
   const path = usePathname();
+  const { inAdmin } = useAdminChrome();
 
   return (
     <div className={styles.nav}>
@@ -23,7 +25,7 @@ const HeaderBar = () => {
         onClick={() => router.push("/")}
       />
       <div className="flex items-center gap-2">
-        {path !== "/search" && (
+        {path !== "/search" && !inAdmin && (
           <TapScaleLink
             href="/search"
             aria-label="搜尋"

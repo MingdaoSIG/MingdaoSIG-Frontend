@@ -42,6 +42,9 @@
 | `brand-800` | `#094a6c` | hover / 深色文字 |
 | `brand-50` | `#e5edf3` | hashtag、icon 底 |
 | `warm-600` | `#b9620f` | 公告標記（logo 橘的深化版，少量使用） |
+| `danger-700` | `#b42318` | 刪除、下架等破壞性動作 |
+| `ok-700` / `ok-50` | `#1d7a46` / `#e4f3ea` | 管理平台：正常、已同意等狀態標籤 |
+| `warm-50` / `danger-50` | `#fbefe3` / `#fbe9e7` | 管理平台：待審、警告與錯誤標籤的淡底 |
 
 SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**文字**時一律 `color-mix(sig 55%, ink-900)` 加深（原色中的粉紅在白底上不可讀）；作為**邊框**時用原色。
 
@@ -164,7 +167,7 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 | **2** ✅ | 資訊、Dashboard、資料、更新紀錄、`/confirm`、404 改為 `DocPage`（80rem 容器；v2.22.0 起標題卡固定、下方內容區塊內捲動，與兩欄頁同一底邊） |
 | **3** ✅ | Markdown 渲染改為 unified 處理鏈（§9）；桌機編輯器改用 CodeMirror 6，保留「左寫右預覽」操作（§10） |
 | 3b | 貼文頁改 Server Component + SSR + `generateMetadata`（渲染模組已可在 Node 執行） |
-| 4 | 管理平台獨立後台版面 |
+| **4** ✅ | 管理平台獨立後台版面（左側導覽、表格＋右側抽屜、SIG 詳情頁；見 `docs/features.md`） |
 | **M** | 行動版套用同一設計語言、渲染器與編輯器核心（§11） |
 
 ---

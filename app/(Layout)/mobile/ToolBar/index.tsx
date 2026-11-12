@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { TapScaleLink } from "@/components/mobile/TapScale";
+import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { selectedTab } from "../../selectedTab";
 import styles from "./ToolBar.module.scss";
@@ -14,6 +15,7 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading, login } = useUserAccount();
 
   const path = usePathname();
+  const { hideDock } = useAdminChrome();
   const ownCustomId = userData?.customId ?? null;
   const [selected, setSelected] = useState<number>(() =>
     selectedTab(path, ownCustomId),
@@ -54,6 +56,11 @@ const ToolBar = () => {
       clickable: true,
     },
   ];
+
+  // The admin panel has its own section switcher and 「回到網站」.
+  if (hideDock) {
+    return null;
+  }
 
   return (
     <nav className={styles.toolBarWrapper} aria-label="主要導覽">

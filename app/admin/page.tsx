@@ -1,150 +1,398 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import NotFoundPage from "@/app/not-found";
-import useIsMobile from "@/utils/useIsMobile";
-import { useUserAccount } from "@/utils/useUserAccount";
-import { menuConfig } from "./(admin)/config";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import {
+  errorText,
+  useAdminSigs,
+  useJoinRequests,
+  useOverview,
+  useSigNames,
+} from "./(admin)/api";
+import { PageHeader } from "./(admin)/components/AdminShell";
+import {
+  Avatar,
+  Badge,
+  buttonClass,
+  Card,
+  EmptyState,
+  ErrorState,
+  linkClass,
+  SkeletonRows,
+} from "./(admin)/components/ui";
+import { useAdmin } from "./(admin)/context";
+import { daysSince, formatCount, formatRelative } from "./(admin)/format";
+import type { AdminSig, JoinRequest } from "./(admin)/types";
 
-export default function AdminPage() {
-  const isMobile = useIsMobile();
-  const userAccount = useUserAccount();
-  const router = useRouter();
+// 總覽: what needs doing today. Admins get the platform numbers, pending
+// join requests, SIGs without a leader or 指導老師, and the newest posts.
+// SIG managers get their pending requests and their SIGs.
 
-  if (userAccount.isLoading === true) {
-    return <div></div>;
-  }
+export default function AdminOverviewPage() {
+  const admin = useAdmin();
+  return admin.isAdmin ? <AdminOverview /> : <ManagerOverview />;
+}
 
-  if (userAccount.isLogin === false && userAccount.isLoading === false) {
-    return <NotFoundPage />;
-  }
+function today() {
+  return new Date().toLocaleDateString("zh-TW", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
+}
 
-  const userData = userAccount.userData;
+function AdminOverview() {
+  const overview = useOverview(true);
+  const pending = useJoinRequests({ skip: 0, limit: 5, status: "pending" });
+  const { names } = useSigNames();
+  const data = overview.data;
+  const oldest = daysSince(data?.pendingJoinRequests.oldestCreatedAt);
 
-  if (userData?.permission !== 2 && userAccount.isLoading === false) {
-    return <NotFoundPage />;
-  }
-
-  return isMobile ? (
-    <div className="h-[100dvh] w-full overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(5rem+env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-md">
-        {/* Header Card */}
-        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-lg">
-          <h1 className="mb-2 text-center font-bold text-2xl text-gray-800">
-            管理員頁面
-          </h1>
-          <div className="mx-auto h-1 w-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-        </div>
-
-        {/* Warning Card */}
-        <div className="mb-6 rounded-xl border-amber-500 border-l-4 bg-gradient-to-r from-amber-50 to-orange-50 p-4 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">⚠️</div>
-            <div>
-              <p className="font-medium text-amber-800 text-sm leading-relaxed">
-                請注意您目前是管理員身份登入系統，這意味著您的操作都會直接或間接影響整個平台的運作，請謹慎操作。
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Menu Title */}
-        <p className="mb-4 text-center font-medium text-gray-600">
-          請選擇您要管理的項目
-        </p>
-
-        {/* Menu Buttons */}
-        <div className="space-y-3">
-          {menuConfig.map((item) => (
-            <button
-              type="button"
-              key={item.link}
-              onClick={() => !item.disable && router.push(item.link)}
-              disabled={item.disable}
-              className={`flex w-full items-center justify-between rounded-xl px-6 py-4 text-left font-medium transition-all duration-200 ${
-                item.disable
-                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                  : "cursor-pointer border border-gray-100 bg-white text-gray-700 shadow-md hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-lg"
+  return (
+    <>
+      <PageHeader title="總覽" description={today()} />
+      {overview.isError ? (
+        <Card>
+          <ErrorState
+            message={errorText(overview.error)}
+            onRetry={() => overview.refetch()}
+          />
+        </Card>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <Kpi
+              label="使用者"
+              value={data?.users.total}
+              delta={data?.users.last7d}
+            />
+            <Kpi
+              label="貼文"
+              value={data?.posts.total}
+              delta={data?.posts.last7d}
+            />
+            <Kpi
+              label="留言"
+              value={data?.comments.total}
+              delta={data?.comments.last7d}
+            />
+            <Kpi
+              label="待審入社申請"
+              value={data?.pendingJoinRequests.total}
+              href="/admin/join-requests"
+              note={
+                data &&
+                (data.pendingJoinRequests.total > 0 && oldest !== null ? (
+                  <span className="text-warm-600">
+                    最久 {oldest === 0 ? "不到 1" : oldest} 天
+                  </span>
+                ) : (
+                  <span className="text-ink-500">沒有待審申請</span>
+                ))
               }
-              `}
-            >
-              <span className="flex items-center gap-3">
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg text-lg ${item.disable ? "bg-gray-200" : "bg-gradient-to-br from-blue-500 to-indigo-500 text-white"}
-                `}
-                >
-                  {item.name.includes("Leader") && "👑"}
-                  {item.name.includes("指導") && "👨‍🏫"}
-                  {item.name.includes("成員") && "👥"}
-                  {item.name.includes("貼文") && "📝"}
-                  {item.name.includes("查詢") && "🔍"}
-                </span>
-                <span className="font-semibold">{item.name}</span>
-              </span>
-              {!item.disable && (
-                <svg
-                  aria-hidden="true"
-                  className="h-5 w-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              )}
-              {item.disable && (
-                <span className="rounded-full bg-gray-200 px-2 py-1 text-gray-500 text-xs">
-                  開發中
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+            />
+          </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center text-gray-400 text-sm">
-          <p>MDSIG Admin Panel v2.0</p>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <div className="h-[calc(100%-6.5rem)] pt-5">
-      <div className="flex h-full flex-col items-center justify-center">
-        <h1 className="mb-6 font-bold text-3xl">管理員頁面</h1>
-        <p className="mb-4 rounded-lg bg-red-200 p-4 font-bold text-lg">
-          請注意您目前是管理員身份登入系統，
-          <br />
-          這意味著您的操作都會直接或間接影響整個平台的運作，
-          <br />
-          請謹慎操作。
-        </p>
-        <p className="mb-4 text-xl">請選擇您要管理的項目:</p>
-        <div className="flex flex-col space-y-4">
-          {menuConfig.map((item) => {
-            return (
-              <button
-                type="button"
-                key={item.link}
-                className={`cursor-pointer rounded-full bg-white px-4 py-2 text-[#5fcdf5] transition-colors hover:bg-gray-50 disabled:cursor-not-allowed ${item.disable ? "cursor-not-allowed opacity-50" : ""}`}
-                onClick={() => {
-                  if (!item.disable) {
-                    router.push(item.link);
+          <div className="mt-4 grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+            <Card title="待處理" padded={false}>
+              {overview.isPending || pending.isPending ? (
+                <SkeletonRows rows={4} />
+              ) : (
+                <TodoList
+                  requests={pending.data?.items ?? []}
+                  moreRequests={
+                    (pending.data?.total ?? 0) -
+                    (pending.data?.items.length ?? 0)
                   }
-                }}
-                disabled={item.disable}
-              >
-                {item.name}
-                {item.disable ? " (開發中)" : ""}
-              </button>
-            );
-          })}
-        </div>
+                  requestError={
+                    pending.isError ? errorText(pending.error) : null
+                  }
+                  withoutLeader={data?.sigsWithoutLeader ?? []}
+                  withoutModerator={data?.sigsWithoutModerator ?? []}
+                />
+              )}
+            </Card>
+            <Card
+              title="最新貼文"
+              padded={false}
+              actions={
+                <Link
+                  href="/admin/posts"
+                  className={`${buttonClass("ghost", "sm")} mr-2`}
+                >
+                  全部貼文
+                </Link>
+              }
+            >
+              {overview.isPending ? (
+                <SkeletonRows rows={5} />
+              ) : (data?.recentPosts.length ?? 0) === 0 ? (
+                <EmptyState title="還沒有貼文" />
+              ) : (
+                <ul className="pb-2">
+                  {data?.recentPosts.map((post) => (
+                    <li
+                      key={post._id}
+                      className="border-line border-t px-4 py-2.5 lg:px-5"
+                    >
+                      <Link
+                        href={`/post/${post._id}`}
+                        className="block truncate font-medium text-ink-900 text-sm hover:text-brand-700"
+                      >
+                        {post.title || "（無標題）"}
+                      </Link>
+                      <p className="mt-0.5 truncate text-ink-500 text-xs">
+                        {names.get(post.sig) ?? "未知 SIG"} ·{" "}
+                        {post.user?.name ?? "已刪除的使用者"} ·{" "}
+                        {formatRelative(post.createdAt)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
+function Kpi({
+  label,
+  value,
+  delta,
+  note,
+  href,
+}: {
+  label: string;
+  value?: number;
+  delta?: number;
+  note?: ReactNode;
+  href?: string;
+}) {
+  const body = (
+    <>
+      <p className="text-ink-500 text-xs">{label}</p>
+      <p className="mt-1 font-bold text-2xl text-ink-900 tabular-nums">
+        {value === undefined ? (
+          <span className="inline-block h-7 w-16 animate-pulse rounded-chip bg-field align-middle" />
+        ) : (
+          formatCount(value)
+        )}
+      </p>
+      <p className="mt-0.5 text-xs">
+        {note ??
+          (typeof delta === "number" && (
+            <span className={delta > 0 ? "text-ok-700" : "text-ink-500"}>
+              近 7 天 {delta > 0 ? "+" : ""}
+              {formatCount(delta)}
+            </span>
+          ))}
+      </p>
+    </>
+  );
+  const className =
+    "block rounded-card border border-line bg-surface p-4 shadow-card";
+  return href ? (
+    <Link href={href} className={`${className} hover:shadow-card-hover`}>
+      {body}
+    </Link>
+  ) : (
+    <div className={className}>{body}</div>
+  );
+}
+
+function TodoRow({
+  badge,
+  children,
+  href,
+  action,
+}: {
+  badge: ReactNode;
+  children: ReactNode;
+  href: string;
+  action: string;
+}) {
+  return (
+    <li className="flex items-center gap-2 border-line border-t px-4 py-2 lg:px-5">
+      {badge}
+      <span className="min-w-0 flex-1 truncate text-ink-800 text-sm">
+        {children}
+      </span>
+      <Link href={href} className={buttonClass("secondary", "sm")}>
+        {action}
+      </Link>
+    </li>
+  );
+}
+
+function TodoList({
+  requests,
+  moreRequests,
+  requestError,
+  withoutLeader,
+  withoutModerator,
+}: {
+  requests: JoinRequest[];
+  moreRequests: number;
+  requestError: string | null;
+  withoutLeader: { _id: string; name: string }[];
+  withoutModerator: { _id: string; name: string }[];
+}) {
+  const nothing =
+    requests.length === 0 &&
+    withoutLeader.length === 0 &&
+    withoutModerator.length === 0 &&
+    !requestError;
+  if (nothing) {
+    return <EmptyState title="目前沒有待處理的事項" />;
+  }
+  return (
+    <ul className="pb-2">
+      {requestError && (
+        <li className="border-line border-t px-4 py-2 text-danger-700 text-sm lg:px-5">
+          入社申請載入失敗：{requestError}
+        </li>
+      )}
+      {requests.map((request) => (
+        <TodoRow
+          key={request._id}
+          badge={<Badge tone="warn">申請</Badge>}
+          href={`/admin/join-requests?sig=${request.sig?._id ?? ""}`}
+          action="審核"
+        >
+          <b className="font-semibold">{request.user?.name ?? "某位同學"}</b>{" "}
+          申請加入 {request.sig?.name ?? "SIG"}
+          <span className="ml-1.5 text-ink-500 text-xs">
+            {formatRelative(request.createdAt)}
+          </span>
+        </TodoRow>
+      ))}
+      {moreRequests > 0 && (
+        <li className="border-line border-t px-4 py-2 text-sm lg:px-5">
+          <Link href="/admin/join-requests" className={linkClass}>
+            還有 {moreRequests} 筆待審申請
+          </Link>
+        </li>
+      )}
+      {withoutModerator.map((sig) => (
+        <TodoRow
+          key={`m-${sig._id}`}
+          badge={<Badge tone="info">SIG</Badge>}
+          href={`/admin/sigs/${sig._id}?tab=staff`}
+          action="設定"
+        >
+          {sig.name} 尚未設定指導老師
+        </TodoRow>
+      ))}
+      {withoutLeader.map((sig) => (
+        <TodoRow
+          key={`l-${sig._id}`}
+          badge={<Badge tone="info">SIG</Badge>}
+          href={`/admin/sigs/${sig._id}?tab=staff`}
+          action="設定"
+        >
+          {sig.name} 尚未設定幹部
+        </TodoRow>
+      ))}
+    </ul>
+  );
+}
+
+function ManagerOverview() {
+  const sigs = useAdminSigs();
+  const pending = useJoinRequests({ skip: 0, limit: 5, status: "pending" });
+  const list = sigs.data ?? [];
+
+  return (
+    <>
+      <PageHeader title="總覽" description={today()} />
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <Card
+          title="待審入社申請"
+          padded={false}
+          actions={
+            <Link
+              href="/admin/join-requests"
+              className={`${buttonClass("ghost", "sm")} mr-2`}
+            >
+              全部申請
+            </Link>
+          }
+        >
+          {pending.isPending ? (
+            <SkeletonRows rows={3} />
+          ) : pending.isError ? (
+            <ErrorState
+              message={errorText(pending.error)}
+              onRetry={() => pending.refetch()}
+            />
+          ) : (pending.data?.items.length ?? 0) === 0 ? (
+            <EmptyState title="目前沒有待審的申請" />
+          ) : (
+            <TodoList
+              requests={pending.data?.items ?? []}
+              moreRequests={
+                (pending.data?.total ?? 0) - (pending.data?.items.length ?? 0)
+              }
+              requestError={null}
+              withoutLeader={[]}
+              withoutModerator={[]}
+            />
+          )}
+        </Card>
+        <section aria-labelledby="my-sigs">
+          <h2 id="my-sigs" className="mb-2 font-bold text-base text-ink-900">
+            我管理的 SIG
+          </h2>
+          {sigs.isPending ? (
+            <Card padded={false}>
+              <SkeletonRows rows={3} />
+            </Card>
+          ) : sigs.isError ? (
+            <Card>
+              <ErrorState
+                message={errorText(sigs.error)}
+                onRetry={() => sigs.refetch()}
+              />
+            </Card>
+          ) : (
+            <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
+              {list.map((sig) => (
+                <SigCard key={sig._id} sig={sig} />
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
-    </div>
+    </>
+  );
+}
+
+function SigCard({ sig }: { sig: AdminSig }) {
+  const pending = sig.pendingJoinRequests ?? 0;
+  return (
+    <li>
+      <Link
+        href={`/admin/sigs/${sig._id}`}
+        className="flex items-center gap-3 rounded-card border border-line bg-surface p-3 shadow-card hover:shadow-card-hover"
+      >
+        <Avatar src={sig.avatar} name={sig.name} size={40} square />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-semibold text-ink-900 text-sm">
+            {sig.name}
+          </span>
+          <span className="block truncate text-ink-500 text-xs">
+            {formatCount(sig.memberCount)} 位成員 · 幹部 {sig.leaders.length} ·
+            指導老師 {sig.moderators.length}
+          </span>
+        </span>
+        {pending > 0 && <Badge tone="warn">{pending} 待審</Badge>}
+        <ChevronRight aria-hidden className="size-4 text-ink-400" />
+      </Link>
+    </li>
   );
 }

@@ -7,6 +7,7 @@ import {
   JoinSigAPI,
   ReadJoinSigAPI,
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
+import { JOIN_QUESTIONS } from "@/app/[userID]/(User)/config/joinQuestions";
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
 import type { ApiFailure } from "@/modules/api/client";
@@ -18,15 +19,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 /** Backend limit for each join-form answer. */
 const JOIN_ANSWER_MAX = 250;
 
-const QUESTIONS = [
-  { id: "aboutYou", label: "自我介紹", placeholder: "我是…" },
-  {
-    id: "whyJoin",
-    label: "為什麼想加入這個 SIG",
-    placeholder: "我想加入是因為…",
-  },
-  { id: "whichTopic", label: "有興趣的主題", placeholder: "我對…有興趣" },
-] as const;
+const QUESTIONS = JOIN_QUESTIONS;
 
 const formHtml = ReactDOMServer.renderToString(
   <div style={{ textAlign: "left" }}>
