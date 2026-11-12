@@ -1,10 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import NotFoundPage from "@/app/not-found";
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
+import { apiRequest } from "@/modules/api/client";
 import sigAPI from "@/modules/sigAPI";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -49,21 +51,32 @@ export default function Page() {
       const params = new URLSearchParams();
       params.set("start", startDate);
       params.set("end", endDate);
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/post/list/range?${params.toString()}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      const data = json.data || [];
-      const users: User[] = await Promise.all(
-        data.map((d: TThread) => sigAPI.getUserData(d.user)),
+      const result = await apiRequest<TThread[]>(
+        `/post/list/range?${params.toString()}`,
       );
-      const userMap = users.reduce<Record<string, string>>((acc, user) => {
+      if (!result.ok) {
+        setResults([]);
+        Swal.fire({ title: "查詢失敗", text: result.message, icon: "error" });
+        return;
+      }
+      const data = Array.isArray(result.data) ? result.data : [];
+      // One lookup per author, and a deleted author must not empty the
+      // whole result: failed lookups just show "未知".
+      const authorIds = Array.from(
+        new Set(data.map((d) => d.user).filter(Boolean)),
+      );
+      const lookups = await Promise.allSettled(
+        authorIds.map((id) => sigAPI.getUserData(id) as Promise<User>),
+      );
+      const userMap: Record<string, string> = {};
+      for (const lookup of lookups) {
+        const user = lookup.status === "fulfilled" ? lookup.value : null;
         if (user?._id && user?.name) {
-          acc[user._id] = user.name;
+          userMap[user._id] = user.name;
         }
-        return acc;
-      }, {});
+      }
       setResults(
-        data.map((d: TThread) => ({
+        data.map((d) => ({
           ...d,
           userName: userMap[d.user] || "未知",
         })),

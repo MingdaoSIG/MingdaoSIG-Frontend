@@ -19,17 +19,22 @@ export const MarkdownView = forwardRef<
   }
 >(function MarkdownView({ markdown, className = "", debounceMs = 0 }, ref) {
   const [html, setHtml] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
-        const rendered = await renderMarkdown(markdown);
+        const rendered = await renderMarkdown(markdown ?? "");
         if (!cancelled) {
           setHtml(rendered);
+          setFailed(false);
         }
       } catch (error) {
         console.error("Markdown render failed:", error);
+        if (!cancelled) {
+          setFailed(true);
+        }
       }
     }, debounceMs);
     return () => {
@@ -37,6 +42,19 @@ export const MarkdownView = forwardRef<
       clearTimeout(timer);
     };
   }, [markdown, debounceMs]);
+
+  // Rendering failed: show the text as written rather than a skeleton
+  // that never goes away. React escapes it, so this is safe.
+  if (failed) {
+    return (
+      <div
+        ref={ref}
+        className={`markdown whitespace-pre-wrap break-words ${className}`}
+      >
+        {markdown}
+      </div>
+    );
+  }
 
   if (html === null) {
     return (

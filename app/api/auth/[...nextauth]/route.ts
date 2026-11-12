@@ -1,11 +1,25 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import type { User } from "@/interfaces/User";
+import { sendLoginWebhook } from "@/modules/loginWebhook";
 
-const emoji: { [key: string]: string } = {
-  developer: "<:developer:1222933983164235876>",
-  "10.21_user": "<:1021user:1222933998913851442>",
-  bug_hunter: "<:bughunter:1245079303000031282>",
-};
+/** Looks the user up on the platform for the login notice; null on failure. */
+async function fetchPlatformUser(accessToken: string): Promise<User | null> {
+  try {
+    const body = new URLSearchParams();
+    body.append("googleToken", accessToken);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+      signal: AbortSignal.timeout(10000),
+    });
+    const json = await response.json();
+    return json?.status === 2000 && json.data ? (json.data as User) : null;
+  } catch {
+    return null;
+  }
+}
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET as string,
@@ -20,48 +34,12 @@ const handler = NextAuth({
       if (!profile?.email?.endsWith("@ms.mingdao.edu.tw")) {
         return "/?error=not_md";
       }
-      if (account) {
-        const urlencoded = new URLSearchParams();
-        urlencoded.append("googleToken", String(account.access_token));
-
-        const response = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: urlencoded,
-          })
-        ).json();
-
-        if (response.status === 2000) {
-          let badgeData: string = "";
-          const data = new FormData();
-          const badges = Array<string>(String(response.data.badge));
-
-          data.append("name", response.data.name);
-          data.append("id", response.data._id);
-          data.append("customId", response.data.customId);
-          data.append("description", response.data.description);
-          data.append("avatar", response.data.avatar);
-          data.append("identity", response.data.identity);
-          data.append("email", response.data.email);
-          data.append("code", response.data.code);
-          data.append("class", response.data.class || "No Class");
-
-          if (response.data.badge.length > 0) {
-            for (const badge of badges[0]?.split(",") ?? []) {
-              badgeData += emoji[badge];
-              badgeData += " ";
-            }
-          }
-
-          data.append("badge", badgeData !== "" ? badgeData : "No Badge");
-
-          fetch(`${process.env.NEXTAUTH_URL}/api/webhook/login`, {
-            method: "POST",
-            body: data,
-          });
+      if (account?.access_token) {
+        // The notice is best effort: a slow or failing backend or Discord
+        // must never block the sign-in itself.
+        const user = await fetchPlatformUser(account.access_token);
+        if (user) {
+          void sendLoginWebhook(user);
         }
       }
 

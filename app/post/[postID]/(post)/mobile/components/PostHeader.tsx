@@ -23,7 +23,8 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
   const { data: user } = useUser(post.user);
   const { data: sig } = useSig(post.sig);
 
-  const customId = user?.customId ?? "anonymous";
+  // No profile link until the author is known (never "/@anonymous").
+  const customId = user?.customId;
   const avatar = user?.avatar || DEFAULT_AVATAR;
   const sigId = post.sig;
   const sigName = isAnnouncement ? "公告" : (sig?.name ?? "SIG");
@@ -68,26 +69,34 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
           <polyline points="15 18 9 12 15 6" />
         </svg>
       </TapScale>
-      <TapScaleLink
-        href={`/@${customId}`}
-        className="flex-shrink-0"
-        whileTap={{ scale: 0.9 }}
-      >
-        <Image
-          src={avatar}
-          alt={`${customId} avatar`}
-          width={40}
-          height={40}
-          className="h-10 w-10 rounded-full object-cover"
-          unoptimized
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
-          }}
-        />
-      </TapScaleLink>
+      {customId ? (
+        <TapScaleLink
+          href={`/@${customId}`}
+          className="flex-shrink-0"
+          whileTap={{ scale: 0.9 }}
+        >
+          <Image
+            src={avatar}
+            alt={`${customId} avatar`}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover"
+            unoptimized
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+            }}
+          />
+        </TapScaleLink>
+      ) : (
+        <div className="h-10 w-10 flex-shrink-0 rounded-full bg-field" />
+      )}
       <div className="min-w-0 flex-1">
         <div className="truncate font-semibold text-ink-900 text-sm leading-tight">
-          @{customId}
+          {customId ? (
+            `@${customId}`
+          ) : (
+            <span className="inline-block h-3.5 w-24 animate-pulse rounded-chip bg-field align-middle" />
+          )}
         </div>
         <div className="mt-0.5 flex items-center gap-1.5">
           {isAnnouncement ? (

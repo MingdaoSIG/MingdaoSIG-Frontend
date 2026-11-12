@@ -24,7 +24,7 @@ export default function TitleSigForm({ data, handleFormEventFunction }: Props) {
     (async () => {
       try {
         const response = await sigAPI.getSigList();
-        setSigs(response);
+        setSigs(Array.isArray(response) ? response : []);
       } catch (error: unknown) {
         console.error(error instanceof Error ? error.message : error);
       }

@@ -11,8 +11,8 @@ export default function Reply({
   overflow,
   first,
 }: {
-  customId: string;
-  avatar: string;
+  customId?: string;
+  avatar?: string;
   content: string;
   createdAt: string;
   overflow: boolean;
@@ -23,7 +23,7 @@ export default function Reply({
   return (
     <div className="flex w-full cursor-default items-start gap-2.5 text-left">
       <Image
-        src={avatar}
+        src={avatar || "/images/default-avatar.png"}
         width={36}
         height={36}
         alt=""
@@ -31,19 +31,25 @@ export default function Reply({
       />
       <div className="flex min-w-0 flex-col">
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className={`font-semibold text-[0.85rem] text-ink-900 ${
-              first ? "cursor-default" : "cursor-pointer hover:underline"
-            }`}
-            onClick={() => {
-              if (!first) {
-                route.push(`/@${customId}`);
-              }
-            }}
-          >
-            @{customId}
-          </button>
+          {customId ? (
+            <button
+              type="button"
+              className={`font-semibold text-[0.85rem] text-ink-900 ${
+                first ? "cursor-default" : "cursor-pointer hover:underline"
+              }`}
+              onClick={() => {
+                if (!first) {
+                  route.push(`/@${customId}`);
+                }
+              }}
+            >
+              @{customId}
+            </button>
+          ) : (
+            <span className="font-semibold text-[0.85rem] text-ink-500">
+              已刪除的使用者
+            </span>
+          )}
           <span className="text-ink-500 text-xs">{createdAt}</span>
         </div>
         <p

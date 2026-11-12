@@ -4,37 +4,55 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import ReaderMode from "@/components/ReaderMode";
 import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
 import type { TThread } from "@/interfaces/Thread";
+import { apiRequest } from "@/modules/api/client";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const Thread = ({ post }: { post: TThread }) => {
   const { isLogin, isLoading, token, userData } = useUserAccount();
 
   const [like, setLike] = useState<boolean>(false);
+  const [liking, setLiking] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   useDuplicateTitle(rootRef, post.title);
 
   const route = useRouter();
 
-  function onLike() {
-    if (!isLoading && !isLogin) {
+  async function onLike() {
+    if (isLoading || liking) {
+      return;
+    }
+    if (!isLogin) {
       Swal.fire({
         title: "Please login first",
         text: "You must login to like someone's post",
         icon: "warning",
         confirmButtonText: "Confirm",
       });
-    } else {
-      setLike(!like);
-      if (like) {
-        DeleteLike();
-      } else {
-        PostLike();
-      }
+      return;
+    }
+    // Show the change at once, and undo it if the server refuses.
+    const willLike = !like;
+    setLike(willLike);
+    setLiking(true);
+    const res = await apiRequest(`/post/${post._id}/like`, {
+      method: willLike ? "POST" : "DELETE",
+      token,
+    });
+    setLiking(false);
+    if (!res.ok) {
+      setLike(!willLike);
+      Swal.fire({
+        title: willLike ? "按讚失敗" : "取消按讚失敗",
+        text: res.message,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   }
 
@@ -42,73 +60,44 @@ const Thread = ({ post }: { post: TThread }) => {
     route.push(`/post/${post._id}/edit`);
   }
 
-  function onDelete() {
-    Swal.fire({
+  async function onDelete() {
+    const confirm = await Swal.fire({
       title: "Are you sure you want to delete this post",
       icon: "question",
       confirmButtonText: "Confirm",
       showCancelButton: true,
       cancelButtonText: "Cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        DeletePost();
-        Swal.fire({
-          title: "Successfully delete post",
-          icon: "success",
-          confirmButtonText: "Back to home",
-          confirmButtonColor: "#6e7881",
-          showDenyButton: true,
-          denyButtonText: "Create new post",
-          denyButtonColor: "#82D7FF",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            route.push("/");
-          } else if (result.isDenied) {
-            route.push("/new");
-          }
-        });
-      }
+      showLoaderOnConfirm: true,
+      allowOutsideClick: () => !Swal.isLoading(),
+      preConfirm: () =>
+        apiRequest(`/post/${post._id}`, { method: "DELETE", token }),
     });
-  }
-
-  async function DeletePost() {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (_error) {
-      // Silently ignore - delete result does not affect UI
+    if (!confirm.isConfirmed || !confirm.value) {
+      return;
     }
-  }
-
-  async function PostLike() {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
+    if (!confirm.value.ok) {
+      Swal.fire({
+        title: "刪除失敗",
+        text: confirm.value.message,
+        icon: "error",
+        confirmButtonText: "OK",
       });
-    } catch (_error) {
-      // Silently ignore - like state is optimistically toggled in UI
+      return;
     }
-  }
-  async function DeleteLike() {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/post/${post._id}/like`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (_error) {
-      // Silently ignore - unlike state is optimistically toggled in UI
+    const next = await Swal.fire({
+      title: "Successfully delete post",
+      icon: "success",
+      confirmButtonText: "Back to home",
+      confirmButtonColor: "#6e7881",
+      showDenyButton: true,
+      denyButtonText: "Create new post",
+      denyButtonColor: "#82D7FF",
+    });
+    if (next.isDenied) {
+      route.push("/new");
+    } else {
+      // Also on dismiss: the post is gone, so do not stay on its page.
+      route.push("/");
     }
   }
 
@@ -134,7 +123,9 @@ const Thread = ({ post }: { post: TThread }) => {
           </h1>
         </div>
         <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
-          <MarkdownView markdown={post.content} />
+          <SectionErrorBoundary label="文章內容">
+            <MarkdownView markdown={post.content ?? ""} />
+          </SectionErrorBoundary>
         </div>
       </article>
     );
@@ -196,7 +187,9 @@ const Thread = ({ post }: { post: TThread }) => {
       </div>
       <ReaderByline post={post} />
       <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
-        <MarkdownView markdown={post.content} />
+        <SectionErrorBoundary label="文章內容">
+          <MarkdownView markdown={post.content ?? ""} />
+        </SectionErrorBoundary>
       </div>
     </article>
   );

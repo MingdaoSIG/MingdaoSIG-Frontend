@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { isValidCustomId } from "@/modules/validation";
 import { useUserAccount } from "@/utils/useUserAccount";
 
 const ToolBar = () => {
@@ -28,7 +29,7 @@ const ToolBar = () => {
     },
     {
       name: "user",
-      route: userData ? `/@${userData.customId}` : "/",
+      route: userData?.customId ? `/@${userData.customId}` : "/",
       icon: "/icons/bx-user.svg",
       clickable: !isLoading && isLogin,
     },
@@ -105,14 +106,13 @@ export default ToolBar;
 
 function pathToSelected(path: string) {
   const homeRegex = /^\/$/gm;
-  const userRegex = /^\/@(?!$)(?=.{1,25}$)[a-z0-9_]+(\.[a-z0-9_]+)*$/gm;
   const newRegex = /^\/new$/gm;
   const infoRegex = /^\/info$/gm;
 
   if (homeRegex.test(path)) {
     return 0;
   }
-  if (userRegex.test(path)) {
+  if (isValidCustomId(path.slice(1))) {
     return 1;
   }
   if (newRegex.test(path)) {

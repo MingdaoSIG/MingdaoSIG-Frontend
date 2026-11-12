@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 // Components
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import {
   InfinityThreadsList,
   ThreadsListSkeleton,
@@ -8,42 +8,28 @@ import {
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
-// apis
-import sigAPI from "@/modules/sigAPI";
 // Hooks
 import { useSigPost, useUserPost } from "@/utils/usePost";
 import Info from "./info";
 // Styles
 import styles from "./mobile.module.scss";
 
+const LIST_HEIGHT = "calc(100dvh - 21rem)";
+
+// Renders the profile the page already fetched (it used to fetch it a
+// second time and, on failure, render a post list for an empty id).
 export default function ProfileMobile({
-  params,
+  data,
+  dataType,
+  isLoading,
+  setData,
 }: {
-  params: { userID: string };
+  data: User | Sig | null;
+  dataType: "user" | "sig" | null;
+  isLoading: boolean;
+  setData: Dispatch<SetStateAction<User | Sig | null>>;
 }) {
-  // Note: params is already resolved when passed from parent
-  if (!decodeURIComponent(params.userID).startsWith("@")) {
-    notFound();
-  }
-
-  const accountId = decodeURIComponent(params.userID);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [dataType, setDataType] = useState<"user" | "sig" | null>(null);
-  const [data, setData] = useState<User | Sig | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-
-      const { data, dataType } = await getAccountData(accountId);
-
-      setData(data);
-      setDataType(dataType);
-
-      return setIsLoading(false);
-    })();
-  }, [accountId]);
+  const id = data?._id ?? "";
 
   return (
     <div className={styles.mobileProfile}>
@@ -54,13 +40,15 @@ export default function ProfileMobile({
         setInfo={setData}
       />
       <div className="mx-[0.5rem] overflow-y-hidden">
-        {isLoading ? (
-          <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
-        ) : dataType === "user" ? (
-          <UserInfinityThreadList id={data?._id ?? ""} />
-        ) : (
-          <SIGInfinityThreadList id={data?._id ?? ""} />
-        )}
+        <SectionErrorBoundary label="貼文列表">
+          {isLoading || !id ? (
+            <ThreadsListSkeleton repeat={6} height={LIST_HEIGHT} />
+          ) : dataType === "user" ? (
+            <UserInfinityThreadList id={id} />
+          ) : (
+            <SIGInfinityThreadList id={id} />
+          )}
+        </SectionErrorBoundary>
       </div>
     </div>
   );
@@ -68,73 +56,38 @@ export default function ProfileMobile({
 
 function UserInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useUserPost(
-    id,
-    { pageSize },
-  );
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
+    useUserPost(id, { pageSize });
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
+    <ThreadsListSkeleton repeat={6} height={LIST_HEIGHT} />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="calc(100dvh - 21rem)"
+      height={LIST_HEIGHT}
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      error={error}
+      onRetry={() => refetch()}
     />
   );
 }
 
 function SIGInfinityThreadList({ id }: { id: string }) {
   const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } = useSigPost(
-    id,
-    { pageSize },
-  );
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
+    useSigPost(id, { pageSize });
 
   return isLoading ? (
-    <ThreadsListSkeleton repeat={6} height="calc(100dvh - 21rem)" />
+    <ThreadsListSkeleton repeat={6} height={LIST_HEIGHT} />
   ) : (
     <InfinityThreadsList
       data={data}
-      height="calc(100dvh - 21rem)"
+      height={LIST_HEIGHT}
       fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
+      error={error}
+      onRetry={() => refetch()}
     />
   );
-}
-
-async function getUser(userId: string) {
-  try {
-    return await sigAPI.getUserData(userId);
-  } catch (_error) {
-    return false;
-  }
-}
-
-async function getSIG(userId: string) {
-  try {
-    return await sigAPI.getSigData(userId);
-  } catch (_error) {
-    return false;
-  }
-}
-
-async function getAccountData(accountId: string): Promise<{
-  data: User | Sig | null;
-  dataType: "user" | "sig" | null;
-}> {
-  const userData = await getUser(accountId);
-  const sigData = await getSIG(accountId);
-
-  if (!(userData && sigData)) {
-    return {
-      data: userData || sigData || null,
-      dataType: userData ? "user" : sigData ? "sig" : null,
-    };
-  }
-  return {
-    data: null,
-    dataType: null,
-  };
 }

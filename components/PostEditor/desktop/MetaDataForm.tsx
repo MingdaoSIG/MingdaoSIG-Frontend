@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 // Types
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
+import { isSubmitEnter } from "@/utils/keyboard";
 // Components
 import Buttons from "./Buttons";
 
@@ -137,8 +138,13 @@ export default function MetaDataForm({
   };
 
   const handleTagInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
+    if (e.key !== "Enter") {
+      return;
+    }
+    // Never submit the form from this field; and an Enter that picks an
+    // IME candidate (注音/拼音) must not add a half-typed tag.
+    e.preventDefault();
+    if (isSubmitEnter(e, true)) {
       handleAddTag();
     }
   };
@@ -251,7 +257,7 @@ export default function MetaDataForm({
               type="text"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
-              onKeyPress={handleTagInputKeyPress}
+              onKeyDown={handleTagInputKeyPress}
               placeholder="新增標籤..."
               className="min-w-0 flex-1 rounded-control border border-line bg-field px-3 py-2 text-ink-800 text-sm placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-700/30"
             />
