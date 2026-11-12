@@ -197,3 +197,32 @@ $badge-height: 1.3rem;
     text-decoration: underline;
   }
 }
+
+/* 「退出 SIG」: secondary, so it is not mistaken for the main action */
+.leaveBtn {
+  width: auto;
+  height: 3rem;
+  display: flex;
+  flex: initial;
+  align-items: center;
+  background-color: var(--color-surface);
+  color: var(--color-ink-700);
+  border: 1px solid var(--color-line-strong);
+  font-weight: 600;
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+  border-radius: var(--radius-control);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-field);
+    color: var(--color-danger-700);
+  }
+
+  &:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}

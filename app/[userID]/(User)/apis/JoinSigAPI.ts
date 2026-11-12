@@ -19,3 +19,24 @@ export function ReadJoinSigAPI(
     signal,
   });
 }
+
+/** Leave a SIG you are a member of (contract v3 §3.5). */
+export function LeaveSigAPI(sig: string, token: string | null) {
+  return apiRequest<{ sig?: string; user?: string }>(`/sig/${sig}/members/me`, {
+    method: "DELETE",
+    token,
+  });
+}
+
+/** Edit a SIG you manage: its description and/or avatar (an image id). */
+export function UpdateSigAPI(
+  sig: string,
+  body: { description?: string; avatar?: string },
+  token: string | null,
+) {
+  return apiRequest<Record<string, unknown>>(`/sig/${sig}`, {
+    method: "POST",
+    token,
+    body,
+  });
+}

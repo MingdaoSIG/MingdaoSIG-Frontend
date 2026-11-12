@@ -12,6 +12,7 @@ import {
 
 import { TapScale } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
+import { CustomStatus } from "@/modules/customStatusCode";
 import { isSubmitEnter } from "@/utils/keyboard";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -20,16 +21,19 @@ import {
   commentErrorMessage,
   PostCommentAPI,
 } from "../../apis/CommentAPI";
+import { ReplyBanner } from "../../components/CommentView";
 import { useCommentDraft } from "../../components/useCommentDraft";
+import type { CommentsController } from "../../components/useComments";
 
 const DEFAULT_AVATAR = "/images/default-avatar.png";
 
 type Props = {
   postId: string;
-  onSubmitted: () => void;
+  controller: CommentsController;
 };
 
-export default function CommentComposer({ postId, onSubmitted }: Props) {
+export default function CommentComposer({ postId, controller }: Props) {
+  const { replyTarget } = controller;
   const { isLogin, isLoading, userData, token, login } = useUserAccount();
   const [text, setText] = useCommentDraft(postId);
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +42,13 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
   const avatar = userData?.avatar || DEFAULT_AVATAR;
   const tooLong = text.length > COMMENT_MAX_LENGTH;
   const canSend = !submitting && text.trim().length > 0 && !tooLong;
+
+  // 「回覆」 on a comment moves the focus here.
+  useEffect(() => {
+    if (replyTarget) {
+      textareaRef.current?.focus();
+    }
+  }, [replyTarget]);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -76,14 +87,24 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
       return;
     }
     setSubmitting(true);
-    const res = await PostCommentAPI(postId, "", text.trim(), token);
+    const parentId = replyTarget?.parentId ?? null;
+    const res = await PostCommentAPI(
+      postId,
+      parentId ?? "",
+      text.trim(),
+      token,
+    );
     setSubmitting(false);
     if (res.ok) {
       setText("");
-      onSubmitted();
-      toast.success("留言成功");
+      controller.onPosted(parentId);
+      toast.success(parentId ? "已回覆" : "留言成功");
     } else {
-      toast.error(commentErrorMessage(res));
+      toast.error(
+        parentId && res.status === CustomStatus.INVALID_BODY
+          ? "要回覆的留言已經不存在"
+          : commentErrorMessage(res),
+      );
     }
   };
 
@@ -97,6 +118,11 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
 
   return (
     <div className="sticky right-0 bottom-0 left-0 z-10">
+      {replyTarget && (
+        <div className="glass-bar border-line border-t">
+          <ReplyBanner controller={controller} variant="mobile" />
+        </div>
+      )}
       <form
         onSubmit={handleSend}
         className="glass-bar flex items-center gap-2 border-line border-t px-3 py-2"
@@ -122,8 +148,14 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
               askToLogin();
             }
           }}
-          placeholder={isLogin ? "寫下你的想法…" : "登入後即可留言"}
-          aria-label="留言內容"
+          placeholder={
+            !isLogin
+              ? "登入後即可留言"
+              : replyTarget
+                ? `回覆 ${replyTarget.name}…`
+                : "寫下你的想法…"
+          }
+          aria-label={replyTarget ? "回覆內容" : "留言內容"}
           rows={1}
           className="min-h-11 min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"
         />
@@ -145,7 +177,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
               : "flex size-11 flex-shrink-0 cursor-not-allowed items-center justify-center rounded-control bg-field"
           }
           whileTap={canSend ? { scale: 0.9 } : undefined}
-          aria-label="送出留言"
+          aria-label={replyTarget ? "送出回覆" : "送出留言"}
         >
           <svg
             aria-hidden="true"

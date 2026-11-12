@@ -65,9 +65,56 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 - Excel exports (`xlsx`, loaded on demand): member lists per SIG and the
   date-range post export (`GET /post/list/range`).
 
+## Comments
+
+- Shared by desktop (`desktop/ThreadInfo.tsx`) and mobile (`mobile/Thread.tsx`)
+  through `components/useComments.ts` (list, reply target, expanded threads,
+  edit and delete) and `components/CommentView.tsx` (one comment UI with a
+  `desktop` / `mobile` variant)
+- Edit: your own comments (`POST /comment/:id`). Delete: your own, or any
+  comment on a SIG you manage (leader or 指導老師), or as an admin
+  (`DELETE /comment/:id`). Rules live in `useCommentPermissions.ts`
+- Replies are one level deep: 「回覆」 on a reply attaches to its parent.
+  Threads with more than two replies start collapsed
+- Edited comments show 「（已編輯）」 (`edited` from the backend)
+
+## Share previews, sitemap, robots
+
+- `/post/[postID]/page.tsx` is a Server Component with `generateMetadata`
+  (`metadata.ts`: title + ` | MDSIG`, ~120 character excerpt, cover as
+  `og:image`); the post itself still renders in the client `PostPage.tsx`.
+  Any failure falls back to the layout's metadata
+- `app/sitemap.ts` (per request, from `GET /post/sitemap`, static pages only
+  when that fails) and `app/robots.ts`
+
+## Hashtags and search
+
+- Hashtags on cards and post pages link to `/tag/<tag>` (`modules/hashtag`
+  strips a stored leading `#`)
+- `/search?q=` searches titles, hashtags and content; the header has a
+  search box (desktop) or icon (mobile). With no query, and with no
+  results, it shows the top hashtags (`components/Tags/TopTags.tsx`)
+
+## Home
+
+- Pinned posts (`/post/list/pinned`) open the feed with 「置頂」
+- 熱門貼文 (desktop card, mobile 熱門 tab): most liked of the last 30 days;
+  fewer than 3 liked posts widens to 180 days, then all time (`useTopPost`,
+  `useHotPostList`)
+
+## Profile and SIG pages
+
+- Your own profile: 「有人留言時寄信通知我」 (`notifyComments`), a
+  「按讚過的貼文」 tab, and on mobile 「關於我」 editing
+- SIG pages: 「編輯 SIG」 (description and avatar) for that SIG's leaders,
+  指導老師 and admins; 「退出 SIG」 for members
+- Image fields may be a URL, `/image/<id>` or a bare image id; render them
+  through `imageUrl()` (`modules/imageUrl`)
+
 ## Data & Info Pages
 
-- `app/data/` — aggregated platform statistics (static JSON config)
+- `app/data/` — SIG lookup by id (`@mdcsl`), desktop and mobile
+  (`useSigLookup.ts`)
 - `app/info/` — platform information and status links
 
 ## Validation Module

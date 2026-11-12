@@ -12,7 +12,9 @@ import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
 import { apiRequest } from "@/modules/api/client";
 import useIsMobile from "@/utils/useIsMobile";
-import { useSigPost, useUserPost } from "@/utils/usePost";
+import { useSigPost, useUserLikedPost, useUserPost } from "@/utils/usePost";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { type ProfileTab, ProfileTabs } from "./components/ProfileTabs";
 import Info from "./desktop/Info";
 import ProfileMobile from "./mobile";
 
@@ -25,6 +27,8 @@ type AccountData = {
 
 export default function UserPage({ accountId }: { accountId: string }) {
   const isMobile = useIsMobile();
+  const { userData } = useUserAccount();
+  const [tab, setTab] = useState<ProfileTab>("posts");
 
   const [isLoading, setIsLoading] = useState(true);
   const [dataType, setDataType] = useState<"user" | "sig" | null>(null);
@@ -90,22 +94,37 @@ export default function UserPage({ accountId }: { accountId: string }) {
         dataType={dataType}
         isLoading={isLoading}
         setData={setData}
+        isOwn={
+          dataType === "user" &&
+          Boolean(data?._id) &&
+          userData?._id === data?._id
+        }
+        tab={tab}
+        setTab={setTab}
       />
     );
   }
 
   const id = data?._id ?? "";
+  // Only your own profile has the 「按讚過的貼文」 tab.
+  const isOwn = dataType === "user" && Boolean(id) && userData?._id === id;
+  const showLiked = isOwn && tab === "liked";
   return (
     <SplitBlock>
-      <SectionErrorBoundary label="貼文列表">
-        {isLoading || !id ? (
-          <ThreadsListSkeleton repeat={6} />
-        ) : dataType === "user" ? (
-          <UserInfinityThreadList id={id} />
-        ) : (
-          <SIGInfinityThreadList id={id} />
-        )}
-      </SectionErrorBoundary>
+      <div className="flex flex-col gap-4">
+        {isOwn && <ProfileTabs value={tab} onChange={setTab} />}
+        <SectionErrorBoundary label="貼文列表">
+          {isLoading || !id ? (
+            <ThreadsListSkeleton repeat={6} />
+          ) : showLiked ? (
+            <LikedInfinityThreadList id={id} />
+          ) : dataType === "user" ? (
+            <UserInfinityThreadList id={id} />
+          ) : (
+            <SIGInfinityThreadList id={id} />
+          )}
+        </SectionErrorBoundary>
+      </div>
       <Info
         user={data}
         isLoading={isLoading}
@@ -130,6 +149,25 @@ function UserInfinityThreadList({ id }: { id: string }) {
       isFetchingNextPage={isFetchingNextPage}
       error={error}
       onRetry={() => refetch()}
+    />
+  );
+}
+
+function LikedInfinityThreadList({ id }: { id: string }) {
+  const pageSize = 10;
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
+    useUserLikedPost(id, { pageSize });
+
+  return isLoading ? (
+    <ThreadsListSkeleton repeat={6} />
+  ) : (
+    <InfinityThreadsList
+      data={data}
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      error={error}
+      onRetry={() => refetch()}
+      emptyText="還沒有按讚過的貼文"
     />
   );
 }

@@ -45,6 +45,12 @@ export type UserAccount = {
   isLoading: boolean;
   login: () => void;
   logout: () => void;
+  /**
+   * Applies a change the backend already accepted (description, SIGs,
+   * notification setting…) to the signed-in profile, so every component
+   * shows it without another `/user/me`.
+   */
+  updateUser: (patch: Partial<User> | ((user: User) => User)) => void;
 };
 
 type AuthState = {
@@ -496,6 +502,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut();
   }, [dropSchoolSession, clearAccount]);
 
+  const updateUser = useCallback(
+    (patch: Partial<User> | ((user: User) => User)) => {
+      const current = stateRef.current;
+      if (!current.user) {
+        return;
+      }
+      const user =
+        typeof patch === "function"
+          ? patch(current.user)
+          : { ...current.user, ...patch };
+      storageSet(USER_KEY, JSON.stringify(user));
+      commit({ ...current, user });
+    },
+    [commit],
+  );
+
   const value = useMemo<UserAccount>(
     () => ({
       isLogin: state.status === "authenticated" && Boolean(state.token),
@@ -504,8 +526,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading: state.status === "loading",
       login,
       logout,
+      updateUser,
     }),
-    [state, login, logout],
+    [state, login, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

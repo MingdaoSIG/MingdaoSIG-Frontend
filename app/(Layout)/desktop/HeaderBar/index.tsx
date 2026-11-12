@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAdminChrome } from "@/utils/useAdminAccess";
+import HeaderSearch from "./HeaderSearch";
 import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
@@ -37,7 +38,11 @@ const HeaderBar = () => {
             </span>
           )}
         </div>
-        <UserLogin />
+        <div className="flex items-center gap-3">
+          {/* Site search; the admin panel has its own search fields. */}
+          {!inAdmin && <HeaderSearch />}
+          <UserLogin />
+        </div>
       </nav>
     </header>
   );

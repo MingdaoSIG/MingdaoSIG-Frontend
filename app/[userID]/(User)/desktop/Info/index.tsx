@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import Image from "next/image";
 import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
 import { Tooltip } from "react-tooltip";
@@ -9,10 +10,15 @@ import { badgeList } from "@/app/[userID]/(User)/config/badge";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
+import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
 import { Description } from "../../components/Description";
+import { EditSigDialog } from "../../components/EditSigDialog";
+import { NotifyToggle } from "../../components/NotifyToggle";
 import { useJoinSig } from "../../useJoinSig";
+import { useLeaveSig } from "../../useLeaveSig";
+import { useSigManager } from "../../useSigManager";
 // Styles
 import styles from "./Info.module.scss";
 
@@ -27,12 +33,25 @@ export default function Info({
   dataType: string | null;
   setInfo: Dispatch<SetStateAction<User | Sig | null>>;
 }) {
-  const { userData, token } = useUserAccount();
+  const { userData, token, updateUser } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [newDescription, setNewDescription] = useState("");
+  const [editingSig, setEditingSig] = useState(false);
   const isSig = dataType === "sig";
+  const isOwnProfile =
+    !isSig &&
+    Boolean(userData?.customId) &&
+    userData?.customId === accountData?.customId;
   const joinSig = useJoinSig(accountData, isSig);
+  const manager = useSigManager(accountData, isSig);
+  const { leave } = useLeaveSig({
+    sig: isSig ? (accountData as Sig | null) : null,
+    isLeader: manager.isLeader,
+    isModerator: manager.isModerator,
+    onLeft: joinSig.markLeft,
+    notify: notice,
+  });
 
   function EditDescriptionButtonHandle() {
     if (isInput && isEdit) {
@@ -58,6 +77,7 @@ export default function Info({
             setInfo((prev) =>
               prev ? { ...prev, description: newDescription } : prev,
             );
+            updateUser({ description: newDescription });
             Swal.fire("已儲存", "自我介紹已更新", "success");
             setIsInput(false);
             setIsEdit(false);
@@ -87,7 +107,7 @@ export default function Info({
       <h2 className={styles.descriptionTitle}>
         {isSig ? "SIG 簡介" : "關於我"}
       </h2>
-      {userData && userData.customId === accountData?.customId && (
+      {isOwnProfile && (
         <button
           type="button"
           className={styles.descriptionEditButton}
@@ -108,11 +128,7 @@ export default function Info({
       >
         <div className={styles.avatarWrapper}>
           <Image
-            src={
-              accountData?.avatar ??
-              process.env.NEXT_PUBLIC_API_URL +
-                "/image/653299930b891d1f6b5b4458"
-            }
+            src={imageUrl(accountData?.avatar) ?? DEFAULT_AVATAR_URL}
             width={100}
             height={100}
             alt=""
@@ -120,6 +136,16 @@ export default function Info({
           />
           {accountData?.badge ? <BadgeList userData={accountData} /> : null}
         </div>
+        {manager.canManage && (
+          <button
+            type="button"
+            className="absolute top-3 right-3 inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-control border border-line bg-surface/95 px-3 font-semibold text-ink-800 text-sm shadow-card transition-colors hover:bg-field"
+            onClick={() => setEditingSig(true)}
+          >
+            <Pencil size={15} aria-hidden />
+            編輯 SIG
+          </button>
+        )}
       </div>
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
@@ -132,20 +158,33 @@ export default function Info({
               </p>
             </div>
             <div className={styles.space}></div>
-            {isSig && accountData?._id !== "652d60b842cdf6a660c2b778" && (
+            {isSig &&
+              accountData?._id !== "652d60b842cdf6a660c2b778" &&
               // Not on the announcement SIG
-              <button
-                type="button"
-                className={styles.joinBtn}
-                onClick={joinSig.join}
-                disabled={joinSig.disabled || isLoading}
-              >
-                {joinSig.label}
-              </button>
-            )}
+              (joinSig.isMember ? (
+                <button
+                  type="button"
+                  className={styles.leaveBtn}
+                  onClick={leave}
+                  disabled={isLoading}
+                >
+                  退出 SIG
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.joinBtn}
+                  onClick={joinSig.join}
+                  disabled={joinSig.disabled || isLoading}
+                >
+                  {joinSig.label}
+                </button>
+              ))}
           </div>
-          {isSig && joinSig.notice && (
-            <p className={styles.joinNotice}>{joinSig.notice}</p>
+          {isSig && (joinSig.notice || joinSig.isMember) && (
+            <p className={styles.joinNotice}>
+              {joinSig.isMember ? "你是這個 SIG 的成員" : joinSig.notice}
+            </p>
           )}
           <hr className={styles.contentHR} />
           {isInput ? (
@@ -167,10 +206,40 @@ export default function Info({
               />
             )
           )}
+          {isOwnProfile && (
+            <>
+              <hr className={styles.contentHR} />
+              <NotifyToggle />
+            </>
+          )}
         </div>
       </div>
+      {isSig && accountData && manager.canManage && (
+        <EditSigDialog
+          sig={accountData as Sig}
+          open={editingSig}
+          onClose={() => setEditingSig(false)}
+          onSaved={(saved) => {
+            setInfo(saved);
+            notice("success", "SIG 資料已更新");
+          }}
+        />
+      )}
     </div>
   );
+}
+
+/** Small toast at the top for results that need no answer. */
+function notice(icon: "success" | "error", title: string) {
+  void Swal.fire({
+    toast: true,
+    position: "top",
+    icon,
+    title,
+    showConfirmButton: false,
+    timer: icon === "error" ? 4000 : 2500,
+    timerProgressBar: true,
+  });
 }
 
 function BadgeList({ userData }: { userData: User | null }) {

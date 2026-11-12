@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Components
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
@@ -9,7 +9,12 @@ import {
   ThreadsListSkeleton,
 } from "@/components/Threads/mobile/ThreadsList";
 // Interfaces
-import { useAllPost, useSigPost } from "@/utils/usePost";
+import {
+  useAllPost,
+  useHotPostList,
+  usePinnedPost,
+  useSigPost,
+} from "@/utils/usePost";
 import SwitchButton from "./ButtonTools";
 import SigList from "./SigList";
 
@@ -18,11 +23,18 @@ const ThreadsList = () => {
   const [dataType, setDataType] = useState("latest");
   const pageSize = 10;
 
-  const { data, fetchNextPage, isFetchingNextPage, isLoading, refetch, error } =
-    useAllPost({
-      pageSize,
-      sort: dataType,
-    });
+  // 熱門 is the hot-post list (last 30 days, widening when that is thin).
+  const latest = useAllPost({ pageSize, sort: "latest" });
+  const hot = useHotPostList({ pageSize }, dataType === "top");
+  const active = dataType === "top" ? hot : latest;
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, error } = active;
+  // A failed pinned list just leaves the section out.
+  const pinned = usePinnedPost();
+  const refetchActive = active.refetch;
+  const refetchPinned = pinned.refetch;
+  const refetch = useCallback(async () => {
+    await Promise.all([refetchActive(), refetchPinned()]);
+  }, [refetchActive, refetchPinned]);
 
   const { data: announcementData } = useSigPost("652d60b842cdf6a660c2b778", {
     pageSize: 1,
@@ -64,7 +76,7 @@ const ThreadsList = () => {
       />
 
       <SectionErrorBoundary label="貼文列表">
-        {isLoading ? (
+        {isLoading || pinned.isLoading ? (
           <ThreadsListSkeleton repeat={10} height="auto" />
         ) : (
           <InfinityThreadsList
@@ -73,6 +85,7 @@ const ThreadsList = () => {
             fetchNextPage={fetchNextPage}
             isFetchingNextPage={isFetchingNextPage}
             announcementData={announcementData}
+            pinnedData={pinned.data}
             error={error}
             onRetry={() => refetch()}
           />
