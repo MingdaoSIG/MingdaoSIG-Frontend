@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { FileDown, NotebookPen } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { PageTitle } from "@/components/mobile/PageTitle";
 import { PortfolioChecklist } from "@/components/Portfolio/PortfolioChecklist";
 import {
@@ -79,25 +79,29 @@ function Notice({ children }: { children: ReactNode }) {
   );
 }
 
-/** Scales the A4 sheets down to fit their column (never up). */
+/**
+ * Scales the A4 sheets down to fit their column (never up). A callback
+ * ref: the column appears only once the portfolio has loaded.
+ */
 function useFitScale(padding: number) {
-  const ref = useRef<HTMLDivElement>(null);
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   useEffect(() => {
-    const el = ref.current;
     if (!el) {
       return;
     }
     const measure = () => {
       const width = el.clientWidth - padding * 2;
-      setScale(Math.min(1, Math.max(0.3, width / A4_WIDTH_PX)));
+      if (width > 0) {
+        setScale(Math.min(1, Math.max(0.3, width / A4_WIDTH_PX)));
+      }
     };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
     return () => observer.disconnect();
-  }, [padding]);
-  return { ref, scale };
+  }, [el, padding]);
+  return { ref: setEl, scale };
 }
 
 export default function PortfolioPage() {
