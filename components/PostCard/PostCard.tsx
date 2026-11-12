@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { BookmarkButton } from "@/components/Bookmark/BookmarkButton";
+import { Highlight } from "@/components/Search/Highlight";
 import { postSummary } from "@/components/Threads/postSummary";
 import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
@@ -34,6 +35,8 @@ export type PostCardProps = {
   eager?: boolean;
   /** Hide the SIG in the meta line (lists of one SIG). */
   hideSig?: boolean;
+  /** Search results: mark these words in the title and the excerpt. */
+  highlight?: string;
   className?: string;
 };
 
@@ -115,6 +118,7 @@ export function PostCard({
   pinned = false,
   eager = false,
   hideSig = false,
+  highlight,
   className = "",
 }: PostCardProps) {
   const isMobile = useIsMobile();
@@ -168,7 +172,7 @@ export function PostCard({
               href={`/post/${post._id}`}
               className="line-clamp-2 [overflow-wrap:anywhere] after:absolute after:inset-0 after:content-['']"
             >
-              {post.title}
+              <Highlight text={post.title} query={highlight} />
             </Link>
           </h2>
           {summary && (
@@ -177,7 +181,7 @@ export function PostCard({
                 announcement ? "line-clamp-3" : "line-clamp-2"
               }`}
             >
-              {summary}
+              <Highlight text={summary} query={highlight} />
             </p>
           )}
           <p className="mt-2 flex min-w-0 items-center gap-1.5 text-[13px] text-ink-500 leading-5">

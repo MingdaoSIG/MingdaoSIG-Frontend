@@ -55,6 +55,8 @@ type CommonProps = {
   skeletons?: number;
   /** Hide the SIG on the default cards (lists of one SIG). */
   hideSig?: boolean;
+  /** Mark these words on the default cards (search results). */
+  highlight?: string;
   /** Accessible name of the feed. */
   label?: string;
   className?: string;
@@ -178,6 +180,7 @@ function ThreadListView({
   endText = "沒有更多貼文了",
   skeletons = 4,
   hideSig = false,
+  highlight,
   label = "貼文列表",
   className = "",
 }: CommonProps & { query: ThreadListQuery }) {
@@ -261,6 +264,7 @@ function ThreadListView({
         post={post}
         eager={index < 2}
         hideSig={hideSig}
+        highlight={highlight}
       />
     ));
 
