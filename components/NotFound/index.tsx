@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { issueReportHref } from "@/modules/issueReports";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import styles from "./NotFound.module.scss";
@@ -9,6 +11,7 @@ export function NotFound({
   content,
   image,
   button,
+  report = true,
 }: {
   code?: {
     show?: boolean;
@@ -30,8 +33,19 @@ export function NotFound({
     message?: string;
     href?: string;
   };
+  /** A small 「回報問題」 link under the button. */
+  report?: boolean;
 }) {
   const isMobile = useIsMobile();
+  const pathname = usePathname();
+  const reportLink = report ? (
+    <Link
+      href={issueReportHref({ from: pathname })}
+      className="text-ink-500 text-sm underline-offset-2 hover:text-brand-700 hover:underline"
+    >
+      回報問題
+    </Link>
+  ) : null;
 
   const defaultCode = {
     show: true,
@@ -81,6 +95,7 @@ export function NotFound({
           {button.message}
         </Link>
       )}
+      {reportLink}
     </div>
   ) : (
     <div className={styles.notFound}>
@@ -102,6 +117,7 @@ export function NotFound({
           {button.message}
         </Link>
       )}
+      {reportLink}
     </div>
   );
 }

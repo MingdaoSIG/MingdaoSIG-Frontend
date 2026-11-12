@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { issueReportHref } from "@/modules/issueReports";
 
 // Last-resort boundary for errors in the root layout itself. It replaces
 // the whole document, so it cannot rely on the app's CSS: inline styles only.
@@ -12,8 +13,19 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [reportHref, setReportHref] = useState(
+    issueReportHref({ category: "bug", digest: error.digest }),
+  );
+
   useEffect(() => {
     console.error("App crashed:", error);
+    setReportHref(
+      issueReportHref({
+        category: "bug",
+        from: `${window.location.pathname}${window.location.search}`,
+        digest: error.digest,
+      }),
+    );
   }, [error]);
 
   const button: React.CSSProperties = {
@@ -90,8 +102,14 @@ export default function GlobalError({
               回首頁
             </a>
           </div>
+          <p style={{ marginTop: 16, fontSize: 14 }}>
+            {/* A full page load: the root layout is what failed. */}
+            <a href={reportHref} style={{ color: "#0b5a83", fontWeight: 500 }}>
+              回報這個問題
+            </a>
+          </p>
           {error.digest && (
-            <p style={{ marginTop: 16, fontSize: 12, color: "#7a8694" }}>
+            <p style={{ marginTop: 8, fontSize: 12, color: "#7a8694" }}>
               錯誤代碼：{error.digest}
             </p>
           )}
