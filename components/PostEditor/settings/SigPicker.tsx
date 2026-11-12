@@ -4,7 +4,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { BRAND_COLOR } from "@/modules/sigTheme";
 import { useSigColor } from "@/modules/sigTheme/useSigColor";
-import { type SigOption, useSigOptions } from "../shared/useSigOptions";
+import { type SigOption, useSigOptionsState } from "../shared/useSigOptions";
 
 // 「發布到」 (v4 7B): colour chips for the SIGs the user may post in, the
 // chosen one filled with its colour. With only one, it is chosen at once.
@@ -29,7 +29,8 @@ export function SigPicker({
   error?: string | null;
   mobile: boolean;
 }) {
-  const options = useSigOptions(keepSigId).filter((option) => option.allowed);
+  const state = useSigOptionsState(keepSigId);
+  const options = state.options.filter((option) => option.allowed);
   const colorOf = useSigColor();
   const labelId = useId();
   const listId = useId();
@@ -37,8 +38,9 @@ export function SigPicker({
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Only one SIG to post in: choose it.
-  const only = options.length === 1 ? options[0].id : "";
+  // Only one SIG to post in: choose it (once the list is in, and the
+  // login is known; before that 公告 alone looks like the only one).
+  const only = state.loaded && options.length === 1 ? options[0].id : "";
   useEffect(() => {
     if (only && !value) {
       onChange(only);
@@ -81,7 +83,7 @@ export function SigPicker({
       <span id={labelId} className="font-semibold text-ink-900 text-sm">
         發布到
       </span>
-      {options.length === 0 ? (
+      {state.loaded && options.length === 0 ? (
         <p className="text-ink-500 text-sm">
           你還沒有可以發文的 SIG，先到「探索」加入一個 SIG 吧。
         </p>

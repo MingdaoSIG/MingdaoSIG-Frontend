@@ -35,9 +35,18 @@ function isSig(value: unknown): value is Sig {
  * `keepSigId`: the SIG an edited post is already in, always allowed.
  */
 export function useSigOptions(keepSigId?: string): SigOption[] {
+  return useSigOptionsState(keepSigId).options;
+}
+
+/** The options, and whether the SIG list has arrived (`loaded`). */
+export function useSigOptionsState(keepSigId?: string): {
+  options: SigOption[];
+  loaded: boolean;
+} {
   const { userData, isLogin } = useUserAccount();
   const [sigs, setSigs] = useState<Sig[]>([]);
   const [announcement, setAnnouncement] = useState<Sig | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,11 +68,12 @@ export function useSigOptions(keepSigId?: string): SigOption[] {
       if (announcementSig.ok && isSig(announcementSig.data)) {
         setAnnouncement(announcementSig.data);
       }
+      setLoaded(true);
     })();
     return () => controller.abort();
   }, []);
 
-  return useMemo(() => {
+  const options = useMemo(() => {
     const listed = sigs.filter((sig) => sig._id !== announcementSigId);
     const userId = userData?._id;
     if (!isLogin || !userId) {
@@ -101,4 +111,5 @@ export function useSigOptions(keepSigId?: string): SigOption[] {
     // Postable first; Array.prototype.sort is stable, so the API order stays.
     return options.sort((a, b) => Number(b.allowed) - Number(a.allowed));
   }, [sigs, announcement, userData, isLogin, keepSigId]);
+  return { options, loaded };
 }
