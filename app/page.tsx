@@ -1,15 +1,13 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import Swal from "sweetalert2";
+import { PullToRefresh } from "@/components/mobile/PullToRefresh";
 import useIsMobile from "@/utils/useIsMobile";
-import Information from "./(home)/desktop/Information";
-import ThreadsListDesktop from "./(home)/desktop/ThreadsList";
-
-// Mobile Components
-import ThreadsListMobile from "./(home)/mobile/ThreadsList";
-// Desktop Components
+import { HomeFeed } from "./(home)/HomeFeed";
+import { HomeRail } from "./(home)/HomeRail";
 import SplitBlock from "./(Layout)/splitBlock";
 
 export default function Home() {
@@ -25,6 +23,7 @@ function HomeContent() {
   const isMobile = useIsMobile();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const error = searchParams.get("error");
 
   useEffect(() => {
@@ -47,13 +46,45 @@ function HomeContent() {
     }
   }, [error, router]);
 
+  const refresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["homeFeed"] }),
+      queryClient.invalidateQueries({ queryKey: ["hotPost"] }),
+      queryClient.invalidateQueries({ queryKey: ["pinnedPost"] }),
+    ]);
+  }, [queryClient]);
+
+  // The tab bar's 首頁 on the home page: back to the top.
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    const onTop = () => {
+      document
+        .querySelector("[data-home-feed]")
+        ?.closest(".overflow-y-auto")
+        ?.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("mobile:scroll-to-top", onTop);
+    return () => window.removeEventListener("mobile:scroll-to-top", onTop);
+  }, [isMobile]);
+
   if (isMobile) {
-    return <ThreadsListMobile />;
+    return (
+      <PullToRefresh
+        onRefresh={refresh}
+        className="scrollbar-hide relative mx-auto h-full w-full overflow-y-auto px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4.5rem+env(safe-area-inset-bottom))]"
+      >
+        <div data-home-feed>
+          <HomeFeed mobile />
+        </div>
+      </PullToRefresh>
+    );
   }
   return (
     <SplitBlock>
-      <ThreadsListDesktop />
-      <Information />
+      <HomeFeed />
+      <HomeRail />
     </SplitBlock>
   );
 }
