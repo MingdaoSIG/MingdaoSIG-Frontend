@@ -90,6 +90,13 @@ Defined in `modules/customStatusCode/index.ts`:
    `GET /user/me`.
 4. On a 401 / 4013 the provider re-exchanges once; only if that fails does it
    sign out (without reloading the page).
+5. A `/?session=…` link can be crafted by anyone, so the provider first
+   resolves it to its account with `POST /login`, then: the same account
+   continues silently; another account than the signed-in one asks
+   (切換 / 取消, and 取消 keeps the current login); with nobody signed in it
+   signs in and shows 「已登入：名字（@customId）」. Either way `session` is
+   removed from the address bar (`history.replaceState`), so a reload or a
+   copied URL does not apply it again.
 5. Components read the state with `useUserAccount()`
    (`{ isLogin, token, userData, isLoading, login, logout }`).
 6. When a logged-out visitor tries something that needs an account, say

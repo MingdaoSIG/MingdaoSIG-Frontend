@@ -45,7 +45,11 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
 - Route: `app/admin/`
 - Sub-pages for managing SIG leaders (`sig-leader/`), advisors (`sig-advisor/`), members (`sig-members/`), posts (`post/`), and post queries (`post-query/`)
-- Requires elevated permissions
+- Requires elevated permissions (`permission === 2`); pages fetch nothing
+  until that is known
+- `post/` pages through `GET /post/list/admin` (50 per page, newest first,
+  title search) and `post-query/` calls `GET /post/list/range`; both send
+  the admin JWT
 
 ## Data & Info Pages
 
