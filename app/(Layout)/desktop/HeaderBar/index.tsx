@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import HeaderSearch from "./HeaderSearch";
 import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
@@ -21,7 +22,10 @@ const HeaderBar = () => {
             priority
           />
         </Link>
-        <UserLogin />
+        <div className="flex items-center gap-3">
+          <HeaderSearch />
+          <UserLogin />
+        </div>
       </nav>
     </header>
   );
