@@ -41,12 +41,12 @@ export default function ReaderByline({ post }: { post: TThread }) {
           className="reader-byline-avatar"
         />
       )}
-      {user && (
+      {user?.customId && (
         <Link href={`/@${user.customId}`} className="reader-byline-author">
           {user.name}
         </Link>
       )}
-      {sig && (
+      {sig?.customId && (
         <Link
           href={`/@${sig.customId}`}
           className="sig-text font-semibold"

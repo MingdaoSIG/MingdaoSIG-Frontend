@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { BottomSheet } from "@/components/mobile/BottomSheet";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
+import { apiRequest } from "@/modules/api/client";
 // Modules
 import maxMatch from "@/modules/maxMatch";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
+  // No link until the SIG has an id to link to (never "/@undefined").
+  if (!child.customId) {
+    return null;
+  }
   return (
     <Link
       className="relative flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface p-2 transition duration-150 active:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
@@ -20,7 +23,7 @@ const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
       }}
       href={`/@${child.customId}`}
     >
-      {maxMatch(child.name).map((name) => (
+      {maxMatch(child.name ?? "").map((name) => (
         <p
           key={name}
           className="text-center font-semibold text-ink-800 text-xs leading-4"
@@ -40,22 +43,29 @@ type SigListProps = {
 const SigList = ({ open, onClose }: SigListProps) => {
   const [sigs, setSigs] = useState<Sig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
       return;
     }
+    const controller = new AbortController();
     (async () => {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/sig/list`, { method: "GET" })
-        ).json();
-        setSigs(res.data);
-        setIsLoading(false);
-      } catch (_error) {
-        setIsLoading(false);
+      const result = await apiRequest<Sig[]>("/sig/list", {
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) {
+        return;
       }
+      if (result.ok && Array.isArray(result.data)) {
+        setSigs(result.data.filter((sig) => sig && typeof sig === "object"));
+        setError(null);
+      } else {
+        setError(result.ok ? "SIG 列表載入失敗，請稍後再試" : result.message);
+      }
+      setIsLoading(false);
     })();
+    return () => controller.abort();
   }, [open]);
 
   return (
@@ -69,6 +79,10 @@ const SigList = ({ open, onClose }: SigListProps) => {
         <div className="flex h-40 items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-line-strong border-t-brand-700" />
         </div>
+      ) : error ? (
+        <p role="alert" className="py-10 text-center text-ink-500 text-sm">
+          {error}
+        </p>
       ) : (
         <>
           <div className="grid grid-cols-3 place-items-center gap-4">

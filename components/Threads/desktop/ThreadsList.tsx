@@ -11,6 +11,7 @@ import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
+import { getErrorMessage } from "@/modules/api/client";
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
 import {
@@ -19,6 +20,24 @@ import {
 } from "../configs/announcement";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+
+/** Populated object, or null for a missing / unpopulated reference. */
+function asObject<T>(value: unknown): T | null {
+  return typeof value === "object" && value !== null ? (value as T) : null;
+}
+
+/** Only well-formed posts are rendered; anything else is skipped. */
+function isThread(value: unknown): value is TThread {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as TThread)._id === "string"
+  );
+}
+
+function sigIdOf(thread: TThread) {
+  return asObject<Sig>(thread.sig)?._id;
+}
 
 function fixCoverUrl(cover: string) {
   if (cover.startsWith("http://") || cover.startsWith("https://")) {
@@ -43,11 +62,15 @@ const Thread = ({
   threadData: TThread;
   eager?: boolean;
 }) => {
-  const user = threadData.user as unknown as User;
-  const sig = threadData.sig as unknown as Sig;
-  const isAnnouncement = sig._id === announcementSigId;
+  const user = asObject<User>(threadData.user);
+  const sig = asObject<Sig>(threadData.sig);
+  const isAnnouncement = sig?._id === announcementSigId;
   const showMeta = Boolean(user) && !isAnnouncement;
-  const showCover = !isAnnouncement && Boolean(threadData.cover);
+  const showCover =
+    !isAnnouncement &&
+    typeof threadData.cover === "string" &&
+    threadData.cover !== "";
+  const hashtags = Array.isArray(threadData.hashtag) ? threadData.hashtag : [];
 
   return (
     <Link
@@ -65,10 +88,10 @@ const Thread = ({
               <span
                 className="sig-text shrink-0 font-semibold"
                 style={{
-                  ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""],
+                  ["--sig-color" as string]: sigDefaultColors[sig?._id ?? ""],
                 }}
               >
-                {sig.name}
+                {sig?.name}
               </span>
             </p>
             <div className="flex shrink-0 items-center gap-3">
@@ -105,28 +128,26 @@ const Thread = ({
             isAnnouncement ? "line-clamp-4" : "line-clamp-2"
           }`}
         >
-          {markdownToPlainText(threadData.content)}
+          {markdownToPlainText(threadData.content ?? "")}
         </p>
 
-        {threadData.hashtag &&
-          threadData.hashtag.length > 0 &&
-          !isAnnouncement && (
-            <div className="mt-auto flex flex-wrap gap-2 pt-2">
-              {threadData.hashtag.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  className="whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+        {hashtags.length > 0 && !isAnnouncement && (
+          <div className="mt-auto flex flex-wrap gap-2 pt-2">
+            {hashtags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {!isAnnouncement && (
         <div className="relative hidden w-1/4 shrink-0 bg-field md:block">
-          {showCover && (
+          {showCover && threadData.cover && (
             <Image
               src={fixCoverUrl(threadData.cover)}
               alt=""
@@ -160,11 +181,38 @@ const ThreadSkeleton = () => {
   );
 };
 
+/** Shown when a post list could not be loaded. */
+export const ThreadsListError = ({
+  error,
+  onRetry,
+}: {
+  error: unknown;
+  onRetry?: () => void;
+}) => (
+  <div
+    role="alert"
+    className="flex h-64 flex-col items-center justify-center gap-3 text-ink-500"
+  >
+    <p>{getErrorMessage(error)}</p>
+    {onRetry && (
+      <button
+        type="button"
+        className="cursor-pointer rounded-control border border-line px-4 py-2 text-ink-800 text-sm hover:bg-field"
+        onClick={() => onRetry()}
+      >
+        重試
+      </button>
+    )}
+  </div>
+);
+
 export const InfinityThreadsList = ({
   data,
   fetchNextPage,
   isFetchingNextPage,
   announcementData,
+  error,
+  onRetry,
 }: {
   data: InfiniteData<TThread[], unknown> | undefined;
   fetchNextPage: (
@@ -174,8 +222,16 @@ export const InfinityThreadsList = ({
   >;
   isFetchingNextPage: boolean;
   announcementData?: InfiniteData<TThread[], unknown>;
+  /** Error from the list query, if the last fetch failed. */
+  error?: Error | null;
+  onRetry?: () => void;
 }) => {
   const sentinel = useRef<HTMLDivElement>(null);
+  const pages = (data?.pages ?? []).map((page) =>
+    Array.isArray(page) ? page.filter(isThread) : [],
+  );
+  const hasPosts = pages.some((page) => page.length > 0);
+  const failed = Boolean(error);
 
   // Load the next page when the end of the list comes within 600px of the
   // scroll container: the SplitBlock column, or the viewport elsewhere.
@@ -186,7 +242,8 @@ export const InfinityThreadsList = ({
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
+        // Stop after a failed page: the user retries with the button.
+        if (entries[0]?.isIntersecting && !isFetchingNextPage && !failed) {
           fetchNextPage();
         }
       },
@@ -197,9 +254,12 @@ export const InfinityThreadsList = ({
     );
     observer.observe(target);
     return () => observer.disconnect();
-  }, [fetchNextPage, isFetchingNextPage]);
+  }, [fetchNextPage, isFetchingNextPage, failed, hasPosts]);
 
-  if (!data || data.pages[0].length < 1) {
+  if (!hasPosts) {
+    if (failed) {
+      return <ThreadsListError error={error} onRetry={onRetry} />;
+    }
     return (
       <div className="flex h-64 items-center justify-center text-ink-500 text-lg">
         No Post Yet
@@ -207,7 +267,8 @@ export const InfinityThreadsList = ({
     );
   }
 
-  const announcement = announcementData?.pages[0]?.[0];
+  const firstAnnouncement = announcementData?.pages?.[0]?.[0];
+  const announcement = isThread(firstAnnouncement) ? firstAnnouncement : null;
   const showAnnouncement =
     announcement &&
     Math.floor(
@@ -220,12 +281,11 @@ export const InfinityThreadsList = ({
       {showAnnouncement && (
         <Thread threadData={announcement} key={announcement._id} />
       )}
-      {data.pages.map((page: TThread[], pageIndex: number) => (
+      {pages.map((page: TThread[], pageIndex: number) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
         <Fragment key={`page-${pageIndex}`}>
           {page.map((item, itemIndex) => {
-            const sig = item.sig as unknown as Sig;
-            if (sig._id === announcementSigId) {
+            if (sigIdOf(item) === announcementSigId) {
               return null;
             }
             return (
@@ -239,6 +299,21 @@ export const InfinityThreadsList = ({
         </Fragment>
       ))}
       {isFetchingNextPage && <ThreadSkeleton />}
+      {failed && !isFetchingNextPage && (
+        <div
+          role="alert"
+          className="flex items-center justify-center gap-3 py-4 text-ink-500 text-sm"
+        >
+          <span>{getErrorMessage(error)}</span>
+          <button
+            type="button"
+            className="cursor-pointer rounded-control border border-line px-3 py-1.5 text-ink-800 hover:bg-field"
+            onClick={() => fetchNextPage()}
+          >
+            重試
+          </button>
+        </div>
+      )}
       <div ref={sentinel} aria-hidden className="h-px w-full" />
     </div>
   );

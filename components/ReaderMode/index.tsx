@@ -2,6 +2,7 @@
 
 import { BookOpen, Minus, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { storageGetJSON, storageSet } from "@/utils/safeStorage";
 
 // Reader mode for the desktop post page (docs/redesign/redesign-2026.md §6).
 // State is reflected onto <html data-reader*> so pure CSS can hide the
@@ -29,16 +30,13 @@ export default function ReaderMode({ title }: { title: string }) {
 
   // Restore remembered preferences
   useEffect(() => {
-    try {
-      const prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-      if (SIZES.includes(prefs.size)) {
-        setSize(prefs.size);
-      }
-      if (prefs.tone === "paper" || prefs.tone === "sepia") {
-        setTone(prefs.tone);
-      }
-    } catch {
-      // Malformed preferences: fall back to defaults
+    // Missing, malformed or blocked storage: keep the defaults
+    const prefs = storageGetJSON<{ size?: Size; tone?: Tone }>(STORAGE_KEY);
+    if (prefs?.size && SIZES.includes(prefs.size)) {
+      setSize(prefs.size);
+    }
+    if (prefs?.tone === "paper" || prefs?.tone === "sepia") {
+      setTone(prefs.tone);
     }
   }, []);
 
@@ -52,7 +50,7 @@ export default function ReaderMode({ title }: { title: string }) {
     root.dataset.reader = "on";
     root.dataset.readerSize = size;
     root.dataset.readerTone = tone;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ size, tone }));
+    storageSet(STORAGE_KEY, JSON.stringify({ size, tone }));
   }, [active, size, tone]);
 
   // Never leak reader state to other pages

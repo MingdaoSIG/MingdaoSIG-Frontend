@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
 import type { TThread } from "@/interfaces/Thread";
@@ -11,7 +12,7 @@ type Props = {
 };
 
 export default function PostBody({ post, isAnnouncement }: Props) {
-  const hashtags = post.hashtag ?? [];
+  const hashtags = Array.isArray(post.hashtag) ? post.hashtag : [];
   const showHashtags = !isAnnouncement && hashtags.length > 0;
   const rootRef = useRef<HTMLDivElement>(null);
   useDuplicateTitle(rootRef, post.title);
@@ -37,7 +38,9 @@ export default function PostBody({ post, isAnnouncement }: Props) {
         </div>
       )}
       <div className="my-1 h-px w-full bg-line" />
-      <MarkdownView markdown={post.content} />
+      <SectionErrorBoundary label="文章內容">
+        <MarkdownView markdown={post.content ?? ""} />
+      </SectionErrorBoundary>
     </article>
   );
 }
