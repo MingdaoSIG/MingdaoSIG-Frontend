@@ -1,6 +1,7 @@
 import {
   Download,
   FileText,
+  Flag,
   History,
   Inbox,
   LayoutDashboard,
@@ -19,6 +20,7 @@ export type AdminSectionId =
   | "overview"
   | "posts"
   | "comments"
+  | "reports"
   | "sigs"
   | "join-requests"
   | "users"
@@ -57,6 +59,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/comments",
     group: "內容",
     icon: MessageSquare,
+    roles: ["admin"],
+  },
+  {
+    id: "reports",
+    label: "檢舉",
+    href: "/admin/reports",
+    group: "內容",
+    icon: Flag,
     roles: ["admin"],
   },
   {
