@@ -136,7 +136,7 @@ export function UserPanel({
             </p>
           )}
         </div>
-        {sigs.length > 0 && (
+        {!compact && sigs.length > 0 && (
           <ul aria-label="SIG" className="flex flex-wrap gap-1.5">
             {sigs.map((sig) => {
               const color = resolveSigColor(sig) ?? BRAND_COLOR;
@@ -159,7 +159,7 @@ export function UserPanel({
             })}
           </ul>
         )}
-        {editing ? (
+        {compact ? null : editing ? (
           <div className="flex flex-col gap-2">
             <label
               htmlFor={bioId}
@@ -209,7 +209,7 @@ export function UserPanel({
             </p>
           )
         )}
-        {totals.data && (
+        {!compact && totals.data && (
           <dl className="grid grid-cols-2 gap-2">
             <div className="rounded-control bg-field px-3 py-2">
               <dt className="text-ink-500 text-xs">貼文</dt>
@@ -226,7 +226,7 @@ export function UserPanel({
             </div>
           </dl>
         )}
-        {own && !editing && (
+        {own && !editing && !compact && (
           <div className="flex gap-2">
             <button
               type="button"

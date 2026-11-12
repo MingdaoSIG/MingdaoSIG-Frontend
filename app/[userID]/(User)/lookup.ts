@@ -30,19 +30,17 @@ function isAccount(value: unknown): value is User | Sig {
   );
 }
 
-async function sigDirectory(client: QueryClient): Promise<Sig[]> {
-  try {
-    return await client.fetchQuery<Sig[]>({
-      queryKey: SIG_LIST_QUERY_KEY,
-      queryFn: async ({ signal }) => {
-        const result = await apiRequest<Sig[]>("/sig/list", { signal });
-        return result.ok && Array.isArray(result.data) ? result.data : [];
-      },
-      staleTime: 60 * 1000,
-    });
-  } catch {
-    return [];
+/** The SIG list from the shared cache, or asked for once. */
+async function sigDirectory(
+  client: QueryClient,
+  signal: AbortSignal,
+): Promise<Sig[]> {
+  const cached = client.getQueryData<Sig[]>(SIG_LIST_QUERY_KEY);
+  if (Array.isArray(cached)) {
+    return cached;
   }
+  const result = await apiRequest<Sig[]>("/sig/list", { signal });
+  return result.ok && Array.isArray(result.data) ? result.data : [];
 }
 
 /** Which kind to ask for first, from the SIG list. */
@@ -61,7 +59,7 @@ export async function lookupAccount(
   client: QueryClient,
   signal: AbortSignal,
 ): Promise<AccountLookup> {
-  const first = guessKind(accountId, await sigDirectory(client));
+  const first = guessKind(accountId, await sigDirectory(client, signal));
   const order: AccountKind[] =
     first === "sig" ? ["sig", "user"] : ["user", "sig"];
   const currentId = accountId.replace(/^@/, "");

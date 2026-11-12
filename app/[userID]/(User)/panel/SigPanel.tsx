@@ -264,6 +264,7 @@ export function SigPanel({
   onTab,
   follow,
   compact = false,
+  cardOnly = false,
 }: {
   sig: Sig;
   setSig: (sig: Sig) => void;
@@ -271,8 +272,10 @@ export function SigPanel({
   onTab: (tab: SigTab) => void;
   /** 追蹤 / 已追蹤 (FE-U1's useFollowSig), when available. */
   follow?: ReactNode;
-  /** Phones: the identity card only (the rest is in the tabs). */
+  /** The short strip (phones, once the card has scrolled away). */
   compact?: boolean;
+  /** Phones: the identity card only; the rest is in the tabs. */
+  cardOnly?: boolean;
 }) {
   const colorOf = useSigColor();
   const color = colorOf(sig, BRAND_COLOR) ?? BRAND_COLOR;
@@ -311,7 +314,7 @@ export function SigPanel({
   const identity = (
     <section
       aria-label="SIG 資訊"
-      className="overflow-hidden rounded-card border border-line bg-surface shadow-card"
+      className="rounded-card border border-line bg-surface shadow-card"
       style={{ borderTop: `3px solid ${color}` }}
       data-sig-panel
     >
@@ -340,7 +343,7 @@ export function SigPanel({
             {counts.length > 0 && <span> · {counts.join(" · ")}</span>}
           </p>
         </div>
-        {sig.description && (
+        {!compact && sig.description && (
           <p className="line-clamp-2 whitespace-pre-line break-words text-ink-700 text-sm leading-6">
             {sig.description}
           </p>
@@ -379,7 +382,17 @@ export function SigPanel({
     <>
       <div className="flex min-w-0 flex-col gap-4">
         {identity}
-        {!compact && !isAnnouncement && (
+        {cardOnly && !compact && !isAnnouncement && !member && (
+          <RecruitingStatus
+            recruiting={
+              joinSig.recruiting
+                ? sig.recruiting
+                : { ...sig.recruiting, open: false }
+            }
+            className="-mt-2"
+          />
+        )}
+        {!compact && !cardOnly && !isAnnouncement && (
           <>
             {!member && (
               <RecruitingStatus

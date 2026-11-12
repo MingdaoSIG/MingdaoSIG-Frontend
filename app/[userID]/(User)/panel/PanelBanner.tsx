@@ -30,7 +30,7 @@ export function PanelBanner({
   const size = strip ? 44 : 96;
   return (
     <div
-      className={`relative flex-none bg-center bg-cover ${
+      className={`relative flex-none rounded-t-[calc(var(--radius-card)-1px)] bg-center bg-cover ${
         strip ? "h-12" : "aspect-video"
       }`}
       style={{ backgroundImage: "url(/images/banner.svg)" }}

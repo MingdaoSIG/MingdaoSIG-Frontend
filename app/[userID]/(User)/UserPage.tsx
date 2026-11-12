@@ -141,14 +141,17 @@ function useAccountView({
   dataType,
   setData,
   mobile,
-  compact,
 }: {
   data: User | Sig;
   dataType: AccountKind;
   setData: (data: User | Sig) => void;
   mobile: boolean;
-  compact: boolean;
-}): { panel: ReactNode; tabs: ReactNode; content: ReactNode } {
+}): {
+  /** `compact`: the strip; `mobile`: the identity card only. */
+  panel: (compact?: boolean, mobile?: boolean) => ReactNode;
+  tabs: ReactNode;
+  content: ReactNode;
+} {
   const { userData } = useUserAccount();
   const colorOf = useSigColor();
   const isSig = dataType === "sig";
@@ -170,12 +173,13 @@ function useAccountView({
       rememberTab(tab);
     };
     return {
-      panel: (
+      panel: (compact = false, card = false) => (
         <SigPanel
           sig={sig}
           setSig={setData}
           onTab={changeTab}
           compact={compact}
+          cardOnly={card}
         />
       ),
       // The announcement SIG is only a channel: its posts, nothing else.
@@ -196,7 +200,7 @@ function useAccountView({
   const user = data as User;
   const current = profileTabs.includes(profileTab) ? profileTab : "posts";
   return {
-    panel: (
+    panel: (compact = false) => (
       <UserPanel user={user} setUser={setData} own={own} compact={compact} />
     ),
     tabs:
@@ -222,7 +226,7 @@ function DesktopView(props: {
   dataType: AccountKind;
   setData: (data: User | Sig) => void;
 }) {
-  const view = useAccountView({ ...props, mobile: false, compact: false });
+  const view = useAccountView({ ...props, mobile: false });
   return (
     <div className="mx-auto grid w-[min(100%-3rem,78rem)] grid-cols-[minmax(0,1fr)_20rem] items-start justify-center gap-8 min-[1280px]:grid-cols-[minmax(0,52rem)_23rem]">
       <div className="flex min-w-0 flex-col gap-4" data-account-main>
@@ -237,7 +241,7 @@ function DesktopView(props: {
         className="custom-scrollbar sticky top-[var(--shell-top,5.5rem)] max-h-[calc(100dvh-var(--shell-top,5.5rem)-1.5rem)] min-w-0 overflow-y-auto overflow-x-hidden"
         data-account-panel
       >
-        {view.panel}
+        {view.panel()}
       </aside>
     </div>
   );
@@ -248,21 +252,23 @@ function MobileView(props: {
   dataType: AccountKind;
   setData: (data: User | Sig) => void;
 }) {
-  // The card shrinks to a strip once the list is scrolled, and comes back
-  // at the top.
+  // Once the card has scrolled away, a short version (banner strip, name,
+  // the main action) stays at the top of the list.
   const [collapsed, setCollapsed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const view = useAccountView({ ...props, mobile: true, compact: collapsed });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const view = useAccountView({ ...props, mobile: true });
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) {
+    const card = cardRef.current;
+    if (!card) {
       return;
     }
-    const onScroll = () => {
-      setCollapsed((was) => (was ? el.scrollTop > 8 : el.scrollTop > 48));
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
+    const observer = new IntersectionObserver(
+      ([entry]) => setCollapsed(!entry.isIntersecting),
+      { root: scrollRef.current, rootMargin: "-40% 0px 0px 0px" },
+    );
+    observer.observe(card);
+    return () => observer.disconnect();
   }, []);
   return (
     <div className="flex h-full flex-col px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]">
@@ -271,17 +277,22 @@ function MobileView(props: {
         className="scrollbar-hide flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-4"
         data-account-scroll
       >
-        <div
-          className={`z-10 shrink-0 ${collapsed ? "sticky top-0" : ""}`}
-          data-account-card={collapsed ? "collapsed" : "open"}
-        >
-          {view.panel}
-        </div>
-        {view.tabs && (
-          <div className={`shrink-0 bg-canvas ${collapsed ? "" : ""}`}>
-            {view.tabs}
+        {/* Takes no room; its strip covers the top of the list when shown. */}
+        <div className="sticky top-0 z-20 h-0 shrink-0">
+          <div
+            inert={!collapsed}
+            className={`transition-opacity duration-200 ${
+              collapsed ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            data-account-card={collapsed ? "collapsed" : "hidden"}
+          >
+            {view.panel(true, true)}
           </div>
-        )}
+        </div>
+        <div ref={cardRef} className="shrink-0" data-account-card="open">
+          {view.panel(false, true)}
+        </div>
+        {view.tabs && <div className="shrink-0">{view.tabs}</div>}
         <SectionErrorBoundary label="貼文列表">
           {view.content}
         </SectionErrorBoundary>
