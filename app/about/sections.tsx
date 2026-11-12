@@ -184,7 +184,10 @@ export function StatusPanel() {
   };
   const version = (key: "frontend" | "backend") => {
     const value = ping?.[key]?.currentVersion;
-    return value ? `v${value}` : ping ? "未知" : "載入中…";
+    if (value && value !== "N/A") {
+      return `v${value}`;
+    }
+    return ping ? "未知" : "載入中…";
   };
 
   return (
