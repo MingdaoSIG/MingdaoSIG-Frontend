@@ -7,6 +7,7 @@ import {
   History,
   Inbox,
   LayoutDashboard,
+  LifeBuoy,
   ListFilter,
   LogIn,
   type LucideIcon,
@@ -38,7 +39,8 @@ export type AdminSectionId =
   | "broadcast"
   | "exports"
   | "audit"
-  | "logins";
+  | "logins"
+  | "issue-reports";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -170,6 +172,15 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/logins",
     group: "其他",
     icon: LogIn,
+    roles: ["admin"],
+  },
+  {
+    // 問題回報 from /report (contract v4 §7).
+    id: "issue-reports",
+    label: "問題回報",
+    href: "/admin/issue-reports",
+    group: "其他",
+    icon: LifeBuoy,
     roles: ["admin"],
   },
 ];
