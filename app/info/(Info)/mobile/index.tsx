@@ -145,32 +145,26 @@ export default function Mobile() {
         </div>
         <div className={styles.content}>
           <div>
-            {data.map((item, index) => {
-              return (
-                <Fragment key={item.name}>
-                  <h1 className={index === 0 ? styles.links : styles.links2}>
-                    {item.name}
-                  </h1>
-                  {item.children.map((child, _childIndex) => {
-                    return (
-                      <Fragment key={child.name}>
-                        <Link
-                          href={child.url}
-                          target={
-                            child.url.includes("http") ? "_blank" : "_self"
-                          }
-                          key={child.name}
-                        >
-                          {child.name}
-                        </Link>
-                        <br />
-                      </Fragment>
-                    );
-                  })}
-                </Fragment>
-              );
-            })}
-            <h1 className={styles.links2}>運行狀態</h1>
+            {data.map((item, index) => (
+              <Fragment key={item.name}>
+                <h2 className={index === 0 ? styles.links : styles.links2}>
+                  {item.name}
+                </h2>
+                <ul className={styles.linkList}>
+                  {item.children.map((child) => (
+                    <li key={child.name}>
+                      <Link
+                        href={child.url}
+                        target={child.url.includes("http") ? "_blank" : "_self"}
+                      >
+                        {child.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            ))}
+            <h2 className={styles.links2}>運行狀態</h2>
             {loading ? (
               <p>載入中...</p>
             ) : (
