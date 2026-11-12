@@ -366,7 +366,8 @@ Contract: `design/api-contract-v4.md` §2.
   managers); its height is its own aspect ratio, never the column's.
 - SIG page (`panel/SigPanel.tsx`, `panel/SigTabs.tsx`): name, @id, member
   and follower counts, the description; then by viewer — not a member:
-  the recruiting card with 申請加入 (`JoinSigDialog`), 即將舉行,
+  申請加入 (`JoinSigDialog`) and 追蹤 / 已追蹤 (FE-U1's `useFollowSig`; the
+  page's follower count follows the answer), the recruiting card, 即將舉行,
   精選成果, 幹部與老師; a member: 下一個活動 with RSVP, and 通知設定 /
   退出 SIG behind ⋯; a manager: 「管理這個 SIG」 (`/admin/sigs/:id`). The SIG
   colour marks the panel's top edge, the join button and the active tab.

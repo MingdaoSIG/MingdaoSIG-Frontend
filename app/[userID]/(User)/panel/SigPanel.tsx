@@ -2,7 +2,9 @@
 
 import {
   Bell,
+  BellPlus,
   CalendarDays,
+  Check,
   LogOut,
   MoreHorizontal,
   Settings2,
@@ -24,8 +26,11 @@ import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 import { formatEventTime } from "@/modules/sigEvents";
 import { BRAND_COLOR } from "@/modules/sigTheme";
 import { useSigColor } from "@/modules/sigTheme/useSigColor";
+import { promptLogin } from "@/utils/loginPrompt";
+import { useFollowSig } from "@/utils/useFollowSig";
 import { useSigEvents } from "@/utils/useSigEvents";
 import useUser from "@/utils/useUser";
+import { useUserAccount } from "@/utils/useUserAccount";
 import { EditSigDialog } from "../components/EditSigDialog";
 import { useJoinSig } from "../useJoinSig";
 import { useLeaveSig } from "../useLeaveSig";
@@ -258,11 +263,61 @@ function UpcomingEvents({
   );
 }
 
+/**
+ * 追蹤 / 已追蹤 (contract v4 §6.1, FE-U1's useFollowSig, which also
+ * updates `followedSigs` and the SIG list). The page's own follower count
+ * follows the answer.
+ */
+function FollowButton({
+  sig,
+  onCount,
+}: {
+  sig: Sig;
+  onCount: (followers: number) => void;
+}) {
+  const { isLogin, isLoading, login } = useUserAccount();
+  const follow = useFollowSig();
+  const following = isLogin && follow.isFollowing(sig._id);
+  const busy = follow.busy === sig._id;
+  return (
+    <button
+      type="button"
+      aria-pressed={following}
+      disabled={busy || isLoading}
+      onClick={async () => {
+        if (!isLogin) {
+          promptLogin(login, {
+            text: "登入後即可追蹤 SIG，新貼文會出現在首頁的「我的 SIG」。",
+          });
+          return;
+        }
+        const result = await follow.toggle(sig._id, !following);
+        if (!result.ok) {
+          notice("error", result.message);
+          return;
+        }
+        onCount(result.data.followers);
+      }}
+      className={`inline-flex h-10 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-control border px-4 font-semibold text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+        following
+          ? "border-line-strong bg-field text-ink-700 hover:bg-surface"
+          : "border-line-strong bg-surface text-ink-800 hover:bg-field"
+      }`}
+    >
+      {following ? (
+        <Check aria-hidden className="size-4" />
+      ) : (
+        <BellPlus aria-hidden className="size-4" />
+      )}
+      {following ? "已追蹤" : "追蹤"}
+    </button>
+  );
+}
+
 export function SigPanel({
   sig,
   setSig,
   onTab,
-  follow,
   compact = false,
   cardOnly = false,
 }: {
@@ -270,8 +325,6 @@ export function SigPanel({
   setSig: (sig: Sig) => void;
   /** Opens a tab of the left column (「全部活動」 → 活動). */
   onTab: (tab: SigTab) => void;
-  /** 追蹤 / 已追蹤 (FE-U1's useFollowSig), when available. */
-  follow?: ReactNode;
   /** The short strip (phones, once the card has scrolled away). */
   compact?: boolean;
   /** Phones: the identity card only; the rest is in the tabs. */
@@ -351,7 +404,14 @@ export function SigPanel({
         {!isAnnouncement && (
           <div className="flex flex-wrap items-center gap-2">
             {!member && joinButton}
-            {follow}
+            {!member && (
+              <FollowButton
+                sig={sig}
+                onCount={(followers) =>
+                  setSig({ ...sig, followerCount: followers })
+                }
+              />
+            )}
             {joinSig.isMember && !manager.canManage && (
               <>
                 <span className="flex-1 text-ink-500 text-sm">
