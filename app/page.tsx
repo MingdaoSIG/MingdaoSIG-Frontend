@@ -7,8 +7,13 @@ import Swal from "sweetalert2";
 import { PullToRefresh } from "@/components/mobile/PullToRefresh";
 import useIsMobile from "@/utils/useIsMobile";
 import { HomeFeed } from "./(home)/HomeFeed";
-import { HomeRail } from "./(home)/HomeRail";
-import SplitBlock from "./(Layout)/splitBlock";
+import {
+  HotPostsCard,
+  RecruitingCard,
+  TopTagsCard,
+  UpcomingEventsCard,
+} from "./(home)/HomeRail";
+import { PageColumns } from "./(Layout)/pageColumns";
 
 export default function Home() {
   // 這裡是「頁面層級」的 Suspense 邊界
@@ -81,10 +86,31 @@ function HomeContent() {
       </PullToRefresh>
     );
   }
+  // Layout 2A: the feed, with 近期活動 + 熱門標籤 on the left and 熱門貼文
+  // + 正在招生 on the right from 1600px; one right column before that.
   return (
-    <SplitBlock>
-      <HomeFeed />
-      <HomeRail />
-    </SplitBlock>
+    <PageColumns
+      main={<HomeFeed />}
+      wideLeft={
+        <>
+          <UpcomingEventsCard />
+          <TopTagsCard />
+        </>
+      }
+      wideRight={
+        <>
+          <HotPostsCard />
+          <RecruitingCard />
+        </>
+      }
+      oneSide={
+        <>
+          <UpcomingEventsCard />
+          <HotPostsCard />
+          <RecruitingCard />
+          <TopTagsCard />
+        </>
+      }
+    />
   );
 }

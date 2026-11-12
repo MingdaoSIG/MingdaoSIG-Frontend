@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { PageColumns } from "@/app/(Layout)/pageColumns";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { InfiniteThreadList } from "@/components/PostCard/InfiniteThreadList";
 import { PostCard } from "@/components/PostCard/PostCard";
@@ -25,6 +26,7 @@ import { SEARCH_MAX_LENGTH, searchHref } from "@/modules/search";
 import { isRecruitingNow } from "@/modules/sigRecruiting";
 import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import useIsMobile from "@/utils/useIsMobile";
+import { TWO_SIDES_MIN, useMinWidth } from "@/utils/useMinWidth";
 import {
   type SearchSig,
   type SearchTag,
@@ -193,9 +195,22 @@ function Card({
   );
 }
 
-function SigResults({ sigs, q }: { sigs: SearchSig[]; q: string }) {
+function SigResults({
+  sigs,
+  q,
+  single = false,
+}: {
+  sigs: SearchSig[];
+  q: string;
+  /** One per row (the narrow side column). */
+  single?: boolean;
+}) {
   return (
-    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <ul
+      className={`grid grid-cols-1 gap-2 ${
+        single ? "" : "sm:grid-cols-[repeat(auto-fill,minmax(16rem,1fr))]"
+      }`}
+    >
       {sigs.map((sig) => (
         <li key={sig._id} className="min-w-0">
           <Link
@@ -273,7 +288,7 @@ function TagResults({ tags, q }: { tags: SearchTag[]; q: string }) {
 
 function UserResults({ users, q }: { users: SearchUser[]; q: string }) {
   return (
-    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(16rem,1fr))]">
       {users.map((user) => (
         <li key={user._id} className="min-w-0">
           <Link
@@ -334,7 +349,11 @@ function LoadError({ error, retry }: { error: unknown; retry: () => void }) {
 const moreLink =
   "shrink-0 font-semibold text-brand-700 text-sm hover:underline";
 
-function AllResults({ q }: { q: string }) {
+/**
+ * The 全部 tab. With `split` (≥1600px) the SIG and tag matches go to the
+ * right column (AllSideResults) and this keeps posts and users.
+ */
+function AllResults({ q, split = false }: { q: string; split?: boolean }) {
   const search = useUnifiedSearch(q, 5);
   if (search.isPending) {
     return (
@@ -372,7 +391,7 @@ function AllResults({ q }: { q: string }) {
   }
   return (
     <div className="flex flex-col gap-4" data-search-all>
-      {sigs.length > 0 && (
+      {!split && sigs.length > 0 && (
         <Card
           title="SIG"
           more={
@@ -411,7 +430,7 @@ function AllResults({ q }: { q: string }) {
           ))}
         </section>
       )}
-      {tags.length > 0 && (
+      {!split && tags.length > 0 && (
         <Card
           title="標籤"
           more={
@@ -437,6 +456,50 @@ function AllResults({ q }: { q: string }) {
           }
         >
           <UserResults users={users} q={q} />
+        </Card>
+      )}
+    </div>
+  );
+}
+
+/** ≥1600px, 全部 tab: SIG and tag matches beside the posts. */
+function AllSideResults({ q }: { q: string }) {
+  const search = useUnifiedSearch(q, 5);
+  if (!search.data) {
+    return null;
+  }
+  const { sigs, tags } = search.data;
+  if (sigs.length === 0 && tags.length === 0) {
+    return null;
+  }
+  return (
+    <div className="flex flex-col gap-4" data-search-side>
+      {sigs.length > 0 && (
+        <Card
+          title="SIG"
+          more={
+            sigs.length >= 5 && (
+              <Link href={typeHref(q, "sigs")} className={moreLink}>
+                查看全部
+              </Link>
+            )
+          }
+        >
+          <SigResults sigs={sigs} q={q} single />
+        </Card>
+      )}
+      {tags.length > 0 && (
+        <Card
+          title="標籤"
+          more={
+            tags.length >= 5 && (
+              <Link href={typeHref(q, "tags")} className={moreLink}>
+                查看全部
+              </Link>
+            )
+          }
+        >
+          <TagResults tags={tags} q={q} />
         </Card>
       )}
     </div>
@@ -528,7 +591,15 @@ function PostTab({ q }: { q: string }) {
   );
 }
 
-function Results({ q, type }: { q: string; type: SearchType }) {
+function Results({
+  q,
+  type,
+  split = false,
+}: {
+  q: string;
+  type: SearchType;
+  split?: boolean;
+}) {
   if (type === "posts") {
     return <PostTab q={q} />;
   }
@@ -538,7 +609,7 @@ function Results({ q, type }: { q: string; type: SearchType }) {
   if (type === "users") {
     return <UserTab q={q} />;
   }
-  return <AllResults q={q} />;
+  return <AllResults q={q} split={split} />;
 }
 
 function StartState() {
@@ -553,6 +624,7 @@ function StartState() {
 
 export default function SearchPage() {
   const isMobile = useIsMobile();
+  const wide = useMinWidth(TWO_SIDES_MIN);
   const params = useSearchParams();
   const q = (params.get("q") ?? "").trim().slice(0, SEARCH_MAX_LENGTH);
   const requested = params.get("type");
@@ -562,11 +634,19 @@ export default function SearchPage() {
     ? { posts: overview.data.posts.total }
     : {};
 
+  // Layout 1B: readable result cards; from 1600px the 全部 tab puts SIG
+  // and tag matches in a right column.
+  const split =
+    !isMobile &&
+    wide &&
+    Boolean(q) &&
+    type === "all" &&
+    Boolean(overview.data?.sigs.length || overview.data?.tags.length);
   const body = (
     <>
       {q && <Tabs q={q} value={type} counts={counts} />}
       <SectionErrorBoundary label="搜尋結果">
-        {q ? <Results q={q} type={type} /> : <StartState />}
+        {q ? <Results q={q} type={type} split={split} /> : <StartState />}
       </SectionErrorBoundary>
     </>
   );
@@ -588,16 +668,21 @@ export default function SearchPage() {
   }
 
   return (
-    <main className="mx-auto flex w-[min(56rem,100%-4rem)] flex-col gap-4">
-      <header className="rounded-card border border-line bg-surface px-6 py-5 shadow-card">
-        <h1 className="mb-3 flex items-center gap-2 font-bold text-2xl text-ink-900 leading-[1.4]">
-          搜尋
-        </h1>
-        <SearchForm q={q} type={type} mobile={false} autoFocus={!q} />
-      </header>
-      <div data-search-results className="flex flex-col gap-4">
-        {body}
-      </div>
-    </main>
+    <PageColumns
+      wideRight={split ? <AllSideResults q={q} /> : undefined}
+      main={
+        <div className="flex flex-col gap-4">
+          <header className="rounded-card border border-line bg-surface px-6 py-5 shadow-card">
+            <h1 className="mb-3 flex items-center gap-2 font-bold text-2xl text-ink-900 leading-[1.4]">
+              搜尋
+            </h1>
+            <SearchForm q={q} type={type} mobile={false} autoFocus={!q} />
+          </header>
+          <div data-search-results className="flex flex-col gap-4">
+            {body}
+          </div>
+        </div>
+      }
+    />
   );
 }

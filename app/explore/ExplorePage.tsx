@@ -4,13 +4,16 @@ import { Check, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useState } from "react";
-import { DocPage } from "@/components/desktop/DocPage";
 import { EventMini, EventMiniSkeleton } from "@/components/Events/EventMini";
 import { PageTitle } from "@/components/mobile/PageTitle";
+import {
+  RecruitingSigCard,
+  useRecruitingSigs,
+} from "@/components/Sig/RecruitingSigs";
 import { TopTags } from "@/components/Tags/TopTags";
 import type { Sig } from "@/interfaces/Sig";
 import { SEARCH_MAX_LENGTH, searchHref } from "@/modules/search";
-import { isRecruitingNow, recruitingOf } from "@/modules/sigRecruiting";
+import { isRecruitingNow } from "@/modules/sigRecruiting";
 import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import { promptLogin } from "@/utils/loginPrompt";
 import { notice } from "@/utils/notice";
@@ -61,7 +64,7 @@ function SearchBox() {
   }
 
   return (
-    <search className="w-full shrink-0">
+    <search className="w-full max-w-[44rem] shrink-0">
       <form onSubmit={onSubmit} className="flex w-full gap-2">
         <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-control border border-line-strong bg-surface px-3 shadow-card focus-within:border-brand-700/50 focus-within:ring-2 focus-within:ring-brand-700/20">
           <Search size={18} className="shrink-0 text-ink-500" aria-hidden />
@@ -86,65 +89,32 @@ function SearchBox() {
   );
 }
 
-function deadlineText(sig: Sig) {
-  const { until } = recruitingOf(sig);
-  if (!until) {
-    return "招生中";
-  }
-  const days = Math.ceil((until.getTime() - Date.now()) / 86400000);
-  const date = `${until.getMonth() + 1}/${until.getDate()}`;
-  return days <= 3
-    ? `${date} 截止，剩 ${Math.max(days, 0)} 天`
-    : `${date} 截止`;
-}
-
-function Recruiting({ sigs }: { sigs: Sig[] }) {
-  const open = sigs.filter((sig) => sig.recruiting && isRecruitingNow(sig));
-  if (open.length === 0) {
+function Recruiting({ mobile }: { mobile: boolean }) {
+  const { sigs } = useRecruitingSigs();
+  if (sigs.length === 0) {
     return null;
   }
   return (
     <Section title="正在招生">
-      <ul className="scrollbar-hide -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
-        {open.map((sig) => {
-          const color = resolveSigColor(sig) ?? BRAND_COLOR;
-          const { message } = recruitingOf(sig);
-          return (
-            <li key={sig._id} className="w-60 shrink-0">
-              <Link
-                href={`/@${sig.customId}`}
-                title={sig.name}
-                data-recruiting-sig={sig._id}
-                className="flex h-full flex-col gap-1.5 rounded-control border border-line border-t-[4px] border-t-[var(--sig-color)] bg-surface p-3 transition-colors hover:bg-[color-mix(in_srgb,var(--sig-color)_6%,white)]"
-                style={{ ["--sig-color" as string]: color }}
-              >
-                <span className="sig-text line-clamp-2 font-bold text-[0.95rem] leading-snug [overflow-wrap:anywhere]">
-                  {sig.name}
-                </span>
-                {message && (
-                  <span className="line-clamp-2 text-ink-700 text-xs leading-5">
-                    {message}
-                  </span>
-                )}
-                <span className="mt-auto flex items-center justify-between gap-2 pt-1">
-                  <span className="font-semibold text-warm-600 text-xs">
-                    {deadlineText(sig)}
-                  </span>
-                  <span className="font-semibold text-brand-700 text-xs">
-                    申請加入 →
-                  </span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
+      <ul
+        className={
+          mobile
+            ? "scrollbar-hide -mx-1 flex gap-3 overflow-x-auto px-1 pb-1"
+            : "grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-3"
+        }
+      >
+        {sigs.map((sig) => (
+          <li key={sig._id} className={mobile ? "w-60 shrink-0" : "min-w-0"}>
+            <RecruitingSigCard sig={sig} />
+          </li>
+        ))}
       </ul>
     </Section>
   );
 }
 
 function UpcomingEvents() {
-  const events = useUpcomingEvents("all", 3);
+  const events = useUpcomingEvents("all", 4);
   const items = events.data?.items ?? [];
   return (
     <Section
@@ -165,7 +135,7 @@ function UpcomingEvents() {
       ) : items.length === 0 ? (
         <p className="text-ink-500 text-sm">接下來 60 天沒有活動</p>
       ) : (
-        <ul className="-mx-1.5 grid grid-cols-1 gap-0.5 lg:grid-cols-3">
+        <ul className="-mx-1.5 grid grid-cols-1 gap-0.5 lg:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))]">
           {items.map((item) => (
             <li key={item.event._id} className="min-w-0">
               <EventMini item={item} />
@@ -242,7 +212,10 @@ function SigGrid({ mobile }: { mobile: boolean }) {
 
   if (directory.isPending) {
     return (
-      <div aria-hidden className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div
+        aria-hidden
+        className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))]"
+      >
         {["a", "b", "c", "d"].map((key) => (
           <div
             key={key}
@@ -267,7 +240,7 @@ function SigGrid({ mobile }: { mobile: boolean }) {
     );
   }
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))]">
       {sigs.map((sig) => (
         <li key={sig._id} className="min-w-0">
           <div
@@ -312,14 +285,10 @@ function SigGrid({ mobile }: { mobile: boolean }) {
 }
 
 function Content({ mobile }: { mobile: boolean }) {
-  const directory = useSigDirectory();
-  const sigs = (directory.data ?? []).filter(
-    (sig) => sig._id !== ANNOUNCEMENT_SIG_ID && sig.customId,
-  );
   return (
     <>
       <SearchBox />
-      <Recruiting sigs={sigs} />
+      <Recruiting mobile={mobile} />
       <UpcomingEvents />
       <Section title="熱門標籤">
         <TopTags limit={16} />
@@ -345,11 +314,14 @@ export default function ExplorePage() {
     );
   }
 
+  // Layout 1B: full width from 1280px, the grids add columns as the
+  // window widens; a centred 56rem column below that.
   return (
-    <DocPage title="探索" width="narrow">
-      <div className="flex flex-col gap-4 pb-2">
-        <Content mobile={false} />
-      </div>
-    </DocPage>
+    <main className="mx-auto flex w-full max-w-[calc(56rem+3rem)] flex-col gap-4 px-6 xl:max-w-none">
+      <header className="rounded-card border border-line bg-surface px-6 py-5 shadow-card">
+        <h1 className="font-bold text-2xl text-ink-900 leading-[1.4]">探索</h1>
+      </header>
+      <Content mobile={false} />
+    </main>
   );
 }

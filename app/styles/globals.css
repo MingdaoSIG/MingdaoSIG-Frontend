@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  /* Desktop widths of the 2026 redesign (owner pick 1B, 2026-11-13):
+     xl (1280px) adds one side column, 3xl (1600px) a second one. */
+  --breakpoint-3xl: 100rem;
+
   /* 自定義顏色 */
   --color-md-light-green: #009bb0;
   --color-md-dark-green: #002024;

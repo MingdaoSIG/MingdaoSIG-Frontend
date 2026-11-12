@@ -1,16 +1,22 @@
 "use client";
 
-import { CalendarDays, Hash, Heart } from "lucide-react";
+import { CalendarDays, Hash, Heart, Megaphone } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { EventMini, EventMiniSkeleton } from "@/components/Events/EventMini";
+import {
+  RecruitingSigRow,
+  useRecruitingSigs,
+} from "@/components/Sig/RecruitingSigs";
 import { TopTags } from "@/components/Tags/TopTags";
 import { useMySigs } from "@/utils/useMySigs";
 import { useTopPost } from "@/utils/usePost";
 import { useUpcomingEvents } from "@/utils/useSiteEvents";
 
-// The home right column on desktop (decision 3A): 近期活動, 熱門標籤 and
-// 熱門貼文. The SIG tiles that used to be here live in 探索 now.
+// The home side columns on desktop (decision 3A, layout 2A): 近期活動 and
+// 熱門標籤 on the left, 熱門貼文 and 正在招生 on the right (≥1600px), or
+// all four in one right column (1280–1600px). The SIG tiles that used to
+// be on the home page live in 探索 now.
 
 function RailCard({
   icon,
@@ -37,7 +43,7 @@ function RailCard({
   );
 }
 
-function UpcomingEvents() {
+export function UpcomingEventsCard() {
   const { sigs } = useMySigs();
   // Your SIGs' events when you have SIGs, every SIG's otherwise.
   const scope = sigs.length > 0 ? "mine" : "all";
@@ -75,7 +81,7 @@ function UpcomingEvents() {
   );
 }
 
-function HotPosts() {
+export function HotPostsCard() {
   const { data, isPending, isError } = useTopPost({ pageSize: 3 });
   const posts = (data?.pages?.[0] ?? []).filter(
     (post) => typeof post?._id === "string",
@@ -119,14 +125,44 @@ function HotPosts() {
   );
 }
 
-export function HomeRail() {
+export function TopTagsCard() {
   return (
-    <div className="flex flex-col gap-4">
-      <UpcomingEvents />
-      <RailCard icon={<Hash size={16} aria-hidden />} title="熱門標籤">
-        <TopTags limit={12} />
-      </RailCard>
-      <HotPosts />
-    </div>
+    <RailCard icon={<Hash size={16} aria-hidden />} title="熱門標籤">
+      <TopTags limit={12} />
+    </RailCard>
+  );
+}
+
+export function RecruitingCard() {
+  const { sigs, isPending, isError } = useRecruitingSigs();
+  return (
+    <RailCard
+      icon={<Megaphone size={16} aria-hidden />}
+      title="正在招生"
+      action={
+        <Link
+          href="/explore"
+          className="shrink-0 font-semibold text-brand-700 text-sm hover:underline"
+        >
+          探索 SIG
+        </Link>
+      }
+    >
+      {isPending ? (
+        <EventMiniSkeleton rows={2} />
+      ) : isError ? (
+        <p className="text-ink-500 text-sm">SIG 列表載入失敗</p>
+      ) : sigs.length === 0 ? (
+        <p className="text-ink-500 text-sm">目前沒有 SIG 在招生</p>
+      ) : (
+        <ul className="-mx-1.5 flex flex-col gap-0.5">
+          {sigs.slice(0, 5).map((sig) => (
+            <li key={sig._id}>
+              <RecruitingSigRow sig={sig} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </RailCard>
   );
 }
