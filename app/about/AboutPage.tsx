@@ -134,12 +134,45 @@ export default function AboutPage() {
   const current = useCurrentSection(scroller, isMobile);
 
   // The page renders after hydration, so the browser's own jump to
-  // #section found nothing: do it once the sections exist.
+  // #section found nothing: do it once the sections exist, and keep the
+  // section in place while the parts above it (平台數據) finish loading,
+  // until the reader scrolls by themselves.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
-    if (SECTIONS.some((section) => section.id === id)) {
-      document.getElementById(id)?.scrollIntoView();
+    if (!SECTIONS.some((section) => section.id === id)) {
+      return;
     }
+    const jump = () => document.getElementById(id)?.scrollIntoView();
+    jump();
+    let active = true;
+    const stop = () => {
+      active = false;
+    };
+    const observer = new ResizeObserver(() => {
+      if (active) {
+        jump();
+      }
+    });
+    observer.observe(document.body);
+    const sections = document.querySelector("[data-about-scroll]");
+    if (sections) {
+      // Phones scroll this box, and its content grows, not the page.
+      for (const child of Array.from(sections.children)) {
+        observer.observe(child);
+      }
+    }
+    const events = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+    for (const name of events) {
+      window.addEventListener(name, stop, { once: true, passive: true });
+    }
+    const timer = window.setTimeout(stop, 3000);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(timer);
+      for (const name of events) {
+        window.removeEventListener(name, stop);
+      }
+    };
   }, []);
 
   const toc = (
