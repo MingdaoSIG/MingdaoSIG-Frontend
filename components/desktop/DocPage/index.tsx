@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 // Single-column desktop page (docs/redesign/redesign-2026.md §3): a title
-// card and the content below it, scrolling with the window like every
+// card and the content below it. It scrolls with the window, like every
 // desktop page since the owner's decision of 2026-11-13.
 
 export function DocPage({

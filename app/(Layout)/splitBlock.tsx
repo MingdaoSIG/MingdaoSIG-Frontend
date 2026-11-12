@@ -2,8 +2,9 @@ import React from "react";
 
 // Two-column desktop page (main + side column). The window scrolls (owner
 // decision 2026-11-13): the main column grows with its content, and the
-// side column sticks under the header, scrolling on its own only when it
-// is taller than the window. Reader mode turns it into one column.
+// side column sticks under the header (`--shell-top`), scrolling on its
+// own only when it is taller than the window. Reader mode turns it into
+// one column (content.css).
 const SplitBlock = ({ children }: { children: React.ReactNode }) => {
   const blocks = React.Children.toArray(children);
 
@@ -14,7 +15,7 @@ const SplitBlock = ({ children }: { children: React.ReactNode }) => {
       </div>
       <aside
         data-shell="aside"
-        className="custom-scrollbar sticky top-[calc(var(--header-h,4rem)+1.5rem)] flex max-h-[calc(100dvh-var(--header-h,4rem)-3rem)] min-h-0 flex-col overflow-y-auto"
+        className="custom-scrollbar sticky top-[var(--shell-top)] flex max-h-[calc(100dvh-var(--shell-top)-1rem)] min-h-0 flex-col self-start overflow-y-auto"
       >
         {blocks[1]}
       </aside>
