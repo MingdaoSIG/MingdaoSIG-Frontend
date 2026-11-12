@@ -16,6 +16,7 @@ import { toast } from "@/components/mobile/Toast";
 import type { User } from "@/interfaces/User";
 import { apiRequest, registerAuthHandlers } from "@/modules/api/client";
 import { CustomStatus } from "@/modules/customStatusCode";
+import { disablePush } from "@/modules/push";
 import {
   storageGet,
   storageGetJSON,
@@ -495,8 +496,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    const token = stateRef.current.token;
     generation.current++;
     pendingLink.current = null;
+    // A shared computer must not keep receiving this account's pushes.
+    if (token) {
+      void disablePush(token);
+    }
     dropSchoolSession();
     clearAccount();
     signOut();

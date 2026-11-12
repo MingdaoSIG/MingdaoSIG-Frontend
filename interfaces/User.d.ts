@@ -1,3 +1,5 @@
+import type { NotificationSettingsPatch } from "./Notification";
+
 export type Identity = "teacher" | "student" | "alumni";
 
 /*
@@ -39,6 +41,11 @@ export type User = {
   permission?: Permission; // 權限
   /** Email me when someone comments (only on /user/me and /login). */
   notifyComments?: boolean;
+  /**
+   * Push and email preferences (only on /user/me and /login). Missing
+   * keys mean the defaults; see modules/notifications/settings.
+   */
+  notificationSettings?: NotificationSettingsPatch;
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本
