@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { TeacherFeedback } from "@/components/TeacherFeedback/TeacherFeedback";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
@@ -183,6 +184,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           </div>
         </div>
       </div>
+
+      {/* Private: only the author, the SIG's 指導老師 and admins see it */}
+      <TeacherFeedback post={post} className="max-h-[55%] shrink-0" />
 
       {/* Comments: sized to content, scrolls when it runs out of room */}
       <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">
