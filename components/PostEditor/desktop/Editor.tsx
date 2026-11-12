@@ -27,6 +27,9 @@ interface Props {
   data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
+  /** Shown in the footer (「請輸入內文」 after 發布), with a red outline. */
+  error?: string;
+  errorId?: string;
   view: EditorView;
   onViewChange: (view: EditorView) => void;
 }
@@ -50,6 +53,8 @@ export default function MdEditorSync({
   token,
   view,
   onViewChange,
+  error,
+  errorId,
 }: Props) {
   const showPreview = view !== "write";
   const showSource = view !== "preview";
@@ -93,7 +98,9 @@ export default function MdEditorSync({
 
   return (
     <div
-      className={`flex min-h-0 flex-col overflow-hidden border border-line bg-surface shadow-card ${
+      className={`flex min-h-0 flex-col overflow-hidden border bg-surface shadow-card ${
+        error ? "border-danger-700" : "border-line"
+      } ${
         fullscreen ? "fixed inset-4 z-50 rounded-card" : "h-full rounded-card"
       }`}
     >
@@ -195,6 +202,15 @@ export default function MdEditorSync({
 
       {/* Footer */}
       <div className="flex shrink-0 items-center gap-4 border-line border-t px-4 py-1.5 text-ink-500 text-xs">
+        {error && (
+          <span
+            id={errorId}
+            role="alert"
+            className="font-semibold text-danger-700"
+          >
+            {error}
+          </span>
+        )}
         <span className="tabular-nums">字數 {countWords(content)}</span>
         {uploading > 0 && (
           <span className="text-brand-700">圖片上傳中（{uploading}）…</span>

@@ -18,6 +18,9 @@ interface Props {
   data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
+  /** Shown in the footer (「請輸入內文」 after 發布), with a red outline. */
+  error?: string;
+  errorId?: string;
   /** Show the rendered post instead of the source. */
   preview: boolean;
 }
@@ -42,7 +45,14 @@ const TOOLBAR = [
   "redo",
 ];
 
-const MdEditorSync = ({ data, setPostData, token, preview }: Props) => {
+const MdEditorSync = ({
+  data,
+  setPostData,
+  token,
+  preview,
+  error,
+  errorId,
+}: Props) => {
   const { hostRef, content, items, uploading, fileInputProps } =
     useMarkdownEditor({
       data,
@@ -53,7 +63,11 @@ const MdEditorSync = ({ data, setPostData, token, preview }: Props) => {
     });
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-control border border-line-strong bg-surface">
+    <div
+      className={`flex h-full min-h-0 w-full flex-col overflow-hidden rounded-control border bg-surface ${
+        error ? "border-danger-700" : "border-line-strong"
+      }`}
+    >
       <div
         hidden={preview}
         className="scrollbar-hide flex shrink-0 items-center gap-0.5 overflow-x-auto border-line border-b px-1.5 py-1"
@@ -92,6 +106,15 @@ const MdEditorSync = ({ data, setPostData, token, preview }: Props) => {
         </section>
       )}
       <div className="flex shrink-0 items-center gap-3 border-line border-t px-3 py-1.5 text-ink-500 text-xs">
+        {error && (
+          <span
+            id={errorId}
+            role="alert"
+            className="font-semibold text-danger-700"
+          >
+            {error}
+          </span>
+        )}
         <span className="tabular-nums">字數 {countWords(content)}</span>
         {uploading > 0 && (
           <span className="text-brand-700">圖片上傳中（{uploading}）…</span>

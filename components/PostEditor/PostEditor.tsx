@@ -246,6 +246,8 @@ export default function PostEditor({
           setPostData={setPostData}
           token={token}
           preview={view === "preview"}
+          error={errors.content}
+          errorId={contentErrorId}
         />
       ) : (
         <DesktopEditor
@@ -254,19 +256,11 @@ export default function PostEditor({
           token={token}
           view={view}
           onViewChange={changeView}
+          error={errors.content}
+          errorId={contentErrorId}
         />
       )}
     </EditorErrorBoundary>
-  );
-
-  const contentError = errors.content && (
-    <p
-      id={contentErrorId}
-      role="alert"
-      className="shrink-0 px-1 text-danger-700 text-sm"
-    >
-      {errors.content}
-    </p>
   );
 
   const settings = (
@@ -312,7 +306,6 @@ export default function PostEditor({
         {statusBar && <div className="shrink-0">{statusBar}</div>}
         {titleField}
         <div className="flex min-h-0 flex-1 flex-col">{editor}</div>
-        {contentError}
         <div className="flex shrink-0 items-center gap-2">
           <fieldset
             aria-label="檢視"
@@ -418,7 +411,6 @@ export default function PostEditor({
         >
           {titleField}
           <div className="min-h-0 flex-1">{editor}</div>
-          {contentError}
         </section>
         {settingsOpen && (
           <aside
