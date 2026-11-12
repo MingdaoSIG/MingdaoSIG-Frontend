@@ -14,8 +14,10 @@ import Info from "./info";
 // Styles
 import styles from "./mobile.module.scss";
 
-const LIST_HEIGHT =
-  "calc(100dvh - 21rem - env(safe-area-inset-top) - env(safe-area-inset-bottom))";
+// The list fills what the profile card leaves (the card's height depends
+// on the bio and the join button, so a fixed estimate ran under the tab
+// bar); a long card leaves it at least half a screen and the page scrolls.
+const LIST_HEIGHT = "100%";
 
 // Renders the profile the page already fetched (it used to fetch it a
 // second time and, on failure, render a post list for an empty id).
@@ -40,7 +42,7 @@ export default function ProfileMobile({
         dataType={dataType}
         setInfo={setData}
       />
-      <div className="mx-[0.5rem] overflow-y-hidden">
+      <div className="mx-[0.5rem] min-h-[50dvh] flex-1 overflow-y-hidden">
         <SectionErrorBoundary label="貼文列表">
           {isLoading || !id ? (
             <ThreadsListSkeleton repeat={6} height={LIST_HEIGHT} />

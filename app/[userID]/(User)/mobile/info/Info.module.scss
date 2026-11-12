@@ -6,6 +6,8 @@ $avatar-height: 5rem;
 $badge-height: 1rem;
 
 .info {
+  /* Never squeezed by the post list below it (the page scrolls instead) */
+  flex-shrink: 0;
   padding: 0 0 $content-padding 0;
 
   position: relative;
