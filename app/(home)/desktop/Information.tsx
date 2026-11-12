@@ -109,14 +109,16 @@ function SigCard({ sig }: { sig: Sig }) {
       className="block size-20 shrink-0 rounded-control"
       aria-label={`前往 SIG：${sig.name}`}
     >
+      {/* Words stay whole (maxMatch) but share lines: 機器人設計／與製造
+          instead of one word per line at 11px. */}
       <div
-        className="flex size-full flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[11px] text-ink-800 leading-tight transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
+        className="flex size-full flex-wrap content-center items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[13px] text-ink-800 leading-snug transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
         style={{
           ["--sig-color" as string]: sigDefaultColors[sig._id] ?? "#0b5a83",
         }}
       >
         {maxMatch(sig.name).map((name) => (
-          <span key={name} className="break-words">
+          <span key={name} className="whitespace-nowrap">
             {name}
           </span>
         ))}
