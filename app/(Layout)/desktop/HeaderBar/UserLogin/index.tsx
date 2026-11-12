@@ -1,9 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
 import Swal from "sweetalert2";
+import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
+
+const secondaryButton =
+  "flex h-10 cursor-pointer items-center rounded-control border border-line-strong bg-surface px-4 font-semibold text-brand-700 text-sm transition-colors hover:bg-field";
 
 export default function UserLogin() {
   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
+  // Admins and SIG managers (leaders, 指導老師) can open the admin panel.
+  const { canOpenAdmin, inAdmin } = useAdminChrome();
 
   if (isLoading) {
     return (
@@ -25,14 +32,16 @@ export default function UserLogin() {
   }
   return (
     <div className="flex items-center gap-2">
-      {userData && userData.permission === 2 && (
-        <button
-          type="button"
-          className="h-10 cursor-pointer rounded-control border border-line-strong bg-surface px-4 font-semibold text-brand-700 text-sm transition-colors hover:bg-field"
-          onClick={() => window.open("/admin", "_self")}
-        >
-          管理平台
-        </button>
+      {inAdmin ? (
+        <Link href="/" className={secondaryButton}>
+          回到網站
+        </Link>
+      ) : (
+        canOpenAdmin && (
+          <Link href="/admin" className={secondaryButton}>
+            管理平台
+          </Link>
+        )
       )}
       <button
         type="button"

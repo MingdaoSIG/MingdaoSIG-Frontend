@@ -1,10 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
 import Swal from "sweetalert2";
+import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 import styles from "./UserLogin.module.scss";
 
 export default function UserLogin() {
   const { isLogin, userData, isLoading, login, logout } = useUserAccount();
+  // Admins and SIG managers (leaders, 指導老師) can open the admin panel.
+  const { canOpenAdmin, inAdmin } = useAdminChrome();
 
   if (isLoading) {
     return (
@@ -30,16 +34,15 @@ export default function UserLogin() {
   }
   return (
     <div className="flex items-center justify-center">
-      {userData && userData.permission === 2 && (
-        <button
-          type="button"
+      {(inAdmin || canOpenAdmin) && (
+        <Link
+          href={inAdmin ? "/" : "/admin"}
           className={`${styles.loginUserPanelWrapper} ${styles.secondary} mr-2`}
-          onClick={() => window.open("/admin", "_self")}
         >
           <span className={styles.loginUserPanel}>
-            <span>管理平台</span>
+            <span>{inAdmin ? "回到網站" : "管理平台"}</span>
           </span>
-        </button>
+        </Link>
       )}
       <button
         type="button"
