@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 
-import { TapScale } from "@/components/mobile/TapScale";
+import { TapScaleButton } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
 import { CustomStatus } from "@/modules/customStatusCode";
 import { isSubmitEnter } from "@/utils/keyboard";
@@ -198,8 +198,8 @@ export default function CommentComposer({
             {text.length}/{COMMENT_MAX_LENGTH}
           </span>
         )}
-        <TapScale
-          onClick={handleSend}
+        <TapScaleButton
+          type="submit"
           className={
             canSend
               ? "flex size-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-brand-700 shadow-sm"
@@ -217,7 +217,7 @@ export default function CommentComposer({
           >
             <path d="m21.426 11.095-17-8A.999.999 0 0 0 3.03 4.242L4.969 12 3.03 19.758a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81zM5.481 18.197l.839-3.357L12 12 6.32 9.16l-.839-3.357L18.651 12l-13.17 6.197z" />
           </svg>
-        </TapScale>
+        </TapScaleButton>
       </form>
     </div>
   );

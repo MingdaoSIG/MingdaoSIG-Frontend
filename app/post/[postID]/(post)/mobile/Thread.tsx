@@ -63,8 +63,15 @@ export default function Thread({ post, isAnnouncement }: Props) {
     if (!hasComments || !bodyReady || !anchor) {
       return;
     }
+    // The first report is where the page opened: a short post shows its
+    // comments at once, and then the bar (讚, 收藏…) must stay.
+    let first = true;
     const observer = new IntersectionObserver(
       ([entry]) => {
+        if (first) {
+          first = false;
+          return;
+        }
         if (entry.isIntersecting) {
           setComposerOpen(true);
           return;

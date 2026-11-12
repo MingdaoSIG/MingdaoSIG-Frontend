@@ -90,6 +90,7 @@ export default function PostHeader({ post, isAnnouncement, onReport }: Props) {
       {customId ? (
         <TapScaleLink
           href={`/@${customId}`}
+          aria-label={`${user?.name || `@${customId}`} 的個人頁`}
           className="flex-shrink-0"
           whileTap={{ scale: 0.9 }}
         >
@@ -123,7 +124,7 @@ export default function PostHeader({ post, isAnnouncement, onReport }: Props) {
             <span className="inline-block h-3.5 w-24 animate-pulse rounded-chip bg-field align-middle" />
           )}
         </div>
-        <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
+        <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
           {isAnnouncement ? (
             <span className="rounded-chip bg-warm-600/10 px-1.5 py-0.5 font-semibold text-[11px] text-warm-600">
               {sigName}
@@ -131,7 +132,7 @@ export default function PostHeader({ post, isAnnouncement, onReport }: Props) {
           ) : (
             <SigChip
               sig={{ _id: sigId, name: sigName }}
-              className="!shrink !px-1.5 !text-[11px] min-w-0 truncate"
+              className="!px-1.5 !text-[11px] max-w-full truncate"
             />
           )}
           {post.pinned && (
@@ -141,15 +142,10 @@ export default function PostHeader({ post, isAnnouncement, onReport }: Props) {
           )}
           <span className="shrink-0 whitespace-nowrap text-ink-500 text-xs">
             {relativeTime(post.createdAt ?? "")}
+            {typeof post.views === "number" && (
+              <span data-views> · {formatViews(post.views)} 次瀏覽</span>
+            )}
           </span>
-          {typeof post.views === "number" && (
-            <span
-              className="shrink-0 whitespace-nowrap text-ink-500 text-xs"
-              data-views
-            >
-              · {formatViews(post.views)} 次瀏覽
-            </span>
-          )}
         </div>
       </div>
       <TapScaleButton

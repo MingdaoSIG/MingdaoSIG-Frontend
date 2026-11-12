@@ -42,7 +42,9 @@ export default function PostLayout({ post }: { post: TThread }) {
             articleRef={articleRef}
             onBodyReady={() => setBodyReady(true)}
           />
-          {!isAnnouncement && (
+          {/* After the post is in: rendered first, they jumped down when it
+              arrived (and #feedback scrolled to the wrong place). */}
+          {!isAnnouncement && bodyReady && (
             <div data-reader-hide className="flex min-w-0 flex-col gap-5">
               {/* Private: only the author, the SIG's 指導老師 and admins */}
               <TeacherFeedback post={post} />
