@@ -6,3 +6,8 @@ onlyBuiltDependencies:
 
 overrides:
   next>postcss: 8.5.30
+  # One copy only: two copies of @lezer/common make CodeMirror read
+  # node props from the wrong registry, so parsing any HTML tag throws
+  # and the post editor crashes the page.
+  '@lezer/common': ^1.5.3
+  '@lezer/highlight': ^1.2.5
