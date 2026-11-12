@@ -6,20 +6,23 @@ $avatar-height: 6.5rem;
 $avatar-border: 0.3rem;
 $badge-height: 1.3rem;
 
+// The panel takes its content's height: the page scrolls on desktop and
+// the side column is sticky, so nothing here may depend on a parent height.
 .info {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
+// The platform banner (16:9 artwork) is the panel's signature header.
 .banner {
   position: relative;
-  flex-grow: 1;
+  flex: none;
+  aspect-ratio: 16 / 9;
   background-position: center;
   background-size: cover;
 
@@ -68,7 +71,6 @@ $badge-height: 1.3rem;
 }
 
 .contentWrapper {
-  height: 70%;
   position: relative;
   padding: calc($avatar-height / 1.5) $margin $margin $margin;
 
@@ -81,7 +83,6 @@ $badge-height: 1.3rem;
 .content {
   background-color: var(--color-field);
   border-radius: var(--radius-control);
-  height: 100%;
   display: flex;
   flex-direction: column;
   padding: $content-padding $content-padding $content-padding $content-padding;
@@ -184,7 +185,6 @@ $badge-height: 1.3rem;
 }
 
 .description {
-  height: 100%;
   color: var(--color-ink-700);
   font-size: 0.95rem;
   line-height: 1.75;
@@ -203,6 +203,11 @@ $badge-height: 1.3rem;
   button:hover {
     text-decoration: underline;
   }
+}
+
+// Editing the description: a usable box now that the panel has no fixed height.
+textarea.description {
+  min-height: 8rem;
 }
 
 /* 「退出 SIG」: secondary, so it is not mistaken for the main action */
