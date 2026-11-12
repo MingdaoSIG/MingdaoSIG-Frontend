@@ -1,5 +1,30 @@
 [
   {
+    "version": "2.22.1",
+    "date": "2026-11-12",
+    "type": "fix",
+    "title": "修正發文頁當機",
+    "summary": "修正文章內容含有 HTML 標籤（例如使用底線）時，發文頁會出現錯誤畫面而無法發文的問題",
+    "changes": [
+      {
+        "type": "fix",
+        "description": "修正文章內容含有底線等 HTML 標籤時，發文與編輯頁會當機，且重新開啟仍持續當機的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正編輯器的 Markdown 語法上色失效"
+      },
+      {
+        "type": "improvement",
+        "description": "編輯器萬一發生錯誤，會自動切換成純文字模式，內容不會遺失，仍可發布"
+      },
+      {
+        "type": "improvement",
+        "description": "頁面發生錯誤時改為顯示說明與「重試」「回首頁」按鈕，不再只出現英文錯誤訊息"
+      }
+    ]
+  },
+  {
     "version": "2.22.0",
     "date": "2026-10-16",
     "type": "feature",
