@@ -16,8 +16,19 @@ function text(value: unknown) {
   return typeof value === "string" && value.trim() ? value : "—";
 }
 
+/**
+ * The Discord URL is a credential. WEBHOOK_LOGIN is server-only; the old
+ * NEXT_PUBLIC_ name still works until the deploy has moved the value.
+ * Only read here, on the server, so neither ends up in a client bundle.
+ */
+function webhookUrl() {
+  return (
+    process.env.WEBHOOK_LOGIN || process.env.NEXT_PUBLIC_WEBHOOK_LOGIN || null
+  );
+}
+
 export async function sendLoginWebhook(user: User): Promise<void> {
-  const url = process.env.NEXT_PUBLIC_WEBHOOK_LOGIN;
+  const url = webhookUrl();
   if (!url) {
     return;
   }
