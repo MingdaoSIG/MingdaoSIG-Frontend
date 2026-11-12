@@ -55,15 +55,22 @@
   word-break: auto-phrase;
 }
 
-.markdown > :first-child {
-  margin-top: 0;
-}
-
-.markdown > :last-child {
-  margin-bottom: 0;
-}
-
-.markdown :is(p, ul, ol, table, pre, blockquote, figure) {
+/*
+ * Rules that set block margins use explicit selector lists, not :is().
+ * For older browserslist targets Lightning CSS adds a
+ * `.markdown :-webkit-any(…)` fallback for :is(), which has the same
+ * specificity as `.markdown > :first-child` and, coming later, used to win:
+ * every post that starts with a heading got a ~51px gap on top. The
+ * first/last-child resets are also declared after these rules (end of this
+ * section), so they win a specificity tie either way.
+ */
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown table,
+.markdown pre,
+.markdown blockquote,
+.markdown figure {
   margin: 0 0 1.15em;
 }
 
@@ -96,7 +103,12 @@
   vertical-align: -0.1em;
 }
 
-.markdown :is(h1, h2, h3, h4, h5, h6) {
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
   margin: 2em 0 0.75em;
   color: var(--color-ink-900);
   font-weight: 700;
@@ -162,7 +174,8 @@
   margin-bottom: 0;
 }
 
-.markdown :is(img, video) {
+.markdown img,
+.markdown video {
   display: block;
   max-width: 100%;
   height: auto;
@@ -304,6 +317,15 @@
 
 .markdown .dup-title + * {
   margin-top: 0;
+}
+
+/* Keep these last in the section: see the note above the block rules. */
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
 }
 
 /* ================================================================== */
