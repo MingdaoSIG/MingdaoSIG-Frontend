@@ -41,7 +41,7 @@ function Section({
       id={id}
       aria-labelledby={`${id}-title`}
       data-about-section={id}
-      className="scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:p-6"
+      className="scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:scroll-mt-[calc(var(--header-h)+1.5rem)] lg:p-6"
     >
       <h2
         id={`${id}-title`}
@@ -85,40 +85,48 @@ function LazyDashboard({ mobile }: { mobile: boolean }) {
   );
 }
 
-/** The section in view, for the table of contents. */
-function useCurrentSection(scroller: React.RefObject<HTMLElement | null>) {
+/**
+ * The section in view, for the table of contents. Phones scroll the
+ * sections box; desktop scrolls the window.
+ */
+function useCurrentSection(
+  scroller: React.RefObject<HTMLElement | null>,
+  mobile: boolean,
+) {
   const [current, setCurrent] = useState<SectionId>("info");
   useEffect(() => {
-    const root = scroller.current;
-    if (!root) {
-      return;
-    }
+    const box = mobile ? scroller.current : null;
+    const target: HTMLElement | Window = box ?? window;
     const onScroll = () => {
-      const top = root.getBoundingClientRect().top;
+      const top = box ? box.getBoundingClientRect().top : 64;
       let found: SectionId = "info";
       for (const { id } of SECTIONS) {
         const element = document.getElementById(id);
-        if (element && element.getBoundingClientRect().top - top <= 80) {
+        if (element && element.getBoundingClientRect().top - top <= 96) {
           found = id;
         }
       }
       // The last section may be too short to reach the top.
-      if (root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
+      const atEnd = box
+        ? box.scrollTop + box.clientHeight >= box.scrollHeight - 4
+        : window.scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 4;
+      if (atEnd) {
         found = SECTIONS[SECTIONS.length - 1].id;
       }
       setCurrent(found);
     };
     onScroll();
-    root.addEventListener("scroll", onScroll, { passive: true });
-    return () => root.removeEventListener("scroll", onScroll);
-  }, [scroller]);
+    target.addEventListener("scroll", onScroll, { passive: true });
+    return () => target.removeEventListener("scroll", onScroll);
+  }, [scroller, mobile]);
   return current;
 }
 
 export default function AboutPage() {
   const isMobile = useIsMobile();
   const scroller = useRef<HTMLDivElement>(null);
-  const current = useCurrentSection(scroller);
+  const current = useCurrentSection(scroller, isMobile);
 
   // The page renders after hydration, so the browser's own jump to
   // #section found nothing: do it once the sections exist.
@@ -203,18 +211,14 @@ export default function AboutPage() {
   }
 
   return (
-    <main className="layout-doc mx-auto grid h-full min-h-0 w-[min(64rem,100%-4rem)] grid-cols-[11rem_minmax(0,1fr)] gap-6">
-      <aside className="flex flex-col gap-3">
+    <main className="layout-doc mx-auto grid w-[min(64rem,100%-4rem)] grid-cols-[11rem_minmax(0,1fr)] items-start gap-6">
+      <aside className="sticky top-[calc(var(--header-h)+1.5rem)] flex flex-col gap-3">
         <h1 className="px-3 font-bold text-2xl text-ink-900 leading-[1.4]">
           關於 MDSIG
         </h1>
         {toc}
       </aside>
-      <div
-        ref={scroller}
-        data-about-scroll
-        className="custom-scrollbar flex min-h-0 flex-col gap-4 overflow-y-auto scroll-smooth pr-1 pb-2"
-      >
+      <div data-about-scroll className="flex min-w-0 flex-col gap-4">
         {sections}
       </div>
     </main>

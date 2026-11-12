@@ -430,8 +430,8 @@ html[data-reader] .layout-split {
   margin-top: 0;
 }
 
-/* Outside reader mode the split columns and the post body scroll on their
-   own; reader mode hands scrolling back to the document. */
+/* Reader mode: no inner scrolling anywhere (the post body may still
+   have its own scroller outside reader mode). */
 html[data-reader] [data-split-main],
 html[data-reader] .post-body {
   overflow: visible;
