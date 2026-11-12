@@ -1,5 +1,38 @@
 [
   {
+    "version": "2.25.0",
+    "date": "2026-11-12",
+    "type": "improvement",
+    "title": "管理平台改善與登入安全性",
+    "summary": "貼文管理改為分頁並可搜尋，修正舊文章圖片無法顯示，並加強登入安全性",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "管理平台的貼文管理改為分頁顯示，並可用標題搜尋貼文"
+      },
+      {
+        "type": "fix",
+        "description": "修正貼文管理中的按鈕會開到不存在頁面的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正手機版管理平台頁面的返回按鈕被上方工具列遮住的問題"
+      },
+      {
+        "type": "fix",
+        "description": "修正部分舊文章的圖片無法顯示的問題"
+      },
+      {
+        "type": "security",
+        "description": "從其他地方開啟的登入連結若會切換成另一個帳號，會先詢問是否切換"
+      },
+      {
+        "type": "security",
+        "description": "加強登入驗證與管理功能的權限檢查"
+      }
+    ]
+  },
+  {
     "version": "2.24.0",
     "date": "2026-11-12",
     "type": "improvement",
