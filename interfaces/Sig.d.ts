@@ -1,3 +1,5 @@
+import type { TFeaturedPost } from "./Engagement";
+
 /** One question of a SIG's join form (contract v4 §5.6). */
 export type SigJoinQuestion = {
   label: string; // 題目（1–60 字）
@@ -33,4 +35,9 @@ export type Sig = {
   /** The join form's questions, with the defaults filled in. */
   joinQuestions?: SigJoinQuestion[];
   recruiting?: SigRecruiting;
+  /**
+   * 精選成果 (contract v4 §3.4): resolved posts from `GET /sig/:id` and
+   * `/sig/@:customId`; plain ids from `/sig/list` and `POST /sig/:id`.
+   */
+  featuredPosts?: (TFeaturedPost | string)[];
 };

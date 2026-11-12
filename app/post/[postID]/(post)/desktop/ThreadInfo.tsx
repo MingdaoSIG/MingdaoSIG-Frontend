@@ -6,6 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useReport } from "@/components/Report/ReportDialog";
 import { SeriesNav } from "@/components/Series/SeriesNav";
+import { TeacherFeedback } from "@/components/TeacherFeedback/TeacherFeedback";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
 import { CustomStatus } from "@/modules/customStatusCode";
@@ -205,6 +206,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
         variant="desktop"
         className="shrink-0"
       />
+
+      {/* Private: only the author, the SIG's 指導老師 and admins see it */}
+      <TeacherFeedback post={post} className="shrink-0" />
 
       {/* Comments: sized to content, scrolls when it runs out of room */}
       <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">

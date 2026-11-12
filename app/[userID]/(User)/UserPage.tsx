@@ -28,6 +28,7 @@ import {
   ProfileTabs,
   useProfileTabs,
 } from "./components/ProfileTabs";
+import { SigSections } from "./components/SigSections";
 import Info from "./desktop/Info";
 import ProfileMobile from "./mobile";
 
@@ -169,6 +170,7 @@ export default function UserPage({ accountId }: { accountId: string }) {
         }
         tab={tab}
         setTab={setTab}
+        sig={dataType === "sig" ? (data as Sig | null) : null}
       />
       <Info
         user={data}
@@ -187,6 +189,7 @@ function DesktopProfileMain({
   isOwn,
   tab,
   setTab,
+  sig,
 }: {
   id: string;
   dataType: "user" | "sig" | null;
@@ -194,6 +197,8 @@ function DesktopProfileMain({
   isOwn: boolean;
   tab: ProfileTab;
   setTab: (tab: ProfileTab) => void;
+  /** The SIG on a SIG page: 精選成果 and 貼文 / 活動. */
+  sig: Sig | null;
 }) {
   const tabs = useProfileTabs(dataType, id, isOwn);
   const current = tabs.includes(tab) ? tab : "posts";
@@ -215,6 +220,8 @@ function DesktopProfileMain({
           <StatsTab />
         ) : dataType === "user" ? (
           <UserInfinityThreadList id={id} />
+        ) : sig ? (
+          <SigSections sig={sig} posts={<SIGInfinityThreadList id={id} />} />
         ) : (
           <SIGInfinityThreadList id={id} />
         )}

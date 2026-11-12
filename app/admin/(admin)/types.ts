@@ -105,6 +105,8 @@ export type AdminSig = {
   /** Listed by `?archived=1`. */
   archived?: boolean;
   previousCustomIds?: string[];
+  /** A Discord webhook is set (contract v4 §3.6); never the URL itself. */
+  discordWebhookSet?: boolean;
 };
 
 export type JoinState = "pending" | "accepted" | "rejected";

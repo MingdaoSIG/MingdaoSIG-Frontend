@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 import { ProfileBadges } from "@/components/Badges/ProfileBadges";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
+import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
 import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
 import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
 import type { Sig } from "@/interfaces/Sig";
@@ -226,6 +227,8 @@ export default function Info({
             <>
               <hr className={styles.contentHR} />
               <NotificationSettingsEntry />
+              <hr className={styles.contentHR} />
+              <PortfolioEntry />
             </>
           )}
         </div>

@@ -10,6 +10,7 @@ import {
 import { ProfileBadges } from "@/components/Badges/ProfileBadges";
 import { toast } from "@/components/mobile/Toast";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
+import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
 import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
 import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
 import type { Sig } from "@/interfaces/Sig";
@@ -168,6 +169,8 @@ export default function Info({
             <>
               <hr className={styles.contentHR} />
               <NotificationSettingsEntry mobile />
+              <hr className={styles.contentHR} />
+              <PortfolioEntry mobile />
             </>
           )}
         </div>
