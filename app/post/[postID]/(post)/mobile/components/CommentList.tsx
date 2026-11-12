@@ -2,11 +2,14 @@
 
 import { MessageCircle } from "lucide-react";
 
+import type { TComments } from "@/interfaces/comments";
+
 import { CommentThread } from "../../components/CommentView";
 import type { CommentsController } from "../../components/useComments";
 
 type Props = {
   controller: CommentsController;
+  onReport?: (comment: TComments) => void;
 };
 
 function CommentSkeleton() {
@@ -25,7 +28,7 @@ function CommentSkeleton() {
   );
 }
 
-export default function CommentList({ controller }: Props) {
+export default function CommentList({ controller, onReport }: Props) {
   const { comments, isLoading, count } = controller;
   // Newest first (the backend sends them so; keep it if it ever does not).
   const sorted = comments
@@ -75,6 +78,7 @@ export default function CommentList({ controller }: Props) {
               comment={c}
               controller={controller}
               variant="mobile"
+              onReport={onReport}
             />
           ))}
         </div>
