@@ -159,126 +159,128 @@ export function PostCard({
           />
         </div>
       )}
-      <div className="flex gap-3 p-4 lg:gap-4 lg:px-5">
-        <div className="flex min-w-0 flex-1 flex-col">
-          <h2 className="flex min-w-0 items-start gap-1.5 font-semibold text-[1.0625rem] text-ink-900 leading-snug tracking-[0.01em] lg:text-lg">
-            {(pinned || announcement) && (
-              <span className="mt-0.5 flex shrink-0 gap-1">
-                {pinned && <PinnedChip />}
-                {announcement && <AnnouncementChip />}
-              </span>
-            )}
-            <Link
-              href={`/post/${post._id}`}
-              className="line-clamp-2 [overflow-wrap:anywhere] after:absolute after:inset-0 after:content-['']"
-            >
-              <Highlight text={post.title} query={highlight} />
-            </Link>
-          </h2>
-          {summary && (
-            <p
-              className={`mt-1 text-[0.9rem] text-ink-700 leading-relaxed [overflow-wrap:anywhere] ${
-                announcement ? "line-clamp-3" : "line-clamp-2"
-              }`}
-            >
-              <Highlight text={summary} query={highlight} />
-            </p>
-          )}
-          <p className="mt-2 flex min-w-0 items-center gap-1.5 text-[13px] text-ink-500 leading-5">
-            {!announcement && !hideSig && sig?.name && (
-              <>
-                <SigDot color={sigInfo.color} />
-                {sigInfo.customId ? (
-                  <Link
-                    href={`/@${sigInfo.customId}`}
-                    className="sig-text relative z-[1] min-w-0 max-w-[45%] shrink truncate font-semibold hover:underline"
-                    style={{
-                      ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
-                    }}
-                  >
-                    {sig.name}
-                  </Link>
-                ) : (
-                  <span
-                    className="sig-text min-w-0 max-w-[45%] shrink truncate font-semibold"
-                    style={{
-                      ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
-                    }}
-                  >
-                    {sig.name}
-                  </span>
-                )}
-                <span aria-hidden>·</span>
-              </>
-            )}
-            {!announcement && author?.name && (
-              <>
-                <span className="min-w-0 truncate">{author.name}</span>
-                <span aria-hidden>·</span>
-              </>
-            )}
-            {time && (
-              <time
-                dateTime={post.createdAt}
-                title={new Date(post.createdAt ?? "").toLocaleString("zh-TW")}
-                className="shrink-0"
-              >
-                {time}
-              </time>
-            )}
-          </p>
-          {!announcement && (
-            <div className="mt-1.5 flex min-w-0 items-center gap-3 text-[13px] text-ink-500 leading-5">
-              <Count
-                icon={<Heart size={14} aria-hidden />}
-                value={likes}
-                label="按讚數"
-              />
-              <Count
-                icon={<MessageCircle size={14} aria-hidden />}
-                value={comments}
-                label="留言數"
-              />
-              {typeof post.views === "number" && (
-                <Count
-                  icon={<Eye size={14} aria-hidden />}
-                  value={post.views}
-                  label="瀏覽數"
-                />
+      <div className="p-4 lg:px-5">
+        <div className="flex gap-3 lg:gap-4">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <h2 className="flex min-w-0 items-start gap-1.5 font-semibold text-[1.0625rem] text-ink-900 leading-snug tracking-[0.01em] lg:text-lg">
+              {(pinned || announcement) && (
+                <span className="mt-0.5 flex shrink-0 gap-1">
+                  {pinned && <PinnedChip />}
+                  {announcement && <AnnouncementChip />}
+                </span>
               )}
-              {/* One line of tags; the ones that do not fit wrap out of
-                  sight instead of squeezing the counts. */}
-              <span className="flex h-[1.375rem] min-w-0 flex-1 flex-wrap gap-1.5 overflow-hidden">
-                {tags.slice(0, 4).map((tag) => {
-                  const href = tagHref(tag);
-                  return href ? (
-                    <Link
-                      key={tag}
-                      href={href}
-                      className="relative z-[1] max-w-[10rem] truncate whitespace-nowrap rounded-chip bg-brand-50 px-1.5 py-0.5 font-medium text-brand-800 text-xs transition-colors hover:bg-[color-mix(in_srgb,var(--color-brand-700)_16%,white)]"
-                    >
-                      #{tag}
-                    </Link>
-                  ) : null;
-                })}
-              </span>
-              <BookmarkButton
-                postId={post._id}
-                size={isMobile ? "touch" : "card"}
-                className={isMobile ? "-my-3 -mr-3" : "-my-1.5 -mr-2"}
+              <Link
+                href={`/post/${post._id}`}
+                className="line-clamp-2 [overflow-wrap:anywhere] after:absolute after:inset-0 after:content-['']"
+              >
+                <Highlight text={post.title} query={highlight} />
+              </Link>
+            </h2>
+            {summary && (
+              <p
+                className={`mt-1 text-[0.9rem] text-ink-700 leading-relaxed [overflow-wrap:anywhere] ${
+                  announcement ? "line-clamp-3" : "line-clamp-2"
+                }`}
+              >
+                <Highlight text={summary} query={highlight} />
+              </p>
+            )}
+          </div>
+          {!featured && cover && (
+            <div className="relative h-[4.5rem] w-[5.5rem] shrink-0 self-start overflow-hidden rounded-control bg-field lg:h-[5.75rem] lg:w-[8.5rem]">
+              <Image
+                src={cover}
+                alt=""
+                fill
+                priority={eager}
+                sizes="(min-width: 1024px) 136px, 88px"
+                className="object-cover"
               />
             </div>
           )}
         </div>
-        {!featured && cover && (
-          <div className="relative h-[4.5rem] w-[5.5rem] shrink-0 self-start overflow-hidden rounded-control bg-field lg:h-[5.75rem] lg:w-[8.5rem]">
-            <Image
-              src={cover}
-              alt=""
-              fill
-              priority={eager}
-              sizes="(min-width: 1024px) 136px, 88px"
-              className="object-cover"
+        <p className="mt-2 flex min-w-0 items-center gap-1.5 text-[13px] text-ink-500 leading-5">
+          {!announcement && !hideSig && sig?.name && (
+            <>
+              <SigDot color={sigInfo.color} />
+              {sigInfo.customId ? (
+                <Link
+                  href={`/@${sigInfo.customId}`}
+                  className="sig-text relative z-[1] min-w-0 max-w-[45%] shrink truncate font-semibold hover:underline"
+                  style={{
+                    ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
+                  }}
+                >
+                  {sig.name}
+                </Link>
+              ) : (
+                <span
+                  className="sig-text min-w-0 max-w-[45%] shrink truncate font-semibold"
+                  style={{
+                    ["--sig-color" as string]: sigInfo.color ?? BRAND_COLOR,
+                  }}
+                >
+                  {sig.name}
+                </span>
+              )}
+              <span aria-hidden>·</span>
+            </>
+          )}
+          {!announcement && author?.name && (
+            <>
+              <span className="min-w-0 truncate">{author.name}</span>
+              <span aria-hidden>·</span>
+            </>
+          )}
+          {time && (
+            <time
+              dateTime={post.createdAt}
+              title={new Date(post.createdAt ?? "").toLocaleString("zh-TW")}
+              className="shrink-0"
+            >
+              {time}
+            </time>
+          )}
+        </p>
+        {!announcement && (
+          <div className="mt-1.5 flex min-w-0 items-center gap-3 text-[13px] text-ink-500 leading-5">
+            <Count
+              icon={<Heart size={14} aria-hidden />}
+              value={likes}
+              label="按讚數"
+            />
+            <Count
+              icon={<MessageCircle size={14} aria-hidden />}
+              value={comments}
+              label="留言數"
+            />
+            {typeof post.views === "number" && (
+              <Count
+                icon={<Eye size={14} aria-hidden />}
+                value={post.views}
+                label="瀏覽數"
+              />
+            )}
+            {/* One line of tags; the ones that do not fit wrap out of
+                sight instead of squeezing the counts. */}
+            <span className="flex h-[1.375rem] min-w-0 flex-1 flex-wrap gap-1.5 overflow-hidden">
+              {tags.slice(0, 4).map((tag) => {
+                const href = tagHref(tag);
+                return href ? (
+                  <Link
+                    key={tag}
+                    href={href}
+                    className="relative z-[1] max-w-[10rem] truncate whitespace-nowrap rounded-chip bg-brand-50 px-1.5 py-0.5 font-medium text-brand-800 text-xs transition-colors hover:bg-[color-mix(in_srgb,var(--color-brand-700)_16%,white)]"
+                  >
+                    #{tag}
+                  </Link>
+                ) : null;
+              })}
+            </span>
+            <BookmarkButton
+              postId={post._id}
+              size={isMobile ? "touch" : "card"}
+              className={isMobile ? "-my-3 -mr-3" : "-my-1.5 -mr-2"}
             />
           </div>
         )}
