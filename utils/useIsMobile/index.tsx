@@ -16,8 +16,13 @@ function subscribe(onChange: () => void) {
   return () => window.removeEventListener("resize", onChange);
 }
 
-function getSnapshot() {
+/** The hook's test, for code that runs outside render (handlers, effects). */
+export function isMobileViewport() {
   return window.innerWidth < BREAKPOINT;
+}
+
+function getSnapshot() {
+  return isMobileViewport();
 }
 
 function getServerSnapshot() {

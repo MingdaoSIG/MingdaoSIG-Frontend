@@ -11,6 +11,8 @@ import {
   useRef,
   useState,
 } from "react";
+import Swal from "sweetalert2";
+import { toast } from "@/components/mobile/Toast";
 import type { User } from "@/interfaces/User";
 import { apiRequest, registerAuthHandlers } from "@/modules/api/client";
 import { CustomStatus } from "@/modules/customStatusCode";
@@ -20,6 +22,7 @@ import {
   storageRemove,
   storageSet,
 } from "@/utils/safeStorage";
+import { isMobileViewport } from "@/utils/useIsMobile";
 import { isJwtUsable } from "./jwt";
 
 // The platform login, mounted once for the whole app (app/providers.tsx).
@@ -30,6 +33,10 @@ import { isJwtUsable } from "./jwt";
 // for a platform JWT only when there is no usable stored JWT, keep reusing
 // that JWT, and when the API rejects it (401 / 4013) try one re-exchange
 // before signing out.
+//
+// A `?session=` link can come from anyone, so it never silently replaces
+// the signed-in account: a link for someone else asks first, and a link
+// that signs a logged-out visitor in says whose account it was.
 
 export type UserAccount = {
   isLogin: boolean;
@@ -48,7 +55,7 @@ type AuthState = {
 
 type Exchange =
   | { ok: true; token: string; user: User }
-  | { ok: false; definitive: boolean };
+  | { ok: false; definitive: boolean; message: string };
 
 const TOKEN_KEY = "token";
 const USER_KEY = "user";
@@ -66,6 +73,56 @@ export const AuthContext = createContext<UserAccount | null>(null);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** "王小明（@xiaoming）": enough to tell two accounts apart. */
+function describeUser(user: User) {
+  const name = user.name || user.email || "未命名的帳號";
+  return user.customId ? `${name}（@${user.customId}）` : name;
+}
+
+function isSameUser(a: User, b: User) {
+  if (a._id && b._id) {
+    return a._id === b._id;
+  }
+  if (a.email && b.email) {
+    return a.email.toLowerCase() === b.email.toLowerCase();
+  }
+  return false;
+}
+
+/** Takes `?session=` out of the address bar, so reload or copy-paste does not reuse it. */
+function removeSessionFromUrl() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has(SESSION_KEY)) {
+    return;
+  }
+  url.searchParams.delete(SESSION_KEY);
+  // null state: Next.js patches replaceState, keeps its own state and
+  // updates useSearchParams.
+  window.history.replaceState(
+    null,
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+}
+
+function showNotice(icon: "success" | "error", title: string) {
+  // Phones get the app's own toast: the fixed mobile header sits above
+  // SweetAlert's toast.
+  if (isMobileViewport()) {
+    toast[icon](title);
+    return;
+  }
+  void Swal.fire({
+    toast: true,
+    position: "top",
+    icon,
+    title,
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+  });
 }
 
 function readAccessToken(session: Session | null) {
@@ -90,13 +147,17 @@ async function platformLogin(
     if (token && isRecord(result.data)) {
       return { ok: true, token, user: result.data };
     }
-    return { ok: false, definitive: false };
+    return {
+      ok: false,
+      definitive: false,
+      message: "伺服器暫時無法回應，請稍後再試",
+    };
   }
   const definitive =
     result.kind === "unauthorized" ||
     (result.status !== null &&
       DEFINITIVE_LOGIN_FAILURES.includes(result.status));
-  return { ok: false, definitive };
+  return { ok: false, definitive, message: result.message };
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -123,6 +184,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const generation = useRef(0);
   const refreshing = useRef<Promise<string | null> | null>(null);
   const lastInputs = useRef<string | null>(null);
+  // A `?session=` link that is still being resolved or confirmed.
+  const pendingLink = useRef<string | null>(null);
+  const linkRead = useRef(false);
+  // Bumped when a link is dropped, so the normal login decision runs.
+  const [linkDropped, setLinkDropped] = useState(0);
 
   const commit = useCallback((next: AuthState) => {
     stateRef.current = next;
@@ -168,7 +234,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (googleToken) {
       return platformLogin({ googleToken });
     }
-    return { ok: false, definitive: true };
+    return { ok: false, definitive: true, message: "" };
   }, [getSchoolSession, dropSchoolSession]);
 
   /** The login cannot be recovered: forget it, without reloading the page. */
@@ -225,19 +291,107 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => registerAuthHandlers(null);
   }, [refreshToken]);
 
-  // The school app signs users in with /?session=…: that is a new login,
-  // so it replaces whatever account was stored before.
+  /** The account signed in right now, if any (token, and profile if known). */
+  const signedInAccount = useCallback(() => {
+    const token = stateRef.current.token ?? storageGet(TOKEN_KEY);
+    if (!token) {
+      return null;
+    }
+    return { user: stateRef.current.user ?? storageGetJSON<User>(USER_KEY) };
+  }, []);
+
+  // The school app signs users in with /?session=…. Resolve the link to
+  // its account first; only then decide, against whoever is signed in.
   useEffect(() => {
-    const fromUrl = new URLSearchParams(window.location.search).get("session");
-    if (fromUrl && fromUrl !== getSchoolSession()) {
+    if (linkRead.current) {
+      return;
+    }
+    linkRead.current = true;
+    const fromUrl = new URLSearchParams(window.location.search).get(
+      SESSION_KEY,
+    );
+    if (!fromUrl) {
+      return;
+    }
+    // After this effect: Next.js patches history in its own mount effect.
+    window.setTimeout(removeSessionFromUrl, 0);
+    if (fromUrl === getSchoolSession()) {
+      // The login we already use; nothing new to decide.
+      return;
+    }
+    pendingLink.current = fromUrl;
+
+    const adopt = (token: string, user: User) => {
+      // Drops in-flight decisions about the previous account.
+      generation.current++;
+      pendingLink.current = null;
       memorySession.current = fromUrl;
       storageSet(SESSION_KEY, fromUrl);
-      storageRemove(TOKEN_KEY);
-      storageRemove(USER_KEY);
-    }
-  }, [getSchoolSession]);
+      lastInputs.current = `session:${fromUrl}`;
+      saveAccount(token, user);
+    };
+
+    const drop = () => {
+      pendingLink.current = null;
+      setLinkDropped((n) => n + 1);
+    };
+
+    (async () => {
+      const result = await platformLogin({ session: fromUrl });
+      if (pendingLink.current !== fromUrl) {
+        return;
+      }
+      if (!result.ok) {
+        drop();
+        showNotice(
+          "error",
+          result.definitive
+            ? "登入連結無效或已過期"
+            : `無法使用登入連結：${result.message}`,
+        );
+        return;
+      }
+
+      const current = signedInAccount();
+      if (!current) {
+        // Nobody to replace, but whoever opened the link must notice
+        // whose account they are now using.
+        adopt(result.token, result.user);
+        showNotice("success", `已登入：${describeUser(result.user)}`);
+        return;
+      }
+      if (current.user && isSameUser(current.user, result.user)) {
+        adopt(result.token, result.user);
+        return;
+      }
+
+      const currentName =
+        current.user?.name || current.user?.email || "目前的帳號";
+      const choice = await Swal.fire({
+        icon: "warning",
+        text: `要切換成 ${describeUser(result.user)}登入嗎？目前登入的是 ${currentName}。`,
+        showCancelButton: true,
+        confirmButtonText: "切換",
+        cancelButtonText: "取消",
+        confirmButtonColor: "#0b5a83",
+        focusCancel: true,
+      });
+      if (pendingLink.current !== fromUrl) {
+        return;
+      }
+      if (choice.isConfirmed) {
+        adopt(result.token, result.user);
+        return;
+      }
+      drop();
+    })();
+  }, [getSchoolSession, saveAccount, signedInAccount]);
 
   useEffect(() => {
+    if (pendingLink.current && !signedInAccount()) {
+      // Nobody is signed in, so the link decides; stay loading meanwhile.
+      return;
+    }
     const schoolSession = getSchoolSession();
     if (!schoolSession && oauthStatus === "loading") {
       return;
@@ -319,7 +473,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     oauthStatus,
     accessToken,
     sessionEmail,
+    linkDropped,
     getSchoolSession,
+    signedInAccount,
     commit,
     clearAccount,
     saveAccount,
@@ -334,6 +490,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     generation.current++;
+    pendingLink.current = null;
     dropSchoolSession();
     clearAccount();
     signOut();
