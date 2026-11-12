@@ -12,9 +12,14 @@ import {
 
 import { TapScale } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
+import { isSubmitEnter } from "@/utils/keyboard";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-import { PostCommentAPI } from "../../apis/CommentAPI";
+import {
+  COMMENT_MAX_LENGTH,
+  commentErrorMessage,
+  PostCommentAPI,
+} from "../../apis/CommentAPI";
 
 const DEFAULT_AVATAR = "/images/default-avatar.png";
 
@@ -30,7 +35,8 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const avatar = userData?.avatar || DEFAULT_AVATAR;
-  const canSend = !submitting && text.trim().length > 0;
+  const tooLong = text.length > COMMENT_MAX_LENGTH;
+  const canSend = !submitting && text.trim().length > 0 && !tooLong;
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -56,28 +62,29 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
       });
       return;
     }
+    if (tooLong) {
+      toast.error(`留言最多 ${COMMENT_MAX_LENGTH} 字`);
+      return;
+    }
     if (!canSend) {
       return;
     }
     setSubmitting(true);
-    try {
-      const res = await PostCommentAPI(postId, "", text.trim(), token);
-      if (res?.status === 2000) {
-        setText("");
-        onSubmitted();
-        toast.success("留言成功");
-      } else {
-        toast.error("發送失敗");
-      }
-    } catch (_err) {
-      toast.error("發送失敗");
-    } finally {
-      setSubmitting(false);
+    const res = await PostCommentAPI(postId, "", text.trim(), token);
+    setSubmitting(false);
+    if (res.ok) {
+      setText("");
+      onSubmitted();
+      toast.success("留言成功");
+    } else {
+      toast.error(commentErrorMessage(res));
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Enter sends, Shift+Enter is a new line, and an Enter that picks an
+    // IME candidate (注音/拼音) does neither.
+    if (isSubmitEnter(e)) {
       handleSend(e);
     }
   };
@@ -109,6 +116,16 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
           rows={1}
           className="min-h-[2.25rem] min-w-0 flex-1 resize-none rounded-control border border-line bg-surface px-3 py-1.5 text-[16px] text-ink-800 outline-none placeholder:text-ink-400 focus:border-brand-700/40"
         />
+        {text.length > 0 && (
+          <span
+            className={`flex-shrink-0 text-xs tabular-nums ${
+              tooLong ? "text-danger-700" : "text-ink-400"
+            }`}
+            aria-live="polite"
+          >
+            {text.length}/{COMMENT_MAX_LENGTH}
+          </span>
+        )}
         <TapScale
           onClick={handleSend}
           className={

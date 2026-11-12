@@ -8,9 +8,8 @@ import { useEffect, useState } from "react";
 import { TapScale } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
 import type { TThread } from "@/interfaces/Thread";
+import { apiRequest } from "@/modules/api/client";
 import { useUserAccount } from "@/utils/useUserAccount";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type Props = {
   post: TThread;
@@ -22,6 +21,7 @@ export default function PostActions({ post, commentCount }: Props) {
   const { isLogin, isLoading, token, userData } = useUserAccount();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     if (isLogin && userData?._id) {
@@ -37,20 +37,23 @@ export default function PostActions({ post, commentCount }: Props) {
       toast.info("登入後即可按讚");
       return;
     }
+    if (liking) {
+      return;
+    }
+    // Show the change at once, and undo it if the server refuses.
     const willLike = !liked;
     setLiked(willLike);
     setLikeCount((c) => c + (willLike ? 1 : -1));
-    try {
-      await fetch(`${API_URL}/post/${post._id}/like`, {
-        method: willLike ? "POST" : "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-    } catch (_err) {
+    setLiking(true);
+    const res = await apiRequest(`/post/${post._id}/like`, {
+      method: willLike ? "POST" : "DELETE",
+      token,
+    });
+    setLiking(false);
+    if (!res.ok) {
       setLiked(!willLike);
       setLikeCount((c) => c + (willLike ? -1 : 1));
+      toast.error(res.message);
     }
   };
 

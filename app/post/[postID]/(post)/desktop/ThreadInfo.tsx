@@ -2,139 +2,103 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 // Interfaces
 import type { TComments } from "@/interfaces/comments";
-import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
-import type { User } from "@/interfaces/User";
+import { isSubmitEnter } from "@/utils/keyboard";
 // Custom Hooks
 import useAlert from "@/utils/useAlert";
+import useSig from "@/utils/useSig";
+import useUser from "@/utils/useUser";
 // Utils
 import { useUserAccount } from "@/utils/useUserAccount";
 
 // API Request Function
-import { GetCommentAPI, PostCommentAPI } from "../apis/CommentAPI";
+import {
+  COMMENT_MAX_LENGTH,
+  commentErrorMessage,
+  GetCommentAPI,
+  PostCommentAPI,
+} from "../apis/CommentAPI";
 // Components
 import Reply from "../components/Reply";
 
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 export default function ThreadInfo({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useState<string>("");
-  const [typeText, setTypeText] = useState(false);
   const [comments, setComments] = useState<TComments[]>([]);
-  const [user, setUser] = useState<User | null>(null);
-  const [sig, setSig] = useState<Sig | null>(null);
+  const [commentsError, setCommentsError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const { token, isLogin } = useUserAccount();
   const { showAlert } = useAlert();
-
-  // 使用 ref 追蹤組件是否已卸載
-  const isMounted = useRef(true);
+  const { data: user } = useUser(post.user);
+  const { data: sig } = useSig(post.sig);
+  const composing = useRef(false);
 
   const route = useRouter();
 
+  const trimmed = typeComments.trim();
+  const tooLong = typeComments.length > COMMENT_MAX_LENGTH;
+  const canSend = isLogin && trimmed.length > 0 && !tooLong && !submitting;
+
+  const loadComments = useCallback(
+    async (signal?: AbortSignal) => {
+      const { comments, error } = await GetCommentAPI(post, signal);
+      if (signal?.aborted) {
+        return;
+      }
+      if (error) {
+        setCommentsError(error.message);
+        return;
+      }
+      setCommentsError(null);
+      setComments(comments);
+    },
+    [post],
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadComments(controller.signal);
+    return () => controller.abort();
+  }, [loadComments]);
+
   async function handleCommandSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (composing.current || submitting) {
+      return;
+    }
     if (!isLogin) {
       return showAlert(alertMessageConfigs.noLogin);
     }
-    const reply = "";
-    const content = typeComments;
-    if (typeComments.length === 0) {
+    if (trimmed.length === 0) {
       return showAlert(alertMessageConfigs.noComment);
     }
-    try {
-      const res = await PostCommentAPI(post?._id, reply, content, token);
-      if (res.status === 2000) {
-        setTypeComments("");
-        showAlert(alertMessageConfigs.commentSuccess).then(async () => {
-          await GetCommentAPI(post).then((res) => {
-            setComments(res.data);
-          });
-        });
-      }
-    } catch (_e) {
-      Swal.fire(alertMessageConfigs.otherError);
+    if (tooLong) {
+      return Swal.fire({
+        ...alertMessageConfigs.otherError,
+        text: `留言最多 ${COMMENT_MAX_LENGTH} 字`,
+      });
     }
+    setSubmitting(true);
+    const res = await PostCommentAPI(post?._id, "", trimmed, token);
+    setSubmitting(false);
+    if (res.ok) {
+      setTypeComments("");
+      showAlert(alertMessageConfigs.commentSuccess);
+      loadComments();
+      return;
+    }
+    Swal.fire({
+      ...alertMessageConfigs.otherError,
+      text: commentErrorMessage(res),
+    });
   }
-
-  useEffect(() => {
-    // 重置掛載狀態
-    isMounted.current = true;
-
-    // 創建 AbortController 用於取消請求
-    const controller = new AbortController();
-
-    async function GetUserAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/user/${post.user}`, {
-            method: "GET",
-            signal: controller.signal,
-          })
-        ).json();
-
-        // 只有在組件仍然掛載時才更新狀態
-        if (isMounted.current) {
-          setUser(res.data);
-        }
-      } catch (error: unknown) {
-        if ((error as Error).name !== "AbortError") {
-          // Non-abort fetch errors are silently ignored - UI shows fallback
-        }
-      }
-    }
-
-    async function GetSigAPI() {
-      try {
-        const res = await (
-          await fetch(`${API_URL}/sig/${post.sig}`, {
-            method: "GET",
-            signal: controller.signal,
-          })
-        ).json();
-
-        // 只有在組件仍然掛載時才更新狀態
-        if (isMounted.current) {
-          setSig(res.data);
-        }
-      } catch (error: unknown) {
-        if ((error as Error).name !== "AbortError") {
-          // Non-abort fetch errors are silently ignored - UI shows fallback
-        }
-      }
-    }
-
-    async function GetCommentsAPI() {
-      try {
-        const res = await GetCommentAPI(post);
-        // 只有在組件仍然掛載時才更新狀態
-        if (isMounted.current) {
-          setComments(res.data);
-        }
-      } catch (error: unknown) {
-        if ((error as Error).name !== "AbortError") {
-          // Non-abort fetch errors are silently ignored - UI shows fallback
-        }
-      }
-    }
-
-    GetUserAPI();
-    GetSigAPI();
-    GetCommentsAPI();
-
-    // 清理函數
-    return () => {
-      isMounted.current = false;
-      controller.abort();
-    };
-  }, [post]);
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
@@ -149,10 +113,12 @@ export default function ThreadInfo({ post }: { post: TThread }) {
         />
         <div className="flex min-w-0 flex-col">
           <div className="flex min-w-0 items-center gap-1.5 text-base">
+            {/* Links wait for the id, so they never point at /@undefined */}
             <button
               type="button"
-              className="cursor-pointer truncate font-bold text-ink-900 hover:underline"
-              onClick={() => route.push(`/@${user?.customId}`)}
+              className="cursor-pointer truncate font-bold text-ink-900 hover:underline disabled:cursor-default disabled:no-underline"
+              disabled={!user?.customId}
+              onClick={() => user?.customId && route.push(`/@${user.customId}`)}
             >
               {user?.name || "Loading..."}
             </button>
@@ -161,11 +127,12 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             </span>
             <button
               type="button"
-              className="sig-text shrink-0 cursor-pointer font-semibold hover:underline"
+              className="sig-text shrink-0 cursor-pointer font-semibold hover:underline disabled:cursor-default disabled:no-underline"
               style={{
                 ["--sig-color" as string]: sigDefaultColors[sig?._id ?? ""],
               }}
-              onClick={() => route.push(`/@${sig?.customId}`)}
+              disabled={!sig?.customId}
+              onClick={() => sig?.customId && route.push(`/@${sig.customId}`)}
             >
               {sig?.name || "Loading..."}
             </button>
@@ -183,14 +150,28 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       {/* Comments: sized to content, scrolls when it runs out of room */}
       <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">
         <div className="custom-scrollbar flex min-h-12 flex-col gap-4 overflow-y-auto overflow-x-hidden">
-          {comments.length !== 0 ? (
+          {commentsError ? (
+            <div
+              role="alert"
+              className="flex flex-col items-center gap-2 py-4 text-center text-ink-500 text-sm"
+            >
+              <p>{commentsError}</p>
+              <button
+                type="button"
+                className="cursor-pointer text-brand-700 hover:underline"
+                onClick={() => loadComments()}
+              >
+                重試
+              </button>
+            </div>
+          ) : comments.length !== 0 ? (
             comments.map((comment: TComments) => {
               return (
                 <Reply
                   key={comment._id}
                   overflow={false}
-                  customId={comment.user.customId}
-                  avatar={comment.user.avatar}
+                  customId={comment.user?.customId}
+                  avatar={comment.user?.avatar}
                   content={comment.content}
                   createdAt={
                     new Date(comment.createdAt || "")
@@ -211,17 +192,36 @@ export default function ThreadInfo({ post }: { post: TThread }) {
           <input
             className="h-full w-full flex-1 bg-transparent px-3 text-ink-800 text-sm placeholder:text-ink-400 focus-visible:outline-none disabled:cursor-not-allowed"
             placeholder="Reply..."
-            onChange={(e) => {
-              e.target.value.length > 0
-                ? setTypeText(true)
-                : setTypeText(false);
-              setTypeComments(e.target.value);
+            aria-label="留言內容"
+            onChange={(e) => setTypeComments(e.target.value)}
+            onCompositionStart={() => {
+              composing.current = true;
+            }}
+            onCompositionEnd={() => {
+              composing.current = false;
+            }}
+            onKeyDown={(e) => {
+              // Enter that picks an IME candidate must not send the comment
+              if (e.key === "Enter" && !isSubmitEnter(e, true)) {
+                e.preventDefault();
+              }
             }}
             value={typeComments}
           />
+          {typeComments.length > 0 && (
+            <span
+              className={`shrink-0 text-xs tabular-nums ${
+                tooLong ? "text-danger-700" : "text-ink-400"
+              }`}
+              aria-live="polite"
+            >
+              {typeComments.length}/{COMMENT_MAX_LENGTH}
+            </span>
+          )}
           <button
             type="submit"
             aria-label="送出留言"
+            disabled={submitting}
             className="flex h-full w-10 flex-none items-center justify-center"
           >
             <Image
@@ -230,7 +230,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               width={20}
               alt=""
               className={
-                typeText && isLogin
+                canSend
                   ? "cursor-pointer opacity-100"
                   : "cursor-not-allowed opacity-30"
               }
