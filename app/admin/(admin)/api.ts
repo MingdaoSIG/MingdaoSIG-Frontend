@@ -286,6 +286,8 @@ export type UserQuery = {
   q?: string;
   role?: string;
   sig?: string;
+  /** 1: only users with a mute or ban in force (contract v4 §5.1). */
+  suspended?: number;
 };
 
 export function useUsers(query: UserQuery, enabled: boolean = true) {

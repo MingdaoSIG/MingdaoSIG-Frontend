@@ -18,6 +18,7 @@ export const PUSH_TYPES: PushNotificationType[] = [
   "join_result",
   "feedback",
   "event",
+  "system",
 ];
 
 export function defaultNotificationSettings(): NotificationSettings {
@@ -30,6 +31,7 @@ export function defaultNotificationSettings(): NotificationSettings {
       join_result: true,
       feedback: true,
       event: true,
+      system: true,
     },
     email: { comment: true, digest: false },
   };

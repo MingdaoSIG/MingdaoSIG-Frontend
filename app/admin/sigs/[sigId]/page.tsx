@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ANNOUNCEMENT_SIG_ID } from "@/utils/useAdminAccess";
 import { errorText, useSigMembers } from "../../(admin)/api";
+import { NotifyMembersButton } from "../../(admin)/broadcast/NotifyMembersButton";
 import { JoinRequestList } from "../../(admin)/components/JoinRequests";
 import {
   Avatar,
@@ -153,16 +154,19 @@ export default function AdminSigPage() {
               ` · ${formatCount(memberCount)} 位成員`}
           </p>
         </div>
-        {sig.customId && (
-          <Link
-            href={`/@${sig.customId}`}
-            target="_blank"
-            className={buttonClass("secondary", "sm")}
-          >
-            <ExternalLink aria-hidden className="size-3.5" />
-            在網站上查看
-          </Link>
-        )}
+        <div className="flex flex-wrap gap-2">
+          <NotifyMembersButton sig={sig} memberCount={memberCount} />
+          {sig.customId && (
+            <Link
+              href={`/@${sig.customId}`}
+              target="_blank"
+              className={buttonClass("secondary", "sm")}
+            >
+              <ExternalLink aria-hidden className="size-3.5" />
+              在網站上查看
+            </Link>
+          )}
+        </div>
       </header>
 
       <nav

@@ -18,6 +18,11 @@ import { apiRequest, registerAuthHandlers } from "@/modules/api/client";
 import { CustomStatus } from "@/modules/customStatusCode";
 import { disablePush } from "@/modules/push";
 import {
+  getReportedSuspension,
+  reportSuspension,
+  subscribeSuspension,
+} from "@/modules/suspension";
+import {
   storageGet,
   storageGetJSON,
   storageRemove,
@@ -200,6 +205,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const commit = useCallback((next: AuthState) => {
     stateRef.current = next;
     setState(next);
+    // The profile says whether a mute or ban is in force (contract v4
+    // §5.1). Signing out keeps a ban on show: the banner says why.
+    if (next.user) {
+      reportSuspension(next.user.suspension ?? null);
+    }
   }, []);
 
   const getSchoolSession = useCallback(
@@ -288,6 +298,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return task;
     },
     [exchange, saveAccount, endSession],
+  );
+
+  // A request refused with 4041 (modules/api/client reports it). A ban
+  // refuses every request with a token, so the site carries on as for a
+  // logged-out visitor, with the banner saying why; the Google session is
+  // kept, so the next visit tries again and logs in once it is lifted. A
+  // mute goes into the profile, so later profile updates keep it.
+  useEffect(
+    () =>
+      subscribeSuspension(() => {
+        const suspension = getReportedSuspension();
+        const { token, user } = stateRef.current;
+        if (!suspension || !token) {
+          return;
+        }
+        if (suspension.type === "ban") {
+          generation.current++;
+          clearAccount();
+          return;
+        }
+        const saved = user?.suspension;
+        if (
+          user &&
+          (saved?.type !== suspension.type ||
+            saved.until !== suspension.until ||
+            saved.reason !== suspension.reason)
+        ) {
+          const next = { ...user, suspension };
+          storageSet(USER_KEY, JSON.stringify(next));
+          commit({ ...stateRef.current, user: next });
+        }
+      }),
+    [clearAccount, commit],
   );
 
   useEffect(() => {
@@ -450,6 +493,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           return;
         }
+        if (!me.ok && me.kind === "suspended") {
+          // A ban: already signed out by the suspension listener above.
+          return;
+        }
         if (!storedUser) {
           await refreshToken(storedToken);
           if (stateRef.current.status === "loading") {
@@ -505,6 +552,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     dropSchoolSession();
     clearAccount();
+    reportSuspension(null);
     signOut();
   }, [dropSchoolSession, clearAccount]);
 

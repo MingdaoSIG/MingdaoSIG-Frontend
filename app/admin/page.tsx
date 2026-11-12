@@ -24,16 +24,25 @@ import {
 } from "./(admin)/components/ui";
 import { useAdmin } from "./(admin)/context";
 import { daysSince, formatCount, formatRelative } from "./(admin)/format";
+import { TrafficCard } from "./(admin)/overview/TrafficCard";
 import type { AdminSig, JoinRequest } from "./(admin)/types";
 
 // 總覽: what needs doing today. Admins get the platform numbers, open
-// reports, pending join requests, SIGs without a leader or 指導老師, and
-// the newest posts.
+// reports, pending join requests, SIGs without a leader or 指導老師, the
+// newest posts and the site traffic.
+// Content moderators get the post, comment and open-report numbers (and,
+// if they also lead or advise a SIG, what a manager gets).
 // SIG managers get their pending requests and their SIGs.
 
 export default function AdminOverviewPage() {
   const admin = useAdmin();
-  return admin.isAdmin ? <AdminOverview /> : <ManagerOverview />;
+  if (admin.isAdmin) {
+    return <AdminOverview />;
+  }
+  if (admin.role === "moderator") {
+    return <ModeratorOverview manages={admin.managedSigIds.length > 0} />;
+  }
+  return <ManagerOverview />;
 }
 
 function today() {
@@ -190,7 +199,67 @@ function AdminOverview() {
               )}
             </Card>
           </div>
+          <TrafficCard />
         </>
+      )}
+    </>
+  );
+}
+
+/**
+ * Content moderators: the numbers `/admin/overview` gives them (posts,
+ * comments, open reports), and the manager part when they manage a SIG.
+ */
+function ModeratorOverview({ manages }: { manages: boolean }) {
+  const overview = useOverview(true);
+  const data = overview.data;
+  const openReports = data?.openReports;
+
+  return (
+    <>
+      <PageHeader title="總覽" description={today()} />
+      {overview.isError ? (
+        <Card>
+          <ErrorState
+            message={errorText(overview.error)}
+            onRetry={() => overview.refetch()}
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          <Kpi
+            label="貼文"
+            value={data?.posts?.total}
+            delta={data?.posts?.last7d}
+            href="/admin/posts"
+          />
+          <Kpi
+            label="留言"
+            value={data?.comments?.total}
+            delta={data?.comments?.last7d}
+            href="/admin/comments"
+          />
+          <Kpi
+            label="待處理檢舉"
+            value={data ? (openReports ?? null) : undefined}
+            href="/admin/reports"
+            className="col-span-2 lg:col-span-1"
+            note={
+              data &&
+              typeof openReports === "number" &&
+              (openReports > 0 ? (
+                <span className="text-danger-700">需要處理</span>
+              ) : (
+                <span className="text-ink-500">沒有待處理的檢舉</span>
+              ))
+            }
+          />
+        </div>
+      )}
+      {manages && (
+        <div className="mt-6">
+          <ManagerSections />
+        </div>
       )}
     </>
   );
@@ -353,72 +422,79 @@ function TodoList({
 }
 
 function ManagerOverview() {
+  return (
+    <>
+      <PageHeader title="總覽" description={today()} />
+      <ManagerSections />
+    </>
+  );
+}
+
+/** A manager's pending join requests and SIGs. */
+function ManagerSections() {
   const sigs = useAdminSigs();
   const pending = useJoinRequests({ skip: 0, limit: 5, status: "pending" });
   const list = sigs.data ?? [];
 
   return (
-    <>
-      <PageHeader title="總覽" description={today()} />
-      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-        <Card
-          title="待審入社申請"
-          padded={false}
-          actions={
-            <Link
-              href="/admin/join-requests"
-              className={`${buttonClass("ghost", "sm")} mr-2`}
-            >
-              全部申請
-            </Link>
-          }
-        >
-          {pending.isPending ? (
+    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+      <Card
+        title="待審入社申請"
+        padded={false}
+        actions={
+          <Link
+            href="/admin/join-requests"
+            className={`${buttonClass("ghost", "sm")} mr-2`}
+          >
+            全部申請
+          </Link>
+        }
+      >
+        {pending.isPending ? (
+          <SkeletonRows rows={3} />
+        ) : pending.isError ? (
+          <ErrorState
+            message={errorText(pending.error)}
+            onRetry={() => pending.refetch()}
+          />
+        ) : (pending.data?.items.length ?? 0) === 0 ? (
+          <EmptyState title="目前沒有待審的申請" />
+        ) : (
+          <TodoList
+            requests={pending.data?.items ?? []}
+            moreRequests={
+              (pending.data?.total ?? 0) - (pending.data?.items.length ?? 0)
+            }
+            requestError={null}
+            withoutLeader={[]}
+            withoutModerator={[]}
+          />
+        )}
+      </Card>
+      <section aria-labelledby="my-sigs">
+        <h2 id="my-sigs" className="mb-2 font-bold text-base text-ink-900">
+          我管理的 SIG
+        </h2>
+        {sigs.isPending ? (
+          <Card padded={false}>
             <SkeletonRows rows={3} />
-          ) : pending.isError ? (
+          </Card>
+        ) : sigs.isError ? (
+          <Card>
             <ErrorState
-              message={errorText(pending.error)}
-              onRetry={() => pending.refetch()}
+              message={errorText(sigs.error)}
+              onRetry={() => sigs.refetch()}
             />
-          ) : (pending.data?.items.length ?? 0) === 0 ? (
-            <EmptyState title="目前沒有待審的申請" />
-          ) : (
-            <TodoList
-              requests={pending.data?.items ?? []}
-              moreRequests={
-                (pending.data?.total ?? 0) - (pending.data?.items.length ?? 0)
-              }
-              requestError={null}
-              withoutLeader={[]}
-              withoutModerator={[]}
-            />
-          )}
-        </Card>
-        <section aria-labelledby="my-sigs">
-          <h2 id="my-sigs" className="mb-2 font-bold text-base text-ink-900">
-            我管理的 SIG
-          </h2>
-          {sigs.isPending ? (
-            <Card padded={false}>
-              <SkeletonRows rows={3} />
-            </Card>
-          ) : sigs.isError ? (
-            <Card>
-              <ErrorState
-                message={errorText(sigs.error)}
-                onRetry={() => sigs.refetch()}
-              />
-            </Card>
-          ) : (
-            <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
-              {list.map((sig) => (
-                <SigCard key={sig._id} sig={sig} />
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
-    </>
+          </Card>
+        ) : (
+          <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
+            {list.map((sig) => (
+              <SigCard key={sig._id} sig={sig} />
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
   );
 }
 

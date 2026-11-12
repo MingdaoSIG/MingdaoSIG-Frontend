@@ -49,16 +49,21 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
   desktop, a section switcher above the page on phones; no dock inside
   `/admin`, the header shows 「回到網站」 instead.
 - Access (`utils/useAdminAccess`): admins (`permission === 2`) see every
-  section; SIG managers (leader or 指導老師 of a SIG in `GET /sig/list`)
-  see 總覽, SIG and 入社申請 for their SIGs; everyone else gets the 404
-  page. Nothing is fetched before the role is known. The header shows
-  「管理平台」 to admins and managers.
+  section; content moderators (`permission === 3`, 內容管理員) see 總覽
+  (post, comment and open-report numbers), 貼文, 留言, 檢舉 and 使用者
+  (read and mute only); SIG managers (leader or 指導老師 of a SIG in
+  `GET /sig/list`) see 總覽, SIG, 入社申請 and 廣播通知 for their SIGs. A
+  content moderator who also manages a SIG sees both (`viewerRoles`);
+  everyone else gets the 404 page. Nothing is fetched before the role is
+  known, and no role fetches what its routes refuse. The header shows
+  「管理平台」 to all three.
 - Sections: `/admin` 總覽, `/admin/posts`, `/admin/comments`,
   `/admin/sigs`,
   `/admin/sigs/[sigId]?tab=info|staff|members|requests|recruiting|events|analytics`,
   `/admin/join-requests`, `/admin/users`, `/admin/rollover`,
   `/admin/badges`, `/admin/exports`, `/admin/audit`, `/admin/reports`
-  (檢舉, admins only).
+  (檢舉), `/admin/keyword-filter`, `/admin/banners`, `/admin/broadcast`,
+  `/admin/logins` (see below).
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -257,6 +262,44 @@ props, so the user-side redesign can move it without rewriting it.
   and 「數據」 (`AnalyticsTab`: chart.js bar charts, `?months=6|12|24`).
 - `POST /sig/:id` answers HTTP 400 for every refusal, so status 4001 there
   means forbidden.
+
+## Moderation and communication (contract v4 §5.1–§5.5, §5.10, §5.11)
+
+- **Mutes and bans** (`modules/suspension`): `/user/me` / `/login` carry
+  `suspension` while one is in force, and every 403/4041 carries
+  `{ type, until, reason }`. `modules/api/client` turns a 4041 into the
+  failure kind `suspended` with a message that says what is refused and
+  until when (Asia/Taipei), so every caller that shows `message` explains
+  it; it also reports the suspension to a small store. A ban signs the
+  site out (the Google session is kept, so `/login` is retried, and
+  refused, on the next visit); a mute goes into the profile.
+- **Site notices** (`components/SiteBanner/SiteNotices`): under the header
+  on every page except `/admin`, the suspension notice (hidden for the
+  tab only) and the site banner (`GET /site/banner`, re-checked against
+  its window every 30 s, closed per banner id in localStorage
+  `mdsig-dismissed-banners`). Desktop: in the header's grid row. Phones:
+  fixed under the fixed header; the page area starts below it
+  (`--site-notices-h`). Self-contained so the redesign can move it.
+- **Users**: filters 內容管理員 (`role=moderator`) and 停權中
+  (`suspended=1`); the drawer has 角色 (select, admins), 停權／禁言
+  (admins: mute and ban; content moderators: mute and lift mutes; nobody
+  on themself or an admin; moderators not on each other; history from the
+  audit log, admins only) and 登入紀錄 (admins). `/admin/logins` lists all
+  logins, or one user's with `?user=`.
+- **公告橫幅** `/admin/banners`: create, edit, schedule and delete; each
+  banner shows 顯示中 / 排程中 / 已結束 / 被較新的橫幅蓋過.
+- **廣播通知** `/admin/broadcast` and 「通知成員」 on the SIG detail
+  (`broadcast/BroadcastComposer`): audience, title, message, site link,
+  push; a `dryRun` count is confirmed before sending; 4290 says the
+  5-per-hour limit. `system` notifications render `meta.title` and
+  `meta.message` in the bell and on `/notifications`, and their push can
+  be turned off (`notificationSettings.push.system`).
+- **網站流量** on the admin overview (`overview/TrafficCard`, admins):
+  Umami totals, a daily line chart (views and visitors, the second
+  dashed) and the top pages and referrers; not shown at all on 503.
+- **關鍵字過濾** `/admin/keyword-filter`: the word list (1–30 characters,
+  at most 200, repeats ignoring case dropped); reports it files show
+  「系統（關鍵字）」 as the reporter.
 
 ## Data & Info Pages
 

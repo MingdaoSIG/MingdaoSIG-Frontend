@@ -11,7 +11,55 @@ export type NotificationText = {
   action: string;
   /** Second line: post title, SIG name… */
   detail: string;
+  /**
+   * `system` notifications (announcements, broadcasts, account notices,
+   * contract v4 §5.5) carry their own words: `meta.title` in bold and
+   * `meta.message` below it, instead of a built sentence.
+   */
+  title?: string;
+  body?: string;
+  /** Where it comes from: 「全站公告」, a SIG name, 「帳號通知」. */
+  source?: string;
 };
+
+function text(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+/** 「全站公告」, the SIG's name, or 「帳號通知」 for a system notification. */
+function systemSource(notification: TNotification) {
+  const meta = notification.meta ?? {};
+  if (meta.suspension && typeof meta.suspension === "object") {
+    return "帳號通知";
+  }
+  const audience =
+    meta.audience && typeof meta.audience === "object"
+      ? (meta.audience as Record<string, unknown>)
+      : null;
+  if (audience?.type === "all") {
+    return "全站公告";
+  }
+  if (audience?.type === "sig") {
+    return text(audience.sigName) || "SIG 通知";
+  }
+  return "";
+}
+
+/** The kind of system notification, for its icon. */
+export function systemKind(
+  notification: TNotification,
+): "broadcast" | "account" | "other" {
+  if (notification.meta?.suspension) {
+    return "account";
+  }
+  if (
+    notification.target?.kind === "broadcast" ||
+    notification.meta?.audience
+  ) {
+    return "broadcast";
+  }
+  return "other";
+}
 
 function count(notification: TNotification) {
   const value = notification.meta?.count;
@@ -66,6 +114,17 @@ export function describeNotification(
       };
     case "report_result":
       return { actor: "", action: "你的檢舉已處理", detail: label };
+    case "system": {
+      const title = text(notification.meta?.title) || label || "平台通知";
+      return {
+        actor: "",
+        action: "",
+        detail: "",
+        title,
+        body: text(notification.meta?.message),
+        source: systemSource(notification),
+      };
+    }
     default:
       return { actor: "", action: label || "你有一則新通知", detail: "" };
   }
@@ -73,9 +132,12 @@ export function describeNotification(
 
 /** Plain sentence, for aria-labels. */
 export function notificationSentence(notification: TNotification) {
-  const text = describeNotification(notification);
-  const sentence = `${text.actor}${text.action}`.trim();
-  return text.detail ? `${sentence}：${text.detail}` : sentence;
+  const words = describeNotification(notification);
+  if (words.title) {
+    return words.body ? `${words.title}：${words.body}` : words.title;
+  }
+  const sentence = `${words.actor}${words.action}`.trim();
+  return words.detail ? `${sentence}：${words.detail}` : sentence;
 }
 
 /**

@@ -11,7 +11,7 @@ import {
   mergeNotificationSettings,
   resolveNotificationSettings,
 } from "@/modules/notifications/settings";
-import { useAdminChrome } from "@/utils/useAdminAccess";
+import { useAdminAccess } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { InstallSetting } from "./InstallPrompt";
 import { PushControl } from "./PushControl";
@@ -36,6 +36,7 @@ const PUSH_LABELS: {
   { type: "feedback", label: "老師給了我的貼文回饋" },
   { type: "event", label: "我的 SIG 有新活動" },
   { type: "join_result", label: "我的入社申請有結果" },
+  { type: "system", label: "平台公告與 SIG 廣播" },
   {
     type: "join_request",
     label: "有人申請加入我管理的 SIG",
@@ -59,7 +60,12 @@ export function NotificationSettingsPanel({
   mobile?: boolean;
 }) {
   const { userData, token, updateUser } = useUserAccount();
-  const { canOpenAdmin } = useAdminChrome();
+  // Join requests reach SIG managers (and admins), not content moderators.
+  const access = useAdminAccess();
+  const managesSigs =
+    access.status === "admin" ||
+    ((access.status === "manager" || access.status === "moderator") &&
+      access.managedSigIds.length > 0);
   const settings = resolveNotificationSettings(userData);
   const [pending, setPending] = useState<Partial<Record<SettingKey, boolean>>>(
     {},
@@ -133,7 +139,7 @@ export function NotificationSettingsPanel({
           套用到你開啟通知的每一台裝置。
         </p>
         <div className="mt-1 divide-y divide-line">
-          {PUSH_LABELS.filter((item) => !item.managersOnly || canOpenAdmin).map(
+          {PUSH_LABELS.filter((item) => !item.managersOnly || managesSigs).map(
             (item) => settingSwitch(`push.${item.type}`, item.label),
           )}
         </div>

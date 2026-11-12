@@ -79,6 +79,8 @@ const REASON_LABEL = new Map<string, string>([
   ["inappropriate", "不當內容"],
   ["privacy", "侵犯隱私"],
   ["other", "其他"],
+  // Filed by the keyword filter (contract v4 §5.11).
+  ["keyword", "符合過濾關鍵字"],
 ]);
 
 const STATUS_BADGE = new Map<string, { label: string; tone: BadgeTone }>([
@@ -143,8 +145,25 @@ function postIdOf(target: ReportTarget) {
   return null;
 }
 
+/** Filed by the keyword filter: `reporter` is "system" (contract v4 §5.11). */
+function isSystemReport(report: AdminReport) {
+  const reporter = report.reporter;
+  return (
+    reporter === "system" ||
+    (typeof reporter === "object" && reporter?._id === "system")
+  );
+}
+
+function reporterOf(report: AdminReport) {
+  const reporter = report.reporter;
+  return typeof reporter === "object" ? reporter : null;
+}
+
 function reporterName(report: AdminReport) {
-  return report.reporter?.name || "已刪除的使用者";
+  if (isSystemReport(report)) {
+    return "系統（關鍵字）";
+  }
+  return reporterOf(report)?.name || "已刪除的使用者";
 }
 
 function handlerName(report: AdminReport, selfId: string) {
@@ -466,7 +485,9 @@ export default function AdminReportsPage() {
                   {current.target.author?.name || "已刪除的使用者"}
                 </InfoRow>
                 <InfoRow label="原因">{reasonLabel(current.reason)}</InfoRow>
-                <InfoRow label="補充說明">
+                <InfoRow
+                  label={isSystemReport(current) ? "符合的字詞" : "補充說明"}
+                >
                   {current.note?.trim() ? (
                     <span className="whitespace-pre-wrap">{current.note}</span>
                   ) : (
@@ -475,12 +496,13 @@ export default function AdminReportsPage() {
                 </InfoRow>
                 <InfoRow label="檢舉人">
                   {reporterName(current)}
-                  {current.reporter?.customId && (
-                    <span className="text-ink-500">
-                      {" "}
-                      @{current.reporter.customId}
-                    </span>
-                  )}
+                  {!isSystemReport(current) &&
+                    reporterOf(current)?.customId && (
+                      <span className="text-ink-500">
+                        {" "}
+                        @{reporterOf(current)?.customId}
+                      </span>
+                    )}
                 </InfoRow>
                 <InfoRow label="檢舉時間">
                   {formatDateTime(current.createdAt)}
@@ -549,6 +571,11 @@ function ResolveDialog({
 
   const remove = request?.action === "remove";
   const noun = request ? kindLabel(request.report.target.kind) : "內容";
+  // The keyword filter is told nothing; people who also reported it are.
+  const system = request ? isSystemReport(request.report) : false;
+  const tellReporters = system
+    ? "，並通知同一則內容的其他檢舉人"
+    : "，並通知檢舉人處理結果";
 
   return (
     <Modal
@@ -561,8 +588,8 @@ function ResolveDialog({
       title={remove ? `移除這則${noun}？` : "不處理這筆檢舉？"}
       description={
         remove
-          ? `${noun}會被隱藏（之後可以在「${noun}」頁復原）。這則${noun}的所有待處理檢舉都會一起結案，並通知檢舉人處理結果。`
-          : `${noun}會保留。這則${noun}的所有待處理檢舉都會一起結案，並通知檢舉人處理結果。`
+          ? `${noun}會被隱藏（之後可以在「${noun}」頁復原）。這則${noun}的所有待處理檢舉都會一起結案${tellReporters}。`
+          : `${noun}會保留。這則${noun}的所有待處理檢舉都會一起結案${tellReporters}。`
       }
       initialFocus={textRef}
       footer={
@@ -585,7 +612,9 @@ function ResolveDialog({
         htmlFor={textId}
         hint={
           <span className="flex justify-between gap-2">
-            <span>會一併通知檢舉人</span>
+            <span>
+              {system ? "會一併通知其他檢舉人（如果有）" : "會一併通知檢舉人"}
+            </span>
             <span
               className={
                 text.length >= RESOLUTION_MAX ? "text-warm-600" : undefined

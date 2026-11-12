@@ -1,3 +1,4 @@
+import type { Suspension } from "@/modules/suspension";
 import type { NotificationSettingsPatch } from "./Notification";
 
 export type Identity = "teacher" | "student" | "alumni";
@@ -49,6 +50,11 @@ export type User = {
   notificationSettings?: NotificationSettingsPatch;
   /** Set when `/user/@:id` matched an old customId: the current one. */
   redirectTo?: string;
+  /**
+   * A mute or ban in force (only on /user/me and /login, contract v4
+   * §5.1); absent otherwise.
+   */
+  suspension?: Suspension;
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本

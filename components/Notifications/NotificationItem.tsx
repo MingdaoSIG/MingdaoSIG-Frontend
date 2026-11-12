@@ -8,7 +8,9 @@ import {
   GraduationCap,
   Heart,
   type LucideIcon,
+  Megaphone,
   MessageCircle,
+  ShieldAlert,
   UserPlus,
   X,
 } from "lucide-react";
@@ -23,6 +25,7 @@ import {
   describeNotification,
   notificationSentence,
   safeNotificationLink,
+  systemKind,
 } from "@/modules/notifications/describe";
 import { relativeTime } from "@/modules/relativeTime";
 
@@ -39,6 +42,14 @@ const TYPE_ICONS: Record<NotificationType, LucideIcon> = {
 };
 
 function iconFor(notification: TNotification): LucideIcon {
+  if (notification.type === "system") {
+    const kind = systemKind(notification);
+    return kind === "broadcast"
+      ? Megaphone
+      : kind === "account"
+        ? ShieldAlert
+        : Bell;
+  }
   if (
     notification.type === "join_result" &&
     notification.meta?.accepted !== true
@@ -98,14 +109,43 @@ export function NotificationItem({
 
   const content = (
     <>
-      <Picture notification={notification} />
+      <Picture
+        notification={
+          // An announcement shows its icon, not the sender's avatar.
+          notification.type === "system"
+            ? { ...notification, actor: null }
+            : notification
+        }
+      />
       <span className="min-w-0 flex-1">
-        <span className="block text-[0.9rem] text-ink-800 leading-6">
-          {text.actor && (
-            <span className="font-semibold text-ink-900">{text.actor}</span>
-          )}
-          {text.action}
-        </span>
+        {text.title ? (
+          <>
+            {text.source && (
+              <span className="block text-brand-700 text-xs leading-5">
+                {text.source}
+              </span>
+            )}
+            <span className="block break-words font-semibold text-[0.9rem] text-ink-900 leading-6">
+              {text.title}
+            </span>
+            {text.body && (
+              <span
+                className={`block whitespace-pre-line break-words text-[13px] text-ink-700 leading-5 ${
+                  compact ? "line-clamp-2" : ""
+                }`}
+              >
+                {text.body}
+              </span>
+            )}
+          </>
+        ) : (
+          <span className="block text-[0.9rem] text-ink-800 leading-6">
+            {text.actor && (
+              <span className="font-semibold text-ink-900">{text.actor}</span>
+            )}
+            {text.action}
+          </span>
+        )}
         {text.detail && (
           <span className="block truncate text-[13px] text-ink-500 leading-5">
             {text.detail}

@@ -41,7 +41,9 @@ export type PushNotificationType =
   | "join_request"
   | "join_result"
   | "feedback"
-  | "event";
+  | "event"
+  /** Announcements and broadcasts (contract v4 §5.5). */
+  | "system";
 
 export type NotificationSettings = {
   push: Record<PushNotificationType, boolean>;
