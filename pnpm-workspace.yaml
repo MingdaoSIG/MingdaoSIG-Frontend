@@ -5,9 +5,13 @@ onlyBuiltDependencies:
   - unrs-resolver
 
 overrides:
-  next>postcss: 8.5.30
+  next>postcss: 8.5.32
   # One copy only: two copies of @lezer/common make CodeMirror read
   # node props from the wrong registry, so parsing any HTML tag throws
   # and the post editor crashes the page.
   '@lezer/common': ^1.5.3
   '@lezer/highlight': ^1.2.5
+  # rehype-katex asks for katex ^0.16, but the app loads the KaTeX CSS from
+  # the direct katex dependency. One copy keeps the rendered HTML and the
+  # CSS from the same release.
+  katex: 0.19.1

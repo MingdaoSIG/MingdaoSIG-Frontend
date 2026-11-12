@@ -3,6 +3,16 @@
 
 const path = require("node:path");
 
+// Hosts whose images go through next/image (/_next/image). Anything else
+// is rejected, so the optimizer cannot be used as an open image proxy.
+// Images inside post content are plain <img> tags and are not affected.
+const apiOrigins = [
+  "https://sig-api.mingdao.edu.tw",
+  "https://api.sig.school",
+  "https://api-beta.sig.school",
+  process.env.NEXT_PUBLIC_API_URL,
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
@@ -11,14 +21,20 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
+      // Post covers and SIG avatars
+      ...apiOrigins
+        .filter((origin) => origin)
+        .map((origin) => new URL("/image/**", origin)),
+      // Google account avatars (/a/, /a-/ and the default /-XdUIqdMkCWA/)
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
+      // One existing post cover links to a Tenor GIF
       {
-        protocol: "http",
-        hostname: "**",
+        protocol: "https",
+        hostname: "media.tenor.com",
         pathname: "/**",
       },
     ],
@@ -27,7 +43,13 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        // Pages, RSC payloads and route handlers must not be cached, so a
+        // deploy shows up right away. Leave out hashed build assets
+        // (/_next/static, served as immutable), optimized images (they set
+        // their own TTL) and files from public/ (served with an ETag, so
+        // the browser revalidates instead of downloading them again).
+        source:
+          "/((?!_next/static/|_next/image|images/|icons/|badges/|videos/).*)",
         headers: [
           {
             key: "Cache-Control",
@@ -37,6 +59,10 @@ const nextConfig = {
       },
     ];
   },
+
+  // next dev writes a managed block into AGENTS.md when it detects an AI
+  // agent. This repo keeps AGENTS.md by hand, so leave it alone.
+  agentRules: false,
 
   turbopack: {
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
