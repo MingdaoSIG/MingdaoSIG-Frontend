@@ -69,6 +69,10 @@ function joinErrorMessage(result: ApiFailure) {
  * State and action of the 「加入 SIG」 button on a SIG page, shared by the
  * desktop and mobile profile cards. Logged-out visitors get an enabled
  * button that explains joining needs an account and offers to log in.
+ *
+ * The state is the user's newest join request (the backend returns that
+ * one): pending → 審核中, accepted or already a member → 已加入, rejected →
+ * the user may apply again, with a notice that the last one was declined.
  */
 export function useJoinSig(account: User | Sig | null, isSig: boolean) {
   const { token, userData, isLoading: authLoading, login } = useUserAccount();
@@ -103,8 +107,11 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
       ? "審核中"
       : state === "accepted"
         ? "已加入"
-        : "加入 SIG";
+        : state === "rejected"
+          ? "再次申請"
+          : "加入 SIG";
   const disabled = state === "" || state === "pending" || state === "accepted";
+  const notice = state === "rejected" ? "上次的申請未通過，可以再次申請" : null;
 
   function join() {
     if (!sigId) {
@@ -160,6 +167,12 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
             confirmButtonColor: "#0b5a83",
           });
         } else {
+          // Another tab or device got there first: show what the server has.
+          if (res.status === CustomStatus.ALREADY_APPLIED) {
+            setRequest("pending");
+          } else if (res.status === CustomStatus.ALREADY_JOINED) {
+            setRequest("accepted");
+          }
           Swal.fire({
             title: "申請失敗",
             text: joinErrorMessage(res),
@@ -172,5 +185,5 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
     });
   }
 
-  return { label, disabled, join };
+  return { label, disabled, notice, join };
 }

@@ -62,6 +62,9 @@ export default function Info({
             )}
             {accountData?.badge ? <BadgeList userData={accountData} /> : null}
           </div>
+          {isSig && joinSig.notice && (
+            <p className={styles.joinNotice}>{joinSig.notice}</p>
+          )}
           <hr className={styles.contentHR} />
           {accountData && (
             <Description
