@@ -58,9 +58,31 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 
 ## Markdown Editor
 
-- Package: `md-editor-rt`
-- Preview theme: `github`
-- Must be loaded with `dynamic(..., { ssr: false })` (client-only)
+- `components/PostEditor/PostEditor.tsx` (design v4 6B), shared by `/new`
+  and the edit page: a sticky bar (cloud-save status, 草稿, 捨棄/還原, 設定,
+  發布/更新), the writing area (title, toolbar, CodeMirror 6 in
+  `desktop/Editor.tsx` / `mobile/Editor.tsx`) filling the window down to a
+  1.5rem margin and scrolling inside, with 寫作 / 並排 / 預覽 (並排 by
+  default from 1280px), and a right settings column that folds away
+  (`settings/EditorSettings.tsx`). On phones 發布 opens the settings as a
+  sheet whose 發布 publishes. Missing title, content or SIG show under the
+  field when 發布 is pressed (never while typing). View and fold choices
+  are remembered (`mdsig-editor-view`, `mdsig-editor-settings`).
+- Settings: 發布到 (`SigPicker`, 7B: colour chips of the SIGs you may post
+  in, the only one chosen at once, more than six → 「更多 SIG…」 with a
+  search; rules from `useSigOptions`); 封面 (`CoverField`, 8B: the real
+  cover from the start, else the SIG default with 「SIG 預設封面」; 更換封面
+  or drop a picture; it is cropped to 16:9 on the client and uploaded as
+  WebP, 調整位置 picks another region of the same picture
+  (`CoverCropDialog`), 移除 goes back to the default; TIFF is uploaded
+  as it is); 標籤 (`TagInput`, 9B: Enter or comma adds, Backspace removes the
+  last, at most 5, suggestions from `GET /post/hashtags/top?q=` debounced
+  200 ms with 「新增「#…」」, 「這個 SIG 常用」 from `?sig=`); 加入系列
+  (`SeriesPicker`, 10B: search, 「建立新系列」 inline via `POST /series`, the
+  order with 「這篇會是第 N 篇」, or the post's real place when editing);
+  卡片預覽 (FE-U1's `PostCard`, inert).
+- The empty editor's placeholder is one short line (「開始寫作…」) so the
+  caret is one line tall; help is the 「Markdown 教學」 link.
 - Logged out, the editor auto-saves to `localStorage` (`editorContent`,
   `postData`); signed in, it saves cloud drafts instead (see below)
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import {
   type Dispatch,
   type SetStateAction,
@@ -16,14 +16,26 @@ import {
 } from "../shared/useMarkdownEditor";
 import type { TPostAPI } from "../types/postAPI";
 
-// Desktop Markdown editor: CodeMirror 6 source on the left, the same
-// renderer as the post page on the right (docs/redesign/redesign-2026.md §10).
+// Desktop Markdown editor: CodeMirror 6 source and the same renderer as
+// the post page (docs/redesign/redesign-2026.md §10), as 寫作 (source),
+// 並排 (side by side) or 預覽 (v4 6B). The source stays mounted in 預覽, so
+// its undo history and cursor survive.
+
+export type EditorView = "write" | "split" | "preview";
 
 interface Props {
   data: TPostAPI;
   setPostData: Dispatch<SetStateAction<TPostAPI>>;
   token: string;
+  view: EditorView;
+  onViewChange: (view: EditorView) => void;
 }
+
+const VIEWS: [EditorView, string][] = [
+  ["write", "寫作"],
+  ["split", "並排"],
+  ["preview", "預覽"],
+];
 
 const TOOLBAR = [
   ["bold", "italic", "underline", "strike"],
@@ -32,9 +44,16 @@ const TOOLBAR = [
   ["undo", "redo"],
 ];
 
-export default function MdEditorSync({ data, setPostData, token }: Props) {
+export default function MdEditorSync({
+  data,
+  setPostData,
+  token,
+  view,
+  onViewChange,
+}: Props) {
+  const showPreview = view !== "write";
+  const showSource = view !== "preview";
   const previewRef = useRef<HTMLDivElement>(null);
-  const [showPreview, setShowPreview] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
 
   const { hostRef, content, items, uploading, fileInputProps } =
@@ -80,44 +99,51 @@ export default function MdEditorSync({ data, setPostData, token }: Props) {
     >
       {/* Toolbar */}
       <div className="flex shrink-0 items-center gap-1 border-line border-b px-3 py-1.5">
-        {TOOLBAR.map((group, groupIndex) => (
-          <div key={group.join()} className="flex items-center gap-0.5">
-            {groupIndex > 0 && (
-              <span aria-hidden className="mx-1.5 h-5 w-px bg-line" />
-            )}
-            {group.map((key) => {
-              const item = items[key];
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  title={item.label}
-                  aria-label={item.label}
-                  className={toolButton}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={item.onClick}
-                >
-                  <item.icon size={17} aria-hidden />
-                </button>
-              );
-            })}
-          </div>
-        ))}
-        <div className="ml-auto flex items-center gap-0.5">
-          <button
-            type="button"
-            title={showPreview ? "隱藏預覽" : "顯示預覽"}
-            aria-label={showPreview ? "隱藏預覽" : "顯示預覽"}
-            aria-pressed={showPreview}
-            className={toolButton}
-            onClick={() => setShowPreview((v) => !v)}
+        {showSource &&
+          TOOLBAR.map((group, groupIndex) => (
+            <div key={group.join()} className="flex items-center gap-0.5">
+              {groupIndex > 0 && (
+                <span aria-hidden className="mx-1.5 h-5 w-px bg-line" />
+              )}
+              {group.map((key) => {
+                const item = items[key];
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    title={item.label}
+                    aria-label={item.label}
+                    className={toolButton}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={item.onClick}
+                  >
+                    <item.icon size={17} aria-hidden />
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        <div className="ml-auto flex items-center gap-1.5">
+          <fieldset
+            aria-label="檢視"
+            className="flex rounded-control bg-ink-900/6 p-0.5"
           >
-            {showPreview ? (
-              <Eye size={17} aria-hidden />
-            ) : (
-              <EyeOff size={17} aria-hidden />
-            )}
-          </button>
+            {VIEWS.map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={view === value}
+                onClick={() => onViewChange(value)}
+                className={`h-7 cursor-pointer whitespace-nowrap rounded-[6px] px-2.5 font-semibold text-xs ${
+                  view === value
+                    ? "bg-surface text-ink-900 shadow-card"
+                    : "text-ink-500 hover:text-ink-800"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </fieldset>
           <button
             type="button"
             title={fullscreen ? "離開全螢幕 (Esc)" : "全螢幕"}
@@ -139,12 +165,21 @@ export default function MdEditorSync({ data, setPostData, token }: Props) {
       {/* Source | Preview */}
       <div
         className={`grid min-h-0 flex-1 ${
-          showPreview ? "grid-cols-2" : "grid-cols-1"
+          view === "split" ? "grid-cols-2" : "grid-cols-1"
         }`}
       >
-        <div ref={hostRef} className="min-h-0 overflow-hidden" />
+        <div
+          ref={hostRef}
+          className={`min-h-0 overflow-hidden ${showSource ? "" : "hidden"}`}
+        />
         {showPreview && (
-          <div className="custom-scrollbar min-h-0 overflow-y-auto border-line border-l bg-paper px-8 py-6">
+          <section
+            aria-label="預覽"
+            className={`custom-scrollbar min-h-0 overflow-y-auto bg-paper px-8 py-6 ${
+              showSource ? "border-line border-l" : ""
+            }`}
+            data-editor-preview
+          >
             {content.trim() ? (
               <MarkdownView
                 ref={previewRef}
@@ -152,9 +187,9 @@ export default function MdEditorSync({ data, setPostData, token }: Props) {
                 debounceMs={150}
               />
             ) : (
-              <p className="text-ink-400 text-sm">預覽內容將顯示在這裡…</p>
+              <p className="text-ink-400 text-sm">還沒有內容</p>
             )}
-          </div>
+          </section>
         )}
       </div>
 
@@ -164,12 +199,16 @@ export default function MdEditorSync({ data, setPostData, token }: Props) {
         {uploading > 0 && (
           <span className="text-brand-700">圖片上傳中（{uploading}）…</span>
         )}
-        <span className="ml-auto">右側預覽與發布後的文章排版相同</span>
+        {showPreview && (
+          <span className="ml-auto">預覽與發布後的文章排版相同</span>
+        )}
         <a
           href={MARKDOWN_GUIDE_URL}
           target="_blank"
           rel="noreferrer"
-          className="text-brand-700 hover:underline"
+          className={`text-brand-700 hover:underline ${
+            showPreview ? "" : "ml-auto"
+          }`}
         >
           Markdown 教學
         </a>
