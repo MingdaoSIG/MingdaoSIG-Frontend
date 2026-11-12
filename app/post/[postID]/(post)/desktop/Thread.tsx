@@ -227,7 +227,10 @@ export default function Thread({
               isOwnPost
                 ? undefined
                 : () =>
-                    report.open({ kind: "post", id: post._id ?? "" }, post.title)
+                    report.open(
+                      { kind: "post", id: post._id ?? "" },
+                      post.title,
+                    )
             }
           />
         </div>

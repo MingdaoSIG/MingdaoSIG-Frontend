@@ -88,9 +88,7 @@ export function BookmarkButton({
         strokeWidth={2}
         fill={saved ? "currentColor" : "none"}
       />
-      {size === "bar" && (
-        <span aria-hidden>{saved ? "已收藏" : "收藏"}</span>
-      )}
+      {size === "bar" && <span aria-hidden>{saved ? "已收藏" : "收藏"}</span>}
     </button>
   );
 }

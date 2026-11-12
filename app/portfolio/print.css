@@ -58,7 +58,31 @@
     display: none !important;
   }
 
+  /* The live preview (v3 7B): grey backdrop, scaled A4 sheets, and on
+     phones a tab that may be hidden. Print the sheets at full size, with
+     the @page margins instead of their own padding. */
+  [data-portfolio] [data-print-show] {
+    display: block !important;
+  }
+
+  [data-portfolio] [data-print-scroll] {
+    background: none !important;
+    border-radius: 0 !important;
+  }
+
+  [data-portfolio] [data-a4-zoom] {
+    zoom: 1 !important;
+  }
+
+  [data-portfolio] [data-a4-page] {
+    width: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
   [data-portfolio] [data-print-sheet] {
+    display: block !important;
     border: 0 !important;
     box-shadow: none !important;
     padding: 0 !important;
