@@ -49,10 +49,12 @@ import {
 import { useAdmin } from "../(admin)/context";
 import { formatCount, formatDate, IDENTITY_LABEL } from "../(admin)/format";
 import type { AdminUser, AdminUserDetail, BadgeId } from "../(admin)/types";
+import { UserEditSection } from "../(admin)/user/UserEditSection";
 import { oneOf, useQueryState } from "../(admin)/useQueryState";
 
 // 使用者: find people by name, account id, email or student number, see
-// their SIGs and activity, make them admin (or not) and give badges.
+// their SIGs and activity, edit their account id, display name and 關於我
+// (編輯資料), make them admin (or not) and give badges.
 
 const ROLES = ["all", "admin"] as const;
 
@@ -340,7 +342,7 @@ function UserDrawer({
   const detail = useUserDetail(user._id);
   // What this drawer changed, until the refetch catches up (the user may
   // also drop out of the filtered list, e.g. after removing admin).
-  const [changed, setChanged] = useState<Partial<AdminUser>>({});
+  const [changed, setChanged] = useState<Partial<AdminUserDetail>>({});
   const full: AdminUserDetail = { ...user, ...detail.data, ...changed };
   const isSelf = user._id === admin.userId;
   const isAdminUser = full.permission === 2;
@@ -498,6 +500,21 @@ function UserDrawer({
           部分資料載入失敗：{errorText(detail.error)}
         </p>
       )}
+
+      <Section title="編輯資料">
+        {detail.isPending ? (
+          <Spinner />
+        ) : (
+          <UserEditSection
+            user={full}
+            onSaved={(saved) => {
+              patch(user._id, { customId: saved.customId });
+              setChanged((prev) => ({ ...prev, ...saved }));
+              void invalidate(adminKeys.users);
+            }}
+          />
+        )}
+      </Section>
 
       <Section title="加入的 SIG">
         {detail.isPending ? (
