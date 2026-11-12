@@ -25,11 +25,11 @@ const nextConfig = {
       ...apiOrigins
         .filter((origin) => origin)
         .map((origin) => new URL("/image/**", origin)),
-      // Google account avatars
+      // Google account avatars (/a/, /a-/ and the default /-XdUIqdMkCWA/)
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-        pathname: "/a/**",
+        pathname: "/**",
       },
       // One existing post cover links to a Tenor GIF
       {
