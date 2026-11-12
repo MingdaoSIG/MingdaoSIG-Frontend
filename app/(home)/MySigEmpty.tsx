@@ -2,7 +2,7 @@
 
 import { Users } from "lucide-react";
 import Link from "next/link";
-import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
+import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import {
   ANNOUNCEMENT_SIG_ID,
   managedSigIdsOf,
@@ -77,7 +77,7 @@ export function MySigEmpty({
                     className="rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-3 py-1.5 font-semibold text-ink-800 text-sm transition-colors hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
                     style={{
                       ["--sig-color" as string]:
-                        sigDefaultColors[sig._id] ?? "#0b5a83",
+                        resolveSigColor(sig) ?? BRAND_COLOR,
                     }}
                   >
                     {sig.name}

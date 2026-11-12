@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
-import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
 import { CustomStatus } from "@/modules/customStatusCode";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import { isSubmitEnter } from "@/utils/keyboard";
 import { promptLogin } from "@/utils/loginPrompt";
 // Custom Hooks
@@ -52,6 +52,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const { showAlert } = useAlert();
   const { data: user, isLoading: userLoading } = useUser(post.user);
   const { data: sig, isLoading: sigLoading } = useSig(post.sig);
+  const colorOf = useSigColor();
   const composing = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const notify = useMemo<CommentNotify>(
@@ -156,7 +157,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               type="button"
               className="sig-text shrink-0 cursor-pointer font-semibold hover:underline disabled:cursor-default disabled:no-underline"
               style={{
-                ["--sig-color" as string]: sigDefaultColors[sig?._id ?? ""],
+                ["--sig-color" as string]: colorOf(sig),
               }}
               disabled={!sig?.customId}
               onClick={() => sig?.customId && route.push(`/@${sig.customId}`)}

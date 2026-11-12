@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { BottomSheet } from "@/components/mobile/BottomSheet";
-import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
 import { apiRequest } from "@/modules/api/client";
 // Modules
 import maxMatch from "@/modules/maxMatch";
+import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 
-const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
+const SIG = (child: Pick<Sig, "_id" | "name" | "customId" | "color">) => {
   // No link until the SIG has an id to link to (never "/@undefined").
   if (!child.customId) {
     return null;
@@ -19,7 +19,7 @@ const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
     <Link
       className="relative flex h-20 w-20 flex-shrink-0 flex-wrap content-center items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface p-1 text-center font-semibold text-[13px] text-ink-800 leading-snug transition duration-150 active:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
       style={{
-        ["--sig-color" as string]: sigDefaultColors[child._id] ?? "#0b5a83",
+        ["--sig-color" as string]: resolveSigColor(child) ?? BRAND_COLOR,
       }}
       href={`/@${child.customId}`}
     >

@@ -10,12 +10,13 @@ import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
 import { postTags } from "@/modules/hashtag";
 import { imageUrl } from "@/modules/imageUrl";
+import { BRAND_COLOR } from "@/modules/sigTheme";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
 // Configs
-import { sigDefaultColors } from "../configs/sigDefaultColors";
 import { HashtagLinks, PinnedChip } from "../desktop/ThreadsList";
 import { postSummary } from "../postSummary";
 
@@ -165,18 +166,21 @@ export const SigChip = ({
   sig,
   className = "",
 }: {
-  sig: Pick<Sig, "_id" | "name">;
+  sig: Pick<Sig, "_id" | "name" | "color">;
   className?: string;
-}) => (
-  <span
-    className={`sig-text shrink-0 rounded-chip bg-[color-mix(in_srgb,var(--sig-color)_12%,white)] px-2 py-0.5 font-semibold text-xs ${className}`}
-    style={{
-      ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""] || "#0b5a83",
-    }}
-  >
-    {sig.name}
-  </span>
-);
+}) => {
+  const colorOf = useSigColor();
+  return (
+    <span
+      className={`sig-text shrink-0 rounded-chip bg-[color-mix(in_srgb,var(--sig-color)_12%,white)] px-2 py-0.5 font-semibold text-xs ${className}`}
+      style={{
+        ["--sig-color" as string]: colorOf(sig, BRAND_COLOR),
+      }}
+    >
+      {sig.name}
+    </span>
+  );
+};
 
 const ThreadSkeleton = () => {
   return (
