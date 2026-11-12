@@ -46,6 +46,8 @@ export type User = {
    * keys mean the defaults; see modules/notifications/settings.
    */
   notificationSettings?: NotificationSettingsPatch;
+  /** Set when `/user/@:id` matched an old customId: the current one. */
+  redirectTo?: string;
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本

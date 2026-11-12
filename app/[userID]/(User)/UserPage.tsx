@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SplitBlock from "@/app/(Layout)/splitBlock";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
@@ -11,6 +12,7 @@ import {
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
 import { apiRequest } from "@/modules/api/client";
+import { isValidCustomId } from "@/modules/validation";
 import useIsMobile from "@/utils/useIsMobile";
 import { useSigPost, useUserLikedPost, useUserPost } from "@/utils/usePost";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -23,10 +25,13 @@ type AccountData = {
   dataType: "user" | "sig" | null;
   /** Set when the lookup failed for a reason other than "not found". */
   error: string | null;
+  /** The id matched an old customId: the current one (contract v4 §3.7). */
+  redirectTo?: string;
 };
 
 export default function UserPage({ accountId }: { accountId: string }) {
   const isMobile = useIsMobile();
+  const router = useRouter();
   const { userData } = useUserAccount();
   const [tab, setTab] = useState<ProfileTab>("posts");
 
@@ -45,6 +50,13 @@ export default function UserPage({ accountId }: { accountId: string }) {
       setError(null);
       const result = await getAccountData(accountId, controller.signal);
       if (controller.signal.aborted) {
+        return;
+      }
+      // An old link: go to the current address, keeping ?tab= and #…,
+      // and stay on the skeleton until that page loads.
+      if (result.redirectTo) {
+        const { search, hash } = window.location;
+        router.replace(`/@${result.redirectTo}${search}${hash}`);
         return;
       }
       setData(result.data);
@@ -210,11 +222,33 @@ async function getAccountData(
     apiRequest<Sig>(`/sig/${accountId}`, { signal }),
   ]);
 
-  if (user.ok && isAccount(user.data)) {
-    return { data: user.data, dataType: "user", error: null };
+  // A current id wins over an old one that redirects (ids are unique
+  // across users and SIGs, so at most one should match either way).
+  const userData = user.ok && isAccount(user.data) ? user.data : null;
+  const sigData = sig.ok && isAccount(sig.data) ? sig.data : null;
+  const currentId = accountId.replace(/^@/, "");
+  const redirect = (account: User | Sig | null) => {
+    const next = account?.redirectTo;
+    return typeof next === "string" &&
+      next !== currentId &&
+      isValidCustomId(`@${next}`)
+      ? next
+      : undefined;
+  };
+  if (userData && !redirect(userData)) {
+    return { data: userData, dataType: "user", error: null };
   }
-  if (sig.ok && isAccount(sig.data)) {
-    return { data: sig.data, dataType: "sig", error: null };
+  if (sigData && !redirect(sigData)) {
+    return { data: sigData, dataType: "sig", error: null };
+  }
+  for (const [account, dataType] of [
+    [userData, "user"],
+    [sigData, "sig"],
+  ] as const) {
+    const redirectTo = redirect(account);
+    if (account && redirectTo) {
+      return { data: account, dataType, error: null, redirectTo };
+    }
   }
   for (const result of [user, sig]) {
     if (!result.ok && result.kind !== "not-found") {
