@@ -97,6 +97,7 @@ function SigGrid() {
         <li key={sig._id}>
           <Link
             href={`/@${sig.customId}`}
+            title={sig.name}
             className="flex h-full min-h-20 flex-col justify-center gap-1 rounded-control border border-line border-t-[3px] border-t-[var(--sig-color)] bg-surface px-3 py-2.5 transition-colors hover:bg-[color-mix(in_srgb,var(--sig-color)_6%,white)]"
             style={{
               ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,

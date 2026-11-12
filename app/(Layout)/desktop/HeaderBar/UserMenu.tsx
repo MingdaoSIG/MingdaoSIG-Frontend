@@ -21,6 +21,9 @@ export default function UserMenu() {
   const { userData, logout } = useUserAccount();
   const { canOpenAdmin } = useAdminChrome();
   const [open, setOpen] = useState(false);
+  // Opened from the keyboard: focus the first entry (with its ring). With
+  // the mouse: focus the menu itself, so no ring shows until a key is used.
+  const [fromKeyboard, setFromKeyboard] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -37,9 +40,13 @@ export default function UserMenu() {
     if (!open) {
       return;
     }
-    menuRef.current
-      ?.querySelector<HTMLElement>('[role="menuitem"]')
-      ?.focus({ preventScroll: true });
+    const first =
+      menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]');
+    if (fromKeyboard) {
+      first?.focus({ preventScroll: true });
+    } else {
+      menuRef.current?.focus({ preventScroll: true });
+    }
     const onPointer = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         setOpen(false);
@@ -47,7 +54,7 @@ export default function UserMenu() {
     };
     document.addEventListener("pointerdown", onPointer);
     return () => document.removeEventListener("pointerdown", onPointer);
-  }, [open]);
+  }, [open, fromKeyboard]);
 
   function close(focusButton: boolean) {
     setOpen(false);
@@ -72,7 +79,7 @@ export default function UserMenu() {
     }
     let next = -1;
     if (event.key === "ArrowDown") {
-      next = (index + 1) % items.length;
+      next = index < 0 ? 0 : (index + 1) % items.length;
     } else if (event.key === "ArrowUp") {
       next = (index - 1 + items.length) % items.length;
     } else if (event.key === "Home") {
@@ -96,10 +103,15 @@ export default function UserMenu() {
         aria-controls={open ? menuId : undefined}
         aria-label={`我的：${userData?.name ?? ""}`}
         data-user-menu
-        onClick={() => setOpen((value) => !value)}
+        onClick={(event) => {
+          // A click from Enter / Space has detail 0.
+          setFromKeyboard(event.detail === 0);
+          setOpen((value) => !value);
+        }}
         onKeyDown={(event) => {
           if (event.key === "ArrowDown" && !open) {
             event.preventDefault();
+            setFromKeyboard(true);
             setOpen(true);
           }
         }}
@@ -122,6 +134,7 @@ export default function UserMenu() {
           id={menuId}
           role="menu"
           aria-label="我的"
+          tabIndex={-1}
           onKeyDown={onMenuKey}
           className="custom-scrollbar absolute top-12 right-0 z-50 flex max-h-[calc(100dvh-5.5rem)] w-72 flex-col overflow-y-auto rounded-card border border-line bg-surface p-1.5 shadow-card-hover"
         >

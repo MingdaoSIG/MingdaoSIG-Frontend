@@ -149,7 +149,7 @@ export default function TagPage({ tag }: { tag: string }) {
           />
         </SectionErrorBoundary>
       </div>
-      <div className="custom-scrollbar flex min-h-0 flex-col gap-4 overflow-y-auto">
+      <div className="flex flex-col gap-4">
         {related.length > 0 && (
           <section className="glass shrink-0 rounded-card p-5">
             <h2 className="mb-3 font-bold text-base text-ink-900 leading-7">
