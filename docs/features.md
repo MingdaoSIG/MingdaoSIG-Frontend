@@ -53,7 +53,8 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
   page. Nothing is fetched before the role is known. The header shows
   「管理平台」 to admins and managers.
 - Sections: `/admin` 總覽, `/admin/posts`, `/admin/comments`,
-  `/admin/sigs`, `/admin/sigs/[sigId]?tab=info|staff|members|requests`,
+  `/admin/sigs`,
+  `/admin/sigs/[sigId]?tab=info|staff|members|requests|events|analytics`,
   `/admin/join-requests`, `/admin/users`, `/admin/exports`, `/admin/audit`.
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
@@ -143,6 +144,44 @@ Contract: `design/api-contract-v4.md` §2.
   指導老師 and admins; 「退出 SIG」 for members
 - Image fields may be a URL, `/image/<id>` or a bare image id; render them
   through `imageUrl()` (`modules/imageUrl`)
+
+## Portfolio, teacher feedback, SIG events, showcase, analytics, Discord
+
+Contract: `design/api-contract-v4.md` §3.1–§3.6. Everything that lives on
+the SIG page or the post page is a self-contained component with plain
+props, so the user-side redesign can move it without rewriting it.
+
+- 學習歷程 `/portfolio` (`app/portfolio/`): your own posts, SIGs and teacher
+  feedback (`GET /user/me/portfolio`). Every post is in by default; the
+  checkboxes and 「包含老師回饋」 pick what goes in. 「下載 PDF」 calls
+  `window.print()`; `app/portfolio/print.css` prints only the document on
+  A4 (no header or dock, page break before the posts, posts not split).
+  The document is `components/Portfolio/PortfolioDocument.tsx`; your own
+  profile links to it (`PortfolioEntry`).
+- 老師回饋 (`components/TeacherFeedback/TeacherFeedback.tsx`, anchor
+  `#feedback`): shown to the post's author (only once there is feedback),
+  the SIG's 指導老師 and admins; SIG leaders do not see it. 指導老師 and
+  admins get the editor; only a feedback's author edits it, its author or
+  an admin deletes it. Desktop: right column above the comments; mobile:
+  above the comments.
+- SIG events (`components/SigEvents/`): `SigEventList` (upcoming, then
+  past on request), `SigEventCard` (RSVP with capacity, 「加到 Google
+  日曆」, 「下載 .ics」, manager 編輯 / 刪除) and `SigEventEditor` (create /
+  edit dialog). An event is past only after `endAt`, so one that is on
+  now can still be joined. Calls and rules are in `modules/sigEvents`,
+  cached lists in `utils/useSigEvents`. The SIG page shows them under the
+  「活動」 tab (`?tab=events`, the link in event notifications).
+- 精選成果: `components/SigShowcase/SigShowcase.tsx` renders the resolved
+  `featuredPosts` of `GET /sig/:id` / `/sig/@:customId` (`/sig/list` and
+  `POST /sig/:id` carry ids only; `featuredPostsOf()` ignores those).
+- Admin SIG detail (`app/admin/(admin)/sig/`): 基本資料 adds the 精選成果
+  picker (`ShowcasePicker`, up to 6, ordered) and 「Discord 通知」
+  (`DiscordSetting`: the URL is never shown again after saving; 測試 and
+  清除). New tabs 「活動」 (`EventsTab`: events, RSVP list in the drawer,
+  Excel export that pages through `GET /event/:id/rsvps` 100 at a time)
+  and 「數據」 (`AnalyticsTab`: chart.js bar charts, `?months=6|12|24`).
+- `POST /sig/:id` answers HTTP 400 for every refusal, so status 4001 there
+  means forbidden.
 
 ## Data & Info Pages
 
