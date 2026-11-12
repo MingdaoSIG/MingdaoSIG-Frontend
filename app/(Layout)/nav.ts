@@ -1,8 +1,10 @@
 import {
   Bell,
   Bookmark,
+  CalendarCheck,
   ChartNoAxesColumn,
   Compass,
+  FileText,
   GraduationCap,
   Heart,
   House,
@@ -109,6 +111,13 @@ export function hubGroups(customId: string | null | undefined): HubGroup[] {
       items: [
         { key: "sigs", label: "我的 SIG", href: "/me#my-sigs", icon: Users },
         {
+          key: "events",
+          label: "活動報名",
+          href: "/events?scope=rsvped",
+          icon: CalendarCheck,
+        },
+        { key: "drafts", label: "草稿", href: "/me/drafts", icon: FileText },
+        {
           key: "bookmarks",
           label: "收藏",
           href: tab("bookmarks"),
@@ -144,7 +153,7 @@ export function hubGroups(customId: string | null | undefined): HubGroup[] {
           href: "/notifications?settings=1",
           icon: Settings,
         },
-        { key: "about", label: "平台資訊", href: "/info", icon: Info },
+        { key: "about", label: "平台資訊", href: "/about", icon: Info },
       ],
     },
   ];

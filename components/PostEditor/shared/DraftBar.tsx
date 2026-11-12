@@ -115,7 +115,7 @@ export function DraftStatusText({
   }
 }
 
-function useDraftList(userId: string, enabled: boolean) {
+export function useDraftList(userId: string, enabled: boolean) {
   return useQuery({
     queryKey: draftKeys.list(userId),
     queryFn: async ({ signal }) => {
@@ -130,7 +130,7 @@ function useDraftList(userId: string, enabled: boolean) {
   });
 }
 
-function DraftList({
+export function DraftList({
   userId,
   currentId,
   onResume,

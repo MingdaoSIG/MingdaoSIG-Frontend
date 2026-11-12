@@ -123,7 +123,6 @@ export default function EventCalendar({
           </p>
         )}
         <div
-          aria-label={title}
           aria-busy={query.isFetching}
           className="grid grid-cols-7 gap-px overflow-hidden rounded-control border border-line bg-line"
         >
