@@ -21,6 +21,7 @@ import {
   ProfileTabs,
   useProfileTabs,
 } from "../components/ProfileTabs";
+import { SigSections } from "../components/SigSections";
 import Info from "./info";
 // Styles
 import styles from "./mobile.module.scss";
@@ -91,7 +92,11 @@ export default function ProfileMobile({
           ) : dataType === "user" ? (
             <UserInfinityThreadList id={id} />
           ) : (
-            <SIGInfinityThreadList id={id} />
+            <SigSections
+              sig={data as Sig}
+              posts={<SIGInfinityThreadList id={id} />}
+              variant="mobile"
+            />
           )}
         </SectionErrorBoundary>
       </div>

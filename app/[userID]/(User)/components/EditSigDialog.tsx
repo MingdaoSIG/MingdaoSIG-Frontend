@@ -124,7 +124,13 @@ export function EditSigDialog({
     }
     const saved =
       result.data && typeof result.data === "object" ? result.data : {};
-    const next: Sig = { ...sig, ...body, ...(saved as Partial<Sig>) };
+    // The answer lists 精選成果 as plain ids; keep the resolved posts.
+    const next: Sig = {
+      ...sig,
+      ...body,
+      ...(saved as Partial<Sig>),
+      featuredPosts: sig.featuredPosts,
+    };
     onSaved(next);
     queryClient.invalidateQueries({ queryKey: ["sig", sig._id] });
     queryClient.invalidateQueries({ queryKey: ["sigs"] });
