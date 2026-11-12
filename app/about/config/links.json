@@ -38,7 +38,7 @@
     "children": [
       {
         "name": "回報問題",
-        "url": "https://forms.gle/QJbcdvTvfcFkNJ1PA"
+        "url": "/report?from=/about"
       }
     ]
   },

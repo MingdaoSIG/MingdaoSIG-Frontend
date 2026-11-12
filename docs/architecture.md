@@ -43,8 +43,11 @@ app/                      # Next.js App Router
 ├── confirm/             # Email confirmation page
 ├── events/              # 活動 (site-wide events)
 ├── explore/             # 探索
-├── me/                  # 我的 hub, me/drafts
+├── me/                  # 個人專區 hub
+│   ├── drafts/          # 草稿
+│   └── reports/         # 我的回報 (issue reports)
 ├── new/                 # New post page
+├── report/              # 回報問題 form (issue reports)
 ├── post/[postID]/       # Post detail
 │   ├── (post)/          # Post content components
 │   └── edit/            # Edit post

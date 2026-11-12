@@ -1,11 +1,17 @@
 "use client";
 
-import { ChevronDown, LogOut, UserRound } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  MessageSquareWarning,
+  UserRound,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
+import { issueReportHref } from "@/modules/issueReports";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { confirmLogout } from "../../confirmLogout";
 import { hubGroups } from "../../nav";
@@ -28,6 +34,11 @@ export default function UserMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
   const pathname = usePathname();
+  // The menu only renders on the client, once opened.
+  const reportFrom =
+    typeof window === "undefined"
+      ? pathname
+      : `${pathname}${window.location.search}`;
   const customId = userData?.customId ?? null;
   const avatar = imageUrl(userData?.avatar) ?? DEFAULT_AVATAR_URL;
 
@@ -205,6 +216,18 @@ export default function UserMenu() {
             <Link role="menuitem" href="/me" className={itemClass}>
               <UserRound size={16} aria-hidden className="text-ink-500" />
               個人專區
+            </Link>
+            <Link
+              role="menuitem"
+              href={issueReportHref({ from: reportFrom })}
+              className={itemClass}
+            >
+              <MessageSquareWarning
+                size={16}
+                aria-hidden
+                className="text-ink-500"
+              />
+              回報問題
             </Link>
             <button
               type="button"
