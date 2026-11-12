@@ -3,7 +3,9 @@
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ANNOUNCEMENT_SIG_ID } from "@/utils/useAdminAccess";
 import { errorText, useSigMembers } from "../../(admin)/api";
+import { NotifyMembersButton } from "../../(admin)/broadcast/NotifyMembersButton";
 import { JoinRequestList } from "../../(admin)/components/JoinRequests";
 import {
   Avatar,
@@ -16,16 +18,32 @@ import {
 } from "../../(admin)/components/ui";
 import { canManageSig, useAdmin } from "../../(admin)/context";
 import { formatCount } from "../../(admin)/format";
+import { AnalyticsTab } from "../../(admin)/sig/AnalyticsTab";
+import { DiscordSetting } from "../../(admin)/sig/DiscordSetting";
+import { EventsTab } from "../../(admin)/sig/EventsTab";
 import { InfoTab } from "../../(admin)/sig/InfoTab";
 import { MembersTab } from "../../(admin)/sig/MembersTab";
+import { RecruitingTab } from "../../(admin)/sig/RecruitingTab";
+import { ShowcasePicker } from "../../(admin)/sig/ShowcasePicker";
+import { SigAdminSettings } from "../../(admin)/sig/SigAdminSettings";
+import { SigLifecycle } from "../../(admin)/sig/SigLifecycle";
 import { StaffTab } from "../../(admin)/sig/StaffTab";
 import { useSigDetail } from "../../(admin)/sig/useSigDetail";
 import { oneOf, useQueryState } from "../../(admin)/useQueryState";
 
-// One SIG, everything in one place (?tab=): 基本資料, 幹部與老師, 成員,
-// 入社申請. Leaders and 指導老師 reach only their own SIGs.
+// One SIG, everything in one place (?tab=): 基本資料 (with 精選成果 and
+// Discord 通知), 幹部與老師, 成員, 入社申請, 招生設定, 活動, 數據. Leaders
+// and 指導老師 reach only their own SIGs.
 
-const TABS = ["info", "staff", "members", "requests"] as const;
+const TABS = [
+  "info",
+  "staff",
+  "members",
+  "requests",
+  "recruiting",
+  "events",
+  "analytics",
+] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminSigPage() {
@@ -110,6 +128,12 @@ export default function AdminSigPage() {
       count: pending,
       warn: (pending ?? 0) > 0,
     },
+    // The announcement SIG takes no join requests.
+    ...(sig._id === ANNOUNCEMENT_SIG_ID
+      ? []
+      : [{ id: "recruiting" as const, label: "招生設定" }]),
+    { id: "events", label: "活動" },
+    { id: "analytics", label: "數據" },
   ];
 
   return (
@@ -118,8 +142,11 @@ export default function AdminSigPage() {
       <header className="mb-4 flex flex-wrap items-center gap-3">
         <Avatar src={sig.avatar} name={sig.name} size={48} square />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-bold text-ink-900 text-lg lg:text-xl">
-            {sig.name}
+          <h1 className="flex min-w-0 items-center gap-2 font-bold text-ink-900 text-lg lg:text-xl">
+            <span className="truncate">{sig.name}</span>
+            {sig.archived && sig._id !== ANNOUNCEMENT_SIG_ID && (
+              <Badge tone="mute">已封存</Badge>
+            )}
           </h1>
           <p className="truncate text-ink-500 text-sm">
             {sig.customId ? `@${sig.customId}` : ""}
@@ -127,16 +154,19 @@ export default function AdminSigPage() {
               ` · ${formatCount(memberCount)} 位成員`}
           </p>
         </div>
-        {sig.customId && (
-          <Link
-            href={`/@${sig.customId}`}
-            target="_blank"
-            className={buttonClass("secondary", "sm")}
-          >
-            <ExternalLink aria-hidden className="size-3.5" />
-            在網站上查看
-          </Link>
-        )}
+        <div className="flex flex-wrap gap-2">
+          <NotifyMembersButton sig={sig} memberCount={memberCount} />
+          {sig.customId && (
+            <Link
+              href={`/@${sig.customId}`}
+              target="_blank"
+              className={buttonClass("secondary", "sm")}
+            >
+              <ExternalLink aria-hidden className="size-3.5" />
+              在網站上查看
+            </Link>
+          )}
+        </div>
       </header>
 
       <nav
@@ -183,10 +213,23 @@ export default function AdminSigPage() {
         })}
       </nav>
 
-      {tab === "info" && <InfoTab sig={sig} />}
+      {tab === "info" && (
+        <div className="flex flex-col gap-4">
+          <InfoTab sig={sig} />
+          {admin.isAdmin && <SigAdminSettings sig={sig} />}
+          <ShowcasePicker sig={sig} />
+          <DiscordSetting sig={sig} />
+          {admin.isAdmin && <SigLifecycle sig={sig} />}
+        </div>
+      )}
       {tab === "staff" && <StaffTab sig={sig} />}
       {tab === "members" && <MembersTab sig={sig} />}
       {tab === "requests" && <JoinRequestList fixedSig={sig._id} />}
+      {tab === "recruiting" && sig._id !== ANNOUNCEMENT_SIG_ID && (
+        <RecruitingTab sig={sig} />
+      )}
+      {tab === "events" && <EventsTab sig={sig} />}
+      {tab === "analytics" && <AnalyticsTab sig={sig} />}
     </>
   );
 }

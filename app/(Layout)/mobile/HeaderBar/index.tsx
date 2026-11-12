@@ -2,28 +2,29 @@
 
 import { Search } from "lucide-react";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { TapScaleLink } from "@/components/mobile/TapScale";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import styles from "./HeaderBar.module.scss";
 import UserLogin from "./UserLogin";
 
 const HeaderBar = () => {
-  const router = useRouter();
   const path = usePathname();
   const { inAdmin } = useAdminChrome();
 
   return (
     <div className={styles.nav}>
-      <Image
-        src="/images/logo_mobile_v2.svg"
-        alt="MDSIG 首頁"
-        width={64}
-        height={32}
-        unoptimized
-        className={styles.logo}
-        onClick={() => router.push("/")}
-      />
+      <Link href="/" aria-label="MDSIG 首頁" className="flex">
+        <Image
+          src="/images/logo_mobile_v2.svg"
+          alt=""
+          width={64}
+          height={32}
+          unoptimized
+          className={styles.logo}
+        />
+      </Link>
       <div className="flex items-center gap-2">
         {path !== "/search" && !inAdmin && (
           <TapScaleLink

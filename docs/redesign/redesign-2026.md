@@ -96,7 +96,8 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 
 ### 3.2 兩欄頁（首頁、貼文頁、個人 / SIG 頁）
 
-- **區塊內捲動**（v2.22.0 起，取代原本的整頁捲動）：`SplitBlock` 填滿 header 與 dock 之間的內容列，主欄與側欄各自捲動，頁面本身不捲動，所有頁面的底邊都對齊在 dock 上方。貼文頁的標題卡固定，只有內文卡片捲動。閱讀模式例外，仍為整頁捲動。
+- **整頁捲動**（2026-11-13 起，使用者端改版）：電腦版改回整個視窗捲動，header 與側欄固定在上方／左側，右欄 `position: sticky`。下面「區塊內捲動」一段是之前的做法，僅供參考。詳見 `docs/architecture.md`（Desktop shell）。
+- ~~區塊內捲動~~（v2.22.0–2.26，已由整頁捲動取代）：`SplitBlock` 填滿 header 與 dock 之間的內容列，主欄與側欄各自捲動，頁面本身不捲動，所有頁面的底邊都對齊在 dock 上方。貼文頁的標題卡固定，只有內文卡片捲動。閱讀模式例外，仍為整頁捲動。
 - 主欄 `minmax(0,1fr)`、側欄 `22.5rem`，間距 1.5rem。
 - 主欄與側欄同高 = 視窗 − header − dock 空間（shell 內容列用 `minmax(0, 1fr)`）。
 - 無限捲動改用 `IntersectionObserver` 觀察列表尾端的 sentinel（`rootMargin` 600px），`root` 為 `[data-split-main]` 主欄捲動容器。

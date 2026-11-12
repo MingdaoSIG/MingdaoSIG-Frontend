@@ -1,69 +1,377 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import SplitBlock from "@/app/(Layout)/splitBlock";
+import { useQueryClient } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { NotFound } from "@/components/NotFound";
-import {
-  InfinityThreadsList,
-  ThreadsListSkeleton,
-} from "@/components/Threads/desktop/ThreadsList";
+import { InfiniteThreadList } from "@/components/PostCard/InfiniteThreadList";
+import { postListFetcher } from "@/components/PostCard/postListFetcher";
+import { announcementSigId } from "@/components/Threads/configs/announcement";
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
-import { apiRequest } from "@/modules/api/client";
+import { BRAND_COLOR } from "@/modules/sigTheme";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import useIsMobile from "@/utils/useIsMobile";
-import { useSigPost, useUserLikedPost, useUserPost } from "@/utils/usePost";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { type ProfileTab, ProfileTabs } from "./components/ProfileTabs";
-import Info from "./desktop/Info";
-import ProfileMobile from "./mobile";
+import {
+  isProfileTab,
+  type ProfileTab,
+  ProfileTabs,
+  useProfileTabs,
+} from "./components/ProfileTabs";
+import { type AccountKind, lookupAccount } from "./lookup";
+import { SigPanel } from "./panel/SigPanel";
+import { isSigTab, SigContent, type SigTab, SigTabBar } from "./panel/SigTabs";
+import { UserPanel } from "./panel/UserPanel";
 
-type AccountData = {
-  data: User | Sig | null;
-  dataType: "user" | "sig" | null;
-  /** Set when the lookup failed for a reason other than "not found". */
-  error: string | null;
-};
+// `/@<id>`: a SIG page or a public profile, one layout for both (owner
+// decision 2026-11-12, v4 4A). Desktop: tabs above an infinite list in a
+// single column (about 52rem), and a wider info panel on the right that
+// sticks under the header. Phones: no right column; the panel is a card
+// at the top that shrinks to a strip once the list is scrolled, then the
+// tabs and the list. `?tab=` opens a tab; old ids redirect (`redirectTo`).
+
+const StatsTab = dynamic(() => import("./components/StatsTab"));
+const SeriesTab = dynamic(() => import("./components/SeriesTab"));
+
+function readTab(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  return new URLSearchParams(window.location.search).get("tab");
+}
+
+/** Keeps `?tab=` in the address bar without a navigation. */
+function rememberTab(tab: string) {
+  const url = new URL(window.location.href);
+  if (tab === "posts") {
+    url.searchParams.delete("tab");
+  } else {
+    url.searchParams.set("tab", tab);
+  }
+  window.history.replaceState(window.history.state, "", url.toString());
+}
+
+const emptyList = (text: string) => (
+  <p className="rounded-card border border-line border-dashed bg-surface/60 px-6 py-12 text-center text-ink-500 text-sm">
+    {text}
+  </p>
+);
+
+function UserList({
+  path,
+  queryKey,
+  auth = false,
+  empty,
+  label,
+}: {
+  path: string;
+  queryKey: string[];
+  auth?: boolean;
+  empty: string;
+  label: string;
+}) {
+  const fetchPage = useMemo(
+    () => postListFetcher(path, {}, auth),
+    [path, auth],
+  );
+  return (
+    <InfiniteThreadList
+      fetchPage={fetchPage}
+      queryKey={queryKey}
+      label={label}
+      empty={emptyList(empty)}
+    />
+  );
+}
+
+function ProfileContent({
+  user,
+  tab,
+  own,
+  mobile,
+}: {
+  user: User;
+  tab: ProfileTab;
+  own: boolean;
+  mobile: boolean;
+}) {
+  const id = user._id ?? "";
+  switch (tab) {
+    case "liked":
+      return (
+        <UserList
+          path={`/post/list/user/${id}/like`}
+          queryKey={["userLiked", id]}
+          empty="還沒有按讚過的貼文"
+          label="按讚過的貼文"
+        />
+      );
+    case "bookmarks":
+      return (
+        <UserList
+          path="/user/me/bookmarks"
+          queryKey={["myBookmarks", id]}
+          auth
+          empty="還沒有收藏的貼文。在貼文上按書籤圖示即可收藏。"
+          label="收藏"
+        />
+      );
+    case "series":
+      return <SeriesTab userId={id} isOwn={own} mobile={mobile} />;
+    case "stats":
+      return <StatsTab mobile={mobile} />;
+    default:
+      return (
+        <UserList
+          path={`/post/list/user/${id}`}
+          queryKey={["userPosts", id]}
+          empty="還沒有貼文"
+          label={`${user.name || user.customId} 的貼文`}
+        />
+      );
+  }
+}
+
+/** The page's two parts, whichever kind the account is. */
+function useAccountView({
+  data,
+  dataType,
+  setData,
+  mobile,
+}: {
+  data: User | Sig;
+  dataType: AccountKind;
+  setData: (data: User | Sig) => void;
+  mobile: boolean;
+}): {
+  /** `compact`: the strip; `mobile`: the identity card only. */
+  panel: (compact?: boolean, mobile?: boolean) => ReactNode;
+  tabs: ReactNode;
+  content: ReactNode;
+} {
+  const { userData } = useUserAccount();
+  const colorOf = useSigColor();
+  const isSig = dataType === "sig";
+  const own = !isSig && Boolean(data._id) && userData?._id === data._id;
+  const profileTabs = useProfileTabs(dataType, data._id ?? "", own);
+  const initial = readTab();
+  const [sigTab, setSigTab] = useState<SigTab>(
+    isSigTab(initial) ? initial : "posts",
+  );
+  const [profileTab, setProfileTab] = useState<ProfileTab>(
+    isProfileTab(initial) ? initial : "posts",
+  );
+
+  if (isSig) {
+    const sig = data as Sig;
+    const plain = sig._id === announcementSigId;
+    const changeTab = (tab: SigTab) => {
+      setSigTab(tab);
+      rememberTab(tab);
+    };
+    return {
+      panel: (compact = false, card = false) => (
+        <SigPanel
+          sig={sig}
+          setSig={setData}
+          onTab={changeTab}
+          compact={compact}
+          cardOnly={card}
+        />
+      ),
+      // The announcement SIG is only a channel: its posts, nothing else.
+      tabs: plain ? null : (
+        <SigTabBar
+          value={sigTab}
+          onChange={changeTab}
+          color={colorOf(sig, BRAND_COLOR) ?? BRAND_COLOR}
+          mobile={mobile}
+        />
+      ),
+      content: (
+        <SigContent sig={sig} tab={plain ? "posts" : sigTab} mobile={mobile} />
+      ),
+    };
+  }
+
+  const user = data as User;
+  const current = profileTabs.includes(profileTab) ? profileTab : "posts";
+  return {
+    panel: (compact = false) => (
+      <UserPanel user={user} setUser={setData} own={own} compact={compact} />
+    ),
+    tabs:
+      profileTabs.length > 0 ? (
+        <ProfileTabs
+          value={current}
+          onChange={(tab) => {
+            setProfileTab(tab);
+            rememberTab(tab);
+          }}
+          tabs={profileTabs}
+          mobile={mobile}
+        />
+      ) : null,
+    content: (
+      <ProfileContent user={user} tab={current} own={own} mobile={mobile} />
+    ),
+  };
+}
+
+function DesktopView(props: {
+  data: User | Sig;
+  dataType: AccountKind;
+  setData: (data: User | Sig) => void;
+}) {
+  const view = useAccountView({ ...props, mobile: false });
+  return (
+    <div className="mx-auto grid w-[min(100%-3rem,78rem)] grid-cols-[minmax(0,1fr)_20rem] items-start justify-center gap-8 min-[1280px]:grid-cols-[minmax(0,52rem)_23rem]">
+      <div className="flex min-w-0 flex-col gap-4" data-account-main>
+        {view.tabs}
+        <SectionErrorBoundary label="貼文列表">
+          {view.content}
+        </SectionErrorBoundary>
+      </div>
+      <aside
+        data-shell="aside"
+        aria-label="資訊"
+        className="custom-scrollbar sticky top-[var(--shell-top,5.5rem)] max-h-[calc(100dvh-var(--shell-top,5.5rem)-1.5rem)] min-w-0 overflow-y-auto overflow-x-hidden"
+        data-account-panel
+      >
+        {view.panel()}
+      </aside>
+    </div>
+  );
+}
+
+function MobileView(props: {
+  data: User | Sig;
+  dataType: AccountKind;
+  setData: (data: User | Sig) => void;
+}) {
+  // Once the card has scrolled away, a short version (banner strip, name,
+  // the main action) stays at the top of the list.
+  const [collapsed, setCollapsed] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const view = useAccountView({ ...props, mobile: true });
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setCollapsed(!entry.isIntersecting),
+      { root: scrollRef.current, rootMargin: "-40% 0px 0px 0px" },
+    );
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div className="flex h-full flex-col px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]">
+      <div
+        ref={scrollRef}
+        className="scrollbar-hide flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-4"
+        data-account-scroll
+      >
+        {/* Takes no room; its strip covers the top of the list when shown. */}
+        <div className="sticky top-0 z-20 h-0 shrink-0">
+          <div
+            inert={!collapsed}
+            className={`transition-opacity duration-200 ${
+              collapsed ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            data-account-card={collapsed ? "collapsed" : "hidden"}
+          >
+            {view.panel(true, true)}
+          </div>
+        </div>
+        <div ref={cardRef} className="shrink-0" data-account-card="open">
+          {view.panel(false, true)}
+        </div>
+        {view.tabs && <div className="shrink-0">{view.tabs}</div>}
+        <SectionErrorBoundary label="貼文列表">
+          {view.content}
+        </SectionErrorBoundary>
+      </div>
+    </div>
+  );
+}
+
+function PageSkeleton({ mobile }: { mobile: boolean }) {
+  return (
+    <div
+      aria-busy="true"
+      className={
+        mobile
+          ? "flex animate-pulse flex-col gap-3 px-2 pt-[calc(4.5rem+env(safe-area-inset-top))]"
+          : "mx-auto grid w-[min(100%-3rem,78rem)] animate-pulse grid-cols-[minmax(0,1fr)_20rem] items-start gap-8 min-[1280px]:grid-cols-[minmax(0,52rem)_23rem]"
+      }
+    >
+      <span className="sr-only">載入中…</span>
+      {mobile && <div className="h-56 rounded-card bg-surface shadow-card" />}
+      <div className="flex flex-col gap-3">
+        <div className="h-10 rounded-control bg-surface/70" />
+        <div className="h-28 rounded-card bg-surface shadow-card" />
+        <div className="h-28 rounded-card bg-surface shadow-card" />
+      </div>
+      {!mobile && <div className="h-96 rounded-card bg-surface shadow-card" />}
+    </div>
+  );
+}
 
 export default function UserPage({ accountId }: { accountId: string }) {
   const isMobile = useIsMobile();
-  const { userData } = useUserAccount();
-  const [tab, setTab] = useState<ProfileTab>("posts");
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [dataType, setDataType] = useState<"user" | "sig" | null>(null);
-  const [data, setData] = useState<User | Sig | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const client = useQueryClient();
+  const [state, setState] = useState<{
+    loading: boolean;
+    data: User | Sig | null;
+    dataType: AccountKind | null;
+    error: string | null;
+  }>({ loading: true, data: null, dataType: null, error: null });
   const [attempt, setAttempt] = useState(0);
 
   // `attempt` re-runs the lookup when the user presses retry.
   useEffect(() => {
     const controller = new AbortController();
-
     (async () => {
-      setIsLoading(true);
-      setError(null);
-      const result = await getAccountData(accountId, controller.signal);
+      setState((current) => ({ ...current, loading: true, error: null }));
+      const result = await lookupAccount(accountId, client, controller.signal);
       if (controller.signal.aborted) {
         return;
       }
-      setData(result.data);
-      setDataType(result.dataType);
-      setError(result.error);
-      setIsLoading(false);
+      // An old link: go to the current address, keeping ?tab= and #…,
+      // and stay on the skeleton until that page loads.
+      if (result.redirectTo) {
+        const { search, hash } = window.location;
+        router.replace(`/@${result.redirectTo}${search}${hash}`);
+        return;
+      }
+      setState({
+        loading: false,
+        data: result.data,
+        dataType: result.dataType,
+        error: result.error,
+      });
     })();
-
     return () => controller.abort();
   }, [accountId, attempt]);
 
-  if (!isLoading && dataType === null) {
-    if (error) {
+  if (state.loading) {
+    return <PageSkeleton mobile={isMobile} />;
+  }
+  if (!state.data || !state.dataType) {
+    if (state.error) {
       return (
         <div
           role="alert"
           className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-ink-700"
         >
-          <p>{error}</p>
+          <p>{state.error}</p>
           <button
             type="button"
             className="cursor-pointer rounded-control border border-line bg-surface px-4 py-2 text-sm hover:bg-field"
@@ -76,150 +384,22 @@ export default function UserPage({ accountId }: { accountId: string }) {
     }
     return (
       <NotFound
-        content={{
-          message: "找不到這個使用者或 SIG",
-        }}
-        image={{
-          show: false,
-        }}
+        content={{ message: "找不到這個使用者或 SIG" }}
+        image={{ show: false }}
       />
     );
   }
 
-  // The profile is fetched once, here; the mobile view gets it as props.
-  if (isMobile) {
-    return (
-      <ProfileMobile
-        data={data}
-        dataType={dataType}
-        isLoading={isLoading}
-        setData={setData}
-        isOwn={
-          dataType === "user" &&
-          Boolean(data?._id) &&
-          userData?._id === data?._id
-        }
-        tab={tab}
-        setTab={setTab}
-      />
-    );
-  }
-
-  const id = data?._id ?? "";
-  // Only your own profile has the 「按讚過的貼文」 tab.
-  const isOwn = dataType === "user" && Boolean(id) && userData?._id === id;
-  const showLiked = isOwn && tab === "liked";
-  return (
-    <SplitBlock>
-      <div className="flex flex-col gap-4">
-        {isOwn && <ProfileTabs value={tab} onChange={setTab} />}
-        <SectionErrorBoundary label="貼文列表">
-          {isLoading || !id ? (
-            <ThreadsListSkeleton repeat={6} />
-          ) : showLiked ? (
-            <LikedInfinityThreadList id={id} />
-          ) : dataType === "user" ? (
-            <UserInfinityThreadList id={id} />
-          ) : (
-            <SIGInfinityThreadList id={id} />
-          )}
-        </SectionErrorBoundary>
-      </div>
-      <Info
-        user={data}
-        isLoading={isLoading}
-        dataType={dataType}
-        setInfo={setData}
-      />
-    </SplitBlock>
-  );
-}
-
-function UserInfinityThreadList({ id }: { id: string }) {
-  const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
-    useUserPost(id, { pageSize });
-
-  return isLoading ? (
-    <ThreadsListSkeleton repeat={6} />
+  const props = {
+    data: state.data,
+    dataType: state.dataType,
+    setData: (data: User | Sig) =>
+      setState((current) => ({ ...current, data })),
+  };
+  // Keyed by account: another profile starts on its own tabs.
+  return isMobile ? (
+    <MobileView key={state.data._id} {...props} />
   ) : (
-    <InfinityThreadsList
-      data={data}
-      fetchNextPage={fetchNextPage}
-      isFetchingNextPage={isFetchingNextPage}
-      error={error}
-      onRetry={() => refetch()}
-    />
+    <DesktopView key={state.data._id} {...props} />
   );
-}
-
-function LikedInfinityThreadList({ id }: { id: string }) {
-  const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
-    useUserLikedPost(id, { pageSize });
-
-  return isLoading ? (
-    <ThreadsListSkeleton repeat={6} />
-  ) : (
-    <InfinityThreadsList
-      data={data}
-      fetchNextPage={fetchNextPage}
-      isFetchingNextPage={isFetchingNextPage}
-      error={error}
-      onRetry={() => refetch()}
-      emptyText="還沒有按讚過的貼文"
-    />
-  );
-}
-
-function SIGInfinityThreadList({ id }: { id: string }) {
-  const pageSize = 10;
-  const { data, fetchNextPage, isFetchingNextPage, isLoading, error, refetch } =
-    useSigPost(id, { pageSize });
-
-  return isLoading ? (
-    <ThreadsListSkeleton repeat={6} />
-  ) : (
-    <InfinityThreadsList
-      data={data}
-      fetchNextPage={fetchNextPage}
-      isFetchingNextPage={isFetchingNextPage}
-      error={error}
-      onRetry={() => refetch()}
-    />
-  );
-}
-
-function isAccount(value: unknown): value is User | Sig {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as User)._id === "string"
-  );
-}
-
-/** Looks the id up as a user and as a SIG at the same time. */
-async function getAccountData(
-  accountId: string,
-  signal: AbortSignal,
-): Promise<AccountData> {
-  // accountId is validated (`@` + [a-z0-9_.-]), so it is safe in the path;
-  // it must not be encoded, or `/user/@:id` stops matching.
-  const [user, sig] = await Promise.all([
-    apiRequest<User>(`/user/${accountId}`, { signal }),
-    apiRequest<Sig>(`/sig/${accountId}`, { signal }),
-  ]);
-
-  if (user.ok && isAccount(user.data)) {
-    return { data: user.data, dataType: "user", error: null };
-  }
-  if (sig.ok && isAccount(sig.data)) {
-    return { data: sig.data, dataType: "sig", error: null };
-  }
-  for (const result of [user, sig]) {
-    if (!result.ok && result.kind !== "not-found") {
-      return { data: null, dataType: null, error: result.message };
-    }
-  }
-  return { data: null, dataType: null, error: null };
 }

@@ -1,16 +1,19 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import Swal from "sweetalert2";
+import { PullToRefresh } from "@/components/mobile/PullToRefresh";
 import useIsMobile from "@/utils/useIsMobile";
-import Information from "./(home)/desktop/Information";
-import ThreadsListDesktop from "./(home)/desktop/ThreadsList";
-
-// Mobile Components
-import ThreadsListMobile from "./(home)/mobile/ThreadsList";
-// Desktop Components
-import SplitBlock from "./(Layout)/splitBlock";
+import { HomeFeed } from "./(home)/HomeFeed";
+import {
+  HotPostsCard,
+  RecruitingCard,
+  TopTagsCard,
+  UpcomingEventsCard,
+} from "./(home)/HomeRail";
+import { PageColumns } from "./(Layout)/pageColumns";
 
 export default function Home() {
   // 這裡是「頁面層級」的 Suspense 邊界
@@ -25,6 +28,7 @@ function HomeContent() {
   const isMobile = useIsMobile();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const error = searchParams.get("error");
 
   useEffect(() => {
@@ -47,13 +51,66 @@ function HomeContent() {
     }
   }, [error, router]);
 
+  const refresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["homeFeed"] }),
+      queryClient.invalidateQueries({ queryKey: ["hotPost"] }),
+      queryClient.invalidateQueries({ queryKey: ["pinnedPost"] }),
+    ]);
+  }, [queryClient]);
+
+  // The tab bar's 首頁 on the home page: back to the top.
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    const onTop = () => {
+      document
+        .querySelector("[data-home-feed]")
+        ?.closest(".overflow-y-auto")
+        ?.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("mobile:scroll-to-top", onTop);
+    return () => window.removeEventListener("mobile:scroll-to-top", onTop);
+  }, [isMobile]);
+
   if (isMobile) {
-    return <ThreadsListMobile />;
+    return (
+      <PullToRefresh
+        onRefresh={refresh}
+        className="scrollbar-hide relative mx-auto h-full w-full overflow-y-auto px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4.5rem+env(safe-area-inset-bottom))]"
+      >
+        <div data-home-feed>
+          <HomeFeed mobile />
+        </div>
+      </PullToRefresh>
+    );
   }
+  // Layout 2A: the feed, with 近期活動 + 熱門標籤 on the left and 熱門貼文
+  // + 正在招生 on the right from 1600px; one right column before that.
   return (
-    <SplitBlock>
-      <ThreadsListDesktop />
-      <Information />
-    </SplitBlock>
+    <PageColumns
+      main={<HomeFeed />}
+      wideLeft={
+        <>
+          <UpcomingEventsCard />
+          <TopTagsCard />
+        </>
+      }
+      wideRight={
+        <>
+          <HotPostsCard />
+          <RecruitingCard />
+        </>
+      }
+      oneSide={
+        <>
+          <UpcomingEventsCard />
+          <HotPostsCard />
+          <RecruitingCard />
+          <TopTagsCard />
+        </>
+      }
+    />
   );
 }

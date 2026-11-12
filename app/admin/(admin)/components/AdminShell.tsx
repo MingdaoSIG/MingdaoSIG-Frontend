@@ -13,19 +13,31 @@ import {
 } from "react";
 import NotFoundPage from "@/app/not-found";
 import { ToastProvider } from "@/components/mobile/Toast";
-import { type AdminRole, useAdminAccess } from "@/utils/useAdminAccess";
+import {
+  type AdminRole,
+  useAdminAccess,
+  viewerRoles,
+} from "@/utils/useAdminAccess";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { usePendingCount } from "../api";
-import { type AdminSection, sectionForPath, sectionsFor } from "../config";
+import { useOpenReportCount, usePendingCount } from "../api";
+import {
+  type AdminSection,
+  type AdminSectionId,
+  canSeeSection,
+  sectionForPath,
+  sectionsFor,
+} from "../config";
 import { AdminContext, type AdminContextValue } from "../context";
+import { useOpenIssueCount } from "../issueReportsApi";
 import { ConfirmProvider } from "./Modal";
 import { ErrorState, Spinner } from "./ui";
 
 // The admin panel's frame: works out the caller's role first (nothing is
 // fetched before that), then shows the sidebar on desktop or the section
-// switcher on phones, and the page. Admins see every section; SIG managers
-// see 總覽, SIG and 入社申請; anyone else gets the 404 page.
+// switcher on phones, and the page. Admins see every section; content
+// moderators 總覽, 貼文, 留言, 檢舉 and 使用者; SIG managers 總覽, SIG,
+// 入社申請 and 廣播通知; anyone else gets the 404 page.
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const access = useAdminAccess();
@@ -34,12 +46,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
 
   const context = useMemo<AdminContextValue | null>(() => {
-    if (access.status !== "admin" && access.status !== "manager") {
+    if (
+      access.status !== "admin" &&
+      access.status !== "moderator" &&
+      access.status !== "manager"
+    ) {
       return null;
     }
     return {
       role: access.status,
+      roles: viewerRoles(access.status, access.managedSigIds),
       isAdmin: access.status === "admin",
+      isModerator: access.status === "admin" || access.status === "moderator",
       userId: access.userId,
       managedSigIds: access.managedSigIds,
       token,
@@ -66,7 +84,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   const section = sectionForPath(pathname);
-  const allowed = section?.roles.includes(context.role) ?? false;
+  const allowed = section ? canSeeSection(section, context.roles) : false;
   const content = allowed ? (
     <Suspense fallback={<Spinner />}>{children}</Suspense>
   ) : (
@@ -79,7 +97,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {isMobile ? (
           <div className="layout-admin custom-scrollbar h-full overflow-y-auto pt-[calc(4rem+env(safe-area-inset-top))]">
             <div className="sticky top-0 z-30 bg-canvas px-4 pt-3 pb-2">
-              <SectionSwitcher role={context.role} current={section} />
+              <SectionSwitcher roles={context.roles} current={section} />
             </div>
             <main
               id="admin-main"
@@ -90,7 +108,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         ) : (
           <div className="layout-admin flex h-full min-h-0">
-            <Sidebar role={context.role} current={section} />
+            <Sidebar roles={context.roles} current={section} />
             <main
               id="admin-main"
               className="custom-scrollbar min-w-0 flex-1 overflow-y-auto"
@@ -108,9 +126,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   );
 }
 
-function groupSections(role: AdminRole) {
+function groupSections(roles: AdminRole[]) {
   const groups: { name: string; items: AdminSection[] }[] = [];
-  for (const section of sectionsFor(role)) {
+  for (const section of sectionsFor(roles)) {
     const last = groups[groups.length - 1];
     if (last && last.name === section.group) {
       last.items.push(section);
@@ -123,18 +141,64 @@ function groupSections(role: AdminRole) {
 
 const ROLE_LABEL: Record<AdminRole, string> = {
   admin: "管理員",
+  moderator: "內容管理員",
   manager: "SIG 幹部／指導老師",
 };
 
+type NavBadge = { count: number; tone: "warn" | "danger"; label: string };
+
+const BADGE_TONE: Record<NavBadge["tone"], string> = {
+  warn: "bg-warm-50 text-warm-600",
+  danger: "bg-danger-50 text-danger-700",
+};
+
+/**
+ * Counts waiting in the sidebar, each only for those who may read it:
+ * join requests for admins and managers, open reports for admins and
+ * content moderators, open 問題回報 for admins.
+ */
+function useNavCounts(roles: AdminRole[]) {
+  const canDecide = roles.includes("admin") || roles.includes("manager");
+  const canModerate = roles.includes("admin") || roles.includes("moderator");
+  const isAdmin = roles.includes("admin");
+  const pending = usePendingCount(canDecide);
+  const reports = useOpenReportCount(canModerate);
+  const issues = useOpenIssueCount(isAdmin);
+  return {
+    pending: canDecide ? (pending.data ?? 0) : 0,
+    reports: canModerate ? (reports.data ?? 0) : 0,
+    issues: isAdmin ? (issues.data ?? 0) : 0,
+  };
+}
+
+type NavCounts = ReturnType<typeof useNavCounts>;
+
+function navBadge(id: AdminSectionId, counts: NavCounts): NavBadge | undefined {
+  if (id === "join-requests") {
+    return { count: counts.pending, tone: "warn", label: "待審" };
+  }
+  if (id === "reports") {
+    return { count: counts.reports, tone: "danger", label: "待處理" };
+  }
+  if (id === "issue-reports") {
+    return { count: counts.issues, tone: "warn", label: "待處理" };
+  }
+  return undefined;
+}
+
+function badgeText(count: number) {
+  return count > 99 ? "99+" : String(count);
+}
+
 function Sidebar({
-  role,
+  roles,
   current,
 }: {
-  role: AdminRole;
+  roles: AdminRole[];
   current: AdminSection | null;
 }) {
-  const pending = usePendingCount();
-  const groups = groupSections(role);
+  const counts = useNavCounts(roles);
+  const groups = groupSections(roles);
 
   return (
     <nav
@@ -153,13 +217,13 @@ function Sidebar({
               key={section.id}
               section={section}
               active={current?.id === section.id}
-              badge={section.id === "join-requests" ? pending.data : undefined}
+              badge={navBadge(section.id, counts)}
             />
           ))}
         </div>
       ))}
       <p className="mx-2.5 mt-auto pt-6 text-[11px] text-ink-400">
-        身分：{ROLE_LABEL[role]}
+        身分：{roles.map((item) => ROLE_LABEL[item]).join("、")}
       </p>
     </nav>
   );
@@ -173,7 +237,7 @@ function NavItem({
 }: {
   section: AdminSection;
   active: boolean;
-  badge?: number;
+  badge?: NavBadge;
   onNavigate?: () => void;
 }) {
   const Icon = section.icon;
@@ -193,10 +257,12 @@ function NavItem({
         className={`size-4 shrink-0 ${active ? "text-brand-700" : "text-ink-400"}`}
       />
       <span className="min-w-0 flex-1 truncate">{section.label}</span>
-      {typeof badge === "number" && badge > 0 && (
-        <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
-          <span className="sr-only">待審 </span>
-          {badge > 99 ? "99+" : badge}
+      {badge && badge.count > 0 && (
+        <span
+          className={`rounded-chip px-1.5 font-semibold text-xs leading-5 ${BADGE_TONE[badge.tone]}`}
+        >
+          <span className="sr-only">{badge.label} </span>
+          {badgeText(badge.count)}
         </span>
       )}
     </Link>
@@ -205,18 +271,18 @@ function NavItem({
 
 /** Phones: the sidebar folds into one menu button above the page. */
 function SectionSwitcher({
-  role,
+  roles,
   current,
 }: {
-  role: AdminRole;
+  roles: AdminRole[];
   current: AdminSection | null;
 }) {
   const [open, setOpen] = useState(false);
-  const pending = usePendingCount();
+  const counts = useNavCounts(roles);
   const pathname = usePathname();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const groups = groupSections(role);
+  const groups = groupSections(roles);
 
   useEffect(() => {
     setOpen(false);
@@ -245,8 +311,6 @@ function SectionSwitcher({
     };
   }, [open]);
 
-  const total = pending.data ?? 0;
-
   return (
     <div ref={ref} className="relative">
       <button
@@ -262,9 +326,19 @@ function SectionSwitcher({
           <span className="sr-only">管理平台：</span>
           {current?.label ?? "管理平台"}
         </span>
-        {total > 0 && current?.id !== "join-requests" && (
+        {counts.pending > 0 && current?.id !== "join-requests" && (
           <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
-            {total > 99 ? "99+" : total} 待審
+            {badgeText(counts.pending)} 待審
+          </span>
+        )}
+        {counts.reports > 0 && current?.id !== "reports" && (
+          <span className="rounded-chip bg-danger-50 px-1.5 font-semibold text-danger-700 text-xs leading-5">
+            {badgeText(counts.reports)} 檢舉
+          </span>
+        )}
+        {counts.issues > 0 && current?.id !== "issue-reports" && (
+          <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
+            {badgeText(counts.issues)} 回報
           </span>
         )}
         <ChevronDown
@@ -290,7 +364,7 @@ function SectionSwitcher({
                   key={section.id}
                   section={section}
                   active={current?.id === section.id}
-                  badge={section.id === "join-requests" ? total : undefined}
+                  badge={navBadge(section.id, counts)}
                   onNavigate={() => setOpen(false)}
                 />
               ))}

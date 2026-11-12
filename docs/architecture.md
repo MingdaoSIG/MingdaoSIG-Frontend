@@ -20,8 +20,9 @@
 ```
 app/                      # Next.js App Router
 ├── (Layout)/            # Layout components
-│   ├── desktop/         # Desktop HeaderBar, ToolBar
-│   └── mobile/          # Mobile HeaderBar, ToolBar
+│   ├── desktop/         # Desktop HeaderBar (search, avatar menu), SideRail
+│   ├── mobile/          # Mobile HeaderBar, ToolBar (tab bar)
+│   └── nav.ts           # Nav sections and the 我的 hub entries
 ├── (home)/              # Home page
 │   ├── apis/            # Home page API calls
 │   ├── desktop/         # Desktop home components
@@ -37,12 +38,16 @@ app/                      # Next.js App Router
 ├── api/                 # Next.js API Routes
 │   ├── auth/            # NextAuth routes
 │   └── version/         # Version check endpoint
-├── changelog/           # Changelog page
+├── about/               # 關於 MDSIG (info, dashboard, changelog, status)
+├── changelog/           # changelog.json only (shown on /about)
 ├── confirm/             # Email confirmation page
-├── dashboard/           # User dashboard
-├── data/                # Data statistics
-├── info/                # Info page
+├── events/              # 活動 (site-wide events)
+├── explore/             # 探索
+├── me/                  # 個人專區 hub
+│   ├── drafts/          # 草稿
+│   └── reports/         # 我的回報 (issue reports)
 ├── new/                 # New post page
+├── report/              # 回報問題 form (issue reports)
 ├── post/[postID]/       # Post detail
 │   ├── (post)/          # Post content components
 │   └── edit/            # Edit post
@@ -58,8 +63,9 @@ app/                      # Next.js App Router
 components/              # Reusable components
 ├── Information/
 ├── NotFound/
+├── PostCard/            # Compact post card, InfiniteThreadList
 ├── PostEditor/          # Post editor (desktop/mobile)
-└── Threads/             # Post list components
+└── Threads/             # Older paged post lists (render PostCard)
 
 modules/                 # Business logic modules
 ├── api/
@@ -76,6 +82,32 @@ interfaces/              # TypeScript type definitions
 utils/                   # Utility hooks
 public/                  # Static assets
 ```
+
+## Desktop shell
+
+`app/device.tsx` renders the header (with the site notices under it), the
+58px side rail and the page in the `.wrap` grid (`app/styles/globals.css`):
+row 1 the header across both columns, row 2 the rail and the page. There is
+no floating dock. Phones get a fixed header and the five-tab bar. See
+`docs/features.md` (Navigation shell).
+
+Desktop pages scroll the window (owner decision 2026-11-13), not their
+columns:
+
+- The header row (`[data-shell="top"]`) is sticky at the top; the rail is
+  sticky under it (`top: var(--shell-header-h)`, full window height, its
+  SIG list scrolls inside when long).
+- `:root` defines `--shell-header-h` (4rem) and `--shell-top` (header +
+  site notices + 1.5rem): the `top` of every sticky side panel.
+- Page columns have no `overflow-y-auto` and no `h-full`. `SplitBlock`'s
+  side column is `sticky; top: var(--shell-top)` with a max height and
+  its own thin scrollbar; `DocPage` is plain flow.
+- Infinite lists observe the viewport (no scrolling ancestor), and the
+  browser restores the scroll position on back / forward.
+- Only `/admin` (`.layout-admin`) keeps a fixed-height layout, and phones
+  keep their fixed header and tab bar with the page areas scrolling.
+- Scrollbars: the page scrollbar and `.custom-scrollbar` (inner areas) are
+  thin with a transparent track; inner thumbs stay faint until hovered.
 
 ## Responsive Design Pattern
 

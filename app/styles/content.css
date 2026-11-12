@@ -327,6 +327,12 @@
 }
 
 /* Keep these last in the section: see the note above the block rules. */
+/* Table-of-contents targets (post page) land just under the sticky
+   header. */
+.post-body .markdown :is(h1, h2, h3) {
+  scroll-margin-top: calc(var(--shell-top, 5.5rem) + 0.5rem);
+}
+
 .markdown > :first-child {
   margin-top: 0;
 }
@@ -340,7 +346,7 @@
 /* ================================================================== */
 /*
  * State lives on <html data-reader data-reader-size data-reader-tone>
- * (components/ReaderMode). Header, dock, side column and post actions
+ * (components/ReaderMode). Header, side rail, side column and post actions
  * step aside; the viewport becomes the page.
  */
 
@@ -407,7 +413,7 @@ html[data-reader-tone="sepia"] .post-body .markdown {
 
 /* --- Chrome that steps aside --------------------------------------- */
 html[data-reader] [data-shell="header"],
-html[data-reader] [data-shell="dock"],
+html[data-reader] [data-shell="rail"],
 html[data-reader] [data-shell="aside"],
 html[data-reader] [data-reader-hide],
 html[data-reader] .reader-toggle {
@@ -423,6 +429,13 @@ html[data-reader] .wrap {
   background: var(--reader-bg);
 }
 
+/* The post page places its article in a later grid column on wide
+   screens; reader mode has one. */
+html[data-reader] .layout-split > [data-split-main] {
+  grid-column: 1 / -1;
+  grid-row: auto;
+}
+
 html[data-reader] .layout-split {
   grid-template-columns: minmax(0, 1fr);
   width: min(44rem, 100% - 3rem);
@@ -430,8 +443,8 @@ html[data-reader] .layout-split {
   margin-top: 0;
 }
 
-/* Outside reader mode the split columns and the post body scroll on their
-   own; reader mode hands scrolling back to the document. */
+/* Reader mode: nothing scrolls on its own (the post body may have its own
+   scroller outside reader mode). */
 html[data-reader] [data-split-main],
 html[data-reader] .post-body {
   overflow: visible;
@@ -459,6 +472,15 @@ html[data-reader] .post-body {
 
 html[data-reader] .post-body .markdown {
   max-width: none;
+}
+
+/* The post page's action row: only the reader bar inside it stays. */
+html[data-reader] [data-post-actions] {
+  display: contents;
+}
+
+html[data-reader] .post-body .markdown :is(h1, h2, h3) {
+  scroll-margin-top: 4.5rem;
 }
 
 /* The parent <article> has gap-4; tuck the byline under the title */

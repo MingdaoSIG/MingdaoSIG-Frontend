@@ -175,12 +175,14 @@ function CommentEntry({
   parent,
   controller,
   variant,
+  onReport,
 }: {
   comment: TComments;
   /** Set for a reply: the top-level comment it sits under. */
   parent?: TComments;
   controller: CommentsController;
   variant: CommentVariant;
+  onReport?: (comment: TComments) => void;
 }) {
   const [editing, setEditing] = useState(false);
   const { permissions } = controller;
@@ -191,6 +193,8 @@ function CommentEntry({
   const avatarSize = isReply ? 28 : 36;
   const canEdit = permissions.canEdit(comment);
   const canDelete = permissions.canDelete(comment);
+  // Anyone but the author (logged-out visitors are asked to log in).
+  const canReport = Boolean(onReport) && !canEdit && Boolean(comment.user);
   const time = formatTime(comment.createdAt, variant);
 
   const action = `cursor-pointer rounded-chip font-semibold text-ink-500 transition-colors ${
@@ -302,6 +306,17 @@ function CommentEntry({
                   刪除
                 </button>
               )}
+              {canReport && (
+                <button
+                  type="button"
+                  className={`${action} ${
+                    mobile ? "" : "hover:text-danger-700"
+                  }`}
+                  onClick={() => onReport?.(comment)}
+                >
+                  檢舉
+                </button>
+              )}
             </div>
           </>
         )}
@@ -315,10 +330,13 @@ export function CommentThread({
   comment,
   controller,
   variant,
+  onReport,
 }: {
   comment: TComments;
   controller: CommentsController;
   variant: CommentVariant;
+  /** 檢舉 on comments by others. */
+  onReport?: (comment: TComments) => void;
 }) {
   const replies = comment.replies ?? [];
   const collapsible = replies.length > VISIBLE_REPLIES;
@@ -354,6 +372,7 @@ export function CommentThread({
         comment={comment}
         controller={controller}
         variant={variant}
+        onReport={onReport}
       />
       {replies.length > 0 && (
         <div className="ml-[1.0625rem] flex flex-col gap-2 border-line border-l-2 pt-1 pl-3">
@@ -365,6 +384,7 @@ export function CommentThread({
                 parent={comment}
                 controller={controller}
                 variant={variant}
+                onReport={onReport}
               />
             ))}
           {toggle}

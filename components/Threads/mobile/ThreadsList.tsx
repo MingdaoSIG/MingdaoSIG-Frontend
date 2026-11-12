@@ -1,209 +1,43 @@
 import type { InfiniteData } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef } from "react";
+import { PostCard, PostCardSkeleton } from "@/components/PostCard/PostCard";
+import { isThread, postSigOf } from "@/components/PostCard/post";
 import type { Sig } from "@/interfaces/Sig";
-// Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
-import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
-import { postTags } from "@/modules/hashtag";
-import { imageUrl } from "@/modules/imageUrl";
+import { BRAND_COLOR } from "@/modules/sigTheme";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
-// Configs
-import { sigDefaultColors } from "../configs/sigDefaultColors";
-import { HashtagLinks, PinnedChip } from "../desktop/ThreadsList";
-import { postSummary } from "../postSummary";
 
-/** Populated object, or null for a missing / unpopulated reference. */
-function asObject<T>(value: unknown): T | null {
-  return typeof value === "object" && value !== null ? (value as T) : null;
-}
-
-/** Only well-formed posts are rendered; anything else is skipped. */
-function isThread(value: unknown): value is TThread {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as TThread)._id === "string"
-  );
-}
+// The older paged lists on phones (home, search, tag and profile pages).
+// Since the 2026 user-side redesign they render the compact `PostCard`
+// in one column; new lists use components/PostCard/InfiniteThreadList.
 
 function sigIdOf(thread: TThread) {
-  return asObject<Sig>(thread.sig)?._id;
+  return postSigOf(thread)?._id;
 }
-
-const Thread = ({
-  threadData,
-  priority = false,
-  pinned = false,
-}: {
-  threadData: TThread;
-  priority?: boolean;
-  /** Shown in the pinned section: adds 「置頂」. */
-  pinned?: boolean;
-}) => {
-  const user = asObject<User>(threadData.user);
-  const sig = asObject<Sig>(threadData.sig);
-  const isAnnouncement = sig?._id === announcementSigId;
-  const hashtags = postTags(threadData.hashtag);
-  const cover =
-    typeof threadData.cover === "string" ? imageUrl(threadData.cover) : "";
-
-  // The title link covers the whole card (its ::after), so the hashtag
-  // links can sit on top without nesting links.
-  return (
-    <article
-      className={`relative block select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow active:shadow-card-hover ${
-        isAnnouncement ? "shadow-[inset_3px_0_0_var(--color-warm-600)]" : ""
-      }`}
-    >
-      {/* Cover Image */}
-      {cover && (
-        <div className="relative h-48 w-full bg-field">
-          <Image
-            src={cover}
-            alt=""
-            fill
-            sizes="(max-width: 640px) 100vw, 50vw"
-            priority={priority}
-            className="object-cover"
-          />
-        </div>
-      )}
-
-      {/* Content Container */}
-      <div className="flex min-h-[200px] flex-col p-4">
-        {/* Header: User info and Date */}
-        {!isAnnouncement && user && (
-          <div className="mb-2.5 flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="truncate text-[13px] text-ink-700">
-                {user?.name}
-              </span>
-              {sig && <SigChip sig={sig} />}
-            </div>
-            <div className="shrink-0 text-[13px] text-ink-500">
-              {
-                new Date(threadData.createdAt ?? "")
-                  .toLocaleString("zh-TW")
-                  .split(" ")[0]
-              }
-            </div>
-          </div>
-        )}
-
-        {/* Title */}
-        <h2 className="mb-1.5 flex min-w-0 items-start gap-2 font-semibold text-[1.125rem] text-ink-900 leading-snug">
-          {pinned && (
-            <span className="mt-0.5 flex">
-              <PinnedChip />
-            </span>
-          )}
-          {isAnnouncement && (
-            <span className="mt-0.5 shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
-              公告
-            </span>
-          )}
-          <Link
-            href={`/post/${threadData._id}`}
-            className="line-clamp-2 after:absolute after:inset-0 after:content-['']"
-          >
-            {threadData.title}
-          </Link>
-        </h2>
-
-        {/* Content Preview - Dynamic lines based on hashtags */}
-        <p
-          className={`mb-3 text-[0.9375rem] text-ink-700 leading-[1.7] ${
-            isAnnouncement
-              ? "line-clamp-3"
-              : hashtags.length > 0
-                ? "line-clamp-2"
-                : "line-clamp-4"
-          }`}
-        >
-          {postSummary(threadData)}
-        </p>
-
-        {/* Hashtags - Horizontal scroll without scrollbar */}
-        {hashtags.length > 0 && !isAnnouncement && (
-          <HashtagLinks
-            tags={hashtags}
-            className="scrollbar-hide relative z-[1] mb-3 flex gap-2 overflow-x-auto pb-1"
-            chipClassName="flex-shrink-0 py-1.5"
-          />
-        )}
-
-        {/* Spacer to push footer to bottom */}
-        <div className="flex-grow"></div>
-
-        {/* Footer: Likes and Comments */}
-        {!isAnnouncement && (
-          <div className="mt-1 flex items-center gap-4 pt-1 text-ink-500">
-            <span className="flex items-center gap-1.5 text-sm">
-              <Heart size={16} aria-label="按讚數" />
-              {threadData.likes}
-            </span>
-            <span className="flex items-center gap-1.5 text-sm">
-              <MessageCircle size={16} aria-label="留言數" />
-              {threadData.comments}
-            </span>
-          </div>
-        )}
-      </div>
-    </article>
-  );
-};
 
 /** SIG name on a light tint of the SIG colour (raw colour as text is unreadable for pinks). */
 export const SigChip = ({
   sig,
   className = "",
 }: {
-  sig: Pick<Sig, "_id" | "name">;
+  sig: Pick<Sig, "_id" | "name" | "color">;
   className?: string;
-}) => (
-  <span
-    className={`sig-text shrink-0 rounded-chip bg-[color-mix(in_srgb,var(--sig-color)_12%,white)] px-2 py-0.5 font-semibold text-xs ${className}`}
-    style={{
-      ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""] || "#0b5a83",
-    }}
-  >
-    {sig.name}
-  </span>
-);
-
-const ThreadSkeleton = () => {
+}) => {
+  const colorOf = useSigColor();
   return (
-    <div className="animate-pulse overflow-hidden rounded-card border border-line bg-surface shadow-card">
-      <div className="h-48 w-full bg-field" />
-      <div className="p-4">
-        <div className="mb-3 flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-16 rounded-chip bg-field" />
-            <div className="h-5 w-20 rounded-chip bg-field" />
-          </div>
-          <div className="h-4 w-20 rounded-chip bg-field" />
-        </div>
-        <div className="mb-2 h-6 w-3/4 rounded-chip bg-field" />
-        <div className="mb-1 h-4 w-full rounded-chip bg-field" />
-        <div className="mb-3 h-4 w-full rounded-chip bg-field" />
-        <div className="mb-3 flex gap-2">
-          <div className="h-6 w-20 rounded-chip bg-field" />
-          <div className="h-6 w-16 rounded-chip bg-field" />
-          <div className="h-6 w-24 rounded-chip bg-field" />
-        </div>
-        <div className="flex gap-4">
-          <div className="h-4 w-12 rounded-chip bg-field" />
-          <div className="h-4 w-12 rounded-chip bg-field" />
-        </div>
-      </div>
-    </div>
+    <span
+      className={`sig-text shrink-0 rounded-chip bg-[color-mix(in_srgb,var(--sig-color)_12%,white)] px-2 py-0.5 font-semibold text-xs ${className}`}
+      style={{
+        ["--sig-color" as string]: colorOf(sig, BRAND_COLOR),
+      }}
+    >
+      {sig.name}
+    </span>
   );
 };
 
@@ -322,19 +156,20 @@ export const InfinityThreadsList = ({
     >
       {/* Announcement Section */}
       {showAnnouncement && (
-        <div key={announcement._id} className="sm:col-span-2">
-          <Thread threadData={announcement} priority={true} />
+        <div key={announcement._id} className="mb-3">
+          <PostCard post={announcement} eager />
         </div>
       )}
 
       {/* Threads Grid */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+      <div className="flex flex-col gap-3">
         {pinned.map((item) =>
           showAnnouncement && item._id === announcement._id ? null : (
-            <Thread
-              threadData={item}
-              priority={true}
+            <PostCard
+              post={item}
+              eager
               key={`pinned-${item._id}`}
+              variant="featured"
               pinned
             />
           ),
@@ -350,9 +185,9 @@ export const InfinityThreadsList = ({
 
               if (!isAnnouncement) {
                 return (
-                  <Thread
-                    threadData={item}
-                    priority={shouldPrioritize}
+                  <PostCard
+                    post={item}
+                    eager={shouldPrioritize}
                     key={item._id}
                   />
                 );
@@ -363,8 +198,8 @@ export const InfinityThreadsList = ({
         ))}
         {isFetchingNextPage && (
           <>
-            <ThreadSkeleton />
-            <ThreadSkeleton />
+            <PostCardSkeleton />
+            <PostCardSkeleton />
           </>
         )}
       </div>
@@ -400,10 +235,10 @@ export const ThreadsListSkeleton = ({
 }) => {
   return (
     <div className="w-full overflow-y-auto" style={{ height }}>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+      <div className="flex flex-col gap-3">
         {[...Array(repeat)].map((_, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no unique identifier
-          <ThreadSkeleton key={`skeleton-${index}`} />
+          <PostCardSkeleton key={`skeleton-${index}`} />
         ))}
       </div>
     </div>

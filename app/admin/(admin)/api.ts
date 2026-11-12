@@ -20,6 +20,7 @@ import { ANNOUNCEMENT_SIG_ID, useSigDirectory } from "@/utils/useAdminAccess";
 import type {
   AdminComment,
   AdminPost,
+  AdminReport,
   AdminSig,
   AdminUser,
   AdminUserDetail,
@@ -27,6 +28,9 @@ import type {
   JoinRequest,
   ListPage,
   Overview,
+  ReportAction,
+  ReportKind,
+  ReportStatusFilter,
   SigMember,
 } from "./types";
 
@@ -191,6 +195,9 @@ export const adminKeys = {
   sigMembers: (id: string) => ["admin", "sig-members", id] as const,
   joinRequests: ["admin", "join-requests"] as const,
   pendingCount: ["admin", "join-requests", "pending-count"] as const,
+  reports: ["admin", "reports"] as const,
+  // Under `reports`, so invalidating the reports also refreshes the badge.
+  openReportCount: ["admin", "reports", "open-count"] as const,
   audit: ["admin", "audit"] as const,
 };
 
@@ -279,6 +286,8 @@ export type UserQuery = {
   q?: string;
   role?: string;
   sig?: string;
+  /** 1: only users with a mute or ban in force (contract v4 §5.1). */
+  suspended?: number;
 };
 
 export function useUsers(query: UserQuery, enabled: boolean = true) {
@@ -346,6 +355,72 @@ export function usePendingCount(enabled: boolean = true) {
     },
     enabled,
     refetchInterval: 2 * 60 * 1000,
+  });
+}
+
+export type ReportQuery = {
+  skip: number;
+  limit: number;
+  status?: ReportStatusFilter;
+  kind?: ReportKind;
+};
+
+/** The backend is new: a report without a target still gets one. */
+function normalizeReport(report: AdminReport): AdminReport {
+  const target: Partial<AdminReport["target"]> =
+    report.target && typeof report.target === "object" ? report.target : {};
+  return {
+    ...report,
+    reporter: report.reporter ?? null,
+    target: {
+      ...target,
+      kind: target.kind === "comment" ? "comment" : "post",
+      id: typeof target.id === "string" ? target.id : "",
+    },
+  };
+}
+
+/** Reports on posts and comments (admins only). */
+export function useReports(query: ReportQuery, enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...adminKeys.reports, "list", query],
+    queryFn: async ({ signal }) => {
+      const page = await getPage<AdminReport>("/admin/reports", query, signal);
+      return { ...page, items: page.items.map(normalizeReport) };
+    },
+    placeholderData: keepPreviousData,
+    enabled,
+  });
+}
+
+/**
+ * Open reports (the sidebar badge). The route is admin-only, so pass
+ * `role === "admin"`: a manager must not fetch it.
+ */
+export function useOpenReportCount(enabled: boolean) {
+  return useQuery({
+    queryKey: adminKeys.openReportCount,
+    queryFn: async ({ signal }) => {
+      const page = await getPage<AdminReport>(
+        "/admin/reports",
+        { status: "open", skip: 0, limit: 1 },
+        signal,
+      );
+      return page.total;
+    },
+    enabled,
+    refetchInterval: 2 * 60 * 1000,
+  });
+}
+
+/** 移除內容 or 不處理. The reporter is told `resolution`. */
+export function resolveReport(
+  id: string,
+  action: ReportAction,
+  resolution: string,
+) {
+  return send<Partial<AdminReport>>(`/admin/reports/${id}/resolve`, {
+    body: { action, resolution },
   });
 }
 

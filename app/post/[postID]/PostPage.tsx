@@ -2,10 +2,6 @@
 import dynamic from "next/dynamic";
 import { use, useEffect, useState } from "react";
 
-// Layout
-import SplitBlock from "@/app/(Layout)/splitBlock";
-
-import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { NotFound } from "@/components/NotFound";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
@@ -15,18 +11,19 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 import { PostSkeleton } from "./(post)/components/PostSkeleton";
-import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
 // Desktop and mobile threads are separate component trees; load only the
 // one this device needs.
-const ThreadDesktop = dynamic(() => import("./(post)/desktop/Thread"));
+const PostDesktop = dynamic(() => import("./(post)/desktop/PostLayout"));
 const ThreadMobile = dynamic(() => import("./(post)/mobile/Thread"));
 
 // Client side of /post/[postID]; page.tsx (a Server Component) adds the
 // share preview metadata and renders this unchanged.
 const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   const isMobile = useIsMobile();
+  const { isLoading: authLoading } = useUserAccount();
 
   // Unwrap the params Promise using React.use()
   const unwrappedParams = use(params);
@@ -42,11 +39,16 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
 
-  // `attempt` re-runs the fetch when the user presses retry.
+  // `attempt` re-runs the fetch when the user presses retry. It waits for
+  // the login: the request carries the JWT so a signed-in reader's views
+  // count once per person (contract v4 §4.1).
   useEffect(() => {
     // 驗證 PostID 格式
     if (!isValidObjectId(PostID)) {
       setStatus("notfound");
+      return;
+    }
+    if (authLoading) {
       return;
     }
 
@@ -55,6 +57,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
       setStatus("loading");
       const result = await apiRequest<TThread>(`/post/${PostID}`, {
         signal: controller.signal,
+        auth: true,
       });
       if (controller.signal.aborted) {
         return;
@@ -73,7 +76,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
     })();
 
     return () => controller.abort();
-  }, [PostID, attempt]);
+  }, [PostID, attempt, authLoading]);
 
   if (status === "loading") {
     return <PostSkeleton isMobile={isMobile} />;
@@ -107,23 +110,15 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
       />
     );
   }
-  if (post.sig === "652d60b842cdf6a660c2b778") {
-    return isMobile ? (
-      <ThreadMobile post={post} isAnnouncement />
-    ) : (
-      <ThreadDesktop post={post} />
-    );
-  }
+  // Keyed by post: a series link to the next post starts at the top.
   return isMobile ? (
-    <ThreadMobile post={post}></ThreadMobile>
+    <ThreadMobile
+      key={post._id}
+      post={post}
+      isAnnouncement={post.sig === "652d60b842cdf6a660c2b778"}
+    />
   ) : (
-    <SplitBlock>
-      <ThreadDesktop post={post} />
-      {/* Comments failing to render must not take the post down */}
-      <SectionErrorBoundary label="留言">
-        <ThreadInfo post={post} />
-      </SectionErrorBoundary>
-    </SplitBlock>
+    <PostDesktop key={post._id} post={post} />
   );
 };
 

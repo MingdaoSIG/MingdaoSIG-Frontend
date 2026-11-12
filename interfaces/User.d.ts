@@ -1,3 +1,6 @@
+import type { Suspension } from "@/modules/suspension";
+import type { NotificationSettingsPatch } from "./Notification";
+
 export type Identity = "teacher" | "student" | "alumni";
 
 /*
@@ -34,11 +37,39 @@ export type User = {
   displayName?: string; // 顯示名稱
   description?: string; // 描述
   avatar?: string; // 大頭貼
-  badge?: ("developer" | "10.21_user" | "bug_hunter")[]; // 徽章
+  /** Badge keys (contract v4 §5.9: any key of `GET /badge/list`). */
+  badge?: string[]; // 徽章
+  /** `GET /user/:id`: visible posts, and the likes on them (backend #123). */
+  postCount?: number;
+  likeCount?: number;
   follower?: string[]; // 追隨者
   permission?: Permission; // 權限
   /** Email me when someone comments (only on /user/me and /login). */
   notifyComments?: boolean;
+  /**
+   * Push and email preferences (only on /user/me and /login). Missing
+   * keys mean the defaults; see modules/notifications/settings.
+   */
+  notificationSettings?: NotificationSettingsPatch;
+  /** Set when `/user/@:id` matched an old customId: the current one. */
+  redirectTo?: string;
+  /**
+   * A mute or ban in force (only on /user/me and /login, contract v4
+   * §5.1); absent otherwise.
+   */
+  suspension?: Suspension;
+  /** SIGs the user follows (contract v4 §6.1; only on `GET /user/me`). */
+  followedSigs?: string[];
+  /**
+   * When the first-login onboarding was finished or skipped (§6.2; only
+   * on `GET /user/me` and `POST /user`). Null: show the onboarding.
+   */
+  onboardedAt?: string | null;
+  /**
+   * The user's own order of their SIGs in the side rail and the 我的 hub
+   * (`POST /user { sigOrder }`, `GET /user/me`); ids not in it go last.
+   */
+  sigOrder?: string[];
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { TThread } from "@/interfaces/Thread";
 import markdownToPlainText from "@/modules/markdownToPlainText";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import useSig from "@/utils/useSig";
 import useUser from "@/utils/useUser";
 
@@ -25,6 +25,7 @@ function readingMinutes(markdown: string) {
 export default function ReaderByline({ post }: { post: TThread }) {
   const { data: user } = useUser(post.user);
   const { data: sig } = useSig(post.sig);
+  const colorOf = useSigColor();
 
   const date = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString("zh-TW")
@@ -51,7 +52,7 @@ export default function ReaderByline({ post }: { post: TThread }) {
           href={`/@${sig.customId}`}
           className="sig-text font-semibold"
           style={{
-            ["--sig-color" as string]: sigDefaultColors[sig._id ?? ""],
+            ["--sig-color" as string]: colorOf(sig),
           }}
         >
           {sig.name}

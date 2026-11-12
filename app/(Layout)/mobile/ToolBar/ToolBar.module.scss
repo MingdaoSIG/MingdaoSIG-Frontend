@@ -75,3 +75,40 @@
   line-height: 1;
   font-weight: 500;
 }
+
+.iconWrap {
+  position: relative;
+  display: flex;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 2px solid var(--color-surface);
+  border-radius: 999px;
+  background-color: var(--color-danger-700);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ＋發文: the filled square in the middle of the bar. */
+.postButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  background-color: var(--color-brand-700);
+  color: #fff;
+  box-shadow: 0 6px 16px -10px rgba(11, 90, 131, 0.9);
+}

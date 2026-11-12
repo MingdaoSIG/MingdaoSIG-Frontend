@@ -1,4 +1,11 @@
 import { CustomStatus } from "@/modules/customStatusCode";
+import {
+  getReportedSuspension,
+  reportSuspension,
+  type SuspensionType,
+  suspensionFromFailure,
+  suspensionRefusal,
+} from "@/modules/suspension";
 
 // One place that talks to the backend. It never throws: every outcome
 // (success, non-2000 status, 429 plain text, 502 HTML, network failure)
@@ -19,6 +26,8 @@ const NOT_FOUND_STATUSES: number[] = [
 
 export type ApiFailureKind =
   | "rate-limited"
+  /** Muted or banned (403/4041); `message` says until when. */
+  | "suspended"
   | "unauthorized"
   | "too-large"
   | "not-found"
@@ -143,6 +152,8 @@ export function describeFailure(kind: ApiFailureKind): string {
   switch (kind) {
     case "rate-limited":
       return "操作太頻繁，請稍後再試";
+    case "suspended":
+      return suspensionRefusal(getReportedSuspension());
     case "unauthorized":
       return "登入已過期，請重新登入後再試";
     case "too-large":
@@ -215,6 +226,9 @@ function classify(
   parsed: unknown,
   text: string,
 ): ApiFailureKind {
+  if (status === CustomStatus.ACCOUNT_SUSPENDED) {
+    return "suspended";
+  }
   if (
     httpStatus === 429 ||
     status === CustomStatus.TOO_MANY_REQUESTS ||
@@ -294,10 +308,41 @@ async function send<T>(
     };
   }
 
-  return failure(
-    classify(status, response.status, parsed, text),
-    status,
-    response.status,
-    parsed ?? text,
-  );
+  const kind = classify(status, response.status, parsed, text);
+  if (kind === "suspended") {
+    return suspendedFailure(path, options, response.status, parsed);
+  }
+  return failure(kind, status, response.status, parsed ?? text);
+}
+
+/**
+ * A 4041 (contract v4 §5.1). The account's suspension is reported to
+ * `modules/suspension` (the banner, and the auth provider, which signs a
+ * banned account out), and the message says what is refused and until
+ * when, so every caller that shows `message` explains it.
+ */
+function suspendedFailure(
+  path: string,
+  options: ApiRequestOptions,
+  httpStatus: number,
+  body: unknown,
+): ApiFailure {
+  // Reading is never refused for a mute, so a refused read is a ban.
+  const method = options.method ?? "GET";
+  const fallback: SuspensionType | null =
+    method === "GET" || path === "/login"
+      ? "ban"
+      : (getReportedSuspension()?.type ?? "mute");
+  const suspension = suspensionFromFailure(body, fallback);
+  if (suspension.type) {
+    reportSuspension(suspension);
+  }
+  return {
+    ok: false,
+    kind: "suspended",
+    status: CustomStatus.ACCOUNT_SUSPENDED,
+    httpStatus,
+    message: suspensionRefusal(suspension),
+    body,
+  };
 }
