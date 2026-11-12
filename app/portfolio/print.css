@@ -1,0 +1,80 @@
+/*
+ * 學習歷程 (/portfolio) print layout: 「下載 PDF」 calls window.print().
+ * A4 with margins; only the document prints (no header, dock, toolbar or
+ * controls); the app shell's fixed-height, scroll-inside layout opens up
+ * so every page of the document prints. Scoped to the portfolio page with
+ * :has(), since global CSS stays loaded after navigating away.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 14mm 16mm;
+  }
+
+  html:has([data-portfolio]),
+  html:has([data-portfolio]) body {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #fff !important;
+    animation: none !important;
+  }
+
+  html:has([data-portfolio]) :is(.wrap, .wrapMobile) {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    background: #fff !important;
+  }
+
+  /* The header, the dock and toasts: everything but the page itself. */
+  html:has([data-portfolio])
+    :is(.wrap, .wrapMobile)
+    > :not(:has([data-portfolio])):not([data-portfolio]) {
+    display: none !important;
+  }
+
+  /* The mobile page transition wrapper is absolutely positioned. */
+  html:has([data-portfolio]) .wrapMobile > :has([data-portfolio]) {
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  [data-portfolio],
+  [data-portfolio] [data-print-scroll] {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  [data-portfolio] [data-print-hide] {
+    display: none !important;
+  }
+
+  [data-portfolio] [data-print-sheet] {
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  [data-portfolio] [data-print-break] {
+    break-before: page;
+  }
+
+  [data-portfolio] [data-print-keep] {
+    break-inside: avoid;
+  }
+
+  [data-portfolio] * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
