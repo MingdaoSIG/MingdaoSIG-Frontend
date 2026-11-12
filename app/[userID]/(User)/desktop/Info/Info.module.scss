@@ -97,11 +97,15 @@ $badge-height: 1.3rem;
 
 .nameWrapper {
   display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
   width: 100%;
 }
 
 .name {
-  width: auto;
+  // Let the name shrink so a long customId never squeezes the buttons
+  flex: 1 1 auto;
+  min-width: 0;
   font-weight: bold;
   color: var(--color-ink-900);
   font-size: 1.5rem;
@@ -111,8 +115,9 @@ $badge-height: 1.3rem;
     color: var(--color-brand-800);
     font-size: 0.9rem;
     font-weight: 400;
+    overflow-wrap: anywhere;
   }
-  
+
 }
 
 .space {
@@ -122,6 +127,8 @@ $badge-height: 1.3rem;
 
 .joinBtn {
   width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
   height: 3rem;
   display: flex;
   flex: initial;
@@ -201,6 +208,8 @@ $badge-height: 1.3rem;
 /* 「退出 SIG」: secondary, so it is not mistaken for the main action */
 .leaveBtn {
   width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
   height: 3rem;
   display: flex;
   flex: initial;
