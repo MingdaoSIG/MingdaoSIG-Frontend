@@ -89,6 +89,24 @@ row 1 the header across both columns, row 2 the rail and the page. There is
 no floating dock. Phones get a fixed header and the five-tab bar. See
 `docs/features.md` (Navigation shell).
 
+Desktop pages scroll the window (owner decision 2026-11-13), not their
+columns:
+
+- The header row (`[data-shell="top"]`) is sticky at the top; the rail is
+  sticky under it (`top: var(--shell-header-h)`, full window height, its
+  SIG list scrolls inside when long).
+- `:root` defines `--shell-header-h` (4rem) and `--shell-top` (header +
+  site notices + 1.5rem): the `top` of every sticky side panel.
+- Page columns have no `overflow-y-auto` and no `h-full`. `SplitBlock`'s
+  side column is `sticky; top: var(--shell-top)` with a max height and
+  its own thin scrollbar; `DocPage` is plain flow.
+- Infinite lists observe the viewport (no scrolling ancestor), and the
+  browser restores the scroll position on back / forward.
+- Only `/admin` (`.layout-admin`) keeps a fixed-height layout, and phones
+  keep their fixed header and tab bar with the page areas scrolling.
+- Scrollbars: the page scrollbar and `.custom-scrollbar` (inner areas) are
+  thin with a transparent track; inner thumbs stay faint until hovered.
+
 ## Responsive Design Pattern
 
 Every UI feature must have both desktop and mobile implementations:
