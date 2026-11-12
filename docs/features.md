@@ -103,7 +103,7 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   `/admin/join-requests`, `/admin/users`, `/admin/rollover`,
   `/admin/badges`, `/admin/exports`, `/admin/audit`, `/admin/reports`
   (檢舉), `/admin/keyword-filter`, `/admin/banners`, `/admin/broadcast`,
-  `/admin/logins` (see below).
+  `/admin/logins`, `/admin/issue-reports` (問題回報, see below).
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -376,6 +376,42 @@ props, so the user-side redesign can move it without rewriting it.
 - **關鍵字過濾** `/admin/keyword-filter`: the word list (1–30 characters,
   at most 200, repeats ignoring case dropped); reports it files show
   「系統（關鍵字）」 as the reporter.
+
+## Issue reports (問題回報, contract v4 §7)
+
+Replaces the old Google Form behind 「回報問題」. Signing in is required.
+
+- **`/report`** (`app/report/`): logged out, a card with 登入 and nothing
+  else. Logged in: 類型 chips (錯誤／建議／帳號問題／其他, default 錯誤 or
+  `?category=`), 標題 (1–80), 說明 (1–2000, counter), up to 3 screenshots
+  (picker, paste anywhere on the page, or drop on the form; uploaded at
+  once through `modules/imageUploadAPI`, same formats and 5 MB cap), and
+  the read-only box 「會一起送出的資訊」 = `context`: 目前頁面 (`?from=`,
+  else a same-origin `document.referrer`), 版本 (`package.json`), 瀏覽器,
+  螢幕大小, 錯誤代碼 (`?digest=`). Errors show on 送出回報 under the
+  field and clear when it changes. 429/4290 says 一小時內最多回報 5 次; a
+  4041 shows the suspension notice text. Success: 查看我的回報 /
+  回到上一頁.
+- **`/me/reports`** 我的回報: `GET /issue-report/mine`, 20 per page with
+  載入更多; status chip (待處理 warm, 處理中 brand, 已解決 green, 不處理
+  grey), category, date, title; expanding shows the description,
+  screenshots and the admin's reply with its date. `?id=` (the
+  notification link) pages until it finds the report, opens it and
+  scrolls to it.
+- **`/admin/issue-reports`** (admins, under 其他, badge = `openCount`):
+  filters status (default `active` = 待處理＋處理中), category and search;
+  the drawer shows the text, screenshots (click to enlarge), the context,
+  the reporter (link to `/admin/users?…&id=`, which opens that user's
+  drawer), and status + reply (≤1000) with 儲存. A new reply, or moving
+  to 已解決／不處理, notifies the reporter; the toast says so. `?id=`
+  opens the drawer, fetching the report when it is not on the page.
+- Entry points: 「回報這個問題」 on `app/error.tsx` and
+  `app/global-error.tsx` (`?category=bug&from=&digest=`), 「回報問題」 on
+  the 404 page (`components/NotFound`, `?from=`). Build links with
+  `issueReportHref()` from `modules/issueReports`.
+- Shared: `modules/issueReports` (labels, limits, context, link helper),
+  `components/IssueReport/` (`IssueStatusChip`, `IssueCategoryChip`,
+  `IssueImages` with `ImageLightbox`).
 
 ## Data & Info Pages
 

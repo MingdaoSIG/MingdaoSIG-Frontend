@@ -278,7 +278,10 @@ function ReportList({ userId }: { userId: string }) {
           找不到這筆回報，可能已經被移除。
         </output>
       )}
-      <section aria-label="回報列表" className={`${card} overflow-hidden`}>
+      <section
+        aria-label="回報列表"
+        className={`${card} shrink-0 overflow-hidden`}
+      >
         <ul className="divide-y divide-line">
           {items.map((report) => (
             <ReportItem

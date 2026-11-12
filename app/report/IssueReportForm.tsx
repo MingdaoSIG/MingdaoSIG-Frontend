@@ -271,6 +271,7 @@ export function IssueReportForm({
   return (
     <form
       ref={formRef}
+      aria-label="回報問題"
       noValidate
       onSubmit={submit}
       onDragOver={(event) => {
@@ -530,7 +531,7 @@ function SentCard({
       >
         已送出回報
       </h2>
-      <p className="max-w-md break-words text-ink-700 text-sm leading-6">
+      <p className="max-w-lg break-words text-ink-700 text-sm leading-6">
         謝謝你回報「{report.title}」。管理員回覆或處理完成時，你會收到通知。
       </p>
       <div className="mt-2 flex flex-wrap items-center justify-center gap-2">

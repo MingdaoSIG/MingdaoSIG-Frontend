@@ -45,7 +45,9 @@ app/                      # Next.js App Router
 ├── explore/             # 探索
 ├── info/                # Info page
 ├── me/                  # 我的 hub
+│   └── reports/         # 我的回報 (issue reports)
 ├── new/                 # New post page
+├── report/              # 回報問題 form (issue reports)
 ├── post/[postID]/       # Post detail
 │   ├── (post)/          # Post content components
 │   └── edit/            # Edit post

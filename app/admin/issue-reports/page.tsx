@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, UserRound } from "lucide-react";
+import { ChevronDown, Save, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { IssueImages } from "@/components/IssueReport/IssueImages";
@@ -553,24 +553,30 @@ export default function AdminIssueReportsPage() {
               {form && (
                 <div className="mt-3 flex flex-col gap-3 border-line border-t pt-3">
                   <Field label="狀態" htmlFor={statusId}>
-                    <select
-                      id={statusId}
-                      value={form.status}
-                      disabled={saving}
-                      onChange={(event) => {
-                        const next = event.target.value;
-                        if (isIssueStatus(next)) {
-                          setDraft({ ...form, status: next });
-                        }
-                      }}
-                      className={selectClass}
-                    >
-                      {ISSUE_STATUSES.map((value) => (
-                        <option key={value} value={value}>
-                          {ISSUE_STATUS_LABEL[value]}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <select
+                        id={statusId}
+                        value={form.status}
+                        disabled={saving}
+                        onChange={(event) => {
+                          const next = event.target.value;
+                          if (isIssueStatus(next)) {
+                            setDraft({ ...form, status: next });
+                          }
+                        }}
+                        className={`${selectClass} appearance-none`}
+                      >
+                        {ISSUE_STATUSES.map((value) => (
+                          <option key={value} value={value}>
+                            {ISSUE_STATUS_LABEL[value]}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        aria-hidden
+                        className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-ink-500"
+                      />
+                    </div>
                   </Field>
                   <Field
                     label="回覆"
