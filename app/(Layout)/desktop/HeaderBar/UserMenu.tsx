@@ -1,26 +1,15 @@
 "use client";
 
-import {
-  ChevronDown,
-  LayoutDashboard,
-  LogOut,
-  UserRound,
-} from "lucide-react";
+import { ChevronDown, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  type KeyboardEvent,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { hubGroups } from "../../nav";
 import { confirmLogout } from "../../confirmLogout";
+import { hubGroups } from "../../nav";
 
 // The avatar menu on desktop: the 我的 hub (decision 7B) as a dropdown,
 // with the same entries as the /me page.
@@ -69,8 +58,7 @@ export default function UserMenu() {
 
   function onMenuKey(event: KeyboardEvent<HTMLDivElement>) {
     const items = Array.from(
-      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ??
-        [],
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
     );
     const index = items.indexOf(document.activeElement as HTMLElement);
     if (event.key === "Escape") {
@@ -164,7 +152,6 @@ export default function UserMenu() {
           {hubGroups(customId).map((group) => (
             <div
               key={group.key}
-              role="group"
               className="mt-1 flex flex-col border-line border-t pt-1"
             >
               {group.items.map((item) => {

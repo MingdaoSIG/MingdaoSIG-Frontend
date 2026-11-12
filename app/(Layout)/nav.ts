@@ -102,8 +102,7 @@ export type HubGroup = { key: string; items: HubItem[] };
  */
 export function hubGroups(customId: string | null | undefined): HubGroup[] {
   const profile = customId ? `/@${customId}` : "/me";
-  const tab = (name: string) =>
-    customId ? `${profile}?tab=${name}` : "/me";
+  const tab = (name: string) => (customId ? `${profile}?tab=${name}` : "/me");
   return [
     {
       key: "content",

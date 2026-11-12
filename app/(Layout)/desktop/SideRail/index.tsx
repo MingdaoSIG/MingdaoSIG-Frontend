@@ -4,9 +4,10 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type FocusEvent, type MouseEvent, useEffect, useState } from "react";
+import { useAppBadge } from "@/components/Notifications/NotificationBell";
 import { formatUnread } from "@/modules/notifications/describe";
-import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import { hasNewPosts, useSigSeen } from "@/modules/sigSeen";
+import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import { type MySig, useMySigs } from "@/utils/useMySigs";
 import { useUnreadCount } from "@/utils/useNotifications";
@@ -129,6 +130,8 @@ export default function SideRail() {
   const { isLogin, userData } = useUserAccount();
   const { hideDock } = useAdminChrome();
   const { unread } = useUnreadCount();
+  // The installed app's icon shows the same count.
+  useAppBadge(unread);
   const { sigs, isLoading } = useMySigs();
   const { seen, baseline } = useSigSeen(userData?._id ?? "");
   const { tip, show, hide } = useTip();

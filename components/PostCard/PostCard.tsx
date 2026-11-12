@@ -144,7 +144,7 @@ export function PostCard({
       } ${className}`}
     >
       {featured && cover && (
-        <div className="relative aspect-[2.6/1] w-full bg-field">
+        <div className="relative h-36 w-full bg-field lg:h-48">
           <Image
             src={cover}
             alt=""

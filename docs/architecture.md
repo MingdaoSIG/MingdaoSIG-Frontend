@@ -20,8 +20,9 @@
 ```
 app/                      # Next.js App Router
 ├── (Layout)/            # Layout components
-│   ├── desktop/         # Desktop HeaderBar, ToolBar
-│   └── mobile/          # Mobile HeaderBar, ToolBar
+│   ├── desktop/         # Desktop HeaderBar (search, avatar menu), SideRail
+│   ├── mobile/          # Mobile HeaderBar, ToolBar (tab bar)
+│   └── nav.ts           # Nav sections and the 我的 hub entries
 ├── (home)/              # Home page
 │   ├── apis/            # Home page API calls
 │   ├── desktop/         # Desktop home components
@@ -41,7 +42,9 @@ app/                      # Next.js App Router
 ├── confirm/             # Email confirmation page
 ├── dashboard/           # User dashboard
 ├── data/                # Data statistics
+├── explore/             # 探索
 ├── info/                # Info page
+├── me/                  # 我的 hub
 ├── new/                 # New post page
 ├── post/[postID]/       # Post detail
 │   ├── (post)/          # Post content components
@@ -58,8 +61,9 @@ app/                      # Next.js App Router
 components/              # Reusable components
 ├── Information/
 ├── NotFound/
+├── PostCard/            # Compact post card, InfiniteThreadList
 ├── PostEditor/          # Post editor (desktop/mobile)
-└── Threads/             # Post list components
+└── Threads/             # Older paged post lists (render PostCard)
 
 modules/                 # Business logic modules
 ├── api/
@@ -76,6 +80,14 @@ interfaces/              # TypeScript type definitions
 utils/                   # Utility hooks
 public/                  # Static assets
 ```
+
+## Desktop shell
+
+`app/device.tsx` renders the header (with the site notices under it), the
+58px side rail and the page in the `.wrap` grid (`app/styles/globals.css`):
+row 1 the header across both columns, row 2 the rail and the page. There is
+no floating dock. Phones get a fixed header and the five-tab bar. See
+`docs/features.md` (Navigation shell).
 
 ## Responsive Design Pattern
 

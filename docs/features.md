@@ -6,15 +6,55 @@
 - Announcements stay pinned for 7 days
 - Visual style: white background, no cover image
 
-## Infinite Scroll
+## Navigation shell (2026 user-side redesign)
 
-Implemented in `components/Threads/desktop/ThreadsList.tsx`.
+Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 
-Triggers load when scroll position is within **600px of the bottom**:
+- **Phones** (`app/(Layout)/mobile/ToolBar`): a tab bar 首頁 / 探索 /
+  ＋發文 / 通知 / 我的. 通知 shows the unread count (and sets the app icon
+  badge); tapping the current tab scrolls back to the top
+  (`mobile:scroll-to-top`). The header keeps the logo, the search icon,
+  登入 (logged out) and 管理平台 / 回到網站.
+- **Desktop**: no floating dock. A 58px side rail
+  (`app/(Layout)/desktop/SideRail`, first column of the `.wrap[data-rail]`
+  grid) with 首頁 / 探索 / 通知 / 我的, then the user's SIGs as colour
+  squares (managed, member, followed: `utils/useMySigs`), 「＋ 探索 SIG」
+  when there are none, and ＋發文 at the bottom. Squares have a tooltip
+  with the SIG name and a dot when the SIG's `latestPostAt` is newer than
+  the last visit (`modules/sigSeen`, localStorage
+  `mdsig-sig-seen:<userId>`; a SIG seen for the first time starts as
+  seen; `useTrackSigVisits` in `app/device.tsx` records visits to
+  `/@<sig>`). The header has the logo, the search box and the avatar menu
+  (the 我的 hub, `UserMenu.tsx`); 管理平台 stays for admins and managers.
+  The admin panel has no rail.
+- Which entry is current: `navSection()` in `app/(Layout)/nav.ts`. The 我的
+  hub entries (`hubGroups()`) are shared by the avatar menu and `/me`.
+- `/me` (我的): profile link, 我的 SIG, 收藏 / 按讚 / 系列 (own profile
+  `?tab=`), 學習歷程, 數據, 通知設定, 平台資訊, 管理平台, 登出. Logged out it
+  offers 登入 and 平台資訊.
+- `/explore` (探索): search, 熱門標籤 and every SIG.
+- The site banner and the suspension notice (`SiteNotices`) sit under the
+  header on both shells.
 
-```typescript
-const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
-```
+## Post cards and infinite lists
+
+- `components/PostCard/PostCard.tsx` (decision 4B): text first (title,
+  two-line excerpt, SIG colour dot + SIG name, author, time, likes /
+  comments / views, up to four tags, bookmark) with a small thumbnail on
+  the right when the post has a cover. `variant="featured"` puts the cover
+  on top as a big image (pinned posts); announcements keep the 公告 chip
+  and the warm edge. The older lists in `components/Threads/*/ThreadsList`
+  render it too.
+- `components/PostCard/InfiniteThreadList.tsx`: give it `fetchPage(skip,
+  limit, signal)` + `queryKey` (`postListFetcher(path, query)` builds one
+  for any backend post list) or an existing infinite `query`
+  (`useAllPost`, `useSigPost`, `useThreadPages`…). An IntersectionObserver
+  sentinel loads the next page 600px ahead inside the nearest scrolling
+  ancestor; pages are never requested twice (`cancelRefetch: false` and a
+  guard), posts are deduplicated by `_id`, and it has loading, empty,
+  error / retry and end-of-list states, plus an optional `header` slot.
+- `/tag/[tag]` uses it, with the post count (`total`) and 相關標籤 (tags
+  that appear on the loaded posts with this one).
 
 ## Markdown Editor
 
