@@ -402,7 +402,11 @@ export function TeacherFeedback({
         </div>
       </div>
 
-      <div className="custom-scrollbar mt-3 min-h-0 overflow-y-auto">
+      <div
+        className={`custom-scrollbar mt-3 min-h-0 overflow-y-auto ${
+          mobile ? "" : "max-h-[26vh]"
+        }`}
+      >
         {list.isPending ? (
           <p className="py-2 text-ink-500 text-sm">載入中…</p>
         ) : list.isError ? (
