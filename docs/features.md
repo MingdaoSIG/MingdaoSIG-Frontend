@@ -43,13 +43,27 @@ const isNearBottom = scrollTop + clientHeight >= scrollHeight - 600;
 
 ## Admin Panel
 
-- Route: `app/admin/`
-- Sub-pages for managing SIG leaders (`sig-leader/`), advisors (`sig-advisor/`), members (`sig-members/`), posts (`post/`), and post queries (`post-query/`)
-- Requires elevated permissions (`permission === 2`); pages fetch nothing
-  until that is known
-- `post/` pages through `GET /post/list/admin` (50 per page, newest first,
-  title search) and `post-query/` calls `GET /post/list/range`; both send
-  the admin JWT
+- Route: `app/admin/` (design: `design/admin-redesign-2026.html`, API:
+  `design/api-contract-v3.md` §2–§3). One responsive UI: a left sidebar on
+  desktop, a section switcher above the page on phones; no dock inside
+  `/admin`, the header shows 「回到網站」 instead.
+- Access (`utils/useAdminAccess`): admins (`permission === 2`) see every
+  section; SIG managers (leader or 指導老師 of a SIG in `GET /sig/list`)
+  see 總覽, SIG and 入社申請 for their SIGs; everyone else gets the 404
+  page. Nothing is fetched before the role is known. The header shows
+  「管理平台」 to admins and managers.
+- Sections: `/admin` 總覽, `/admin/posts`, `/admin/comments`,
+  `/admin/sigs`, `/admin/sigs/[sigId]?tab=info|staff|members|requests`,
+  `/admin/join-requests`, `/admin/users`, `/admin/exports`, `/admin/audit`.
+  The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
+  `sig-members`) redirect to these (`next.config.js`).
+- Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
+  writes through `apiRequest`), `components/` (DataTable: table on
+  desktop, cards on phones; Drawer: side panel / full-screen sheet; Modal
+  and `useConfirm` on `<dialog>`), `useQueryState.ts` (filters, sort and
+  page in the URL query).
+- Excel exports (`xlsx`, loaded on demand): member lists per SIG and the
+  date-range post export (`GET /post/list/range`).
 
 ## Data & Info Pages
 
