@@ -1,9 +1,5 @@
-import type {
-  FetchNextPageOptions,
-  InfiniteData,
-  InfiniteQueryObserverResult,
-} from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
+import type { InfiniteData } from "@tanstack/react-query";
+import { Heart, MessageCircle, Pin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useRef } from "react";
@@ -12,6 +8,8 @@ import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
+import { postTags, tagHref } from "@/modules/hashtag";
+import { imageUrl } from "@/modules/imageUrl";
 import {
   announcementSigId,
   announcementStayTime,
@@ -38,28 +36,49 @@ function sigIdOf(thread: TThread) {
   return asObject<Sig>(thread.sig)?._id;
 }
 
-function fixCoverUrl(cover: string) {
-  if (cover.startsWith("http://") || cover.startsWith("https://")) {
-    if (cover.includes("lazco.dev")) {
-      const pathPart = cover.split("lazco.dev/")[1] || "";
-      return `${process.env.NEXT_PUBLIC_API_URL}/${pathPart}`;
-    }
-    return cover;
-  }
+/** 「置頂」 on a pinned post at the top of the home feed. */
+export const PinnedChip = () => (
+  <span className="inline-flex shrink-0 items-center gap-1 rounded-chip bg-brand-50 px-2 py-0.5 font-semibold text-brand-800 text-xs">
+    <Pin size={12} aria-hidden strokeWidth={2.4} />
+    置頂
+  </span>
+);
 
-  if (cover.startsWith("/image/")) {
-    return `${process.env.NEXT_PUBLIC_API_URL}${cover}`;
-  }
-
-  return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
-}
+/** A post's hashtags, each linking to its /tag page. */
+export const HashtagLinks = ({
+  tags,
+  className = "",
+  chipClassName = "",
+}: {
+  tags: string[];
+  className?: string;
+  chipClassName?: string;
+}) => (
+  <div className={className}>
+    {tags.map((tag) => {
+      const href = tagHref(tag);
+      return href ? (
+        <Link
+          key={tag}
+          href={href}
+          className={`whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs transition-colors hover:bg-[color-mix(in_srgb,var(--color-brand-700)_16%,white)] ${chipClassName}`}
+        >
+          #{tag}
+        </Link>
+      ) : null;
+    })}
+  </div>
+);
 
 const Thread = ({
   threadData,
   eager = false,
+  pinned = false,
 }: {
   threadData: TThread;
   eager?: boolean;
+  /** Shown in the pinned section: adds 「置頂」. */
+  pinned?: boolean;
 }) => {
   const user = asObject<User>(threadData.user);
   const sig = asObject<Sig>(threadData.sig);
@@ -69,12 +88,13 @@ const Thread = ({
     !isAnnouncement &&
     typeof threadData.cover === "string" &&
     threadData.cover !== "";
-  const hashtags = Array.isArray(threadData.hashtag) ? threadData.hashtag : [];
+  const hashtags = postTags(threadData.hashtag);
 
+  // The title link covers the whole card (its ::after), so the hashtag
+  // links can sit on top without nesting links.
   return (
-    <Link
-      href={`/post/${threadData._id}`}
-      className={`flex h-48 cursor-pointer select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow duration-200 hover:shadow-card-hover ${
+    <article
+      className={`relative flex h-48 select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow duration-200 hover:shadow-card-hover ${
         isAnnouncement ? "shadow-[inset_3px_0_0_var(--color-warm-600)]" : ""
       }`}
     >
@@ -114,12 +134,18 @@ const Thread = ({
         )}
 
         <h2 className="mt-1.5 flex min-w-0 items-center gap-2 font-semibold text-ink-900 text-lg leading-7 tracking-[0.01em]">
+          {pinned && <PinnedChip />}
           {isAnnouncement && (
             <span className="shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
               公告
             </span>
           )}
-          <span className="truncate">{threadData.title}</span>
+          <Link
+            href={`/post/${threadData._id}`}
+            className="truncate after:absolute after:inset-0 after:content-['']"
+          >
+            {threadData.title}
+          </Link>
         </h2>
 
         <p
@@ -131,24 +157,18 @@ const Thread = ({
         </p>
 
         {hashtags.length > 0 && !isAnnouncement && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-2">
-            {hashtags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
+          <HashtagLinks
+            tags={hashtags.slice(0, 3)}
+            className="relative z-[1] mt-auto flex flex-wrap gap-2 self-start pt-2"
+          />
         )}
       </div>
 
       {!isAnnouncement && (
         <div className="relative hidden w-1/4 shrink-0 bg-field md:block">
-          {showCover && threadData.cover && (
+          {showCover && imageUrl(threadData.cover) && (
             <Image
-              src={fixCoverUrl(threadData.cover)}
+              src={imageUrl(threadData.cover) ?? ""}
               alt=""
               className="object-cover"
               priority={eager}
@@ -158,7 +178,7 @@ const Thread = ({
           )}
         </div>
       )}
-    </Link>
+    </article>
   );
 };
 
@@ -210,26 +230,31 @@ export const InfinityThreadsList = ({
   fetchNextPage,
   isFetchingNextPage,
   announcementData,
+  pinnedData,
   error,
   onRetry,
+  emptyText = "還沒有貼文",
 }: {
   data: InfiniteData<TThread[], unknown> | undefined;
-  fetchNextPage: (
-    options?: FetchNextPageOptions | undefined,
-  ) => Promise<
-    InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
-  >;
+  fetchNextPage: () => Promise<unknown>;
   isFetchingNextPage: boolean;
   announcementData?: InfiniteData<TThread[], unknown>;
+  /** Pinned posts, shown first with 「置頂」 (home feed only). */
+  pinnedData?: TThread[];
   /** Error from the list query, if the last fetch failed. */
   error?: Error | null;
   onRetry?: () => void;
+  emptyText?: string;
 }) => {
   const sentinel = useRef<HTMLDivElement>(null);
+  const pinned = (pinnedData ?? []).filter(isThread);
+  const pinnedIds = new Set(pinned.map((post) => post._id));
   const pages = (data?.pages ?? []).map((page) =>
-    Array.isArray(page) ? page.filter(isThread) : [],
+    Array.isArray(page)
+      ? page.filter((item) => isThread(item) && !pinnedIds.has(item._id))
+      : [],
   );
-  const hasPosts = pages.some((page) => page.length > 0);
+  const hasPosts = pages.some((page) => page.length > 0) || pinned.length > 0;
   const failed = Boolean(error);
 
   // Load the next page when the end of the list comes within 600px of the
@@ -261,7 +286,7 @@ export const InfinityThreadsList = ({
     }
     return (
       <div className="flex h-64 items-center justify-center text-ink-500 text-lg">
-        還沒有貼文
+        {emptyText}
       </div>
     );
   }
@@ -279,6 +304,16 @@ export const InfinityThreadsList = ({
     <div className="flex flex-col gap-4">
       {showAnnouncement && (
         <Thread threadData={announcement} key={announcement._id} />
+      )}
+      {pinned.map((item, index) =>
+        showAnnouncement && item._id === announcement._id ? null : (
+          <Thread
+            threadData={item}
+            key={`pinned-${item._id}`}
+            eager={index < 2}
+            pinned
+          />
+        ),
       )}
       {pages.map((page: TThread[], pageIndex: number) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier

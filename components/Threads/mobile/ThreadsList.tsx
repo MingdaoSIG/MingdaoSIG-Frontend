@@ -1,8 +1,4 @@
-import type {
-  FetchNextPageOptions,
-  InfiniteData,
-  InfiniteQueryObserverResult,
-} from "@tanstack/react-query";
+import type { InfiniteData } from "@tanstack/react-query";
 import { Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,13 +8,15 @@ import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
-
+import { postTags } from "@/modules/hashtag";
+import { imageUrl } from "@/modules/imageUrl";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+import { HashtagLinks, PinnedChip } from "../desktop/ThreadsList";
 import { postSummary } from "../postSummary";
 
 /** Populated object, or null for a missing / unpopulated reference. */
@@ -39,40 +37,28 @@ function sigIdOf(thread: TThread) {
   return asObject<Sig>(thread.sig)?._id;
 }
 
-// Helper function to fix cover URL
-function fixCoverUrl(cover: string) {
-  if (cover.startsWith("http://") || cover.startsWith("https://")) {
-    if (cover.includes("lazco.dev")) {
-      const pathPart = cover.split("lazco.dev/")[1] || "";
-      return `${process.env.NEXT_PUBLIC_API_URL}/${pathPart}`;
-    }
-    return cover;
-  }
-
-  if (cover.startsWith("/image/")) {
-    return `${process.env.NEXT_PUBLIC_API_URL}${cover}`;
-  }
-
-  return `${process.env.NEXT_PUBLIC_API_URL}/image/${cover}`;
-}
-
 const Thread = ({
   threadData,
   priority = false,
+  pinned = false,
 }: {
   threadData: TThread;
   priority?: boolean;
+  /** Shown in the pinned section: adds 「置頂」. */
+  pinned?: boolean;
 }) => {
   const user = asObject<User>(threadData.user);
   const sig = asObject<Sig>(threadData.sig);
   const isAnnouncement = sig?._id === announcementSigId;
-  const hashtags = Array.isArray(threadData.hashtag) ? threadData.hashtag : [];
-  const cover = typeof threadData.cover === "string" ? threadData.cover : "";
+  const hashtags = postTags(threadData.hashtag);
+  const cover =
+    typeof threadData.cover === "string" ? imageUrl(threadData.cover) : "";
 
+  // The title link covers the whole card (its ::after), so the hashtag
+  // links can sit on top without nesting links.
   return (
-    <Link
-      href={`/post/${threadData._id}`}
-      className={`block cursor-pointer select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow active:shadow-card-hover ${
+    <article
+      className={`relative block select-none overflow-hidden rounded-card border border-line bg-surface shadow-card transition-shadow active:shadow-card-hover ${
         isAnnouncement ? "shadow-[inset_3px_0_0_var(--color-warm-600)]" : ""
       }`}
     >
@@ -80,7 +66,7 @@ const Thread = ({
       {cover && (
         <div className="relative h-48 w-full bg-field">
           <Image
-            src={fixCoverUrl(cover)}
+            src={cover}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, 50vw"
@@ -113,12 +99,22 @@ const Thread = ({
 
         {/* Title */}
         <h2 className="mb-1.5 flex min-w-0 items-start gap-2 font-semibold text-[1.125rem] text-ink-900 leading-snug">
+          {pinned && (
+            <span className="mt-0.5 flex">
+              <PinnedChip />
+            </span>
+          )}
           {isAnnouncement && (
             <span className="mt-0.5 shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
               公告
             </span>
           )}
-          <span className="line-clamp-2">{threadData.title}</span>
+          <Link
+            href={`/post/${threadData._id}`}
+            className="line-clamp-2 after:absolute after:inset-0 after:content-['']"
+          >
+            {threadData.title}
+          </Link>
         </h2>
 
         {/* Content Preview - Dynamic lines based on hashtags */}
@@ -136,16 +132,11 @@ const Thread = ({
 
         {/* Hashtags - Horizontal scroll without scrollbar */}
         {hashtags.length > 0 && !isAnnouncement && (
-          <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1">
-            {hashtags.map((tag) => (
-              <span
-                key={tag}
-                className="flex-shrink-0 whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
+          <HashtagLinks
+            tags={hashtags}
+            className="scrollbar-hide relative z-[1] mb-3 flex gap-2 overflow-x-auto pb-1"
+            chipClassName="flex-shrink-0 py-1.5"
+          />
         )}
 
         {/* Spacer to push footer to bottom */}
@@ -165,7 +156,7 @@ const Thread = ({
           </div>
         )}
       </div>
-    </Link>
+    </article>
   );
 };
 
@@ -247,27 +238,32 @@ export const InfinityThreadsList = ({
   fetchNextPage,
   isFetchingNextPage,
   announcementData,
+  pinnedData,
   error,
   onRetry,
+  emptyText = "還沒有貼文",
 }: {
   data: InfiniteData<TThread[], unknown> | undefined;
   height?: string;
-  fetchNextPage: (
-    options?: FetchNextPageOptions | undefined,
-  ) => Promise<
-    InfiniteQueryObserverResult<InfiniteData<TThread[], unknown>, Error>
-  >;
+  fetchNextPage: () => Promise<unknown>;
   isFetchingNextPage: boolean;
   announcementData?: InfiniteData<TThread[], unknown>;
+  /** Pinned posts, shown first with 「置頂」 (home feed only). */
+  pinnedData?: TThread[];
   /** Error from the list query, if the last fetch failed. */
   error?: Error | null;
   onRetry?: () => void;
+  emptyText?: string;
 }) => {
   const postList = useRef(null);
+  const pinned = (pinnedData ?? []).filter(isThread);
+  const pinnedIds = new Set(pinned.map((post) => post._id));
   const pages = (data?.pages ?? []).map((page) =>
-    Array.isArray(page) ? page.filter(isThread) : [],
+    Array.isArray(page)
+      ? page.filter((item) => isThread(item) && !pinnedIds.has(item._id))
+      : [],
   );
-  const hasPosts = pages.some((page) => page.length > 0);
+  const hasPosts = pages.some((page) => page.length > 0) || pinned.length > 0;
   const failed = Boolean(error);
 
   // The announcement query may fail or come back empty: only a real,
@@ -333,6 +329,16 @@ export const InfinityThreadsList = ({
 
       {/* Threads Grid */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        {pinned.map((item) =>
+          showAnnouncement && item._id === announcement._id ? null : (
+            <Thread
+              threadData={item}
+              priority={true}
+              key={`pinned-${item._id}`}
+              pinned
+            />
+          ),
+        )}
         {pages.map((page: TThread[], pageIndex: number) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
           <Fragment key={`page-${pageIndex}`}>
@@ -380,7 +386,7 @@ export const InfinityThreadsList = ({
     </div>
   ) : (
     <div className="flex h-full w-full items-center justify-center">
-      <h1 className="text-ink-500 text-lg">還沒有貼文</h1>
+      <h1 className="text-ink-500 text-lg">{emptyText}</h1>
     </div>
   );
 };

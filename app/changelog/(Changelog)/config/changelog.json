@@ -1,5 +1,66 @@
 [
   {
+    "version": "2.26.0",
+    "date": "2026-11-12",
+    "type": "feature",
+    "title": "留言回覆、搜尋與管理平台改版",
+    "summary": "留言可編輯與回覆、新增搜尋與標籤頁、分享時顯示文章預覽，並全面改版管理平台",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "留言可以編輯、刪除，也可以回覆別人的留言"
+      },
+      {
+        "type": "feature",
+        "description": "有人在你的貼文留言或回覆你時，會寄信通知（可在個人頁關閉）"
+      },
+      {
+        "type": "feature",
+        "description": "新增搜尋：可搜尋貼文標題、內文與標籤，並顯示熱門標籤"
+      },
+      {
+        "type": "feature",
+        "description": "點擊 #標籤 可以看到同一個標籤的所有貼文"
+      },
+      {
+        "type": "feature",
+        "description": "分享貼文到 LINE、IG、Discord 時，會顯示該篇的標題、摘要與封面"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 幹部與指導老師可以直接在 SIG 頁編輯簡介與頭像"
+      },
+      {
+        "type": "feature",
+        "description": "可以自行退出已加入的 SIG"
+      },
+      {
+        "type": "feature",
+        "description": "個人頁新增「按讚過的貼文」"
+      },
+      {
+        "type": "feature",
+        "description": "管理平台全面改版：總覽、貼文、留言、SIG、入社申請、使用者、匯出與操作紀錄，手機也能使用"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 幹部與指導老師可在管理平台審核自己 SIG 的入社申請"
+      },
+      {
+        "type": "improvement",
+        "description": "首頁會顯示置頂貼文；熱門貼文改看近 30 天的文章"
+      },
+      {
+        "type": "improvement",
+        "description": "手機版可以編輯個人簡介"
+      },
+      {
+        "type": "improvement",
+        "description": "電腦版「資料查詢」頁可以使用"
+      }
+    ]
+  },
+  {
     "version": "2.25.1",
     "date": "2026-11-12",
     "type": "fix",

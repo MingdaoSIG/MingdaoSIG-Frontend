@@ -7,6 +7,7 @@ import {
   JoinSigAPI,
   ReadJoinSigAPI,
 } from "@/app/[userID]/(User)/apis/JoinSigAPI";
+import { JOIN_QUESTIONS } from "@/app/[userID]/(User)/config/joinQuestions";
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
 import type { ApiFailure } from "@/modules/api/client";
@@ -18,15 +19,7 @@ import { useUserAccount } from "@/utils/useUserAccount";
 /** Backend limit for each join-form answer. */
 const JOIN_ANSWER_MAX = 250;
 
-const QUESTIONS = [
-  { id: "aboutYou", label: "自我介紹", placeholder: "我是…" },
-  {
-    id: "whyJoin",
-    label: "為什麼想加入這個 SIG",
-    placeholder: "我想加入是因為…",
-  },
-  { id: "whichTopic", label: "有興趣的主題", placeholder: "我對…有興趣" },
-] as const;
+const QUESTIONS = JOIN_QUESTIONS;
 
 const formHtml = ReactDOMServer.renderToString(
   <div style={{ textAlign: "left" }}>
@@ -119,6 +112,12 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
           : "加入 SIG";
   const disabled = state === "" || state === "pending" || state === "accepted";
   const notice = state === "rejected" ? "上次的申請未通過，可以再次申請" : null;
+  const member = state === "accepted";
+
+  /** After leaving the SIG: the user may apply again. */
+  function markLeft() {
+    setRequest("none");
+  }
 
   function join() {
     if (!sigId) {
@@ -192,5 +191,5 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
     });
   }
 
-  return { label, disabled, notice, join };
+  return { label, disabled, notice, join, isMember: member, markLeft };
 }

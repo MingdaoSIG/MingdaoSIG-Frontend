@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { toast } from "@/components/mobile/Toast";
-import type { TComments } from "@/interfaces/comments";
 import type { TThread } from "@/interfaces/Thread";
 
-import { GetCommentAPI } from "../apis/CommentAPI";
+import { type CommentNotify, useComments } from "../components/useComments";
 import CommentComposer from "./components/CommentComposer";
 import CommentList from "./components/CommentList";
 import PostActions from "./components/PostActions";
@@ -20,30 +19,28 @@ type Props = {
 };
 
 export default function Thread({ post, isAnnouncement }: Props) {
-  const [comments, setComments] = useState<TComments[]>([]);
-  const [commentsLoading, setCommentsLoading] = useState(true);
   // The like bar and comments wait for the body: rendered first, they sat
   // right under a three-line placeholder and jumped thousands of pixels
   // down when the post appeared (CLS 0.56 on long posts).
   const [bodyReady, setBodyReady] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const commentsAnchorRef = useRef<HTMLDivElement>(null);
+  const notify = useMemo<CommentNotify>(
+    () => ({
+      success: (message) => toast.success(message),
+      error: (message) => toast.error(message),
+    }),
+    [],
+  );
+  const controller = useComments(post, notify);
+  const { error } = controller;
 
-  const refetchComments = useCallback(async () => {
-    const { comments, error } = await GetCommentAPI(post);
-    if (error) {
-      // Keep what is already shown; just say the refresh failed.
-      toast.error(error.message);
-    } else {
-      setComments(comments);
-    }
-    setCommentsLoading(false);
-  }, [post]);
-
+  // Keep what is already shown; just say the refresh failed.
   useEffect(() => {
-    setCommentsLoading(true);
-    refetchComments();
-  }, [refetchComments]);
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error]);
 
   useEffect(() => {
     const onScrollToComments = () => {
@@ -74,22 +71,17 @@ export default function Thread({ post, isAnnouncement }: Props) {
           onReady={() => setBodyReady(true)}
         />
         {!isAnnouncement && bodyReady && (
-          <PostActions post={post} commentCount={comments.length} />
+          <PostActions post={post} commentCount={controller.count} />
         )}
       </div>
       {!isAnnouncement && bodyReady && (
         <>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
             <SectionErrorBoundary label="留言">
-              <CommentList comments={comments} isLoading={commentsLoading} />
+              <CommentList controller={controller} />
             </SectionErrorBoundary>
           </div>
-          <CommentComposer
-            postId={post._id ?? ""}
-            onSubmitted={() => {
-              refetchComments();
-            }}
-          />
+          <CommentComposer postId={post._id ?? ""} controller={controller} />
         </>
       )}
     </div>

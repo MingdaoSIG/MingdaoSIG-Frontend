@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { selectedTab } from "../../selectedTab";
 
@@ -12,6 +13,7 @@ const ToolBar = () => {
   const { isLogin, userData, isLoading, login } = useUserAccount();
 
   const path = usePathname();
+  const { hideDock } = useAdminChrome();
   const ownCustomId = userData?.customId ?? null;
   const [selected, setSelected] = useState<number>(() =>
     selectedTab(path, ownCustomId),
@@ -47,6 +49,11 @@ const ToolBar = () => {
       icon: "/icons/info.svg",
     },
   ];
+
+  // The admin panel has its own navigation and a 「回到網站」 button.
+  if (hideDock) {
+    return null;
+  }
 
   // 計算選中項目的 left 位置 (rem)
   const getSelectedPosition = () => {

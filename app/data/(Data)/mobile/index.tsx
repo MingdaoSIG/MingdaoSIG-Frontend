@@ -1,45 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import type { Sig } from "@/interfaces/Sig";
-import { apiRequest } from "@/modules/api/client";
+import { imageUrl } from "@/modules/imageUrl";
+import { countOf, useSigLookup } from "../useSigLookup";
 import styles from "./index.module.scss";
 
 export default function Mobile() {
-  const [sigData, setSigData] = useState<Sig | 0 | null>(null);
-  const [message, setMessage] = useState(NOT_FOUND);
-  const [searching, setSearching] = useState(false);
+  const { sigData, message, searching, lookup } = useSigLookup();
 
-  async function searchSigData(e: React.FormEvent<HTMLFormElement>) {
+  function searchSigData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const input = form.elements[0] as HTMLInputElement;
-    const query = input.value.trim();
-    if (!query || searching) {
-      return;
-    }
-    // Accept "@mdcsl" (custom id) or a raw SIG id; anything else is
-    // looked up as typed and simply comes back "not found".
-    setSearching(true);
-    const result = await apiRequest<Sig>(
-      `/sig/${encodeURIComponent(query).replace(/^%40/, "@")}`,
-    );
-    setSearching(false);
-    if (result.ok && typeof result.data?._id === "string") {
-      setSigData(result.data);
-      return;
-    }
-    // Any answer without a SIG (a non-2000 status, a malformed id…) means
-    // there is no such SIG; only real failures say what went wrong.
-    setMessage(
-      result.ok ||
-        result.kind === "not-found" ||
-        result.kind === "error" ||
-        result.kind === "unauthorized"
-        ? NOT_FOUND
-        : result.message,
-    );
-    setSigData(0);
+    lookup(input.value);
   }
 
   return (
@@ -67,9 +39,9 @@ export default function Mobile() {
                 <div className={styles.sigDataWrapper}>
                   <div>
                     <div className="flex items-center gap-3 text-left">
-                      {sigData.avatar && (
+                      {imageUrl(sigData.avatar) && (
                         <Image
-                          src={sigData.avatar}
+                          src={imageUrl(sigData.avatar) ?? ""}
                           width={48}
                           height={48}
                           alt=""
@@ -122,10 +94,4 @@ export default function Mobile() {
       </div>
     </div>
   );
-}
-
-const NOT_FOUND = "查無此 SIG";
-
-function countOf(value: unknown) {
-  return Array.isArray(value) ? value.length : 0;
 }

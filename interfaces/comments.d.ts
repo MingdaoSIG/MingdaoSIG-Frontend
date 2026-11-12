@@ -1,18 +1,26 @@
+export type TCommentUser = {
+  _id?: string;
+  customId?: string;
+  avatar?: string;
+  name?: string;
+};
+
 export type TComments = {
   _id: string;
   /** Populated author; null when the author was deleted. */
-  user: {
-    customId?: string;
-    avatar?: string;
-    /** Not sent by the comment list yet (it projects customId + avatar). */
-    name?: string;
-  } | null;
+  user: TCommentUser | null;
   post: string;
   content: string;
-  like: Array;
-  reply: string;
-  removed: boolean;
-  createdAt: Date;
-  updateAt: Date;
-  __v: string;
+  like?: string[];
+  /** Parent comment id; "" (or null) for a top-level comment. */
+  reply: string | null;
+  removed?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  /** `updatedAt` is more than 5 s after `createdAt` (set by the backend). */
+  edited?: boolean;
+  /** Top-level comments only: replies, oldest first. */
+  replies?: TComments[];
+  replyCount?: number;
+  __v?: number;
 };

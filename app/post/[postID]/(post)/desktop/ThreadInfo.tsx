@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 // Interfaces
-import type { TComments } from "@/interfaces/comments";
 import type { TThread } from "@/interfaces/Thread";
+import { CustomStatus } from "@/modules/customStatusCode";
 import { isSubmitEnter } from "@/utils/keyboard";
 import { promptLogin } from "@/utils/loginPrompt";
 // Custom Hooks
@@ -21,20 +21,31 @@ import { useUserAccount } from "@/utils/useUserAccount";
 import {
   COMMENT_MAX_LENGTH,
   commentErrorMessage,
-  GetCommentAPI,
   PostCommentAPI,
 } from "../apis/CommentAPI";
 // Components
-import Reply from "../components/Reply";
+import { CommentThread, ReplyBanner } from "../components/CommentView";
 import { useCommentDraft } from "../components/useCommentDraft";
+import { type CommentNotify, useComments } from "../components/useComments";
 
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
 
+/** Small toast at the top for results that need no answer. */
+function notice(icon: "success" | "error", title: string) {
+  void Swal.fire({
+    toast: true,
+    position: "top",
+    icon,
+    title,
+    showConfirmButton: false,
+    timer: icon === "error" ? 4000 : 2000,
+    timerProgressBar: true,
+  });
+}
+
 export default function ThreadInfo({ post }: { post: TThread }) {
   const [typeComments, setTypeComments] = useCommentDraft(post._id);
-  const [comments, setComments] = useState<TComments[]>([]);
-  const [commentsError, setCommentsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [loginHint, setLoginHint] = useState(false);
   const { token, isLogin, isLoading: authLoading, login } = useUserAccount();
@@ -42,34 +53,29 @@ export default function ThreadInfo({ post }: { post: TThread }) {
   const { data: user, isLoading: userLoading } = useUser(post.user);
   const { data: sig, isLoading: sigLoading } = useSig(post.sig);
   const composing = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const notify = useMemo<CommentNotify>(
+    () => ({
+      success: (message) => notice("success", message),
+      error: (message) =>
+        Swal.fire({
+          title: "操作失敗",
+          text: message,
+          icon: "error",
+          confirmButtonText: "好",
+          confirmButtonColor: "#0b5a83",
+        }),
+    }),
+    [],
+  );
+  const controller = useComments(post, notify);
+  const { comments, replyTarget } = controller;
 
   const route = useRouter();
 
   const trimmed = typeComments.trim();
   const tooLong = typeComments.length > COMMENT_MAX_LENGTH;
   const canSend = isLogin && trimmed.length > 0 && !tooLong && !submitting;
-
-  const loadComments = useCallback(
-    async (signal?: AbortSignal) => {
-      const { comments, error } = await GetCommentAPI(post, signal);
-      if (signal?.aborted) {
-        return;
-      }
-      if (error) {
-        setCommentsError(error.message);
-        return;
-      }
-      setCommentsError(null);
-      setComments(comments);
-    },
-    [post],
-  );
-
-  useEffect(() => {
-    const controller = new AbortController();
-    loadComments(controller.signal);
-    return () => controller.abort();
-  }, [loadComments]);
 
   async function handleCommandSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -91,18 +97,32 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       });
     }
     setSubmitting(true);
-    const res = await PostCommentAPI(post?._id, "", trimmed, token);
+    const parentId = replyTarget?.parentId ?? null;
+    const res = await PostCommentAPI(post?._id, parentId ?? "", trimmed, token);
     setSubmitting(false);
     if (res.ok) {
       setTypeComments("");
-      showAlert(alertMessageConfigs.commentSuccess);
-      loadComments();
+      controller.onPosted(parentId);
+      if (parentId) {
+        notice("success", "已回覆");
+      } else {
+        showAlert(alertMessageConfigs.commentSuccess);
+      }
       return;
     }
     Swal.fire({
       ...alertMessageConfigs.otherError,
-      text: commentErrorMessage(res),
+      title: parentId ? "回覆失敗" : alertMessageConfigs.otherError.title,
+      text:
+        parentId && res.status === CustomStatus.INVALID_BODY
+          ? "要回覆的留言已經不存在"
+          : commentErrorMessage(res),
     });
+  }
+
+  function startReply(...args: Parameters<typeof controller.startReply>) {
+    controller.startReply(...args);
+    inputRef.current?.focus();
   }
 
   return (
@@ -167,99 +187,106 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       {/* Comments: sized to content, scrolls when it runs out of room */}
       <div className="glass flex min-h-0 flex-col rounded-card px-5 pt-4 pb-5">
         <div className="custom-scrollbar flex min-h-12 flex-col gap-4 overflow-y-auto overflow-x-hidden">
-          {commentsError ? (
+          {controller.error ? (
             <div
               role="alert"
               className="flex flex-col items-center gap-2 py-4 text-center text-ink-500 text-sm"
             >
-              <p>{commentsError}</p>
+              <p>{controller.error.message}</p>
               <button
                 type="button"
                 className="cursor-pointer text-brand-700 hover:underline"
-                onClick={() => loadComments()}
+                onClick={() => controller.reload()}
               >
                 重試
               </button>
             </div>
           ) : comments.length !== 0 ? (
-            comments.map((comment: TComments) => {
-              return (
-                <Reply
-                  key={comment._id}
-                  overflow={false}
-                  customId={comment.user?.customId}
-                  name={comment.user?.name}
-                  avatar={comment.user?.avatar}
-                  content={comment.content}
-                  createdAt={
-                    new Date(comment.createdAt || "")
-                      .toLocaleString("zh-TW")
-                      .split(" ")[0]
-                  }
-                />
-              );
-            })
+            comments.map((comment) => (
+              <CommentThread
+                key={comment._id}
+                comment={comment}
+                controller={{ ...controller, startReply }}
+                variant="desktop"
+              />
+            ))
           ) : (
-            <p className="py-4 text-center text-ink-500 text-sm">尚無留言</p>
+            <p className="py-4 text-center text-ink-500 text-sm">
+              {controller.isLoading ? "載入中…" : "尚無留言"}
+            </p>
           )}
         </div>
-        <form
-          className="mt-4 flex h-10 w-full shrink-0 items-center rounded-control border border-line bg-field pl-1 focus-within:ring-2 focus-within:ring-brand-700/30"
-          onSubmit={handleCommandSubmit}
-        >
-          <input
-            className="h-full w-full flex-1 bg-transparent px-3 text-ink-800 text-sm placeholder:text-ink-400 focus-visible:outline-none disabled:cursor-not-allowed"
-            placeholder={isLogin ? "寫下你的想法…" : "登入後即可留言"}
-            aria-label="留言內容"
-            onFocus={() => {
-              if (!isLogin && !authLoading) {
-                setLoginHint(true);
-              }
-            }}
-            onChange={(e) => setTypeComments(e.target.value)}
-            onCompositionStart={() => {
-              composing.current = true;
-            }}
-            onCompositionEnd={() => {
-              composing.current = false;
-            }}
-            onKeyDown={(e) => {
-              // Enter that picks an IME candidate must not send the comment
-              if (e.key === "Enter" && !isSubmitEnter(e, true)) {
-                e.preventDefault();
-              }
-            }}
-            value={typeComments}
-          />
-          {typeComments.length > 0 && (
-            <span
-              className={`shrink-0 text-xs tabular-nums ${
-                tooLong ? "text-danger-700" : "text-ink-400"
-              }`}
-              aria-live="polite"
-            >
-              {typeComments.length}/{COMMENT_MAX_LENGTH}
-            </span>
-          )}
-          <button
-            type="submit"
-            aria-label="送出留言"
-            disabled={submitting}
-            className="flex h-full w-10 flex-none items-center justify-center"
+        <div className="mt-4 shrink-0">
+          <ReplyBanner controller={controller} variant="desktop" />
+          <form
+            className="flex h-10 w-full shrink-0 items-center rounded-control border border-line bg-field pl-1 focus-within:ring-2 focus-within:ring-brand-700/30"
+            onSubmit={handleCommandSubmit}
           >
-            <Image
-              src={"/icons/bx-send.svg"}
-              height={20}
-              width={20}
-              alt=""
-              className={
-                canSend
-                  ? "cursor-pointer opacity-100"
-                  : "cursor-not-allowed opacity-30"
+            <input
+              ref={inputRef}
+              className="h-full w-full flex-1 bg-transparent px-3 text-ink-800 text-sm placeholder:text-ink-400 focus-visible:outline-none disabled:cursor-not-allowed"
+              placeholder={
+                !isLogin
+                  ? "登入後即可留言"
+                  : replyTarget
+                    ? `回覆 ${replyTarget.name}…`
+                    : "寫下你的想法…"
               }
+              aria-label={replyTarget ? "回覆內容" : "留言內容"}
+              onFocus={() => {
+                if (!isLogin && !authLoading) {
+                  setLoginHint(true);
+                }
+              }}
+              onChange={(e) => setTypeComments(e.target.value)}
+              onCompositionStart={() => {
+                composing.current = true;
+              }}
+              onCompositionEnd={() => {
+                composing.current = false;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape" && replyTarget) {
+                  controller.cancelReply();
+                  return;
+                }
+                // Enter that picks an IME candidate must not send the comment
+                if (e.key === "Enter" && !isSubmitEnter(e, true)) {
+                  e.preventDefault();
+                }
+              }}
+              value={typeComments}
             />
-          </button>
-        </form>
+            {typeComments.length > 0 && (
+              <span
+                className={`shrink-0 text-xs tabular-nums ${
+                  tooLong ? "text-danger-700" : "text-ink-400"
+                }`}
+                aria-live="polite"
+              >
+                {typeComments.length}/{COMMENT_MAX_LENGTH}
+              </span>
+            )}
+            <button
+              type="submit"
+              aria-label={replyTarget ? "送出回覆" : "送出留言"}
+              disabled={submitting}
+              className="flex h-full w-10 flex-none items-center justify-center"
+            >
+              <Image
+                src={"/icons/bx-send.svg"}
+                height={20}
+                width={20}
+                alt=""
+                className={
+                  canSend
+                    ? "cursor-pointer opacity-100"
+                    : "cursor-not-allowed opacity-30"
+                }
+              />
+            </button>
+          </form>
+        </div>
         {loginHint && !isLogin && (
           <div className="mt-2 flex items-center justify-between gap-3 text-ink-700 text-sm">
             <span>登入後即可留言，輸入的內容會保留。</span>

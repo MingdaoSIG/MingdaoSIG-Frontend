@@ -8,7 +8,7 @@ import {
 } from "@/components/Threads/desktop/ThreadsList";
 
 // APIs Request Function
-import { useAllPost, useSigPost } from "@/utils/usePost";
+import { useAllPost, usePinnedPost, useSigPost } from "@/utils/usePost";
 
 const ThreadsList = () => {
   const pageSize = 10;
@@ -20,11 +20,13 @@ const ThreadsList = () => {
     pageSize: 1,
     sort: "latest",
   });
+  // A failed pinned list just leaves the section out.
+  const pinned = usePinnedPost();
 
   return (
     <div className="w-full">
       <SectionErrorBoundary label="貼文列表">
-        {isLoading ? (
+        {isLoading || pinned.isLoading ? (
           <ThreadsListSkeleton repeat={10} />
         ) : (
           <InfinityThreadsList
@@ -32,6 +34,7 @@ const ThreadsList = () => {
             fetchNextPage={fetchNextPage}
             isFetchingNextPage={isFetchingNextPage}
             announcementData={announcementData}
+            pinnedData={pinned.data}
             error={error}
             onRetry={() => refetch()}
           />

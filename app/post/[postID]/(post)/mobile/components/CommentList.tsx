@@ -2,13 +2,11 @@
 
 import { MessageCircle } from "lucide-react";
 
-import type { TComments } from "@/interfaces/comments";
-
-import CommentItem from "./CommentItem";
+import { CommentThread } from "../../components/CommentView";
+import type { CommentsController } from "../../components/useComments";
 
 type Props = {
-  comments: TComments[];
-  isLoading: boolean;
+  controller: CommentsController;
 };
 
 function CommentSkeleton() {
@@ -27,7 +25,9 @@ function CommentSkeleton() {
   );
 }
 
-export default function CommentList({ comments, isLoading }: Props) {
+export default function CommentList({ controller }: Props) {
+  const { comments, isLoading, count } = controller;
+  // Newest first (the backend sends them so; keep it if it ever does not).
   const sorted = comments
     .slice()
     .sort(
@@ -49,7 +49,7 @@ export default function CommentList({ comments, isLoading }: Props) {
         >
           留言
         </h3>
-        <span className="text-ink-500 text-xs">{comments.length} 則</span>
+        <span className="text-ink-500 text-xs">{count} 則</span>
       </div>
       {isLoading ? (
         <div className="flex flex-col gap-2">
@@ -70,7 +70,12 @@ export default function CommentList({ comments, isLoading }: Props) {
       ) : (
         <div className="flex flex-col gap-2">
           {sorted.map((c) => (
-            <CommentItem key={c._id} comment={c} />
+            <CommentThread
+              key={c._id}
+              comment={c}
+              controller={controller}
+              variant="mobile"
+            />
           ))}
         </div>
       )}
