@@ -100,7 +100,7 @@ export default function UserMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        aria-label={`我的：${userData?.name ?? ""}`}
+        aria-label={`個人專區：${userData?.name ?? ""}`}
         data-user-menu
         onClick={(event) => {
           // A click from Enter / Space has detail 0.
@@ -151,7 +151,7 @@ export default function UserMenu() {
           ref={menuRef}
           id={menuId}
           role="menu"
-          aria-label="我的"
+          aria-label="個人專區"
           tabIndex={-1}
           onKeyDown={onMenuKey}
           className="custom-scrollbar absolute top-12 right-0 z-50 flex max-h-[calc(100dvh-5.5rem)] w-72 flex-col overflow-y-auto rounded-card border border-line bg-surface p-1.5 shadow-card-hover"
@@ -204,7 +204,7 @@ export default function UserMenu() {
           <div className="mt-1 flex flex-col border-line border-t pt-1">
             <Link role="menuitem" href="/me" className={itemClass}>
               <UserRound size={16} aria-hidden className="text-ink-500" />
-              前往我的
+              個人專區
             </Link>
             <button
               type="button"

@@ -25,7 +25,10 @@ export type NavSection = "home" | "explore" | "new" | "notifications" | "me";
 
 export type NavItem = {
   section: NavSection;
+  /** Under the icon (short). */
   label: string;
+  /** The accessible name, when the short label is not the full one. */
+  ariaLabel?: string;
   href: string;
   icon: LucideIcon;
 };
@@ -44,7 +47,14 @@ export const NAV_ITEMS: Record<Exclude<NavSection, "new">, NavItem> = {
     href: "/notifications",
     icon: Bell,
   },
-  me: { section: "me", label: "我的", href: "/me", icon: UserRound },
+  // The hub is 「個人專區」; 「我的」 fits under the icon (owner 2026-11-13).
+  me: {
+    section: "me",
+    label: "我的",
+    ariaLabel: "個人專區",
+    href: "/me",
+    icon: UserRound,
+  },
 };
 
 const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/events"];

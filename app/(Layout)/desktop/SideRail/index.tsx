@@ -18,13 +18,13 @@ import {
   NotificationPanel,
 } from "@/components/Notifications/NotificationPanel";
 import { formatUnread } from "@/modules/notifications/describe";
-import { hasNewPosts, useSigSeen } from "@/modules/sigSeen";
-import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
+import { useSigSeen } from "@/modules/sigSeen";
 import { useAdminChrome } from "@/utils/useAdminAccess";
-import { type MySig, useMySigs } from "@/utils/useMySigs";
+import { useMySigs } from "@/utils/useMySigs";
 import { useUnreadCount } from "@/utils/useNotifications";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { NAV_ITEMS, type NavItem, navSection } from "../../nav";
+import { RailSigs } from "./RailSigs";
 
 // The desktop side rail (decision 2 = v2 1B): 58px wide, under the header
 // (first column of the shell grid, see `.wrap[data-rail]` in globals.css).
@@ -77,7 +77,9 @@ function RailLink({
       aria-controls={expanded ? NOTIFICATION_PANEL_ID : undefined}
       aria-current={active ? "page" : undefined}
       aria-label={
-        badge > 0 ? `${item.label}，${formatUnread(badge)} 則未讀` : undefined
+        badge > 0
+          ? `${item.label}，${formatUnread(badge)} 則未讀`
+          : item.ariaLabel
       }
       data-rail-item={item.section}
       className={`relative flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
@@ -98,56 +100,6 @@ function RailLink({
         >
           {formatUnread(badge)}
         </span>
-      )}
-    </Link>
-  );
-}
-
-function firstLetter(name: string) {
-  const [first = "?"] = Array.from(name.trim());
-  return first.toUpperCase();
-}
-
-function SigSquare({
-  sig,
-  active,
-  isNew,
-  onShow,
-  onHide,
-}: {
-  sig: MySig;
-  active: boolean;
-  isNew: boolean;
-  onShow: (label: string) => (event: MouseEvent | FocusEvent) => void;
-  onHide: () => void;
-}) {
-  const label = isNew ? `${sig.name}（有新貼文）` : sig.name;
-  return (
-    <Link
-      href={`/@${sig.customId}`}
-      aria-label={label}
-      aria-current={active ? "page" : undefined}
-      data-rail-sig={sig._id}
-      data-new={isNew || undefined}
-      onMouseEnter={onShow(sig.name)}
-      onMouseLeave={onHide}
-      onFocus={onShow(sig.name)}
-      onBlur={onHide}
-      className={`sig-text relative flex size-10 shrink-0 items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-[color-mix(in_srgb,var(--sig-color)_18%,white)] font-bold text-[15px] transition-transform hover:-translate-y-px ${
-        active
-          ? "shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--sig-color)]"
-          : ""
-      }`}
-      style={{
-        ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,
-      }}
-    >
-      <span aria-hidden>{firstLetter(sig.name)}</span>
-      {isNew && (
-        <span
-          aria-hidden
-          className="absolute -top-1 -right-1 size-2.5 rounded-full bg-danger-700 ring-2 ring-surface"
-        />
       )}
     </Link>
   );
@@ -233,7 +185,7 @@ export default function SideRail() {
           <div aria-hidden className="my-3 h-px w-8 shrink-0 bg-line" />
           <div
             data-rail-sigs
-            className="scrollbar-hide flex min-h-0 w-full flex-1 flex-col items-center overflow-y-auto px-1 py-1"
+            className="scrollbar-hide flex min-h-0 w-full flex-1 flex-col items-center overflow-y-auto py-1.5"
           >
             {isLoading ? (
               <div aria-hidden className="flex flex-col items-center gap-2.5">
@@ -241,19 +193,13 @@ export default function SideRail() {
                 <span className="size-10 animate-pulse rounded-control bg-field" />
               </div>
             ) : sigs.length > 0 ? (
-              <ul aria-label="我的 SIG" className="flex flex-col gap-2.5">
-                {sigs.map((sig) => (
-                  <li key={sig._id}>
-                    <SigSquare
-                      sig={sig}
-                      active={decodedPath === `/@${sig.customId}`}
-                      isNew={hasNewPosts(seen, sig)}
-                      onShow={show}
-                      onHide={hide}
-                    />
-                  </li>
-                ))}
-              </ul>
+              <RailSigs
+                sigs={sigs}
+                seen={seen}
+                currentPath={decodedPath}
+                onShow={show}
+                onHide={hide}
+              />
             ) : (
               <Link
                 href="/explore"

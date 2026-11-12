@@ -23,8 +23,8 @@ import { type MySig, useMySigs } from "@/utils/useMySigs";
 import { useUpcomingEvents } from "@/utils/useSiteEvents";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-// 我的 (decision 7B): the hub of everything personal. On phones it is the
-// 我的 tab; on desktop the avatar menu lists the same entries
+// 個人專區 (decision 7B): the hub of everything personal. On phones it is
+// the 我的 tab; on desktop the avatar menu lists the same entries
 // (app/(Layout)/nav.ts `hubGroups`). Logged out it offers 登入 and keeps
 // 平台資訊 reachable.
 
@@ -315,7 +315,7 @@ export default function MePage() {
   if (isMobile) {
     return (
       <div className="flex h-full flex-col gap-2 px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]">
-        <PageTitle title="我的" />
+        <PageTitle title="個人專區" />
         <div
           data-me-hub
           className="scrollbar-hide flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-4"
@@ -327,7 +327,7 @@ export default function MePage() {
   }
 
   return (
-    <DocPage title="我的" width="narrow">
+    <DocPage title="個人專區" width="narrow">
       <div data-me-hub className="flex flex-col gap-4 pb-2">
         <Content />
       </div>
