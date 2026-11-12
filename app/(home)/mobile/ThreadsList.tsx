@@ -12,22 +12,39 @@ import {
 import {
   useAllPost,
   useHotPostList,
+  useMySigPost,
   usePinnedPost,
   useSigPost,
 } from "@/utils/usePost";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { MySigEmpty } from "../MySigEmpty";
+import { useHomeFeed } from "../useHomeFeed";
 import SwitchButton from "./ButtonTools";
 import SigList from "./SigList";
 
 const ThreadsList = () => {
   const [showList, setShowList] = useState(false);
-  const [dataType, setDataType] = useState("latest");
+  const { userData, isLoading: accountLoading } = useUserAccount();
+  const { feed, setFeed, showMySig } = useHomeFeed();
   const pageSize = 10;
 
   // 熱門 is the hot-post list (last 30 days, widening when that is thin).
   const latest = useAllPost({ pageSize, sort: "latest" });
-  const hot = useHotPostList({ pageSize }, dataType === "top");
-  const active = dataType === "top" ? hot : latest;
+  const hot = useHotPostList({ pageSize }, feed === "top");
+  // 我的 SIG: posts of the SIGs the user is in or manages (logged in).
+  const mySig = useMySigPost(
+    userData?._id ?? "",
+    { pageSize },
+    feed === "mysig",
+  );
+  const isMySig = feed === "mysig";
+  const active = feed === "top" ? hot : isMySig ? mySig : latest;
   const { data, fetchNextPage, isFetchingNextPage, isLoading, error } = active;
+  const mySigEmpty =
+    isMySig &&
+    !error &&
+    !isLoading &&
+    (data?.pages ?? []).every((page) => page.length === 0);
   // A failed pinned list just leaves the section out.
   const pinned = usePinnedPost();
   const refetchActive = active.refetch;
@@ -40,14 +57,6 @@ const ThreadsList = () => {
     pageSize: 1,
     sort: "latest",
   });
-
-  async function switchListType(index: number) {
-    if (index === 0) {
-      setDataType("top");
-    } else if (index === 1) {
-      setDataType("latest");
-    }
-  }
 
   useEffect(() => {
     const onScrollToTop = () => {
@@ -71,21 +80,27 @@ const ThreadsList = () => {
       <SigList open={showList} onClose={() => setShowList(false)} />
 
       <SwitchButton
-        switchCallback={switchListType}
+        value={feed}
+        onChange={setFeed}
+        showMySig={showMySig}
         sigListCallback={setShowList}
       />
 
       <SectionErrorBoundary label="貼文列表">
-        {isLoading || pinned.isLoading ? (
+        {isLoading ||
+        (isMySig && accountLoading) ||
+        (!isMySig && pinned.isLoading) ? (
           <ThreadsListSkeleton repeat={10} height="auto" />
+        ) : mySigEmpty ? (
+          <MySigEmpty mobile onBrowseSigs={() => setShowList(true)} />
         ) : (
           <InfinityThreadsList
             data={data}
             height="calc(100dvh - 12.5rem)"
             fetchNextPage={fetchNextPage}
             isFetchingNextPage={isFetchingNextPage}
-            announcementData={announcementData}
-            pinnedData={pinned.data}
+            announcementData={isMySig ? undefined : announcementData}
+            pinnedData={isMySig ? undefined : pinned.data}
             error={error}
             onRetry={() => refetch()}
           />
