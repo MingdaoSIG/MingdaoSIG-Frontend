@@ -345,7 +345,7 @@
 /* ================================================================== */
 /*
  * State lives on <html data-reader data-reader-size data-reader-tone>
- * (components/ReaderMode). Header, dock, side column and post actions
+ * (components/ReaderMode). Header, side rail, side column and post actions
  * step aside; the viewport becomes the page.
  */
 
@@ -412,7 +412,7 @@ html[data-reader-tone="sepia"] .post-body .markdown {
 
 /* --- Chrome that steps aside --------------------------------------- */
 html[data-reader] [data-shell="header"],
-html[data-reader] [data-shell="dock"],
+html[data-reader] [data-shell="rail"],
 html[data-reader] [data-shell="aside"],
 html[data-reader] [data-reader-hide],
 html[data-reader] .reader-toggle {

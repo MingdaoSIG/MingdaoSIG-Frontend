@@ -38,7 +38,7 @@ function Badge({ unread }: { unread: number }) {
 }
 
 /** Shows the count on the installed app's icon where supported. */
-function useAppBadge(unread: number) {
+export function useAppBadge(unread: number) {
   useEffect(() => {
     const nav = navigator as Navigator & {
       setAppBadge?: (count?: number) => Promise<void>;

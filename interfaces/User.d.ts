@@ -55,6 +55,13 @@ export type User = {
    * §5.1); absent otherwise.
    */
   suspension?: Suspension;
+  /** SIGs the user follows (contract v4 §6.1; only on `GET /user/me`). */
+  followedSigs?: string[];
+  /**
+   * When the first-login onboarding was finished or skipped (§6.2; only
+   * on `GET /user/me` and `POST /user`). Null: show the onboarding.
+   */
+  onboardedAt?: string | null;
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本
