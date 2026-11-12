@@ -10,6 +10,8 @@ import { toast } from "@/components/mobile/Toast";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
 import { useUserAccount } from "@/utils/useUserAccount";
+import { confirmDeletePost } from "../../components/confirmDeletePost";
+import { usePostPermissions } from "../../components/usePostPermissions";
 
 type Props = {
   post: TThread;
@@ -68,7 +70,11 @@ export default function PostActions({ post, commentCount }: Props) {
     router.push(`/post/${post._id}/edit`);
   };
 
-  const isOwner = isLogin && post.user === userData?._id;
+  const onDelete = () => {
+    confirmDeletePost(post._id, token, (href) => router.push(href));
+  };
+
+  const { canEdit, canDelete } = usePostPermissions(post);
 
   return (
     <div className="flex items-center gap-2 rounded-card border border-line bg-surface px-2 py-2.5 shadow-card">
@@ -121,7 +127,7 @@ export default function PostActions({ post, commentCount }: Props) {
         <span className="font-semibold text-sm">{commentCount}</span>
       </TapScale>
       <div className="flex-1" />
-      {isOwner && (
+      {canEdit && (
         <TapScale
           onClick={onEdit}
           className="-my-1 flex size-11 cursor-pointer items-center justify-center"
@@ -129,6 +135,16 @@ export default function PostActions({ post, commentCount }: Props) {
           aria-label="編輯貼文"
         >
           <Image src="/icons/edit.svg" width={24} height={24} alt="" />
+        </TapScale>
+      )}
+      {canDelete && (
+        <TapScale
+          onClick={onDelete}
+          className="-my-1 flex size-11 cursor-pointer items-center justify-center"
+          whileTap={{ scale: 0.9 }}
+          aria-label="刪除貼文"
+        >
+          <Image src="/icons/delete.svg" width={24} height={24} alt="" />
         </TapScale>
       )}
     </div>

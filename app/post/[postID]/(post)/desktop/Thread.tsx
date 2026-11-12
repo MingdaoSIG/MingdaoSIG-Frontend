@@ -15,6 +15,8 @@ import { apiRequest } from "@/modules/api/client";
 import { promptLogin } from "@/utils/loginPrompt";
 import useUser from "@/utils/useUser";
 import { useUserAccount } from "@/utils/useUserAccount";
+import { confirmDeletePost } from "../components/confirmDeletePost";
+import { usePostPermissions } from "../components/usePostPermissions";
 
 /** Author and date under an announcement's title (posts show them in the side card). */
 function AnnouncementMeta({ post }: { post: TThread }) {
@@ -87,47 +89,8 @@ const Thread = ({ post }: { post: TThread }) => {
     route.push(`/post/${post._id}/edit`);
   }
 
-  async function onDelete() {
-    const confirm = await Swal.fire({
-      title: "確定要刪除這篇貼文嗎？",
-      text: "刪除後就無法復原",
-      icon: "warning",
-      confirmButtonText: "刪除",
-      confirmButtonColor: "#b42318",
-      showCancelButton: true,
-      cancelButtonText: "取消",
-      showLoaderOnConfirm: true,
-      allowOutsideClick: () => !Swal.isLoading(),
-      preConfirm: () =>
-        apiRequest(`/post/${post._id}`, { method: "DELETE", token }),
-    });
-    if (!confirm.isConfirmed || !confirm.value) {
-      return;
-    }
-    if (!confirm.value.ok) {
-      Swal.fire({
-        title: "刪除失敗",
-        text: confirm.value.message,
-        icon: "error",
-        confirmButtonText: "好",
-      });
-      return;
-    }
-    const next = await Swal.fire({
-      title: "貼文已刪除",
-      icon: "success",
-      confirmButtonText: "回到首頁",
-      confirmButtonColor: "#0b5a83",
-      showDenyButton: true,
-      denyButtonText: "發布新貼文",
-      denyButtonColor: "#586676",
-    });
-    if (next.isDenied) {
-      route.push("/new");
-    } else {
-      // Also on dismiss: the post is gone, so do not stay on its page.
-      route.push("/");
-    }
+  function onDelete() {
+    confirmDeletePost(post._id, token, (href) => route.push(href));
   }
 
   useEffect(() => {
@@ -136,20 +99,49 @@ const Thread = ({ post }: { post: TThread }) => {
     }
   }, [isLogin, post.like, userData?._id]);
 
-  const isOwner = isLogin && post.user === userData?._id;
+  const { canEdit, canDelete } = usePostPermissions(post);
   const iconButton =
     "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-control transition-colors hover:bg-field";
 
+  const editButton = canEdit && (
+    <button
+      type="button"
+      data-reader-hide
+      className={iconButton}
+      onClick={onEdit}
+      aria-label="編輯貼文"
+    >
+      <Image src="/icons/edit.svg" width={26} height={26} alt="" />
+    </button>
+  );
+  const deleteButton = canDelete && (
+    <button
+      type="button"
+      data-reader-hide
+      className={iconButton}
+      onClick={onDelete}
+      aria-label="刪除貼文"
+    >
+      <Image src="/icons/delete.svg" width={26} height={26} alt="" />
+    </button>
+  );
+
   if (post.sig === "652d60b842cdf6a660c2b778") {
+    // Announcements have no like button; edit and delete follow the same
+    // rules as any other post.
     return (
       <article
         ref={rootRef}
         className="layout-doc mx-auto flex h-full min-h-0 w-[min(56rem,100%-4rem)] flex-col gap-4"
       >
         <div className="rounded-card border border-line bg-paper px-6 py-4 shadow-card">
-          <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
-            {post.title}
-          </h1>
+          <div className="flex items-start gap-2">
+            <h1 className="min-w-0 flex-1 font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
+              {post.title}
+            </h1>
+            {editButton}
+            {deleteButton}
+          </div>
           <AnnouncementMeta post={post} />
         </div>
         <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
@@ -170,28 +162,8 @@ const Thread = ({ post }: { post: TThread }) => {
           {post.title}
         </h1>
         <ReaderMode title={post.title} />
-        {isOwner && (
-          <button
-            type="button"
-            data-reader-hide
-            className={iconButton}
-            onClick={onEdit}
-            aria-label="編輯貼文"
-          >
-            <Image src="/icons/edit.svg" width={26} height={26} alt="" />
-          </button>
-        )}
-        {isOwner && (
-          <button
-            type="button"
-            data-reader-hide
-            className={iconButton}
-            onClick={onDelete}
-            aria-label="刪除貼文"
-          >
-            <Image src="/icons/delete.svg" width={26} height={26} alt="" />
-          </button>
-        )}
+        {editButton}
+        {deleteButton}
         <button
           type="button"
           data-reader-hide
