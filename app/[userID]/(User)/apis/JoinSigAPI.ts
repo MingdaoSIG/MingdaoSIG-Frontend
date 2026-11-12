@@ -1,11 +1,12 @@
 import type { TJoinSigAPI } from "@/app/[userID]/(User)/types/joinSigAPI";
 import { apiRequest } from "@/modules/api/client";
 
-export function JoinSigAPI({ sig, q1, q2, q3 }: TJoinSigAPI, token: string) {
+/** Apply to join; 403/4040 when the SIG is not recruiting. */
+export function JoinSigAPI({ sig, answers }: TJoinSigAPI, token: string) {
   return apiRequest(`/sig/${sig}/join`, {
     method: "POST",
     token,
-    body: { q1, q2, q3 },
+    body: { answers },
   });
 }
 

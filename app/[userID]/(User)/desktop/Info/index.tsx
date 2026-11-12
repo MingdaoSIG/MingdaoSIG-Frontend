@@ -1,14 +1,14 @@
 import { Pencil } from "lucide-react";
 import Image from "next/image";
-import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
-import { Tooltip } from "react-tooltip";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import Swal from "sweetalert2";
 // APIs
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
-// Config
-import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import { ProfileBadges } from "@/components/Badges/ProfileBadges";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
+import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
+import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -135,7 +135,11 @@ export default function Info({
             alt=""
             className={styles.avatar}
           />
-          {accountData?.badge ? <BadgeList userData={accountData} /> : null}
+          <ProfileBadges
+            keys={accountData?.badge}
+            className={styles.badgeWrapper}
+            badgeClassName={styles.badge}
+          />
         </div>
         {manager.canManage && (
           <button
@@ -187,6 +191,18 @@ export default function Info({
               {joinSig.isMember ? "你是這個 SIG 的成員" : joinSig.notice}
             </p>
           )}
+          {isSig &&
+            accountData?._id !== "652d60b842cdf6a660c2b778" &&
+            !joinSig.isMember && (
+              <RecruitingStatus
+                recruiting={
+                  joinSig.recruiting
+                    ? (accountData as Sig).recruiting
+                    : { ...(accountData as Sig).recruiting, open: false }
+                }
+                className="mt-2"
+              />
+            )}
           <hr className={styles.contentHR} />
           {isInput ? (
             <>
@@ -217,6 +233,9 @@ export default function Info({
           )}
         </div>
       </div>
+      {isSig && accountData && (
+        <JoinSigDialog sig={accountData as Sig} {...joinSig.dialog} />
+      )}
       {isSig && accountData && manager.canManage && (
         <EditSigDialog
           sig={accountData as Sig}
@@ -243,42 +262,4 @@ function notice(icon: "success" | "error", title: string) {
     timer: icon === "error" ? 4000 : 2500,
     timerProgressBar: true,
   });
-}
-
-function BadgeList({ userData }: { userData: User | null }) {
-  const chosenBadge = userData?.badge;
-
-  if (userData && chosenBadge && chosenBadge.length > 0) {
-    return (
-      <div className={styles.badgeWrapper}>
-        {chosenBadge.sort().map((badge) => {
-          if (badgeList[badge] === undefined) {
-            return <Fragment key={badge} />;
-          }
-          return (
-            <Fragment key={badge}>
-              <Image
-                src={badgeList[badge].icon}
-                height={24}
-                width={24}
-                alt={badgeList[badge].name}
-                className={styles.badge}
-                data-tooltip-id={badgeList[badge].name}
-                data-tooltip-content={badgeList[badge].content}
-                data-tooltip-place="top"
-              />
-              <Tooltip
-                id={badgeList[badge].name}
-                style={{
-                  padding: "0.2rem 0.4rem",
-                  backgroundColor: "rgb(50, 50, 50)",
-                }}
-              />
-            </Fragment>
-          );
-        })}
-      </div>
-    );
-  }
-  return null;
 }

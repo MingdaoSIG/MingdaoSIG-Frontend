@@ -11,13 +11,12 @@ import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
 import { postTags, tagHref } from "@/modules/hashtag";
 import { imageUrl } from "@/modules/imageUrl";
+import { useSigColor } from "@/modules/sigTheme/useSigColor";
 import { formatViews } from "@/modules/views";
 import {
   announcementSigId,
   announcementStayTime,
 } from "../configs/announcement";
-// Configs
-import { sigDefaultColors } from "../configs/sigDefaultColors";
 import { postSummary } from "../postSummary";
 
 /** Populated object, or null for a missing / unpopulated reference. */
@@ -84,6 +83,7 @@ const Thread = ({
 }) => {
   const user = asObject<User>(threadData.user);
   const sig = asObject<Sig>(threadData.sig);
+  const colorOf = useSigColor();
   const isAnnouncement = sig?._id === announcementSigId;
   const showMeta = Boolean(user) && !isAnnouncement;
   const showCover =
@@ -109,7 +109,7 @@ const Thread = ({
               <span
                 className="sig-text shrink-0 font-semibold"
                 style={{
-                  ["--sig-color" as string]: sigDefaultColors[sig?._id ?? ""],
+                  ["--sig-color" as string]: colorOf(sig),
                 }}
               >
                 {sig?.name}

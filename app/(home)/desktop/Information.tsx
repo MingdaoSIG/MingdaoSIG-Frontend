@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
-import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
 
 // Modules / Components
 import maxMatch from "@/modules/maxMatch";
+import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 // APIs / Types
 import { useTopPost } from "@/utils/usePost";
 
@@ -114,7 +114,7 @@ function SigCard({ sig }: { sig: Sig }) {
       <div
         className="flex size-full flex-wrap content-center items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[13px] text-ink-800 leading-snug transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
         style={{
-          ["--sig-color" as string]: sigDefaultColors[sig._id] ?? "#0b5a83",
+          ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,
         }}
       >
         {maxMatch(sig.name).map((name) => (

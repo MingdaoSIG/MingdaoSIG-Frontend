@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiRequest } from "@/modules/api/client";
+import { withAlpha } from "@/modules/sigTheme";
+import { useSigColorByName } from "@/modules/sigTheme/useSigColor";
 import {
   sigDefaultBorderColors,
   sigDefaultColors,
@@ -37,14 +39,28 @@ const NO_STATS: DashboardStats = {
   posts: null,
 };
 
-function toChart(items: SigCountItem[]): ChartData {
+/**
+ * The figures name their SIGs, so colours are looked up by name: the
+ * SIG's colour from the API (half transparent fill, solid border), else
+ * the old tables.
+ */
+function toChart(
+  items: SigCountItem[],
+  colors: Map<string, string> = new Map(),
+): ChartData {
+  const fill = (name: string) => {
+    const color = colors.get(name);
+    return color ? withAlpha(color, 0.5) : sigDefaultColors[name];
+  };
   return {
     labels: items.map((item) => item.name),
     datasets: [
       {
         data: items.map((item) => item.count),
-        backgroundColor: items.map((item) => sigDefaultColors[item.name]),
-        borderColor: items.map((item) => sigDefaultBorderColors[item.name]),
+        backgroundColor: items.map((item) => fill(item.name)),
+        borderColor: items.map(
+          (item) => colors.get(item.name) ?? sigDefaultBorderColors[item.name],
+        ),
         borderWidth: 1,
       },
     ],
@@ -82,8 +98,17 @@ export function formatStat(value: number | null) {
  */
 export function useDashboardData() {
   const [stats, setStats] = useState<DashboardStats>(NO_STATS);
-  const [sigPosts, setSigPosts] = useState<ChartData>(EMPTY_CHART);
-  const [sigUsers, setSigUsers] = useState<ChartData>(EMPTY_CHART);
+  const [postCounts, setPostCounts] = useState<SigCountItem[]>([]);
+  const [userCounts, setUserCounts] = useState<SigCountItem[]>([]);
+  const colors = useSigColorByName();
+  const sigPosts = useMemo(
+    () => toChart(postCounts, colors),
+    [postCounts, colors],
+  );
+  const sigUsers = useMemo(
+    () => toChart(userCounts, colors),
+    [userCounts, colors],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -120,8 +145,8 @@ export function useDashboardData() {
         posters: asNumber(posters),
         posts: asNumber(posts),
       });
-      setSigPosts(toChart(asSigCounts(postsBySig)));
-      setSigUsers(toChart(asSigCounts(usersBySig)));
+      setPostCounts(asSigCounts(postsBySig));
+      setUserCounts(asSigCounts(usersBySig));
       const failure = results.find((result) => !result.ok);
       setError(failure && !failure.ok ? failure.message : null);
       setLoading(false);
