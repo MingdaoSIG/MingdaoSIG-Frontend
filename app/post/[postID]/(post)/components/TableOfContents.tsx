@@ -1,7 +1,7 @@
 "use client";
 
 import { ListTree } from "lucide-react";
-import { type RefObject, useEffect, useState } from "react";
+import { type RefObject, useEffect, useId, useState } from "react";
 
 // 目錄 in the post page's side rail (decision 6C): the headings of the
 // rendered post, with the one being read highlighted (scroll-spy). The
@@ -111,24 +111,25 @@ export function TableOfContents({
   activeId: string | null;
   className?: string;
 }) {
+  const titleId = useId();
   // One heading is no outline.
   if (headings.length < 2) {
     return null;
   }
   return (
     <nav
-      aria-labelledby="post-toc-title"
+      aria-labelledby={titleId}
       className={`flex min-h-0 flex-col rounded-card border border-line bg-surface py-3 shadow-card ${className}`}
       data-post-toc
     >
       <h2
-        id="post-toc-title"
+        id={titleId}
         className="flex shrink-0 items-center gap-1.5 px-4 pb-1.5 font-bold text-ink-900 text-sm"
       >
         <ListTree aria-hidden className="size-4 text-ink-500" />
         目錄
       </h2>
-      <ol className="custom-scrollbar flex max-h-[min(24rem,45vh)] flex-col overflow-y-auto px-2">
+      <ol className="custom-scrollbar flex max-h-[calc(100dvh-var(--shell-top,5.5rem)-4rem)] flex-col overflow-y-auto px-2">
         {headings.map((heading) => {
           const active = heading.id === activeId;
           return (

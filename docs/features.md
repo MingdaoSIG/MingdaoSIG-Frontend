@@ -153,12 +153,15 @@ Contract: `design/api-contract-v4.md` §3.7, §5.6–§5.9.
 
 ## Post page (decision 6C)
 
-- Desktop (`app/post/[postID]/(post)/desktop/PostLayout.tsx`): a reading
-  column (`Thread.tsx`: title, date and views, tags, then 讚 / 收藏 / 分享 /
-  閱讀模式 and 編輯 / 刪除 / ⋯) and a right rail that sticks under the
-  header at `--shell-top`: `AuthorCard`, the series boxes (`SeriesNav`)
-  and 目錄 (`components/TableOfContents.tsx`). The page is document flow;
-  the window scrolls.
+- Desktop (`app/post/[postID]/(post)/desktop/PostLayout.tsx`, v4 3B): at
+  ≥1440px a sticky 目錄 on the left, the article in the middle (`Thread.tsx`,
+  at most 46rem, about 38 CJK characters per line: title, date and views,
+  tags, then 讚 / 收藏 / 分享 / 閱讀模式 and 編輯 / 刪除 / ⋯), and a sticky
+  right column: `AuthorCard`, the series boxes (`SeriesNav`) and 同 SIG 的
+  其他文章 (`SigMorePosts.tsx`, `/post/list/sig/:id`, this post left out).
+  At 1280–1439px 目錄 joins the right column; under 1280px there is one
+  column, the right column's cards follow the article and 目錄 is left
+  out. The side columns stick at `--shell-top`; the window scrolls.
 - 目錄 lists the post's h1–h3 (not the opening heading that repeats the
   title) once the Markdown is rendered, gives them ids `h-1`, `h-2`… and
   marks the section being read (scroll-spy on the window). A link such as

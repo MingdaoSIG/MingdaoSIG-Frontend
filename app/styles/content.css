@@ -429,6 +429,13 @@ html[data-reader] .wrap {
   background: var(--reader-bg);
 }
 
+/* The post page places its article in a later grid column on wide
+   screens; reader mode has one. */
+html[data-reader] .layout-split > [data-split-main] {
+  grid-column: 1 / -1;
+  grid-row: auto;
+}
+
 html[data-reader] .layout-split {
   grid-template-columns: minmax(0, 1fr);
   width: min(44rem, 100% - 3rem);
