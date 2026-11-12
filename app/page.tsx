@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import Swal from "sweetalert2";
 import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 import Information from "./(home)/desktop/Information";
 import ThreadsListDesktop from "./(home)/desktop/ThreadsList";
 
@@ -27,6 +28,7 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const session = searchParams.get("session");
+  const { isLoading: authLoading } = useUserAccount();
 
   useEffect(() => {
     if (error === "not_md") {
@@ -48,12 +50,13 @@ function HomeContent() {
     }
   }, [error, router]);
 
+  // The auth provider reads ?session= (school app login) on load; once it
+  // has, drop it from the address bar.
   useEffect(() => {
-    if (session) {
-      localStorage.setItem("session", session);
-      router.push("/");
+    if (session && !authLoading) {
+      router.replace("/");
     }
-  }, [session, router]);
+  }, [session, authLoading, router]);
 
   if (isMobile) {
     return <ThreadsListMobile />;

@@ -6,20 +6,32 @@ Always use `process.env.NEXT_PUBLIC_API_URL` — never hardcode the API URL.
 
 ## Request Module
 
-All API calls go through `modules/sigAPI/function/_request.ts`:
+New code calls the backend through `modules/api/client.ts`:
 
 ```typescript
-// GET
-const data = await request.get("default", "/post/list", {
-  token: "jwt-token",
-  requestQuery: { skip: 0, limit: 10 }
+const result = await apiRequest<TThread[]>("/post/list", {
+  query: { skip: 0, limit: 10 },
 });
+if (!result.ok) {
+  toast.error(result.message); // Traditional Chinese, e.g. 429 → 「操作太頻繁，請稍後再試」
+  return;
+}
+use(result.data);
 
-// POST
-const result = await request.post("default", "/post", body, {
-  token: "jwt-token"
-});
+// Authenticated: pass the token, or `auth: true` for the signed-in user's
+await apiRequest(`/post/${id}/like`, { method: "POST", token });
 ```
+
+`apiRequest` never throws. Every outcome comes back as a result:
+`ok: true` with `data` only for status 2000; otherwise `ok: false` with a
+`kind` (`rate-limited`, `unauthorized`, `too-large`, `not-found`,
+`network`, `invalid-response`, `error`) and a user-facing `message`. It
+handles non-JSON bodies (429 plain text, 502 HTML pages) too.
+`fetchApiData` and `modules/sigAPI` resolve to `data` and throw an
+`ApiError` instead, for react-query and older callers.
+
+An authenticated request answered with HTTP 401 or status 4013 makes the
+auth provider re-exchange the login once and retries with the new token.
 
 ## Custom Status Codes
 
@@ -66,9 +78,24 @@ Defined in `modules/customStatusCode/index.ts`:
 ## Authentication Flow
 
 1. NextAuth.js handles Google OAuth — only `@ms.mingdao.edu.tw` domain accepted
-2. After login, exchange for a platform JWT token
-3. Store token in `localStorage` under the key `token`
-4. Use `useUserAccount` hook to access login state
+   (the school app can also sign users in with `/?session=…`).
+2. `AuthProvider` (`utils/useUserAccount/AuthProvider.tsx`, mounted once in
+   `app/providers.tsx`) exchanges the Google access token or the session for a
+   platform JWT via `POST /login`, but only when there is no usable stored JWT
+   (expired per its `exp` claim, or missing). The Google token next-auth keeps
+   stops working after about an hour, so the JWT is what keeps users signed in.
+3. The JWT is stored in `localStorage` under `token` (the profile under `user`),
+   through `utils/safeStorage`, which never throws when storage is blocked.
+   On each page load a stored JWT is reused and the profile refreshed with
+   `GET /user/me`.
+4. On a 401 / 4013 the provider re-exchanges once; only if that fails does it
+   sign out (without reloading the page).
+5. Components read the state with `useUserAccount()`
+   (`{ isLogin, token, userData, isLoading, login, logout }`).
+
+Email, student number and other private fields come only from `/user/me`
+(yourself) or `/user/:id/full` (yourself or an admin), never from the public
+`/user/:id` or users embedded in posts and comments.
 
 ## Image Upload
 
