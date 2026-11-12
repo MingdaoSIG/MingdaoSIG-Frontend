@@ -66,8 +66,21 @@
 }
 
 /* Desktop: keep a visible ring for keyboard users on interactive
-   elements (inputs keep their own focus styles). */
-.wrap :is(a, button, [role="button"], summary):focus-visible {
+   elements (inputs keep their own focus styles). The colour is set on the
+   resting state too: `outline: none` above makes it currentColor, and
+   controls with `transition-colors` (which includes outline-color) faded
+   the ring in from their text colour, white on the Login button. */
+.wrap a,
+.wrap button,
+.wrap [role="button"],
+.wrap summary {
+  outline-color: var(--color-brand-700);
+}
+
+.wrap a:focus-visible,
+.wrap button:focus-visible,
+.wrap [role="button"]:focus-visible,
+.wrap summary:focus-visible {
   outline: 2px solid var(--color-brand-700);
   outline-offset: 2px;
 }

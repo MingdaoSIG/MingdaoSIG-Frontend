@@ -10,33 +10,43 @@ export default function UserLogin() {
     return (
       <div className={`${styles.loginUserPanelWrapper} ${styles.secondary}`}>
         <div className={styles.loginUserPanel}>
-          <p>載入中…</p>
+          <span>載入中…</span>
         </div>
       </div>
     );
   }
   if (!isLogin) {
     return (
-      <div className={styles.loginUserPanelWrapper} onClick={() => login()}>
-        <div className={styles.loginUserPanel}>
-          <p>登入</p>
-        </div>
-      </div>
+      <button
+        type="button"
+        className={styles.loginUserPanelWrapper}
+        onClick={() => login()}
+      >
+        <span className={styles.loginUserPanel}>
+          <span>登入</span>
+        </span>
+      </button>
     );
   }
   return (
     <div className="flex items-center justify-center">
       {userData && userData.permission === 2 && (
-        <div
+        <button
+          type="button"
           className={`${styles.loginUserPanelWrapper} ${styles.secondary} mr-2`}
           onClick={() => window.open("/admin", "_self")}
         >
-          <div className={styles.loginUserPanel}>
-            <p>管理平台</p>
-          </div>
-        </div>
+          <span className={styles.loginUserPanel}>
+            <span>管理平台</span>
+          </span>
+        </button>
       )}
-      <div className={styles.userPanel} onClick={() => confirmLogout(logout)}>
+      <button
+        type="button"
+        className={styles.userPanel}
+        onClick={() => confirmLogout(logout)}
+        aria-label="登出"
+      >
         <Image
           src={
             userData?.avatar ||
@@ -44,10 +54,10 @@ export default function UserLogin() {
           }
           width={50}
           height={50}
-          alt="你的頭像"
+          alt=""
           className={styles.avatar}
         />
-      </div>
+      </button>
     </div>
   );
 }
