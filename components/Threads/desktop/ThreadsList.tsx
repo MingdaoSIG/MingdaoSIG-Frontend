@@ -1,8 +1,9 @@
 import type { InfiniteData } from "@tanstack/react-query";
-import { Heart, MessageCircle, Pin } from "lucide-react";
+import { Eye, Heart, MessageCircle, Pin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useRef } from "react";
+import { BookmarkButton } from "@/components/Bookmark/BookmarkButton";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
@@ -10,6 +11,7 @@ import type { User } from "@/interfaces/User";
 import { getErrorMessage } from "@/modules/api/client";
 import { postTags, tagHref } from "@/modules/hashtag";
 import { imageUrl } from "@/modules/imageUrl";
+import { formatViews } from "@/modules/views";
 import {
   announcementSigId,
   announcementStayTime,
@@ -129,6 +131,16 @@ const Thread = ({
                 <MessageCircle size={14} aria-label="留言數" />
                 {threadData.comments}
               </span>
+              {typeof threadData.views === "number" && (
+                <span className="flex items-center gap-1">
+                  <Eye size={14} aria-label="瀏覽數" />
+                  {formatViews(threadData.views)}
+                </span>
+              )}
+              <BookmarkButton
+                postId={threadData._id}
+                className="-my-1.5 -mr-2"
+              />
             </div>
           </div>
         )}
