@@ -10,6 +10,7 @@ import {
 } from "react";
 
 // Types
+import { EditorErrorBoundary } from "../shared/EditorErrorBoundary";
 import type { TPostAPI } from "../types/postAPI";
 import MetaDataForm from "./MetaDataForm";
 import TitleSigForm from "./TitleSigForm";
@@ -60,7 +61,9 @@ export default function NewPost({
             handleFormEventFunction={handleFormEventFunction}
           />
           <div className="min-h-0 flex-1">
-            <Editor setPostData={setPostData} data={data} token={token} />
+            <EditorErrorBoundary data={data} setPostData={setPostData}>
+              <Editor setPostData={setPostData} data={data} token={token} />
+            </EditorErrorBoundary>
           </div>
         </Suspense>
       </div>

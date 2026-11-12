@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { EditorErrorBoundary } from "../shared/EditorErrorBoundary";
 // Types
 import type { TPostAPI } from "../types/postAPI";
 import Button from "./Buttons";
@@ -147,7 +148,9 @@ export default function NewPostMobile({
           </h2>
           <hr className="mb-3 h-px w-full border-line" />
           <div className="mb-4 h-auto w-full max-w-full">
-            <Editor setPostData={setPostData} data={data} token={token} />
+            <EditorErrorBoundary data={data} setPostData={setPostData}>
+              <Editor setPostData={setPostData} data={data} token={token} />
+            </EditorErrorBoundary>
           </div>
 
           {/* Hashtag Section */}
