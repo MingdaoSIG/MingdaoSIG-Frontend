@@ -27,7 +27,13 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        // Pages, RSC payloads and route handlers must not be cached, so a
+        // deploy shows up right away. Leave out hashed build assets
+        // (/_next/static, served as immutable), optimized images (they set
+        // their own TTL) and files from public/ (served with an ETag, so
+        // the browser revalidates instead of downloading them again).
+        source:
+          "/((?!_next/static/|_next/image|images/|icons/|badges/|videos/).*)",
         headers: [
           {
             key: "Cache-Control",
