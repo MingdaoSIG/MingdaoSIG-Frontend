@@ -29,7 +29,11 @@ function daysOf(item: SiteEvent) {
   if (Number.isNaN(start.getTime())) {
     return days;
   }
-  const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const cursor = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate(),
+  );
   const last = Number.isNaN(end.getTime()) ? cursor : end;
   for (let i = 0; i < 62 && cursor <= last; i++) {
     days.push(dayKey(cursor));
@@ -119,7 +123,6 @@ export default function EventCalendar({
           </p>
         )}
         <div
-          role="grid"
           aria-label={title}
           aria-busy={query.isFetching}
           className="grid grid-cols-7 gap-px overflow-hidden rounded-control border border-line bg-line"
@@ -127,7 +130,7 @@ export default function EventCalendar({
           {WEEKDAYS.map((day) => (
             <div
               key={day}
-              role="columnheader"
+              aria-hidden
               className="bg-field py-1 text-center font-semibold text-ink-500 text-xs"
             >
               {day}
@@ -143,8 +146,7 @@ export default function EventCalendar({
               <button
                 key={key}
                 type="button"
-                role="gridcell"
-                aria-selected={isSelected}
+                aria-pressed={isSelected}
                 aria-label={`${date.getMonth() + 1} 月 ${date.getDate()} 日${
                   events.length ? `，${events.length} 個活動` : ""
                 }`}
@@ -196,7 +198,10 @@ export default function EventCalendar({
                       </span>
                     ))}
                     {events.length > 2 && (
-                      <span aria-hidden className="px-1 text-[11px] text-ink-500">
+                      <span
+                        aria-hidden
+                        className="px-1 text-[11px] text-ink-500"
+                      >
                         還有 {events.length - 2} 個
                       </span>
                     )}

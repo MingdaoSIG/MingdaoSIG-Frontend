@@ -4,10 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { apiRequest } from "@/modules/api/client";
 import { withAlpha } from "@/modules/sigTheme";
 import { useSigColorByName } from "@/modules/sigTheme/useSigColor";
-import {
-  sigDefaultBorderColors,
-  sigDefaultColors,
-} from "./sigDefaultColors";
+import { sigDefaultBorderColors, sigDefaultColors } from "./sigDefaultColors";
 
 type SigCountItem = {
   name: string;

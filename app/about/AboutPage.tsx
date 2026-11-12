@@ -3,7 +3,12 @@
 import dynamic from "next/dynamic";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import useIsMobile from "@/utils/useIsMobile";
-import { ChangelogList, ContactLinks, InfoLinks, StatusPanel } from "./sections";
+import {
+  ChangelogList,
+  ContactLinks,
+  InfoLinks,
+  StatusPanel,
+} from "./sections";
 
 // 關於 MDSIG (v3 8A): 資訊, 平台數據 (Dashboard), 更新紀錄, 運行狀態 and 聯絡
 // on one page with a table of contents (anchors). The old pages redirect
@@ -41,7 +46,7 @@ function Section({
       id={id}
       aria-labelledby={`${id}-title`}
       data-about-section={id}
-      className="scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:scroll-mt-[calc(var(--header-h)+1.5rem)] lg:p-6"
+      className="scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:scroll-mt-[var(--shell-top)] lg:p-6"
     >
       <h2
         id={`${id}-title`}
@@ -212,7 +217,7 @@ export default function AboutPage() {
 
   return (
     <main className="layout-doc mx-auto grid w-[min(64rem,100%-4rem)] grid-cols-[11rem_minmax(0,1fr)] items-start gap-6">
-      <aside className="sticky top-[calc(var(--header-h)+1.5rem)] flex flex-col gap-3">
+      <aside className="sticky top-[var(--shell-top)] flex flex-col gap-3">
         <h1 className="px-3 font-bold text-2xl text-ink-900 leading-[1.4]">
           關於 MDSIG
         </h1>

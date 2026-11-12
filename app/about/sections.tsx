@@ -24,7 +24,11 @@ function LinkList({ items }: { items: { name: string; url: string }[] }) {
           <li key={child.name}>
             <Link
               href={child.url}
-              target={external && !child.url.startsWith("mailto:") ? "_blank" : undefined}
+              target={
+                external && !child.url.startsWith("mailto:")
+                  ? "_blank"
+                  : undefined
+              }
               rel={external ? "noopener noreferrer" : undefined}
               className={docLink}
             >
@@ -251,13 +255,15 @@ type ChangelogEntry = {
 };
 
 // Muted semantic colours: readable text on a light tint (AA on white).
-const TYPE_LABELS: Record<ChangeType, { text: string; fg: string; bg: string }> =
-  {
-    feature: { text: "新功能", fg: "#1d6b46", bg: "#e6f3ec" },
-    improvement: { text: "優化", fg: "#0b5a83", bg: "#e5edf3" },
-    fix: { text: "修復", fg: "#85530a", bg: "#f8efdc" },
-    security: { text: "安全性", fg: "#b42318", bg: "#fbeceb" },
-  };
+const TYPE_LABELS: Record<
+  ChangeType,
+  { text: string; fg: string; bg: string }
+> = {
+  feature: { text: "新功能", fg: "#1d6b46", bg: "#e6f3ec" },
+  improvement: { text: "優化", fg: "#0b5a83", bg: "#e5edf3" },
+  fix: { text: "修復", fg: "#85530a", bg: "#f8efdc" },
+  security: { text: "安全性", fg: "#b42318", bg: "#fbeceb" },
+};
 
 function TypeTag({ type }: { type: ChangeType }) {
   const label = TYPE_LABELS[type] ?? TYPE_LABELS.improvement;
@@ -319,7 +325,9 @@ export function ChangelogList() {
                 <span className="mt-0.5 shrink-0">
                   <TypeTag type={change.type} />
                 </span>
-                <span className="min-w-0 break-words">{change.description}</span>
+                <span className="min-w-0 break-words">
+                  {change.description}
+                </span>
               </li>
             ))}
           </ul>

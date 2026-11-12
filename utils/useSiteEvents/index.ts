@@ -111,8 +111,7 @@ export function useUpcomingEvents(
   const viewer = userData?._id ?? "guest";
   return useQuery<SiteEventPage, Error>({
     queryKey: [...SITE_EVENTS_KEY, "upcoming", scope, limit, viewer],
-    queryFn: ({ signal }) =>
-      fetchSiteEvents({ scope, skip: 0, limit }, signal),
+    queryFn: ({ signal }) => fetchSiteEvents({ scope, skip: 0, limit }, signal),
     enabled: enabled && !isLoading && (scope === "all" || isLogin),
     staleTime: 60 * 1000,
   });

@@ -24,7 +24,11 @@ function barOptions(title: string, mobile: boolean) {
   };
 }
 
-export default function DashboardPanel({ mobile = false }: { mobile?: boolean }) {
+export default function DashboardPanel({
+  mobile = false,
+}: {
+  mobile?: boolean;
+}) {
   const { stats, sigPosts, sigUsers, loading, error, retry } =
     useDashboardData();
   const items = [

@@ -3,9 +3,20 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type FocusEvent, type MouseEvent, useEffect, useState } from "react";
+import {
+  type FocusEvent,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { useAppBadge } from "@/components/Notifications/NotificationBell";
+import {
+  NOTIFICATION_PANEL_ID,
+  NotificationPanel,
+} from "@/components/Notifications/NotificationPanel";
 import { formatUnread } from "@/modules/notifications/describe";
 import { hasNewPosts, useSigSeen } from "@/modules/sigSeen";
 import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
@@ -44,22 +55,33 @@ function RailLink({
   item,
   active,
   badge = 0,
+  linkRef,
+  onClick,
+  expanded,
 }: {
   item: NavItem;
   active: boolean;
   badge?: number;
+  linkRef?: React.Ref<HTMLAnchorElement>;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  /** 通知 with its side panel open. */
+  expanded?: boolean;
 }) {
   const Icon = item.icon;
   return (
     <Link
+      ref={linkRef}
       href={item.href}
+      onClick={onClick}
+      aria-expanded={expanded}
+      aria-controls={expanded ? NOTIFICATION_PANEL_ID : undefined}
       aria-current={active ? "page" : undefined}
       aria-label={
         badge > 0 ? `${item.label}，${formatUnread(badge)} 則未讀` : undefined
       }
       data-rail-item={item.section}
       className={`relative flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
-        active
+        active || expanded
           ? "bg-brand-700/10 text-brand-700"
           : "text-ink-500 hover:bg-field hover:text-ink-800"
       }`}
@@ -142,6 +164,9 @@ export default function SideRail() {
   const { seen, baseline } = useSigSeen(userData?._id ?? "");
   const { tip, show, hide } = useTip();
   const section = navSection(path, userData?.customId);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const notificationsRef = useRef<HTMLAnchorElement>(null);
+  const closePanel = useCallback(() => setPanelOpen(false), []);
 
   let decodedPath = path;
   try {
@@ -177,11 +202,28 @@ export default function SideRail() {
       <ul className="flex flex-col items-center gap-1">
         {(["home", "explore", "notifications", "me"] as const).map((key) => (
           <li key={key}>
-            <RailLink
-              item={NAV_ITEMS[key]}
-              active={section === key}
-              badge={key === "notifications" ? unread : 0}
-            />
+            {key === "notifications" ? (
+              <RailLink
+                item={NAV_ITEMS[key]}
+                active={section === key}
+                badge={unread}
+                linkRef={notificationsRef}
+                expanded={section !== key ? panelOpen : undefined}
+                onClick={(event) => {
+                  // The page itself needs no panel on top of it.
+                  if (section === key) {
+                    return;
+                  }
+                  event.preventDefault();
+                  setPanelOpen((value) => !value);
+                }}
+              />
+            ) : (
+              <RailLink
+                item={NAV_ITEMS[key]}
+                active={section === key && !panelOpen}
+              />
+            )}
           </li>
         ))}
       </ul>
@@ -242,6 +284,12 @@ export default function SideRail() {
       >
         <Plus size={22} aria-hidden strokeWidth={2.4} />
       </Link>
+
+      <NotificationPanel
+        open={panelOpen}
+        onClose={closePanel}
+        trigger={notificationsRef}
+      />
 
       {/* In <body>: the rail's backdrop-filter would make it the
           containing block of a fixed tooltip and shift it down. */}

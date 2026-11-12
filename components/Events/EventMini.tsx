@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import type { SiteEvent } from "@/utils/useSiteEvents";
 import { eventDateParts, formatEventTime } from "@/modules/sigEvents";
 import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
+import type { SiteEvent } from "@/utils/useSiteEvents";
 
 // One upcoming event as a row: the date block in the SIG colour, the
 // title, the SIG and the time. Links to the SIG's 活動 tab. Used by the
@@ -22,9 +22,7 @@ export function EventMini({ item }: { item: SiteEvent }) {
       style={{ ["--sig-color" as string]: color }}
     >
       <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-control bg-[color-mix(in_srgb,var(--sig-color)_14%,white)] leading-none">
-        <span className="sig-text font-semibold text-[10px]">
-          {date.month}
-        </span>
+        <span className="sig-text font-semibold text-[10px]">{date.month}</span>
         <span className="sig-text font-bold text-base tabular-nums">
           {date.day}
         </span>
