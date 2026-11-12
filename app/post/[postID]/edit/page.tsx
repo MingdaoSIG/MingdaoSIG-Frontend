@@ -9,19 +9,13 @@ import {
   editPostAPI,
   getPostAPI,
 } from "@/app/post/[postID]/edit/(edit)/apis/postAPI";
-// Desktop Components
-import PostEditorDesktop from "@/components/PostEditor/desktop/PostEditor";
-// Mobile Components
-import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
+import PostEditor from "@/components/PostEditor/PostEditor";
+import { addPostToSeries } from "@/components/PostEditor/shared/addPostToSeries";
 import {
   DraftBar,
   DraftsDialog,
   formatClock,
 } from "@/components/PostEditor/shared/DraftBar";
-import {
-  addPostToSeries,
-  SeriesSelect,
-} from "@/components/PostEditor/shared/SeriesSelect";
 import { useCloudDraft } from "@/components/PostEditor/shared/useCloudDraft";
 import type { TPostAPI } from "@/components/PostEditor/types/postAPI";
 import type { TDraft, TDraftSummary } from "@/interfaces/Reading";
@@ -281,15 +275,23 @@ export default function EditPostPage({
       void queryClient.invalidateQueries({ queryKey: draftKeys.list(userId) });
     }
   }
-  const editButtonDisable =
-    !baseline ||
-    saving ||
-    (unchanged && !seriesId) ||
-    !currentPostData.content ||
-    !currentPostData.title ||
-    !currentPostData.sig;
+  // Missing title, content or SIG are shown under their fields by the
+  // editor when 更新 is pressed.
+  const editButtonDisable = !baseline || saving || (unchanged && !seriesId);
 
   async function undo() {
+    const answer = await Swal.fire({
+      title: "還原成目前發布的版本？",
+      text: "這次的修改會清除，這篇的雲端草稿也會刪除",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "還原",
+      cancelButtonText: "取消",
+      confirmButtonColor: "#b42318",
+    });
+    if (!answer.isConfirmed) {
+      return;
+    }
     if (oldPostData) {
       setCurrentPostData(toForm(oldPostData));
       if (cloud.currentId()) {
@@ -450,12 +452,6 @@ export default function EditPostPage({
           </div>
         </section>
       )}
-      <DraftBar
-        status={cloud.status}
-        onRetry={cloud.retry}
-        onOpenList={() => setDraftsOpen(true)}
-        mobile={isMobile}
-      />
       <DraftsDialog
         open={draftsOpen}
         onClose={() => setDraftsOpen(false)}
@@ -494,17 +490,17 @@ export default function EditPostPage({
       />
     </>
   ) : null;
-  const metaExtra = userId ? (
-    <SeriesSelect
-      value={seriesId}
-      onChange={setSeriesId}
-      postId={postID}
+  const statusBar = userId ? (
+    <DraftBar
+      status={cloud.status}
+      onRetry={cloud.retry}
+      onOpenList={() => setDraftsOpen(true)}
       mobile={isMobile}
     />
   ) : null;
 
-  return isMobile ? (
-    <PostEditorMobile
+  return (
+    <PostEditor
       token={token ?? ""}
       data={currentPostData}
       setPostData={setCurrentPostData}
@@ -516,22 +512,12 @@ export default function EditPostPage({
       isEdit
       originalSig={baseline?.sig}
       topBar={topBar}
-      metaExtra={metaExtra}
-    ></PostEditorMobile>
-  ) : (
-    <PostEditorDesktop
-      token={token ?? ""}
-      data={currentPostData}
-      setPostData={setCurrentPostData}
-      discardFunction={undo}
-      postFunction={sendEdit}
-      postButtonDisable={editButtonDisable}
-      handleFormEventFunction={handleFormChange}
-      handleFileChange={handleFileChange}
-      isEdit
-      originalSig={baseline?.sig}
-      topBar={topBar}
-      metaExtra={metaExtra}
+      statusBar={statusBar}
+      series={
+        userId
+          ? { value: seriesId, onChange: setSeriesId, postId: postID }
+          : undefined
+      }
     />
   );
 }

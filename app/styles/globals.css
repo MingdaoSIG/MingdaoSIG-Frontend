@@ -105,6 +105,14 @@
   outline-offset: 2px;
 }
 
+/* The window is the scroller on desktop: give the root the canvas colour so
+   the rubber-band overscroll at the top and bottom (macOS, iOS) never shows
+   a white strip, and turn the bounce off where the browser allows it. */
+html {
+  background-color: var(--color-canvas);
+  overscroll-behavior-y: none;
+}
+
 body {
   max-width: 100dvw;
   color: black;

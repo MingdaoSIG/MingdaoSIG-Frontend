@@ -91,9 +91,31 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 
 ## Markdown Editor
 
-- Package: `md-editor-rt`
-- Preview theme: `github`
-- Must be loaded with `dynamic(..., { ssr: false })` (client-only)
+- `components/PostEditor/PostEditor.tsx` (design v4 6B), shared by `/new`
+  and the edit page: a sticky bar (cloud-save status, 草稿, 捨棄/還原, 設定,
+  發布/更新), the writing area (title, toolbar, CodeMirror 6 in
+  `desktop/Editor.tsx` / `mobile/Editor.tsx`) filling the window down to a
+  1.5rem margin and scrolling inside, with 寫作 / 並排 / 預覽 (並排 by
+  default from 1280px), and a right settings column that folds away
+  (`settings/EditorSettings.tsx`). On phones 發布 opens the settings as a
+  sheet whose 發布 publishes. Missing title, content or SIG show under the
+  field when 發布 is pressed (never while typing). View and fold choices
+  are remembered (`mdsig-editor-view`, `mdsig-editor-settings`).
+- Settings: 發布到 (`SigPicker`, 7B: colour chips of the SIGs you may post
+  in, the only one chosen at once, more than six → 「更多 SIG…」 with a
+  search; rules from `useSigOptions`); 封面 (`CoverField`, 8B: the real
+  cover from the start, else the SIG default with 「SIG 預設封面」; 更換封面
+  or drop a picture; it is cropped to 16:9 on the client and uploaded as
+  WebP, 調整位置 picks another region of the same picture
+  (`CoverCropDialog`), 移除 goes back to the default; TIFF is uploaded
+  as it is); 標籤 (`TagInput`, 9B: Enter or comma adds, Backspace removes the
+  last, at most 5, suggestions from `GET /post/hashtags/top?q=` debounced
+  200 ms with 「新增「#…」」, 「這個 SIG 常用」 from `?sig=`); 加入系列
+  (`SeriesPicker`, 10B: search, 「建立新系列」 inline via `POST /series`, the
+  order with 「這篇會是第 N 篇」, or the post's real place when editing);
+  卡片預覽 (FE-U1's `PostCard`, inert).
+- The empty editor's placeholder is one short line (「開始寫作…」) so the
+  caret is one line tall; help is the 「Markdown 教學」 link.
 - Logged out, the editor auto-saves to `localStorage` (`editorContent`,
   `postData`); signed in, it saves cloud drafts instead (see below)
 
@@ -185,9 +207,41 @@ Contract: `design/api-contract-v4.md` §3.7, §5.6–§5.9.
   retires badges; profiles render `GET /badge/list` with the old
   `config/badge.ts` as the fallback (`components/Badges/ProfileBadges.tsx`).
 
+## Post page (decision 6C)
+
+- Desktop (`app/post/[postID]/(post)/desktop/PostLayout.tsx`, v4 3B): at
+  ≥1440px a sticky 目錄 on the left, the article in the middle (`Thread.tsx`,
+  at most 46rem, about 38 CJK characters per line: title, date and views,
+  tags, then 讚 / 收藏 / 分享 / 閱讀模式 and 編輯 / 刪除 / ⋯), and a sticky
+  right column: `AuthorCard`, the series boxes (`SeriesNav`) and 同 SIG 的
+  其他文章 (`SigMorePosts.tsx`, `/post/list/sig/:id`, this post left out).
+  At 1280–1439px 目錄 joins the right column; under 1280px there is one
+  column, the right column's cards follow the article and 目錄 is left
+  out. The side columns stick at `--shell-top`; the window scrolls.
+- 目錄 lists the post's h1–h3 (not the opening heading that repeats the
+  title) once the Markdown is rendered, gives them ids `h-1`, `h-2`… and
+  marks the section being read (scroll-spy on the window). A link such as
+  `/post/<id>#h-3` opens at that section. Shown with two or more headings.
+- 老師回饋 and the comments follow the article at the column's full width,
+  only once the post body is rendered (so `#feedback` lands right). The
+  desktop composer stays at the bottom of the window while the comments
+  are on screen. `#comments` / `#comments-section` open at the comments.
+- Mobile (`mobile/Thread.tsx`): one sticky place at the bottom holds
+  either the bar 讚 / 留言 / 收藏 / 分享 (`mobile/components/BottomBar.tsx`)
+  or the comment composer, so neither covers the other. 留言 scrolls to
+  the comments and opens the composer focused; 「回覆」 opens it too;
+  scrolling into the comments opens it without the keyboard, scrolling
+  back up (or 「收起」) brings the bar back. A short post whose comments
+  are on screen at once keeps the bar. 編輯 / 刪除 / 複製連結 / 檢舉 are in
+  the header's ⋯ sheet.
+- 分享 (`components/sharePost.ts`): the Web Share API where there is one,
+  else the link is copied. 讚 (`components/usePostLike.ts`) is shared by
+  both and shows a refusal's message (a mute's 4041 explains itself).
+- Announcements (公告) have no 讚 and no comments; pinned posts show 置頂.
+
 ## Comments
 
-- Shared by desktop (`desktop/ThreadInfo.tsx`) and mobile (`mobile/Thread.tsx`)
+- Shared by desktop (`desktop/Comments.tsx`) and mobile (`mobile/Thread.tsx`)
   through `components/useComments.ts` (list, reply target, expanded threads,
   edit and delete) and `components/CommentView.tsx` (one comment UI with a
   `desktop` / `mobile` variant)
@@ -342,19 +396,23 @@ Contract: `design/api-contract-v4.md` §3.1–§3.6. Everything that lives on
 the SIG page or the post page is a self-contained component with plain
 props, so the user-side redesign can move it without rewriting it.
 
-- 學習歷程 `/portfolio` (`app/portfolio/`): your own posts, SIGs and teacher
-  feedback (`GET /user/me/portfolio`). Every post is in by default; the
-  checkboxes and 「包含老師回饋」 pick what goes in. 「下載 PDF」 calls
-  `window.print()`; `app/portfolio/print.css` prints only the document on
-  A4 (no header or dock, page break before the posts, posts not split).
-  The document is `components/Portfolio/PortfolioDocument.tsx`; your own
-  profile links to it (`PortfolioEntry`).
+- 學習歷程 `/portfolio` (`app/portfolio/`, design v3 7B): your own posts,
+  SIGs and teacher feedback (`GET /user/me/portfolio`). Left, a checklist
+  (`components/Portfolio/PortfolioChecklist.tsx`): 基本資料, SIG 與幹部經歷,
+  文章 (all or none, or post by post), 老師回饋, 數據; everything is in by
+  default. Right, a live A4 preview: `PortfolioDocument` with
+  `variant="a4"` and `sections` draws 210 × 297 mm sheets with the print
+  margins, scaled down to fit the column, the posts starting on a new
+  sheet (on the first one when neither SIGs nor 數據 are in). On phones
+  the two are tabs (選擇內容 / 預覽). 「下載 PDF」 calls `window.print()`;
+  `app/portfolio/print.css` prints only the document on A4 (no header or
+  rail, zoom reset, page break before the posts, posts not split). Your
+  own profile links to it (`PortfolioEntry`).
 - 老師回饋 (`components/TeacherFeedback/TeacherFeedback.tsx`, anchor
   `#feedback`): shown to the post's author (only once there is feedback),
   the SIG's 指導老師 and admins; SIG leaders do not see it. 指導老師 and
   admins get the editor; only a feedback's author edits it, its author or
-  an admin deletes it. Desktop: right column above the comments; mobile:
-  above the comments.
+  an admin deletes it. Shown above the comments, on desktop and mobile.
 - SIG events (`components/SigEvents/`): `SigEventList` (upcoming, then
   past on request), `SigEventCard` (RSVP with capacity, 「加到 Google
   日曆」, 「下載 .ics」, manager 編輯 / 刪除) and `SigEventEditor` (create /

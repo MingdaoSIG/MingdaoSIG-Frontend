@@ -2,10 +2,6 @@
 import dynamic from "next/dynamic";
 import { use, useEffect, useState } from "react";
 
-// Layout
-import SplitBlock from "@/app/(Layout)/splitBlock";
-
-import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { NotFound } from "@/components/NotFound";
 // Interfaces
 import type { TThread } from "@/interfaces/Thread";
@@ -17,11 +13,10 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { PostSkeleton } from "./(post)/components/PostSkeleton";
-import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
 // Desktop and mobile threads are separate component trees; load only the
 // one this device needs.
-const ThreadDesktop = dynamic(() => import("./(post)/desktop/Thread"));
+const PostDesktop = dynamic(() => import("./(post)/desktop/PostLayout"));
 const ThreadMobile = dynamic(() => import("./(post)/mobile/Thread"));
 
 // Client side of /post/[postID]; page.tsx (a Server Component) adds the
@@ -115,23 +110,15 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
       />
     );
   }
-  if (post.sig === "652d60b842cdf6a660c2b778") {
-    return isMobile ? (
-      <ThreadMobile post={post} isAnnouncement />
-    ) : (
-      <ThreadDesktop post={post} />
-    );
-  }
+  // Keyed by post: a series link to the next post starts at the top.
   return isMobile ? (
-    <ThreadMobile post={post}></ThreadMobile>
+    <ThreadMobile
+      key={post._id}
+      post={post}
+      isAnnouncement={post.sig === "652d60b842cdf6a660c2b778"}
+    />
   ) : (
-    <SplitBlock>
-      <ThreadDesktop post={post} />
-      {/* Comments failing to render must not take the post down */}
-      <SectionErrorBoundary label="留言">
-        <ThreadInfo post={post} />
-      </SectionErrorBoundary>
-    </SplitBlock>
+    <PostDesktop key={post._id} post={post} />
   );
 };
 
