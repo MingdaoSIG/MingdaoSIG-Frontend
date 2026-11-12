@@ -183,7 +183,7 @@ export default function ManagePost() {
   };
 
   const openPost = (post: AdminPost) => {
-    router.push(`/admin/post/${post._id}`);
+    router.push(`/post/${post._id}`);
   };
 
   const goToPage = (next: number) => {
@@ -257,7 +257,7 @@ export default function ManagePost() {
   );
 
   return isMobile ? (
-    <div className="h-[calc(100dvh-8rem)] w-full overflow-y-auto bg-gradient-to-br from-blue-50 to-cyan-50 px-4 pt-4 pb-4">
+    <div className="h-[100dvh] w-full overflow-y-auto bg-gradient-to-br from-blue-50 to-cyan-50 px-4 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
@@ -358,7 +358,7 @@ export default function ManagePost() {
                   type="button"
                   className="flex-shrink-0 rounded-lg bg-blue-500 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-600"
                 >
-                  管理
+                  查看
                 </button>
               </div>
             ))}
@@ -448,7 +448,7 @@ export default function ManagePost() {
                             onClick={() => openPost(post)}
                             className="inline-flex cursor-pointer rounded-lg bg-blue-500 px-3 py-2 font-medium text-sm text-white shadow-sm transition-all duration-200 hover:bg-blue-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                           >
-                            管理貼文
+                            查看貼文
                           </button>
                         </td>
                       </tr>
