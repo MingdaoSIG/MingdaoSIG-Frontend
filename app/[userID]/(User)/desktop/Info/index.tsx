@@ -21,7 +21,10 @@ import Linkify from "@/components/Linkify/Linkify";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
+import type { ApiFailure } from "@/modules/api/client";
+import { CustomStatus } from "@/modules/customStatusCode";
 import { jumpOut } from "@/utils/jumpOut";
+import { isSubmitEnter } from "@/utils/keyboard";
 // Hooks
 import { useUserAccount } from "@/utils/useUserAccount";
 // Styles
@@ -38,23 +41,32 @@ export default function Info({
   dataType: string | null;
   setInfo: Dispatch<SetStateAction<User | Sig | null>>;
 }) {
-  const { userData, token } = useUserAccount();
+  const { userData, token, isLoading: authLoading } = useUserAccount();
   const [isInput, setIsInput] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [newDescription, setNewDescription] = useState("");
   const [joinRequest, setJoinRequest] = useState("");
 
+  // "" = unknown yet (button disabled); "none" = no request, may apply.
   useEffect(() => {
+    const sigId = accountData?._id;
+    if (dataType !== "sig" || !sigId || authLoading) {
+      return;
+    }
+    if (!token) {
+      // Logged out: the button stays usable and asks the user to log in.
+      setJoinRequest("none");
+      return;
+    }
+    const controller = new AbortController();
     (async () => {
-      if (dataType === "sig") {
-        const response = await ReadJoinSigAPI(
-          accountData?._id ?? "",
-          token ?? "",
-        );
-        setJoinRequest(response.data?.state);
+      const response = await ReadJoinSigAPI(sigId, token, controller.signal);
+      if (!controller.signal.aborted) {
+        setJoinRequest((response.ok && response.data?.state) || "none");
       }
     })();
-  }, [accountData?._id, dataType, token]);
+    return () => controller.abort();
+  }, [accountData?._id, dataType, token, authLoading]);
 
   const JumpOut = jumpOut;
 
@@ -75,16 +87,12 @@ export default function Info({
             { description: newDescription },
             token ?? "",
           );
-          setInfo((prev) =>
-            prev ? { ...prev, description: newDescription } : prev,
-          );
-          if (response.status !== 2000) {
-            Swal.fire(
-              "Error",
-              "Something went wrong. Please try again later",
-              "error",
-            );
+          if (!response.ok) {
+            Swal.fire("Error", response.message, "error");
           } else {
+            setInfo((prev) =>
+              prev ? { ...prev, description: newDescription } : prev,
+            );
             Swal.fire("Success", "Successfully changed description", "success");
             setIsInput(false);
             setIsEdit(false);
@@ -117,6 +125,7 @@ export default function Info({
         id="aboutYou"
         className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
+        maxLength={JOIN_ANSWER_MAX}
         placeholder="I am ..."
       />
       <br />
@@ -127,6 +136,7 @@ export default function Info({
         id="whyJoin"
         className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
+        maxLength={JOIN_ANSWER_MAX}
         placeholder="I want to join ..."
       />
       <br />
@@ -137,6 +147,7 @@ export default function Info({
         id="whichTopic"
         className={`swal2-textarea ${styles.JoinSIGFormInput}`}
         style={{ height: "5rem" }}
+        maxLength={JOIN_ANSWER_MAX}
         placeholder="I am interest in ..."
       />
     </Fragment>,
@@ -168,19 +179,24 @@ export default function Info({
         aboutYou = popup.querySelector("#aboutYou") as HTMLTextAreaElement;
         whyJoin = popup.querySelector("#whyJoin") as HTMLTextAreaElement;
         whichTopic = popup.querySelector("#whichTopic") as HTMLTextAreaElement;
-        aboutYou.onkeyup = (e: KeyboardEvent) =>
-          e.key === "Enter" && Swal.clickConfirm();
-        whyJoin.onkeyup = (e: KeyboardEvent) =>
-          e.key === "Enter" && Swal.clickConfirm();
-        whichTopic.onkeyup = (e: KeyboardEvent) =>
-          e.key === "Enter" && Swal.clickConfirm();
+        // Enter submits, Shift+Enter starts a new line; an Enter that picks
+        // an IME candidate (注音/拼音) does neither.
+        for (const field of [aboutYou, whyJoin, whichTopic]) {
+          field.onkeydown = (e: KeyboardEvent) => {
+            if (isSubmitEnter(e)) {
+              e.preventDefault();
+              Swal.clickConfirm();
+            }
+          };
+        }
       },
       preConfirm: async () => {
-        const aboutRes = aboutYou.value;
-        const joinRes = whyJoin.value;
-        const topicRes = whichTopic.value;
+        const aboutRes = aboutYou.value.trim();
+        const joinRes = whyJoin.value.trim();
+        const topicRes = whichTopic.value.trim();
         if (!aboutRes || !joinRes || !topicRes) {
           Swal.showValidationMessage("Please fill up the following questions");
+          return false;
         }
 
         const res = await JoinSigAPI(
@@ -193,7 +209,8 @@ export default function Info({
           token ?? "",
         );
 
-        if (res.status === 2000) {
+        if (res.ok) {
+          setJoinRequest("pending");
           Swal.fire({
             title: "Success",
             text: "You have successfully applied to join this SIG",
@@ -203,7 +220,7 @@ export default function Info({
         } else {
           Swal.fire({
             title: "Error",
-            text: "Something went wrong, please try again later",
+            text: joinErrorMessage(res),
             icon: "error",
             confirmButtonText: "Confirm",
           });
@@ -316,6 +333,22 @@ export default function Info({
       </div>
     </div>
   );
+}
+
+/** Backend limit for each join-form answer. */
+const JOIN_ANSWER_MAX = 250;
+
+function joinErrorMessage(result: ApiFailure) {
+  switch (result.status) {
+    case CustomStatus.ALREADY_JOINED:
+      return "你已經是這個 SIG 的成員";
+    case CustomStatus.ALREADY_APPLIED:
+      return "你已經申請過了，請等待審核";
+    case CustomStatus.INVALID_CONTENT_LENGTH:
+      return `每題最多 ${JOIN_ANSWER_MAX} 字`;
+    default:
+      return result.message;
+  }
 }
 
 function BadgeList({ userData }: { userData: User | null }) {

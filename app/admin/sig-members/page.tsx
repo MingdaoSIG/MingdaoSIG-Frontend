@@ -21,7 +21,7 @@ export default function ManageMembersChooseSIG() {
     (async () => {
       try {
         const response = await sigAPI.getSigList();
-        setSigList(response);
+        setSigList(Array.isArray(response) ? response : []);
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         console.error(message);

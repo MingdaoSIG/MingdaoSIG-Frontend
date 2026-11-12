@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
+import { toast } from "@/components/mobile/Toast";
 import type { TComments } from "@/interfaces/comments";
 import type { TThread } from "@/interfaces/Thread";
 
@@ -24,14 +26,14 @@ export default function Thread({ post, isAnnouncement }: Props) {
   const commentsAnchorRef = useRef<HTMLDivElement>(null);
 
   const refetchComments = useCallback(async () => {
-    try {
-      const res = await GetCommentAPI(post);
-      setComments(res?.data ?? []);
-    } catch (_err) {
-      setComments([]);
-    } finally {
-      setCommentsLoading(false);
+    const { comments, error } = await GetCommentAPI(post);
+    if (error) {
+      // Keep what is already shown; just say the refresh failed.
+      toast.error(error.message);
+    } else {
+      setComments(comments);
     }
+    setCommentsLoading(false);
   }, [post]);
 
   useEffect(() => {
@@ -70,7 +72,9 @@ export default function Thread({ post, isAnnouncement }: Props) {
       {!isAnnouncement && (
         <>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
-            <CommentList comments={comments} isLoading={commentsLoading} />
+            <SectionErrorBoundary label="留言">
+              <CommentList comments={comments} isLoading={commentsLoading} />
+            </SectionErrorBoundary>
           </div>
           <CommentComposer
             postId={post._id ?? ""}

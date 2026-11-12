@@ -2,17 +2,17 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { apiRequest } from "@/modules/api/client";
 import { CustomStatus } from "@/modules/customStatusCode";
 import BackToHome from "./Status/BackToHome/BackToHome";
-import Failed from "./Status/Failed/Failed";
 import Success from "./Status/Success/Success";
 
-type ConfirmStatus = 0 | 1 | 2;
+type Decision = "accept" | "reject";
 
-interface ConfirmResponse {
-  status: number;
-  message?: string;
-}
+type Outcome =
+  | { kind: "done"; decision: Decision }
+  | { kind: "already" }
+  | { kind: "failed"; message: string };
 
 export default function ConfirmPage() {
   return (
@@ -28,148 +28,124 @@ function Fallback() {
       <div className="relative h-16 w-16">
         <div className="absolute inset-0 animate-spin rounded-full border-4 border-line-strong border-t-brand-700"></div>
       </div>
-      <h1 className="font-bold text-5xl text-ink-900">Confirming</h1>
     </div>
   );
 }
 
+// Opening the email link only shows the request. Mail scanners follow
+// links, so nothing is decided until a SIG leader presses a button, which
+// sends POST /sig/confirm/:confirmId.
 function ConfirmContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const confirmId = searchParams.get("confirmId");
   const accept = searchParams.get("accept");
+  // The link the leader clicked (accept=true / false) is only a hint.
+  const suggested: Decision | null =
+    accept === "true" ? "accept" : accept === "false" ? "reject" : null;
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [confirmStatus, setConfirmStatus] = useState<ConfirmStatus | null>(
-    null,
-  );
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const confirmUrl =
-    isValidConfirmId(confirmId) && isValidAccept(accept)
-      ? `${process.env.NEXT_PUBLIC_API_URL}/sig/confirm/${confirmId}?accept=${accept}`
-      : null;
+  const [pending, setPending] = useState<Decision | null>(null);
+  const [outcome, setOutcome] = useState<Outcome | null>(null);
 
   useEffect(() => {
-    if (!isValidConfirmId(confirmId) || !isValidAccept(accept)) {
+    if (!isValidConfirmId(confirmId)) {
       router.replace("/");
-      return;
     }
-  }, [confirmId, accept, router]);
+  }, [confirmId, router]);
 
-  useEffect(() => {
-    if (!confirmUrl) {
-      return;
-    }
-
-    let isMounted = true;
-    const controller = new AbortController();
-
-    const confirmRequest = async () => {
-      try {
-        const status = await sendConfirmRequest(
-          new URL(confirmUrl),
-          controller.signal,
-        );
-        if (isMounted) {
-          setConfirmStatus(status);
-          setIsLoading(false);
-        }
-      } catch (error: unknown) {
-        if (
-          isMounted &&
-          (!(error instanceof Error) || error.name !== "AbortError")
-        ) {
-          console.error("Confirm request failed:", error);
-          setErrorMessage(
-            error instanceof Error ? error.message : "Unknown error occurred",
-          );
-          setConfirmStatus(2);
-          setIsLoading(false);
-        }
-      }
-    };
-
-    confirmRequest();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [confirmUrl]);
-
-  if (isLoading) {
+  if (!isValidConfirmId(confirmId)) {
     return <Fallback />;
   }
 
-  if (confirmStatus === null) {
+  async function decide(decision: Decision) {
+    if (pending || !isValidConfirmId(confirmId)) {
+      return;
+    }
+    setPending(decision);
+    const result = await apiRequest(`/sig/confirm/${confirmId}`, {
+      method: "POST",
+      body: { accept: decision === "accept" },
+    });
+    setPending(null);
+    if (result.ok) {
+      setOutcome({ kind: "done", decision });
+    } else if (result.status === CustomStatus.ALREADY_CONFIRMED) {
+      setOutcome({ kind: "already" });
+    } else if (result.kind === "not-found") {
+      setOutcome({ kind: "failed", message: "找不到這筆申請，可能已被取消" });
+    } else {
+      setOutcome({ kind: "failed", message: result.message });
+    }
+  }
+
+  if (outcome?.kind === "done") {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
-        <Failed message="Invalid request" />
+        <Success
+          message={outcome.decision === "accept" ? "已同意申請" : "已拒絕申請"}
+        />
+        <BackToHome />
+      </div>
+    );
+  }
+  if (outcome?.kind === "already") {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
+        <Success message="這筆申請已經審核過了" />
         <BackToHome />
       </div>
     );
   }
 
-  const acceptMessage = accept === "true" ? "Accepted" : "Rejected";
+  const button =
+    "inline-flex h-11 min-w-28 cursor-pointer items-center justify-center rounded-control px-5 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60";
 
-  switch (confirmStatus) {
-    case 0:
-      return (
-        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
-          <Success message={`Successfully ${acceptMessage}`} />
-          <BackToHome />
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-6 p-4">
+      <div className="w-full max-w-md rounded-card border border-line bg-surface p-6 text-center shadow-card">
+        <h1 className="mb-2 font-bold text-ink-900 text-xl">SIG 加入申請</h1>
+        <p className="mb-1 text-ink-700 text-sm leading-6">
+          申請內容已寄到你的信箱。請選擇是否同意這位同學加入 SIG。
+        </p>
+        <p className="mb-5 break-all text-ink-400 text-xs">
+          申請編號：{confirmId}
+        </p>
+        {outcome?.kind === "failed" && (
+          <p role="alert" className="mb-4 text-danger-700 text-sm">
+            {outcome.message}
+          </p>
+        )}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            className={`${button} bg-brand-700 text-white hover:bg-brand-800 ${
+              suggested === "accept"
+                ? "ring-2 ring-brand-700/40 ring-offset-2"
+                : ""
+            }`}
+            disabled={pending !== null}
+            onClick={() => decide("accept")}
+          >
+            {pending === "accept" ? "處理中…" : "同意"}
+          </button>
+          <button
+            type="button"
+            className={`${button} border border-line text-ink-800 hover:bg-field ${
+              suggested === "reject"
+                ? "ring-2 ring-ink-400/40 ring-offset-2"
+                : ""
+            }`}
+            disabled={pending !== null}
+            onClick={() => decide("reject")}
+          >
+            {pending === "reject" ? "處理中…" : "拒絕"}
+          </button>
         </div>
-      );
-    case 1:
-      return (
-        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
-          <Success message="Already Reviewed" />
-          <BackToHome />
-        </div>
-      );
-    default:
-      return (
-        <div className="flex h-full flex-col items-center justify-center gap-8 p-4">
-          <Failed message={errorMessage || "Please try again later"} />
-          <BackToHome />
-        </div>
-      );
-  }
-}
-
-async function sendConfirmRequest(
-  confirmUrl: URL,
-  signal?: AbortSignal,
-): Promise<ConfirmStatus> {
-  try {
-    const response = await fetch(confirmUrl.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      signal,
-    });
-
-    const data: ConfirmResponse = await response.json();
-
-    if (data.status === CustomStatus.OK) {
-      return 0;
-    }
-    if (data.status === CustomStatus.ALREADY_CONFIRMED) {
-      return 1;
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return 2;
-  } catch (error) {
-    console.error("Request failed:", error);
-    throw error;
-  }
+      </div>
+      <BackToHome />
+    </div>
+  );
 }
 
 function isValidConfirmId(uuid: string | null): uuid is string {
@@ -179,11 +155,4 @@ function isValidConfirmId(uuid: string | null): uuid is string {
   const uuidV4Regex =
     /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
   return uuidV4Regex.test(uuid);
-}
-
-function isValidAccept(accept: string | null): accept is "true" | "false" {
-  if (!accept) {
-    return false;
-  }
-  return accept === "true" || accept === "false";
 }

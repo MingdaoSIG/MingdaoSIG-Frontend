@@ -11,6 +11,7 @@ import type { Sig } from "@/interfaces/Sig";
 // Interfaces, Types
 import type { TThread } from "@/interfaces/Thread";
 import type { User } from "@/interfaces/User";
+import { getErrorMessage } from "@/modules/api/client";
 
 // Modules
 import markdownToPlainText from "@/modules/markdownToPlainText";
@@ -20,6 +21,24 @@ import {
 } from "../configs/announcement";
 // Configs
 import { sigDefaultColors } from "../configs/sigDefaultColors";
+
+/** Populated object, or null for a missing / unpopulated reference. */
+function asObject<T>(value: unknown): T | null {
+  return typeof value === "object" && value !== null ? (value as T) : null;
+}
+
+/** Only well-formed posts are rendered; anything else is skipped. */
+function isThread(value: unknown): value is TThread {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as TThread)._id === "string"
+  );
+}
+
+function sigIdOf(thread: TThread) {
+  return asObject<Sig>(thread.sig)?._id;
+}
 
 // Helper function to fix cover URL
 function fixCoverUrl(cover: string) {
@@ -45,9 +64,11 @@ const Thread = ({
   threadData: TThread;
   priority?: boolean;
 }) => {
-  const user = threadData.user as User;
-  const sig = threadData.sig as unknown as Sig;
-  const isAnnouncement = sig._id === announcementSigId;
+  const user = asObject<User>(threadData.user);
+  const sig = asObject<Sig>(threadData.sig);
+  const isAnnouncement = sig?._id === announcementSigId;
+  const hashtags = Array.isArray(threadData.hashtag) ? threadData.hashtag : [];
+  const cover = typeof threadData.cover === "string" ? threadData.cover : "";
 
   return (
     <Link
@@ -57,10 +78,10 @@ const Thread = ({
       }`}
     >
       {/* Cover Image */}
-      {threadData.cover && (
+      {cover && (
         <div className="relative h-48 w-full bg-field">
           <Image
-            src={fixCoverUrl(threadData.cover)}
+            src={fixCoverUrl(cover)}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, 50vw"
@@ -79,7 +100,7 @@ const Thread = ({
               <span className="truncate text-[13px] text-ink-700">
                 {user?.name}
               </span>
-              <SigChip sig={sig} />
+              {sig && <SigChip sig={sig} />}
             </div>
             <div className="shrink-0 text-[13px] text-ink-500">
               {
@@ -106,29 +127,27 @@ const Thread = ({
           className={`mb-3 text-[0.9375rem] text-ink-700 leading-[1.7] ${
             isAnnouncement
               ? "line-clamp-3"
-              : threadData.hashtag && threadData.hashtag.length > 0
+              : hashtags.length > 0
                 ? "line-clamp-2"
                 : "line-clamp-4"
           }`}
         >
-          {markdownToPlainText(threadData.content)}
+          {markdownToPlainText(threadData.content ?? "")}
         </p>
 
         {/* Hashtags - Horizontal scroll without scrollbar */}
-        {threadData.hashtag &&
-          threadData.hashtag.length > 0 &&
-          !isAnnouncement && (
-            <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1">
-              {threadData.hashtag.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex-shrink-0 whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+        {hashtags.length > 0 && !isAnnouncement && (
+          <div className="scrollbar-hide mb-3 flex gap-2 overflow-x-auto pb-1">
+            {hashtags.map((tag) => (
+              <span
+                key={tag}
+                className="flex-shrink-0 whitespace-nowrap rounded-chip bg-brand-50 px-2.5 py-1 font-medium text-brand-800 text-xs"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Spacer to push footer to bottom */}
         <div className="flex-grow"></div>
@@ -198,12 +217,39 @@ const ThreadSkeleton = () => {
   );
 };
 
+/** Shown when a post list could not be loaded. */
+export const ThreadsListError = ({
+  error,
+  onRetry,
+}: {
+  error: unknown;
+  onRetry?: () => void;
+}) => (
+  <div
+    role="alert"
+    className="flex h-full min-h-48 w-full flex-col items-center justify-center gap-3 text-ink-500"
+  >
+    <p>{getErrorMessage(error)}</p>
+    {onRetry && (
+      <button
+        type="button"
+        className="rounded-control border border-line bg-surface px-4 py-2 text-ink-800 text-sm"
+        onClick={() => onRetry()}
+      >
+        重試
+      </button>
+    )}
+  </div>
+);
+
 export const InfinityThreadsList = ({
   data,
   height,
   fetchNextPage,
   isFetchingNextPage,
   announcementData,
+  error,
+  onRetry,
 }: {
   data: InfiniteData<TThread[], unknown> | undefined;
   height?: string;
@@ -214,8 +260,27 @@ export const InfinityThreadsList = ({
   >;
   isFetchingNextPage: boolean;
   announcementData?: InfiniteData<TThread[], unknown>;
+  /** Error from the list query, if the last fetch failed. */
+  error?: Error | null;
+  onRetry?: () => void;
 }) => {
   const postList = useRef(null);
+  const pages = (data?.pages ?? []).map((page) =>
+    Array.isArray(page) ? page.filter(isThread) : [],
+  );
+  const hasPosts = pages.some((page) => page.length > 0);
+  const failed = Boolean(error);
+
+  // The announcement query may fail or come back empty: only a real,
+  // recent announcement is shown.
+  const firstAnnouncement = announcementData?.pages?.[0]?.[0];
+  const announcement = isThread(firstAnnouncement) ? firstAnnouncement : null;
+  const showAnnouncement =
+    announcement !== null &&
+    Math.floor(
+      (Date.now() - new Date(announcement.createdAt ?? "").getTime()) /
+        (1000 * 60 * 60 * 24),
+    ) < announcementStayTime;
 
   const onScroll = useCallback(() => {
     if (postList.current) {
@@ -223,11 +288,12 @@ export const InfinityThreadsList = ({
       // 距離底部 1200px 時就開始加載（更早觸發）
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 1200;
 
-      if (isNearBottom && !isFetchingNextPage) {
+      // Stop after a failed page: the user retries with the button.
+      if (isNearBottom && !isFetchingNextPage && !failed) {
         fetchNextPage();
       }
     }
-  }, [fetchNextPage, isFetchingNextPage]);
+  }, [fetchNextPage, isFetchingNextPage, failed]);
 
   useEffect(() => {
     const listInnerElement = postList.current as HTMLElement | null;
@@ -245,40 +311,34 @@ export const InfinityThreadsList = ({
     }
   }, [onScroll]);
 
-  return data && data.pages[0].length >= 1 ? (
+  if (!hasPosts && failed) {
+    return (
+      <div style={{ height }} className="w-full">
+        <ThreadsListError error={error} onRetry={onRetry} />
+      </div>
+    );
+  }
+
+  return hasPosts ? (
     <div
       className="scrollbar-hide w-full overflow-y-auto"
       style={{ height }}
       ref={postList}
     >
       {/* Announcement Section */}
-      {announcementData &&
-        announcementData.pages[0].length >= 1 &&
-        announcementData.pages.map((page: TThread[], _index: number) => {
-          const currentDate = Date.now();
-          const postDate = new Date(page[0].createdAt ?? "").getTime();
-          const diffDays = Math.floor(
-            (currentDate - postDate) / (1000 * 60 * 60 * 24),
-          );
-
-          if (diffDays < announcementStayTime) {
-            return (
-              <div key={page[0]._id} className="sm:col-span-2">
-                <Thread threadData={page[0]} priority={true} />
-              </div>
-            );
-          }
-          return null;
-        })}
+      {showAnnouncement && (
+        <div key={announcement._id} className="sm:col-span-2">
+          <Thread threadData={announcement} priority={true} />
+        </div>
+      )}
 
       {/* Threads Grid */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-        {data.pages.map((page: TThread[], pageIndex: number) => (
+        {pages.map((page: TThread[], pageIndex: number) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: paginated data has no unique page identifier
           <Fragment key={`page-${pageIndex}`}>
             {page.map((item, itemIndex) => {
-              const sig = item.sig as unknown as Sig;
-              const isAnnouncement = sig._id === announcementSigId;
+              const isAnnouncement = sigIdOf(item) === announcementSigId;
               // Calculate global index for priority
               const globalIndex = pageIndex * page.length + itemIndex;
               const shouldPrioritize = globalIndex < 4;
@@ -303,6 +363,21 @@ export const InfinityThreadsList = ({
           </>
         )}
       </div>
+      {failed && !isFetchingNextPage && (
+        <div
+          role="alert"
+          className="flex items-center justify-center gap-3 py-4 text-ink-500 text-sm"
+        >
+          <span>{getErrorMessage(error)}</span>
+          <button
+            type="button"
+            className="rounded-control border border-line bg-surface px-3 py-1.5 text-ink-800"
+            onClick={() => fetchNextPage()}
+          >
+            重試
+          </button>
+        </div>
+      )}
     </div>
   ) : (
     <div className="flex h-full w-full items-center justify-center">

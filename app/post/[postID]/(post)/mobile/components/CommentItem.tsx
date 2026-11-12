@@ -15,34 +15,50 @@ type Props = {
 };
 
 export default function CommentItem({ comment }: Props) {
+  // A deleted author comes back without a user: show no profile link.
+  const customId = comment.user?.customId;
+  const avatar = (
+    <Image
+      src={comment.user?.avatar || DEFAULT_AVATAR}
+      alt={customId ? `${customId} avatar` : ""}
+      width={36}
+      height={36}
+      className="h-9 w-9 rounded-full object-cover"
+      unoptimized
+      onError={(e) => {
+        (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+      }}
+    />
+  );
+
   return (
     <div className="flex gap-2.5 rounded-card border border-line bg-surface p-3">
-      <TapScaleLink
-        href={`/@${comment.user.customId}`}
-        className="flex-shrink-0"
-        whileTap={{ scale: 0.9 }}
-      >
-        <Image
-          src={comment.user.avatar || DEFAULT_AVATAR}
-          alt={`${comment.user.customId} avatar`}
-          width={36}
-          height={36}
-          className="h-9 w-9 rounded-full object-cover"
-          unoptimized
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
-          }}
-        />
-      </TapScaleLink>
+      {customId ? (
+        <TapScaleLink
+          href={`/@${customId}`}
+          className="flex-shrink-0"
+          whileTap={{ scale: 0.9 }}
+        >
+          {avatar}
+        </TapScaleLink>
+      ) : (
+        <div className="flex-shrink-0">{avatar}</div>
+      )}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-1.5">
-          <TapScaleLink
-            href={`/@${comment.user.customId}`}
-            className="font-semibold text-ink-900 text-sm"
-            whileTap={{ scale: 0.96 }}
-          >
-            @{comment.user.customId}
-          </TapScaleLink>
+          {customId ? (
+            <TapScaleLink
+              href={`/@${customId}`}
+              className="font-semibold text-ink-900 text-sm"
+              whileTap={{ scale: 0.96 }}
+            >
+              @{customId}
+            </TapScaleLink>
+          ) : (
+            <span className="font-semibold text-ink-500 text-sm">
+              已刪除的使用者
+            </span>
+          )}
           <span className="text-ink-500 text-xs">
             {relativeTime(comment.createdAt ?? "")}
           </span>

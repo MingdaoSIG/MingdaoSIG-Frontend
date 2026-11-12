@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { isSubmitEnter } from "@/utils/keyboard";
 import { EditorErrorBoundary } from "../shared/EditorErrorBoundary";
 // Types
 import type { TPostAPI } from "../types/postAPI";
@@ -125,8 +126,13 @@ export default function NewPostMobile({
   };
 
   const handleTagInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
+    if (e.key !== "Enter") {
+      return;
+    }
+    // Never submit the form from this field; and an Enter that picks an
+    // IME candidate (注音/拼音) must not add a half-typed tag.
+    e.preventDefault();
+    if (isSubmitEnter(e, true)) {
       handleAddTag();
     }
   };

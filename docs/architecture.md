@@ -36,8 +36,7 @@ app/                      # Next.js App Router
 │   └── post-query/      # Post range query
 ├── api/                 # Next.js API Routes
 │   ├── auth/            # NextAuth routes
-│   ├── version/         # Version check endpoint
-│   └── webhook/         # Webhook handlers
+│   └── version/         # Version check endpoint
 ├── changelog/           # Changelog page
 ├── confirm/             # Email confirmation page
 ├── dashboard/           # User dashboard

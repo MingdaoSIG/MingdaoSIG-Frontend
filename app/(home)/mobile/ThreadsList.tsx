@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 
 // Components
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { PullToRefresh } from "@/components/mobile/PullToRefresh";
 import {
   InfinityThreadsList,
@@ -17,7 +18,7 @@ const ThreadsList = () => {
   const [dataType, setDataType] = useState("latest");
   const pageSize = 10;
 
-  const { data, fetchNextPage, isFetchingNextPage, isLoading, refetch } =
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, refetch, error } =
     useAllPost({
       pageSize,
       sort: dataType,
@@ -62,17 +63,21 @@ const ThreadsList = () => {
         sigListCallback={setShowList}
       />
 
-      {isLoading ? (
-        <ThreadsListSkeleton repeat={10} height="auto" />
-      ) : (
-        <InfinityThreadsList
-          data={data}
-          height="calc(100dvh - 12.5rem)"
-          fetchNextPage={fetchNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          announcementData={announcementData}
-        />
-      )}
+      <SectionErrorBoundary label="貼文列表">
+        {isLoading ? (
+          <ThreadsListSkeleton repeat={10} height="auto" />
+        ) : (
+          <InfinityThreadsList
+            data={data}
+            height="calc(100dvh - 12.5rem)"
+            fetchNextPage={fetchNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            announcementData={announcementData}
+            error={error}
+            onRetry={() => refetch()}
+          />
+        )}
+      </SectionErrorBoundary>
     </PullToRefresh>
   );
 };

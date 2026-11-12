@@ -1,141 +1,97 @@
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import type { TThread } from "@/interfaces/Thread";
+import { ApiError, apiRequest } from "@/modules/api/client";
 
 type PostQuery = {
   pageSize: number;
   sort?: string;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Every list query throws an ApiError unless the backend answered 2000 with
+// an array, so components see a clean error state instead of `undefined`
+// pages (which used to crash the home page on any non-2000 answer).
 
-export const useAllPost = (query: PostQuery) => {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.removeQueries({ queryKey: ["allPost"] });
-  }, [queryClient]);
-
-  return useInfiniteQuery<TThread[], Error>({
-    queryKey: ["allPost", query],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(
-        `${API_URL}/post/list?` +
-          new URLSearchParams({
-            skip: String(
-              (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize,
-            ),
-            limit: String(query.pageSize),
-            sort: query.sort ? String(query.sort) : "latest",
-          }),
-        {
-          method: "GET",
-        },
-      );
-
-      const responseData = await response.json();
-      return responseData.data as TThread[];
+/** `sort` omitted means the backend default (most liked first). */
+async function fetchPostPage(
+  path: string,
+  query: PostQuery,
+  pageParam: unknown,
+  signal: AbortSignal,
+): Promise<TThread[]> {
+  const page = Number(pageParam);
+  const result = await apiRequest<TThread[]>(path, {
+    query: {
+      skip: (page === 0 ? 0 : page - 1) * query.pageSize,
+      limit: query.pageSize,
+      sort: query.sort,
     },
+    signal,
+  });
+  if (!result.ok) {
+    throw new ApiError(result);
+  }
+  if (!Array.isArray(result.data)) {
+    throw new ApiError({
+      ok: false,
+      kind: "invalid-response",
+      status: result.status,
+      httpStatus: result.httpStatus,
+      message: "伺服器暫時無法回應，請稍後再試",
+      body: result.body,
+    });
+  }
+  return result.data;
+}
+
+function usePostList(
+  key: readonly unknown[],
+  path: string,
+  query: PostQuery,
+  enabled: boolean = true,
+) {
+  return useInfiniteQuery<TThread[], Error>({
+    queryKey: [...key, query],
+    queryFn: ({ pageParam, signal }) =>
+      fetchPostPage(
+        path,
+        { ...query, sort: query.sort ?? "latest" },
+        pageParam,
+        signal,
+      ),
+    enabled,
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage = [], allPages) => {
       return lastPage.length > 0 ? allPages.length + 1 : undefined;
     },
     initialPageParam: 0,
   });
-};
+}
 
-export const useUserPost = (userId: string, query: PostQuery) => {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.removeQueries({ queryKey: ["userPost"] });
-  }, [queryClient]);
+export const useAllPost = (query: PostQuery) =>
+  usePostList(["allPost"], "/post/list", query);
 
-  return useInfiniteQuery<TThread[], Error>({
-    queryKey: ["userPost", query],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(
-        `${API_URL}/post/list/user/${userId}?` +
-          new URLSearchParams({
-            skip: String(
-              (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize,
-            ),
-            limit: String(query.pageSize),
-            sort: query.sort ? String(query.sort) : "latest",
-          }),
-        {
-          method: "GET",
-        },
-      );
+export const useUserPost = (userId: string, query: PostQuery) =>
+  usePostList(
+    ["userPost", userId],
+    `/post/list/user/${encodeURIComponent(userId)}`,
+    query,
+    Boolean(userId),
+  );
 
-      const responseData = await response.json();
-      return responseData.data as TThread[];
-    },
-    staleTime: 1 * 60 * 1000,
-    getNextPageParam: (lastPage = [], allPages) => {
-      return lastPage.length > 0 ? allPages.length + 1 : undefined;
-    },
-    initialPageParam: 0,
-  });
-};
+export const useSigPost = (sigId: string, query: PostQuery) =>
+  usePostList(
+    ["sigPost", sigId],
+    `/post/list/sig/${encodeURIComponent(sigId)}`,
+    query,
+    Boolean(sigId),
+  );
 
-export const useSigPost = (sigId: string, query: PostQuery) => {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.removeQueries({ queryKey: ["sigPost"] });
-  }, [queryClient]);
-
-  return useInfiniteQuery<TThread[], Error>({
-    queryKey: ["sigPost", query],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(
-        `${API_URL}/post/list/sig/${sigId}?` +
-          new URLSearchParams({
-            skip: String(
-              (Number(pageParam) === 0 ? 0 : Number(pageParam) - 1) *
-                query.pageSize,
-            ),
-            limit: String(query.pageSize),
-            sort: query.sort ? String(query.sort) : "latest",
-          }),
-        {
-          method: "GET",
-        },
-      );
-
-      const responseData = await response.json();
-      return responseData.data as TThread[];
-    },
-    staleTime: 1 * 60 * 1000,
-    getNextPageParam: (lastPage = [], allPages) => {
-      return lastPage.length > 0 ? allPages.length + 1 : undefined;
-    },
-    initialPageParam: 0,
-  });
-};
-
-export const useTopPost = (query: PostQuery) => {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.removeQueries({ queryKey: ["topPost"] });
-  }, [queryClient]);
-
-  return useInfiniteQuery<TThread[], Error>({
+export const useTopPost = (query: PostQuery) =>
+  useInfiniteQuery<TThread[], Error>({
     queryKey: ["topPost", query],
-    queryFn: async () => {
-      const response = await fetch(
-        `${API_URL}/post/list?skip=0&limit=${String(Number(query.pageSize))}`,
-        {
-          method: "GET",
-        },
-      );
-      const responseData = await response.json();
-      return responseData.data as TThread[];
-    },
+    queryFn: ({ signal }) =>
+      fetchPostPage("/post/list", { pageSize: query.pageSize }, 0, signal),
     staleTime: 1 * 60 * 1000,
-    getNextPageParam: (lastPage = [], allPages) => {
-      return lastPage.length > 0 ? allPages.length + 1 : undefined;
-    },
+    getNextPageParam: () => undefined,
     initialPageParam: 0,
   });
-};

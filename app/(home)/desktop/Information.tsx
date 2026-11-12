@@ -6,13 +6,12 @@ import { InformationSkeleton } from "@/components/Information/desktop/Skeleton";
 import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors";
 import type { Sig } from "@/interfaces/Sig";
 import type { TThread } from "@/interfaces/Thread";
+import { apiRequest } from "@/modules/api/client";
 
 // Modules / Components
 import maxMatch from "@/modules/maxMatch";
 // APIs / Types
 import { useTopPost } from "@/utils/usePost";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // ----------------------
 // Helpers
@@ -142,28 +141,26 @@ export default function Information() {
     const controller = new AbortController();
 
     (async () => {
-      try {
-        setSigsLoading(true);
-        setSigsError(null);
-        const url = API_URL ? `${API_URL}/sig/list` : "/sig/list";
-        const res = await fetch(url, {
-          method: "GET",
-          signal: controller.signal,
-          headers: { "cache-control": "no-store" },
-        });
-        if (!res.ok) {
-          throw new Error(`SIG list failed: ${res.status}`);
-        }
-        const json = await res.json();
-        const all = (json?.data ?? []) as Sig[];
-        setSigs(all);
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          setSigsError(err.message || "Failed to load SIGs.");
-        }
-      } finally {
-        setSigsLoading(false);
+      setSigsLoading(true);
+      setSigsError(null);
+      const result = await apiRequest<Sig[]>("/sig/list", {
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) {
+        return;
       }
+      if (result.ok && Array.isArray(result.data)) {
+        setSigs(
+          result.data.filter(
+            (sig) => sig && typeof sig.name === "string" && sig.customId,
+          ),
+        );
+      } else {
+        setSigsError(
+          result.ok ? "SIG 列表載入失敗，請稍後再試" : result.message,
+        );
+      }
+      setSigsLoading(false);
     })();
 
     return () => controller.abort();
@@ -178,7 +175,13 @@ export default function Information() {
   } = useTopPost({ pageSize });
 
   const posts: MinimalThread[] = useMemo(() => {
-    const raw: TThread[] = data?.pages?.[0] ?? [];
+    const first: unknown = data?.pages?.[0];
+    const raw = (Array.isArray(first) ? first : []).filter(
+      (item): item is TThread =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof (item as TThread)._id === "string",
+    );
 
     return raw.map((item) => ({
       _id: item._id,

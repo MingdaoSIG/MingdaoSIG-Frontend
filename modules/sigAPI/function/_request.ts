@@ -1,17 +1,31 @@
-import type {
-  LimitedRequestInit,
-  PaginationQuery,
-  ParsedPaginationQuery,
-} from "@/interfaces/Request";
+import type { LimitedRequestInit, PaginationQuery } from "@/interfaces/Request";
+import { ApiError, apiRequest } from "@/modules/api/client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-const baseUrlMap = {
-  default: API_BASE_URL,
-  dev: "http://localhost:3001",
-};
+// Thin wrappers kept for the sigAPI module. They resolve to `data` and
+// throw an ApiError (with a Traditional Chinese message) for anything that
+// is not a 2000 answer with data, including 429 plain text and 502 HTML.
+
+async function unwrap(path: string, options: Parameters<typeof apiRequest>[1]) {
+  const result = await apiRequest(path, options);
+  if (!result.ok) {
+    throw new ApiError(result);
+  }
+  if (result.data === undefined || result.data === null) {
+    throw new ApiError({
+      ok: false,
+      kind: "invalid-response",
+      status: result.status,
+      httpStatus: result.httpStatus,
+      message: "伺服器暫時無法回應，請稍後再試",
+      body: result.body,
+    });
+  }
+  // biome-ignore lint/suspicious/noExplicitAny: callers type the payload
+  return result.data as any;
+}
 
 async function get(
-  baseUrlType: "default" | "dev",
+  _baseUrlType: "default" | "dev",
   path: string,
   option?: {
     token?: string;
@@ -19,39 +33,15 @@ async function get(
     requestOption?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
-  const baseUrl = baseUrlMap[baseUrlType];
-
-  let parsedQuery: ParsedPaginationQuery | "" = "";
-  if (option?.requestQuery) {
-    parsedQuery = {
-      skip: String(option.requestQuery.skip),
-      limit: String(option.requestQuery.limit),
-    };
-  }
-
-  const response = await (
-    await fetch(baseUrl + path + new URLSearchParams(parsedQuery), {
-      ...option?.requestOption,
-      method: "GET",
-      headers: {
-        Authorization: option?.token ? `Bearer ${option.token}` : "",
-        "Content-Type": "application/json",
-      },
-    })
-  ).json();
-
-  if (response.status !== 2000) {
-    throw new Error(response.status);
-  }
-  if (!response.data) {
-    throw new Error("Unexpected response");
-  }
-
-  return response.data;
+  return unwrap(path, {
+    token: option?.token,
+    query: option?.requestQuery,
+    signal: option?.requestOption?.signal ?? undefined,
+  });
 }
 
 async function post(
-  baseUrlType: "default",
+  _baseUrlType: "default",
   path: string,
   body?: object,
   option?: {
@@ -60,36 +50,13 @@ async function post(
     requestOptions?: LimitedRequestInit & { signal?: AbortSignal };
   },
 ) {
-  const baseUrl = baseUrlMap[baseUrlType];
-
-  let parsedQuery: ParsedPaginationQuery | "" = "";
-  if (option?.requestQuery) {
-    parsedQuery = {
-      skip: String(option.requestQuery.skip),
-      limit: String(option.requestQuery.limit),
-    };
-  }
-
-  const response = await (
-    await fetch(baseUrl + path + new URLSearchParams(parsedQuery), {
-      ...option?.requestOptions,
-      method: "POST",
-      headers: {
-        Authorization: option?.token ? `Bearer ${option.token}` : "",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-  ).json();
-
-  if (response.status !== 2000) {
-    throw new Error(response.status);
-  }
-  if (!response.data) {
-    throw new Error("Unexpected response");
-  }
-
-  return response.data;
+  return unwrap(path, {
+    method: "POST",
+    body: body ?? {},
+    token: option?.token,
+    query: option?.requestQuery,
+    signal: option?.requestOptions?.signal ?? undefined,
+  });
 }
 
 const request = {
