@@ -188,7 +188,7 @@ export default function AdminKeywordFilterPage() {
                       add(`${input}\n${text}`);
                     }
                   }}
-                  placeholder="輸入後按 Enter；可一次貼上多個（換行或逗號分隔）"
+                  placeholder="輸入後按 Enter"
                   disabled={full}
                   className={inputClass}
                   aria-invalid={Boolean(inputError) || undefined}
@@ -204,7 +204,8 @@ export default function AdminKeywordFilterPage() {
                   <span className="text-warm-600">{inputError}</span>
                 ) : (
                   <span className="text-ink-500">
-                    每個 1–{KEYWORD_MAX_LENGTH} 字，最多 {KEYWORD_MAX_WORDS}{" "}
+                    可一次貼上多個（換行或逗號分隔）；每個 1–
+                    {KEYWORD_MAX_LENGTH} 字，最多 {KEYWORD_MAX_WORDS}{" "}
                     個；重複的字詞（不分大小寫）只會保留一個。
                   </span>
                 )}

@@ -117,13 +117,13 @@ export function RoleSection({
       <label htmlFor={selectId} className="sr-only">
         角色
       </label>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-2">
         <select
           id={selectId}
           value={role}
           onChange={(event) => setRole(event.target.value as UserRole)}
           disabled={busy || lockedSelf}
-          className={`${selectClass} w-auto min-w-40 flex-1 sm:flex-none`}
+          className={`${selectClass} flex-1`}
         >
           {ROLES.map((item) => (
             <option key={item} value={item}>

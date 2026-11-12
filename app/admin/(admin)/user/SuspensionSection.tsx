@@ -543,9 +543,10 @@ function SuspendDialog({
           ref={reasonRef}
           id={reasonId}
           value={reason}
-          onChange={(event) =>
-            setReason(event.target.value.slice(0, SUSPENSION_REASON_MAX))
-          }
+          onChange={(event) => {
+            setReason(event.target.value.slice(0, SUSPENSION_REASON_MAX));
+            setError("");
+          }}
           maxLength={SUSPENSION_REASON_MAX}
           rows={3}
           disabled={busy}
