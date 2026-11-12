@@ -37,6 +37,8 @@ export type User = {
   badge?: ("developer" | "10.21_user" | "bug_hunter")[]; // 徽章
   follower?: string[]; // 追隨者
   permission?: Permission; // 權限
+  /** Email me when someone comments (only on /user/me and /login). */
+  notifyComments?: boolean;
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本
