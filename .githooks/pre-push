@@ -113,8 +113,15 @@ check_bundle_size() {
     return 0
   fi
 
-  local size_kb
+  # Measure the build output only. Since Next 16, .next/cache holds the
+  # Turbopack build cache and .next/dev holds `next dev` output; neither
+  # is deployed.
+  local size_kb skip_kb dir
   size_kb=$(du -sk .next 2>/dev/null | cut -f1)
+  for dir in .next/cache .next/dev; do
+    skip_kb=$(du -sk "$dir" 2>/dev/null | cut -f1)
+    size_kb=$(( size_kb - ${skip_kb:-0} ))
+  done
   local size_mb=$(( size_kb / 1024 ))
   local limit_kb=$(( BUNDLE_SIZE_LIMIT_MB * 1024 ))
 
