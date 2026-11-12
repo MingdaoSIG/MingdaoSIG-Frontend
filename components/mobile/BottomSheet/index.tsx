@@ -122,7 +122,7 @@ export function BottomSheet({
             <button
               type="button"
               onClick={handleHandleClick}
-              aria-label="Toggle sheet height"
+              aria-label="調整面板高度"
               style={{
                 padding: "10px 0",
                 display: "flex",
@@ -165,7 +165,7 @@ export function BottomSheet({
                   ref={closeButtonRef}
                   type="button"
                   onClick={onClose}
-                  aria-label="Close"
+                  aria-label="關閉"
                   style={{
                     width: 32,
                     height: 32,

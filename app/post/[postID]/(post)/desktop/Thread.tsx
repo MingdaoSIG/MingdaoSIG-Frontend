@@ -51,7 +51,7 @@ const Thread = ({ post }: { post: TThread }) => {
         title: willLike ? "按讚失敗" : "取消按讚失敗",
         text: res.message,
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: "好",
       });
     }
   }
@@ -62,11 +62,13 @@ const Thread = ({ post }: { post: TThread }) => {
 
   async function onDelete() {
     const confirm = await Swal.fire({
-      title: "Are you sure you want to delete this post",
-      icon: "question",
-      confirmButtonText: "Confirm",
+      title: "確定要刪除這篇貼文嗎？",
+      text: "刪除後就無法復原",
+      icon: "warning",
+      confirmButtonText: "刪除",
+      confirmButtonColor: "#b42318",
       showCancelButton: true,
-      cancelButtonText: "Cancel",
+      cancelButtonText: "取消",
       showLoaderOnConfirm: true,
       allowOutsideClick: () => !Swal.isLoading(),
       preConfirm: () =>
@@ -80,18 +82,18 @@ const Thread = ({ post }: { post: TThread }) => {
         title: "刪除失敗",
         text: confirm.value.message,
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: "好",
       });
       return;
     }
     const next = await Swal.fire({
-      title: "Successfully delete post",
+      title: "貼文已刪除",
       icon: "success",
-      confirmButtonText: "Back to home",
-      confirmButtonColor: "#6e7881",
+      confirmButtonText: "回到首頁",
+      confirmButtonColor: "#0b5a83",
       showDenyButton: true,
-      denyButtonText: "Create new post",
-      denyButtonColor: "#82D7FF",
+      denyButtonText: "發布新貼文",
+      denyButtonColor: "#586676",
     });
     if (next.isDenied) {
       route.push("/new");

@@ -72,7 +72,7 @@ const SigList = ({ open, onClose }: SigListProps) => {
     <BottomSheet
       open={open}
       onClose={onClose}
-      title="探索 SIGs"
+      title="探索 SIG"
       snapPoints={["60%", "90%"]}
     >
       {isLoading ? (

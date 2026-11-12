@@ -160,7 +160,7 @@ export default function MetaDataForm({
         {/* Cover Section */}
         <div className="mb-6">
           <span className="mb-2 block font-semibold text-base text-ink-900">
-            Cover
+            封面
           </span>
 
           {data?.cover && data.cover !== "" ? (
@@ -245,7 +245,7 @@ export default function MetaDataForm({
             className="font-semibold text-base text-ink-900"
             htmlFor="tagInput"
           >
-            Hashtag
+            標籤
           </label>
 
           {/* Tag Input */}
@@ -266,7 +266,7 @@ export default function MetaDataForm({
               className="cursor-pointer whitespace-nowrap rounded-control bg-brand-700 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-brand-800"
               type="button"
             >
-              ADD
+              新增
             </button>
           </div>
 

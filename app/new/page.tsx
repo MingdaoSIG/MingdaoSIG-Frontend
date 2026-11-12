@@ -252,20 +252,12 @@ export default function NewPostPage() {
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
-      Swal.fire(
-        "File type not supported",
-        "You can only upload png, jpg, webp, tiff",
-        "error",
-      );
+      Swal.fire("不支援的檔案格式", "只能上傳 JPG、PNG、WebP、TIFF", "error");
       return;
     }
 
     if (file.size > 5 * 1000 * 1000) {
-      Swal.fire(
-        "File too large",
-        "You can only upload files under 5MB",
-        "error",
-      );
+      Swal.fire("檔案太大", "圖片需小於 5MB", "error");
       return;
     }
 
@@ -284,11 +276,7 @@ export default function NewPostPage() {
       );
     } catch (error) {
       console.error("error: ", error);
-      Swal.fire(
-        "Error",
-        "Something went wrong. Please try again later",
-        "error",
-      );
+      Swal.fire("上傳失敗", "封面上傳失敗，請稍後再試", "error");
       return;
     }
   }

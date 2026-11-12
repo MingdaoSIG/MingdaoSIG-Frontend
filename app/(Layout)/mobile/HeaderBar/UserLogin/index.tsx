@@ -10,7 +10,7 @@ export default function UserLogin() {
     return (
       <div className={`${styles.loginUserPanelWrapper} ${styles.secondary}`}>
         <div className={styles.loginUserPanel}>
-          <p>Loading</p>
+          <p>載入中…</p>
         </div>
       </div>
     );
@@ -19,7 +19,7 @@ export default function UserLogin() {
     return (
       <div className={styles.loginUserPanelWrapper} onClick={() => login()}>
         <div className={styles.loginUserPanel}>
-          <p>Login</p>
+          <p>登入</p>
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ export default function UserLogin() {
           }
           width={50}
           height={50}
-          alt="Avatar"
+          alt="你的頭像"
           className={styles.avatar}
         />
       </div>
@@ -54,12 +54,12 @@ export default function UserLogin() {
 
 function confirmLogout(logout: () => void) {
   Swal.fire({
-    text: "Are you sure you want to logout?",
+    text: "確定要登出嗎？",
     icon: "question",
     showCancelButton: true,
-    cancelButtonText: "Cancel",
-    confirmButtonText: "Logout me out now",
-    confirmButtonColor: "#DC0032",
+    cancelButtonText: "取消",
+    confirmButtonText: "登出",
+    confirmButtonColor: "#b42318",
   }).then((result) => {
     if (result.isConfirmed) {
       logout();

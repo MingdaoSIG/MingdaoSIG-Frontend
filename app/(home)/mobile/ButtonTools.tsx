@@ -34,7 +34,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             switchCallback(1);
           }}
         >
-          Latest
+          最新
         </TapScaleButton>
         <TapScaleButton
           type="button"
@@ -48,7 +48,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
             switchCallback(0);
           }}
         >
-          Top
+          熱門
         </TapScaleButton>
       </div>
 
@@ -60,7 +60,7 @@ const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
         onClick={() => sigListCallback(true)}
       >
-        SIGs
+        SIG
       </TapScaleButton>
     </div>
   );

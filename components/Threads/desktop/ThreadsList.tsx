@@ -103,11 +103,11 @@ const Thread = ({
                 }
               </span>
               <span className="flex items-center gap-1">
-                <Heart size={14} aria-label="likes" />
+                <Heart size={14} aria-label="按讚數" />
                 {threadData.likes}
               </span>
               <span className="flex items-center gap-1">
-                <MessageCircle size={14} aria-label="comments" />
+                <MessageCircle size={14} aria-label="留言數" />
                 {threadData.comments}
               </span>
             </div>
@@ -262,7 +262,7 @@ export const InfinityThreadsList = ({
     }
     return (
       <div className="flex h-64 items-center justify-center text-ink-500 text-lg">
-        No Post Yet
+        還沒有貼文
       </div>
     );
   }

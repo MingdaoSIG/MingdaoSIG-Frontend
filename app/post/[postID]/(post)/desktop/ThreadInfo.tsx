@@ -182,7 +182,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               );
             })
           ) : (
-            <p className="py-4 text-center text-ink-500 text-sm">No comments</p>
+            <p className="py-4 text-center text-ink-500 text-sm">尚無留言</p>
           )}
         </div>
         <form

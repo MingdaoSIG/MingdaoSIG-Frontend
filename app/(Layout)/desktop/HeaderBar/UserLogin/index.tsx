@@ -8,7 +8,7 @@ export default function UserLogin() {
   if (isLoading) {
     return (
       <div className="flex h-10 w-28 items-center justify-center rounded-control bg-field font-medium text-ink-500 text-sm">
-        Loading…
+        載入中…
       </div>
     );
   }
@@ -19,7 +19,7 @@ export default function UserLogin() {
         className="h-10 cursor-pointer rounded-control bg-brand-700 px-6 font-semibold text-sm text-white shadow-[0_6px_16px_-10px_rgba(11,90,131,0.9)] transition-colors hover:bg-brand-800"
         onClick={() => login()}
       >
-        Login
+        登入
       </button>
     );
   }
@@ -64,12 +64,12 @@ export default function UserLogin() {
 
 function confirmLogout(logout: () => void) {
   Swal.fire({
-    text: "Are you sure you want to logout?",
+    text: "確定要登出嗎？",
     icon: "question",
     showCancelButton: true,
-    cancelButtonText: "Cancel",
-    confirmButtonText: "Sure!",
-    confirmButtonColor: "#DC0032",
+    cancelButtonText: "取消",
+    confirmButtonText: "登出",
+    confirmButtonColor: "#b42318",
   }).then((result) => {
     if (result.isConfirmed) {
       logout();

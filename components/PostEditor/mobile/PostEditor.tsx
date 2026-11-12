@@ -150,7 +150,7 @@ export default function NewPostMobile({
 
           {/* Content Section */}
           <h2 className="mt-6 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
-            Content
+            內文
           </h2>
           <hr className="mb-3 h-px w-full border-line" />
           <div className="mb-4 h-auto w-full max-w-full">
@@ -161,7 +161,7 @@ export default function NewPostMobile({
 
           {/* Hashtag Section */}
           <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
-            Hashtag
+            標籤
           </h2>
           <hr className="mb-3 h-px w-full border-line" />
           <div className="w-full max-w-full">
@@ -180,7 +180,7 @@ export default function NewPostMobile({
                 onClick={handleAddTag}
                 className="flex-none whitespace-nowrap rounded-control bg-brand-700 px-5 py-2.5 font-semibold text-sm text-white transition-colors active:bg-brand-800"
               >
-                ADD
+                新增
               </button>
             </div>
 
@@ -209,7 +209,7 @@ export default function NewPostMobile({
 
           {/* Cover Section */}
           <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">
-            Cover
+            封面
           </h2>
           <hr className="mb-3 h-px w-full border-line" />
           <div className="w-full max-w-full">

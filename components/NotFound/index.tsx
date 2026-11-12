@@ -41,7 +41,7 @@ export function NotFound({
 
   const defaultContent = {
     show: true,
-    message: "Page Not Found",
+    message: "找不到這個頁面",
   };
   content = { ...defaultContent, ...content };
 
@@ -56,7 +56,7 @@ export function NotFound({
 
   const defaultButton = {
     show: true,
-    message: "Back To Home",
+    message: "回到首頁",
     href: "/",
   };
   button = { ...defaultButton, ...button };

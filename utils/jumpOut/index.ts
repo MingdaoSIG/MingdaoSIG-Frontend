@@ -39,15 +39,16 @@ export function jumpOut(url: string) {
   }
 
   Swal.fire({
-    title: "<strong>HOLD UP</strong>",
+    title: "即將離開 MDSIG",
     html:
-      "<p>This link will take you to <br/><strong>" +
+      "<p>這個連結會前往<br/><strong>" +
       escapeHtml(validatedUrl) +
-      "</strong><br/>Are you sure you want to go there?</p>",
+      "</strong><br/>確定要開啟嗎？</p>",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Yep",
-    cancelButtonText: "Cancel",
+    confirmButtonText: "開啟連結",
+    cancelButtonText: "取消",
+    confirmButtonColor: "#0b5a83",
   }).then((res) => {
     if (res.isConfirmed) {
       window.open(validatedUrl, "_blank", "noopener,noreferrer");

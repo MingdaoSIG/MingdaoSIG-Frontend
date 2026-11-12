@@ -96,7 +96,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
     return (
       <NotFound
         content={{
-          message: "Post Not Found",
+          message: "找不到這篇貼文",
         }}
         image={{
           show: false,

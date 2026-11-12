@@ -97,7 +97,7 @@ export default function CommentComposer({ postId, onSubmitted }: Props) {
       >
         <Image
           src={avatar}
-          alt="your avatar"
+          alt=""
           width={32}
           height={32}
           className="h-8 w-8 flex-shrink-0 rounded-full object-cover"

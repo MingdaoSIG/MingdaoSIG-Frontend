@@ -3,15 +3,15 @@
     "name": "常用連結",
     "children": [
       {
-        "name": "Rule",
+        "name": "平台規範",
         "url": "/post/652cabdb45c0be8f82c54d9a"
       },
       {
-        "name": "About",
+        "name": "關於 MDSIG",
         "url": "/post/65325fce0b891d1f6b5b3131"
       },
       {
-        "name": "Markdown Tourist",
+        "name": "Markdown 教學",
         "url": "/post/652e4591d04b679afdff697e"
       }
     ]
@@ -20,7 +20,7 @@
     "name": "聯絡我們",
     "children": [
       {
-        "name": "Email",
+        "name": "電子郵件",
         "url": "mailto:mdsig20@ms.mingdao.edu.tw"
       },
       {
@@ -28,7 +28,7 @@
         "url": "https://www.instagram.com/mdsig.dev/"
       },
       {
-        "name": "Join Dev",
+        "name": "加入開發團隊",
         "url": "https://forms.gle/ADMk67dcTURxjn979"
       }
     ]
@@ -37,7 +37,7 @@
     "name": "回報錯誤",
     "children": [
       {
-        "name": "MDSIG 2.0 Report",
+        "name": "回報問題",
         "url": "https://forms.gle/QJbcdvTvfcFkNJ1PA"
       }
     ]
@@ -46,7 +46,7 @@
     "name": "統計資料",
     "children": [
       {
-        "name": "Dashboard",
+        "name": "平台數據",
         "url": "/dashboard"
       }
     ]
@@ -55,11 +55,11 @@
     "name": "小小彩蛋",
     "children": [
       {
-        "name": "Banner",
+        "name": "平台橫幅",
         "url": "/images/banner.png"
       },
       {
-        "name": "Dynamic Banner",
+        "name": "動態橫幅",
         "url": "/videos/sig.mp4"
       }
     ]
