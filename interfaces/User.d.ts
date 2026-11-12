@@ -39,6 +39,9 @@ export type User = {
   avatar?: string; // 大頭貼
   /** Badge keys (contract v4 §5.9: any key of `GET /badge/list`). */
   badge?: string[]; // 徽章
+  /** `GET /user/:id`: visible posts, and the likes on them (backend #123). */
+  postCount?: number;
+  likeCount?: number;
   follower?: string[]; // 追隨者
   permission?: Permission; // 權限
   /** Email me when someone comments (only on /user/me and /login). */

@@ -1,6 +1,12 @@
 "use client";
 
-import type { ChangeEvent, ReactNode } from "react";
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { PostCard } from "@/components/PostCard/PostCard";
 import type { TThread } from "@/interfaces/Thread";
 import { FALLBACK_DEFAULT_COVERS } from "@/modules/sigTheme/fallbackCovers";
@@ -110,12 +116,58 @@ export function EditorSettings({
         >
           卡片預覽
         </h2>
-        {/* A picture of the card: not a link, not focusable. */}
-        <div inert className="select-none" data-card-preview>
-          <PostCard post={preview} />
-        </div>
+        <ScaledCard post={preview} />
       </section>
       {actions}
+    </div>
+  );
+}
+
+/** The feed's card width: the preview is drawn at it, then scaled down. */
+const FEED_CARD_WIDTH = 768;
+
+/**
+ * The card exactly as the feed shows it, drawn at the feed's width and
+ * scaled to the column (a picture of it: not a link, not focusable).
+ */
+function ScaledCard({ post }: { post: TThread }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ scale: 1, height: 0 });
+  useEffect(() => {
+    const box = boxRef.current;
+    const card = cardRef.current;
+    if (!box || !card) {
+      return;
+    }
+    const measure = () => {
+      const scale = Math.min(1, box.clientWidth / FEED_CARD_WIDTH);
+      setSize({ scale, height: card.offsetHeight * scale });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div
+      ref={boxRef}
+      className="relative w-full overflow-hidden"
+      style={{ height: size.height || undefined }}
+      data-card-preview
+    >
+      <div
+        ref={cardRef}
+        inert
+        className="absolute top-0 left-0 origin-top-left select-none"
+        style={{
+          width: FEED_CARD_WIDTH,
+          transform: `scale(${size.scale})`,
+        }}
+      >
+        <PostCard post={post} />
+      </div>
     </div>
   );
 }

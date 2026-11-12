@@ -350,11 +350,39 @@ Contract: `design/api-contract-v4.md` §2.
 
 ## Profile and SIG pages
 
-- Your own profile: 「通知設定」 (see above), the tabs 貼文 / 按讚過的貼文 /
-  收藏 / 系列 / 我的數據 (`?tab=` opens one), and on mobile 「關於我」
-  editing. Someone else's profile shows 貼文 / 系列 when they have a series
-- SIG pages: 「編輯 SIG」 (description and avatar) for that SIG's leaders,
-  指導老師 and admins; 「退出 SIG」 for members
+- `/@<id>` (`app/[userID]/(User)/UserPage.tsx`) is a SIG page or a public
+  profile, with one layout (owner decision 2026-11-12, design v4 4A).
+  Desktop: tabs above an infinite list (FE-U1's `InfiniteThreadList`,
+  at most 52rem) and a wider info panel on the right that sticks at
+  `--shell-top` and scrolls inside when it is taller than the window.
+  Phones: no right column; the identity card comes first, and once it has
+  scrolled away a short strip (banner strip, name, the main action) stays
+  at the top of the list.
+- The lookup (`lookup.ts`) asks the cached `/sig/list` (current and old
+  ids) whether the id is a SIG, then makes that one request; the other
+  kind is tried only when the first finds nothing. Old ids answer
+  `redirectTo` and the page replaces the URL, keeping `?tab=` and `#…`.
+- Both panels start with the platform banner (`panel/PanelBanner.tsx`:
+  `/images/banner.svg` at 16:9, the round avatar over its bottom-left
+  edge, badges at its bottom right, 「編輯 SIG」 at its top right for
+  managers); its height is its own aspect ratio, never the column's.
+- SIG page (`panel/SigPanel.tsx`, `panel/SigTabs.tsx`): name, @id, member
+  and follower counts, the description; then by viewer — not a member:
+  申請加入 (`JoinSigDialog`) and 追蹤 / 已追蹤 (FE-U1's `useFollowSig`; the
+  page's follower count follows the answer), the recruiting card, 即將舉行,
+  精選成果, 幹部與老師; a member: 下一個活動 with RSVP, and 通知設定 /
+  退出 SIG behind ⋯; a manager: 「管理這個 SIG」 (`/admin/sigs/:id`). The SIG
+  colour marks the panel's top edge, the join button and the active tab.
+  Tabs 貼文 / 活動 / 成果 / 成員 / 關於 (`?tab=events|showcase|members|about`);
+  成員 lists everyone only for managers (`GET /sig/:id/members`). The
+  announcement SIG shows its posts and nothing else.
+- Profile (`panel/UserPanel.tsx`): name, @id, SIG chips in SIG colours
+  (SIGs the user leads or advises, from `/sig/list`; on your own profile
+  also your memberships, which are private), the bio, and 貼文 / 獲得讚
+  (`postCount` / `likeCount` of `GET /user/:id`). Your own profile adds
+  「編輯個人簡介」, 「個人專區」 (`/me`), 通知設定 and 學習歷程, and keeps
+  the tabs 貼文 / 按讚過的貼文 / 收藏 / 系列 / 我的數據 that 我的 links to
+  (`?tab=`); someone else's shows 貼文 / 系列 when they have a series.
 - Image fields may be a URL, `/image/<id>` or a bare image id; render them
   through `imageUrl()` (`modules/imageUrl`)
 

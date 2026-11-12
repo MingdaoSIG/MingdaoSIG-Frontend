@@ -78,7 +78,7 @@ export function useJoinSig(account: User | Sig | null, isSig: boolean) {
         ? "已加入"
         : state === "rejected"
           ? "再次申請"
-          : "加入 SIG";
+          : "申請加入";
   const disabled =
     closed || state === "" || state === "pending" || state === "accepted";
   const notice =
