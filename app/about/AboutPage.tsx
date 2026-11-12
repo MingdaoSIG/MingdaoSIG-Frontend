@@ -36,17 +36,22 @@ function Section({
   id,
   title,
   children,
+  wide = false,
 }: {
   id: SectionId;
   title: string;
   children: ReactNode;
+  /** Cards and charts use the full width; text keeps a readable measure. */
+  wide?: boolean;
 }) {
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
       data-about-section={id}
-      className="scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:scroll-mt-[var(--shell-top)] lg:p-6"
+      className={`scroll-mt-4 rounded-card border border-line bg-surface p-4 shadow-card lg:scroll-mt-[var(--shell-top)] lg:p-6 ${
+        wide ? "" : "lg:max-w-[52rem]"
+      }`}
     >
       <h2
         id={`${id}-title`}
@@ -213,13 +218,13 @@ export default function AboutPage() {
       <Section id="info" title="資訊">
         <InfoLinks />
       </Section>
-      <Section id="dashboard" title="平台數據">
+      <Section id="dashboard" title="平台數據" wide>
         <LazyDashboard mobile={isMobile} />
       </Section>
       <Section id="changelog" title="更新紀錄">
         <ChangelogList />
       </Section>
-      <Section id="status" title="運行狀態">
+      <Section id="status" title="運行狀態" wide>
         <StatusPanel />
       </Section>
       <Section id="contact" title="聯絡">
@@ -249,7 +254,7 @@ export default function AboutPage() {
   }
 
   return (
-    <main className="layout-doc mx-auto grid w-[min(64rem,100%-4rem)] grid-cols-[11rem_minmax(0,1fr)] items-start gap-6">
+    <main className="layout-doc grid w-full grid-cols-[12rem_minmax(0,1fr)] items-start gap-6 px-6">
       <aside className="sticky top-[var(--shell-top)] flex flex-col gap-3">
         <h1 className="px-3 font-bold text-2xl text-ink-900 leading-[1.4]">
           關於 MDSIG

@@ -56,7 +56,7 @@ export default function DashboardPanel({
         </div>
       )}
       <div
-        className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-3 lg:grid-cols-[repeat(auto-fill,minmax(12rem,1fr))]"
         aria-busy={loading}
       >
         {items.map((stat) => (
@@ -71,11 +71,19 @@ export default function DashboardPanel({
           </div>
         ))}
       </div>
-      <div className="min-w-0">
-        <Bar data={sigPosts} options={barOptions("各 SIG 發文數量", mobile)} />
-      </div>
-      <div className="min-w-0">
-        <Bar data={sigUsers} options={barOptions("各 SIG 人員數量", mobile)} />
+      <div className="grid 3xl:grid-cols-2 grid-cols-1 gap-6">
+        <div className="min-w-0">
+          <Bar
+            data={sigPosts}
+            options={barOptions("各 SIG 發文數量", mobile)}
+          />
+        </div>
+        <div className="min-w-0">
+          <Bar
+            data={sigUsers}
+            options={barOptions("各 SIG 人員數量", mobile)}
+          />
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { Hash } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import SplitBlock from "@/app/(Layout)/splitBlock";
+import { PageColumns } from "@/app/(Layout)/pageColumns";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import {
   InfiniteThreadList,
@@ -126,45 +126,51 @@ export default function TagPage({ tag }: { tag: string }) {
     );
   }
 
-  return (
-    <SplitBlock>
-      <div className="flex flex-col gap-4">
-        <header className="flex items-center gap-4 rounded-card border border-line bg-surface px-6 py-5 shadow-card">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-700">
-            <Hash size={22} aria-hidden />
-          </span>
-          <div className="min-w-0">
-            <p className="text-ink-500 text-sm">標籤</p>
-            <h1 className="truncate font-bold text-2xl text-ink-900 leading-[1.4]">
-              #{tag}
-            </h1>
-          </div>
-          <div className="ml-auto shrink-0">{count}</div>
-        </header>
-        <SectionErrorBoundary label="貼文列表">
-          <InfiniteThreadList
-            query={query}
-            empty={empty}
-            label={`#${tag} 的貼文`}
-          />
-        </SectionErrorBoundary>
-      </div>
-      <div className="flex flex-col gap-4">
-        {related.length > 0 && (
-          <section className="glass shrink-0 rounded-card p-5">
-            <h2 className="mb-3 font-bold text-base text-ink-900 leading-7">
-              相關標籤
-            </h2>
-            <TagChips tags={related} />
-          </section>
-        )}
+  const side = (
+    <>
+      {related.length > 0 && (
         <section className="glass shrink-0 rounded-card p-5">
           <h2 className="mb-3 font-bold text-base text-ink-900 leading-7">
-            熱門標籤
+            相關標籤
           </h2>
-          <TopTags current={tag} />
+          <TagChips tags={related} />
         </section>
-      </div>
-    </SplitBlock>
+      )}
+      <section className="glass shrink-0 rounded-card p-5">
+        <h2 className="mb-3 font-bold text-base text-ink-900 leading-7">
+          熱門標籤
+        </h2>
+        <TopTags current={tag} />
+      </section>
+    </>
+  );
+
+  return (
+    <PageColumns
+      oneSide={side}
+      main={
+        <div className="flex flex-col gap-4">
+          <header className="flex items-center gap-4 rounded-card border border-line bg-surface px-6 py-5 shadow-card">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-700">
+              <Hash size={22} aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <p className="text-ink-500 text-sm">標籤</p>
+              <h1 className="truncate font-bold text-2xl text-ink-900 leading-[1.4]">
+                #{tag}
+              </h1>
+            </div>
+            <div className="ml-auto shrink-0">{count}</div>
+          </header>
+          <SectionErrorBoundary label="貼文列表">
+            <InfiniteThreadList
+              query={query}
+              empty={empty}
+              label={`#${tag} 的貼文`}
+            />
+          </SectionErrorBoundary>
+        </div>
+      }
+    />
   );
 }

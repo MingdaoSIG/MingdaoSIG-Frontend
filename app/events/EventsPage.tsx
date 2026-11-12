@@ -3,12 +3,14 @@
 import { CalendarDays, List } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useCallback, useRef, useState } from "react";
 import { DocPage } from "@/components/desktop/DocPage";
+import { dayHeading, dayKey } from "@/components/Events/eventDays";
 import { SiteEventItem } from "@/components/Events/SiteEventItem";
 import { PageTitle } from "@/components/mobile/PageTitle";
 import { promptLogin } from "@/utils/loginPrompt";
 import useIsMobile from "@/utils/useIsMobile";
+import { ONE_SIDE_MIN, useMinWidth } from "@/utils/useMinWidth";
 import { type EventScope, useSiteEvents } from "@/utils/useSiteEvents";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -81,7 +83,16 @@ function Segmented<T extends string>({
   );
 }
 
-function EventList({ scope, mobile }: { scope: EventScope; mobile: boolean }) {
+function EventList({
+  scope,
+  mobile,
+  highlight,
+}: {
+  scope: EventScope;
+  mobile: boolean;
+  /** The day the side calendar jumped to. */
+  highlight?: string | null;
+}) {
   const list = useSiteEvents(scope);
   const items = list.data?.pages.flatMap((page) => page.items) ?? [];
 
@@ -125,10 +136,38 @@ function EventList({ scope, mobile }: { scope: EventScope; mobile: boolean }) {
       </p>
     );
   }
+  // Grouped by start day, so the side calendar can jump to a day.
+  const groups: { key: string; date: Date; items: typeof items }[] = [];
+  for (const item of items) {
+    const date = new Date(item.event.startAt);
+    const key = dayKey(date);
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) {
+      last.items.push(item);
+    } else {
+      groups.push({ key, date, items: [item] });
+    }
+  }
   return (
     <div className="flex flex-col gap-4" data-event-list>
-      {items.map((item) => (
-        <SiteEventItem key={item.event._id} item={item} mobile={mobile} />
+      {groups.map((group) => (
+        <section
+          key={group.key}
+          data-event-day={group.key}
+          aria-label={dayHeading(group.date)}
+          className={`flex scroll-mt-[var(--shell-top)] flex-col gap-3 rounded-card transition-shadow duration-500 ${
+            highlight === group.key
+              ? "shadow-[0_0_0_3px_var(--color-surface),0_0_0_6px_var(--color-brand-700)]"
+              : ""
+          }`}
+        >
+          <h2 className="px-1 font-semibold text-ink-700 text-sm">
+            {dayHeading(group.date)}
+          </h2>
+          {group.items.map((item) => (
+            <SiteEventItem key={item.event._id} item={item} mobile={mobile} />
+          ))}
+        </section>
       ))}
       {list.hasNextPage && (
         <button
@@ -146,6 +185,8 @@ function EventList({ scope, mobile }: { scope: EventScope; mobile: boolean }) {
 
 export default function EventsPage() {
   const isMobile = useIsMobile();
+  const wide = useMinWidth(ONE_SIDE_MIN);
+  const sideBySide = !isMobile && wide;
   const router = useRouter();
   const params = useSearchParams();
   const { isLogin, isLoading, login } = useUserAccount();
@@ -233,6 +274,61 @@ export default function EventsPage() {
       />
     </div>
   );
+
+  // Layout 5B: from 1280px the list and the month sit side by side and the
+  // 列表 / 月曆 switch goes away.
+  const [highlight, setHighlight] = useState<string | null>(null);
+  const highlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pickDay = useCallback((day: string) => {
+    const group = document.querySelector<HTMLElement>(
+      `[data-event-day="${day}"]`,
+    );
+    if (!group) {
+      return false;
+    }
+    group.scrollIntoView({ behavior: "smooth", block: "start" });
+    setHighlight(day);
+    if (highlightTimer.current) {
+      clearTimeout(highlightTimer.current);
+    }
+    highlightTimer.current = setTimeout(() => setHighlight(null), 2400);
+    return true;
+  }, []);
+
+  if (sideBySide) {
+    return (
+      <main className="flex w-full flex-col gap-4 px-6">
+        <header className="rounded-card border border-line bg-surface px-6 py-5 shadow-card">
+          <h1 className="font-bold text-2xl text-ink-900 leading-[1.4]">
+            活動
+          </h1>
+          <p className="mt-1 text-ink-500 text-sm">各 SIG 接下來的活動與社課</p>
+        </header>
+        <div className="grid grid-cols-[minmax(0,3fr)_minmax(22rem,2fr)] items-start gap-6">
+          <div className="flex min-w-0 flex-col gap-4">
+            <Segmented
+              label="顯示哪些活動"
+              value={effective}
+              options={SCOPES}
+              onChange={setScope}
+              mobile={false}
+            />
+            <EventList scope={effective} mobile={false} highlight={highlight} />
+          </div>
+          <aside
+            data-shell="aside"
+            className="custom-scrollbar sticky top-[var(--shell-top)] max-h-[calc(100dvh-var(--shell-top)-1rem)] min-w-0 self-start overflow-y-auto"
+          >
+            <EventCalendar
+              scope={effective}
+              variant="side"
+              onPickDay={pickDay}
+            />
+          </aside>
+        </div>
+      </main>
+    );
+  }
 
   const body =
     view === "calendar" ? (

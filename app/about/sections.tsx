@@ -188,7 +188,7 @@ export function StatusPanel() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))]">
       <dl className="grid grid-cols-[auto_1fr] content-start gap-x-4 gap-y-2 text-sm">
         <dt className="text-ink-500">前端版本</dt>
         <dd className="text-ink-900">{version("frontend")}</dd>
