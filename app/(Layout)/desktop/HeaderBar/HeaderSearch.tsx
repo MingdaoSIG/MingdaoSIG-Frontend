@@ -24,9 +24,9 @@ export default function HeaderSearch() {
   }
 
   return (
-    <search>
+    <search className="w-full min-w-0 max-w-[24rem]">
       <form onSubmit={onSubmit}>
-        <label className="flex h-10 w-60 items-center gap-2 rounded-control border border-line bg-field px-3 transition-colors focus-within:border-brand-700/40 focus-within:bg-surface focus-within:ring-2 focus-within:ring-brand-700/20 hover:border-line-strong">
+        <label className="flex h-10 w-full items-center gap-2 rounded-control border border-line bg-field px-3 transition-colors focus-within:border-brand-700/40 focus-within:bg-surface focus-within:ring-2 focus-within:ring-brand-700/20 hover:border-line-strong">
           <Search size={16} className="shrink-0 text-ink-500" aria-hidden />
           <span className="sr-only">搜尋貼文</span>
           <input

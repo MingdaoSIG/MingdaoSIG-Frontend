@@ -1,0 +1,219 @@
+"use client";
+
+import {
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  UserRound,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
+import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
+import { useAdminChrome } from "@/utils/useAdminAccess";
+import { useUserAccount } from "@/utils/useUserAccount";
+import { hubGroups } from "../../nav";
+import { confirmLogout } from "../../confirmLogout";
+
+// The avatar menu on desktop: the 我的 hub (decision 7B) as a dropdown,
+// with the same entries as the /me page.
+
+const itemClass =
+  "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-control px-2.5 text-left text-ink-800 text-sm transition-colors hover:bg-field focus-visible:bg-field";
+
+export default function UserMenu() {
+  const { userData, logout } = useUserAccount();
+  const { canOpenAdmin } = useAdminChrome();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
+  const pathname = usePathname();
+  const customId = userData?.customId ?? null;
+  const avatar = imageUrl(userData?.avatar) ?? DEFAULT_AVATAR_URL;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    menuRef.current
+      ?.querySelector<HTMLElement>('[role="menuitem"]')
+      ?.focus({ preventScroll: true });
+    const onPointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => document.removeEventListener("pointerdown", onPointer);
+  }, [open]);
+
+  function close(focusButton: boolean) {
+    setOpen(false);
+    if (focusButton) {
+      buttonRef.current?.focus();
+    }
+  }
+
+  function onMenuKey(event: KeyboardEvent<HTMLDivElement>) {
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ??
+        [],
+    );
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close(true);
+      return;
+    }
+    if (event.key === "Tab") {
+      setOpen(false);
+      return;
+    }
+    let next = -1;
+    if (event.key === "ArrowDown") {
+      next = (index + 1) % items.length;
+    } else if (event.key === "ArrowUp") {
+      next = (index - 1 + items.length) % items.length;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = items.length - 1;
+    }
+    if (next >= 0) {
+      event.preventDefault();
+      items[next]?.focus();
+    }
+  }
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
+        aria-label={`我的：${userData?.name ?? ""}`}
+        data-user-menu
+        onClick={() => setOpen((value) => !value)}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" && !open) {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
+        className={`flex h-10 cursor-pointer items-center gap-1 rounded-control border border-line py-1 pr-1.5 pl-1 transition-colors hover:bg-field ${
+          open ? "bg-field" : "bg-surface"
+        }`}
+      >
+        <Image
+          src={avatar}
+          width={32}
+          height={32}
+          alt=""
+          className="size-8 rounded-full object-cover"
+        />
+        <ChevronDown size={16} aria-hidden className="text-ink-500" />
+      </button>
+      {open && (
+        <div
+          ref={menuRef}
+          id={menuId}
+          role="menu"
+          aria-label="我的"
+          onKeyDown={onMenuKey}
+          className="custom-scrollbar absolute top-12 right-0 z-50 flex max-h-[calc(100dvh-5.5rem)] w-72 flex-col overflow-y-auto rounded-card border border-line bg-surface p-1.5 shadow-card-hover"
+        >
+          <Link
+            role="menuitem"
+            href={customId ? `/@${customId}` : "/me"}
+            className="flex items-center gap-3 rounded-control p-2.5 transition-colors hover:bg-field focus-visible:bg-field"
+          >
+            <Image
+              src={avatar}
+              width={40}
+              height={40}
+              alt=""
+              className="size-10 shrink-0 rounded-full object-cover"
+            />
+            <span className="flex min-w-0 flex-col">
+              <span className="truncate font-semibold text-ink-900 text-sm">
+                {userData?.name}
+              </span>
+              <span className="truncate text-ink-500 text-xs">
+                {customId ? `@${customId}` : userData?.email}
+              </span>
+              <span className="mt-0.5 font-semibold text-brand-700 text-xs">
+                查看個人頁面
+              </span>
+            </span>
+          </Link>
+          {hubGroups(customId).map((group) => (
+            <div
+              key={group.key}
+              role="group"
+              className="mt-1 flex flex-col border-line border-t pt-1"
+            >
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.key}
+                    role="menuitem"
+                    href={item.href}
+                    data-hub-item={item.key}
+                    className={itemClass}
+                  >
+                    <Icon size={16} aria-hidden className="text-ink-500" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+          <div className="mt-1 flex flex-col border-line border-t pt-1">
+            <Link role="menuitem" href="/me" className={itemClass}>
+              <UserRound size={16} aria-hidden className="text-ink-500" />
+              前往我的
+            </Link>
+            {canOpenAdmin && (
+              <Link role="menuitem" href="/admin" className={itemClass}>
+                <LayoutDashboard
+                  size={16}
+                  aria-hidden
+                  className="text-ink-500"
+                />
+                管理平台
+              </Link>
+            )}
+            <button
+              type="button"
+              role="menuitem"
+              className={`${itemClass} text-danger-700`}
+              onClick={() => {
+                close(false);
+                confirmLogout(logout);
+              }}
+            >
+              <LogOut size={16} aria-hidden />
+              登出
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
