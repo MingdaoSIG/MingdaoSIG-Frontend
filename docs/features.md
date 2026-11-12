@@ -305,8 +305,8 @@ Contract: `design/api-contract-v4.md` §2.
 - Profile (`panel/UserPanel.tsx`): name, @id, SIG chips in SIG colours
   (SIGs the user leads or advises, from `/sig/list`; on your own profile
   also your memberships, which are private), the bio, and 貼文 / 獲得讚
-  (from the user's newest 100 posts; 「+」 when there are more). Your own
-  profile adds 「編輯個人簡介」, 「前往我的」, 通知設定 and 學習歷程, and keeps
+  (`postCount` / `likeCount` of `GET /user/:id`). Your own profile adds
+  「編輯個人簡介」, 「個人專區」 (`/me`), 通知設定 and 學習歷程, and keeps
   the tabs 貼文 / 按讚過的貼文 / 收藏 / 系列 / 我的數據 that 我的 links to
   (`?tab=`); someone else's shows 貼文 / 系列 when they have a series.
 - Image fields may be a URL, `/image/<id>` or a bare image id; render them
