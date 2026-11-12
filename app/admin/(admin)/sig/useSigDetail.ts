@@ -6,11 +6,13 @@ import type { User } from "@/interfaces/User";
 import sigAPI from "@/modules/sigAPI";
 import { getData, isObjectId, useAdminSigs } from "../api";
 import { useAdmin } from "../context";
+import { useArchivedSigs } from "../sigAdminApi";
 import type { AdminSig, UserRef } from "../types";
 
 // One SIG for its admin page. It comes from GET /admin/sigs (admins get
-// every SIG, managers their own). The announcement SIG is stored as
-// removed and is not in that list, so admins fall back to GET /sig/:id.
+// every SIG, managers their own). Archived SIGs, and the announcement SIG
+// (stored as removed), are in GET /admin/sigs?archived=1 for admins; the
+// last resort is GET /sig/:id.
 
 function toRef(user: User | null, id: string): UserRef {
   return {
@@ -43,6 +45,10 @@ async function loadFallback(sigId: string, signal: AbortSignal) {
     customId: sig.customId,
     avatar: sig.avatar,
     description: sig.description,
+    color: sig.color,
+    defaultCover: sig.defaultCover,
+    previousCustomIds: sig.previousCustomIds,
+    archived: Boolean(sig.removed),
     leaders,
     moderators,
   };
@@ -52,9 +58,15 @@ async function loadFallback(sigId: string, signal: AbortSignal) {
 export function useSigDetail(sigId: string) {
   const admin = useAdmin();
   const list = useAdminSigs();
-  const fromList = list.data?.find((sig) => sig._id === sigId);
+  const fromActive = list.data?.find((sig) => sig._id === sigId);
+  const lookArchived = admin.isAdmin && list.isSuccess && !fromActive;
+  const archived = useArchivedSigs(lookArchived);
+  const fromArchived = lookArchived
+    ? archived.data?.find((sig) => sig._id === sigId)
+    : undefined;
+  const fromList = fromActive ?? fromArchived;
   const needFallback =
-    admin.isAdmin && list.isSuccess && !fromList && isObjectId(sigId);
+    lookArchived && !archived.isPending && !fromArchived && isObjectId(sigId);
   const fallback = useQuery({
     queryKey: ["admin", "sigs", "fallback", sigId],
     queryFn: ({ signal }) => loadFallback(sigId, signal),
@@ -62,7 +74,10 @@ export function useSigDetail(sigId: string) {
   });
 
   const sig = fromList ?? (needFallback ? fallback.data : undefined);
-  const isPending = list.isPending || (needFallback && fallback.isPending);
+  const isPending =
+    list.isPending ||
+    (lookArchived && archived.isPending) ||
+    (needFallback && fallback.isPending);
   const error = list.error ?? (needFallback ? fallback.error : null);
   return {
     sig,
@@ -71,6 +86,9 @@ export function useSigDetail(sigId: string) {
     notFound: !isPending && !error && !sig,
     refetch: () => {
       void list.refetch();
+      if (lookArchived) {
+        void archived.refetch();
+      }
       if (needFallback) {
         void fallback.refetch();
       }
