@@ -195,11 +195,6 @@ export function NotificationSettingsEntry({
     }
   }, []);
 
-  const summary = [
-    `留言通知信：${settings.email.comment ? "開" : "關"}`,
-    `每週摘要：${settings.email.digest ? "開" : "關"}`,
-  ].join("　");
-
   return (
     <div className="flex items-center gap-3">
       <div className="min-w-0 flex-1">
@@ -211,7 +206,15 @@ export function NotificationSettingsEntry({
           通知設定
         </p>
         <p className="text-ink-500 text-xs leading-5">
-          手機通知與 Email。{summary}
+          <span className="whitespace-nowrap">手機通知與 Email</span>
+          {"・"}
+          <span className="whitespace-nowrap">
+            留言通知信{settings.email.comment ? "開" : "關"}
+          </span>
+          {"・"}
+          <span className="whitespace-nowrap">
+            每週摘要{settings.email.digest ? "開" : "關"}
+          </span>
         </p>
       </div>
       <button
