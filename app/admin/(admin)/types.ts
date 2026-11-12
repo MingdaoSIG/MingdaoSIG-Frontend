@@ -28,6 +28,8 @@ export type Overview = {
     user: UserRef | null;
     createdAt: string;
   }[];
+  /** Open reports (contract v4 §4.6); older backends leave it out. */
+  openReports?: number;
 };
 
 export type PostStatus = "active" | "removed" | "pinned" | "all";
@@ -167,6 +169,47 @@ export type AuditEntry = {
   target: { kind: AuditTargetKind | string; id: string; label?: string };
   meta?: Record<string, unknown>;
   createdAt?: string;
+};
+
+export type ReportReason =
+  | "spam"
+  | "harassment"
+  | "inappropriate"
+  | "privacy"
+  | "other";
+export type ReportStatus = "open" | "resolved" | "dismissed";
+export type ReportStatusFilter = ReportStatus | "all";
+export type ReportKind = "post" | "comment";
+export type ReportAction = "remove" | "dismiss";
+
+export type ReportTarget = {
+  kind: ReportKind;
+  id: string;
+  /** A post's title. */
+  title?: string;
+  /** The start of a comment. */
+  excerpt?: string;
+  author?: { _id: string; name?: string } | null;
+  removed?: boolean;
+  /** For a comment, the post it sits under, if the backend sends it. */
+  post?: string | { _id: string; title?: string } | null;
+  postId?: string;
+};
+
+/** A report as `GET /admin/reports` returns it (contract v4 §4.6). */
+export type AdminReport = {
+  _id: string;
+  reporter: UserRef | null;
+  target: ReportTarget;
+  reason: ReportReason | string;
+  note?: string;
+  status: ReportStatus;
+  handledBy?: UserRef | string | null;
+  /** The admin who handled it, resolved to public fields. */
+  handledByUser?: UserRef | null;
+  resolution?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /** A member as `GET /sig/:sigId/members` returns it. */

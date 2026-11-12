@@ -1,6 +1,6 @@
 import { ImagePlus } from "lucide-react";
 import dynamic from "next/dynamic";
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { isSubmitEnter } from "@/utils/keyboard";
 import { promptLogin } from "@/utils/loginPrompt";
@@ -27,6 +27,10 @@ interface Props {
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   /** Edit mode: the SIG the post is already in. */
   originalSig?: string;
+  /** At the top: cloud-draft status, drafts list, notices. */
+  topBar?: ReactNode;
+  /** After 標籤 (「加入系列」). */
+  metaExtra?: ReactNode;
 }
 
 const Editor = dynamic(() => import("./Editor"), {
@@ -44,6 +48,8 @@ export default function NewPostMobile({
   isEdit,
   handleFileChange,
   originalSig,
+  topBar,
+  metaExtra,
 }: Props) {
   const { isLogin, login } = useUserAccount();
   const [tagInput, setTagInput] = useState("");
@@ -134,6 +140,9 @@ export default function NewPostMobile({
       <div className="h-full overflow-hidden rounded-card border border-line bg-surface p-4 pr-2 shadow-card">
         <div className="small-scrollbar flex h-full flex-col items-center overflow-y-auto overflow-x-hidden pr-2">
           {!isEdit && <LoginBanner className="mb-3 w-full" />}
+          {topBar && (
+            <div className="mb-3 flex w-full flex-col gap-2">{topBar}</div>
+          )}
           <div className="w-full max-w-full">
             <MetaDataForm
               data={data}
@@ -200,6 +209,8 @@ export default function NewPostMobile({
               </div>
             )}
           </div>
+
+          {metaExtra && <div className="mt-4 w-full">{metaExtra}</div>}
 
           {/* Cover Section */}
           <h2 className="mt-4 mb-2 h-auto w-full text-left font-semibold text-base text-ink-900">

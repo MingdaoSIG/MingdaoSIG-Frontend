@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { toast } from "@/components/mobile/Toast";
+import { useReport } from "@/components/Report/ReportDialog";
+import { SeriesNav } from "@/components/Series/SeriesNav";
 import type { TThread } from "@/interfaces/Thread";
 
 import { type CommentNotify, useComments } from "../components/useComments";
@@ -34,6 +36,7 @@ export default function Thread({ post, isAnnouncement }: Props) {
   );
   const controller = useComments(post, notify);
   const { error } = controller;
+  const report = useReport();
 
   // Keep what is already shown; just say the refresh failed.
   useEffect(() => {
@@ -71,19 +74,41 @@ export default function Thread({ post, isAnnouncement }: Props) {
           onReady={() => setBodyReady(true)}
         />
         {!isAnnouncement && bodyReady && (
-          <PostActions post={post} commentCount={controller.count} />
+          <SeriesNav
+            series={post.series}
+            postId={post._id ?? ""}
+            variant="mobile"
+          />
+        )}
+        {!isAnnouncement && bodyReady && (
+          <PostActions
+            post={post}
+            commentCount={controller.count}
+            onReport={() =>
+              report.open({ kind: "post", id: post._id ?? "" }, post.title)
+            }
+          />
         )}
       </div>
       {!isAnnouncement && bodyReady && (
         <>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
             <SectionErrorBoundary label="留言">
-              <CommentList controller={controller} />
+              <CommentList
+                controller={controller}
+                onReport={(comment) =>
+                  report.open(
+                    { kind: "comment", id: comment._id },
+                    comment.content,
+                  )
+                }
+              />
             </SectionErrorBoundary>
           </div>
           <CommentComposer postId={post._id ?? ""} controller={controller} />
         </>
       )}
+      {report.dialog}
     </div>
   );
 }

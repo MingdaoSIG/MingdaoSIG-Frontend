@@ -7,6 +7,7 @@ import {
   errorText,
   useAdminSigs,
   useJoinRequests,
+  useOpenReportCount,
   useOverview,
   useSigNames,
 } from "./(admin)/api";
@@ -25,8 +26,9 @@ import { useAdmin } from "./(admin)/context";
 import { daysSince, formatCount, formatRelative } from "./(admin)/format";
 import type { AdminSig, JoinRequest } from "./(admin)/types";
 
-// 總覽: what needs doing today. Admins get the platform numbers, pending
-// join requests, SIGs without a leader or 指導老師, and the newest posts.
+// 總覽: what needs doing today. Admins get the platform numbers, open
+// reports, pending join requests, SIGs without a leader or 指導老師, and
+// the newest posts.
 // SIG managers get their pending requests and their SIGs.
 
 export default function AdminOverviewPage() {
@@ -49,6 +51,14 @@ function AdminOverview() {
   const { names } = useSigNames();
   const data = overview.data;
   const oldest = daysSince(data?.pendingJoinRequests.oldestCreatedAt);
+  // Shares the sidebar badge's cache; used when the overview has no count.
+  const reportCount = useOpenReportCount(true);
+  const openReports =
+    typeof data?.openReports === "number"
+      ? data.openReports
+      : reportCount.isError
+        ? null
+        : reportCount.data;
 
   return (
     <>
@@ -62,26 +72,32 @@ function AdminOverview() {
         </Card>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {/* Phones: 2 + 2 + 1 wide; lg: the 3 totals over the 2 pending
+              cards; xl: one row of 5. */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-6 xl:grid-cols-5">
             <Kpi
               label="使用者"
               value={data?.users.total}
               delta={data?.users.last7d}
+              className="lg:col-span-2 xl:col-span-1"
             />
             <Kpi
               label="貼文"
               value={data?.posts.total}
               delta={data?.posts.last7d}
+              className="lg:col-span-2 xl:col-span-1"
             />
             <Kpi
               label="留言"
               value={data?.comments.total}
               delta={data?.comments.last7d}
+              className="lg:col-span-2 xl:col-span-1"
             />
             <Kpi
               label="待審入社申請"
               value={data?.pendingJoinRequests.total}
               href="/admin/join-requests"
+              className="lg:col-span-3 xl:col-span-1"
               note={
                 data &&
                 (data.pendingJoinRequests.total > 0 && oldest !== null ? (
@@ -93,6 +109,25 @@ function AdminOverview() {
                 ))
               }
             />
+            <Kpi
+              label="待處理檢舉"
+              value={data ? openReports : undefined}
+              href="/admin/reports"
+              className="col-span-2 lg:col-span-3 xl:col-span-1"
+              note={
+                data &&
+                (openReports === null ? (
+                  <span className="text-ink-500">無法載入</span>
+                ) : (
+                  typeof openReports === "number" &&
+                  (openReports > 0 ? (
+                    <span className="text-danger-700">需要處理</span>
+                  ) : (
+                    <span className="text-ink-500">沒有待處理的檢舉</span>
+                  ))
+                ))
+              }
+            />
           </div>
 
           <div className="mt-4 grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
@@ -101,6 +136,7 @@ function AdminOverview() {
                 <SkeletonRows rows={4} />
               ) : (
                 <TodoList
+                  openReports={openReports ?? 0}
                   requests={pending.data?.items ?? []}
                   moreRequests={
                     (pending.data?.total ?? 0) -
@@ -166,12 +202,15 @@ function Kpi({
   delta,
   note,
   href,
+  className: extra = "",
 }: {
   label: string;
-  value?: number;
+  /** undefined while loading; null when it could not be loaded. */
+  value?: number | null;
   delta?: number;
   note?: ReactNode;
   href?: string;
+  className?: string;
 }) {
   const body = (
     <>
@@ -194,8 +233,7 @@ function Kpi({
       </p>
     </>
   );
-  const className =
-    "block rounded-card border border-line bg-surface p-4 shadow-card";
+  const className = `block rounded-card border border-line bg-surface p-4 shadow-card ${extra}`;
   return href ? (
     <Link href={href} className={`${className} hover:shadow-card-hover`}>
       {body}
@@ -230,12 +268,14 @@ function TodoRow({
 }
 
 function TodoList({
+  openReports = 0,
   requests,
   moreRequests,
   requestError,
   withoutLeader,
   withoutModerator,
 }: {
+  openReports?: number;
   requests: JoinRequest[];
   moreRequests: number;
   requestError: string | null;
@@ -243,6 +283,7 @@ function TodoList({
   withoutModerator: { _id: string; name: string }[];
 }) {
   const nothing =
+    openReports <= 0 &&
     requests.length === 0 &&
     withoutLeader.length === 0 &&
     withoutModerator.length === 0 &&
@@ -252,6 +293,15 @@ function TodoList({
   }
   return (
     <ul className="pb-2">
+      {openReports > 0 && (
+        <TodoRow
+          badge={<Badge tone="danger">檢舉</Badge>}
+          href="/admin/reports"
+          action="處理"
+        >
+          {formatCount(openReports)} 筆檢舉待處理
+        </TodoRow>
+      )}
       {requestError && (
         <li className="border-line border-t px-4 py-2 text-danger-700 text-sm lg:px-5">
           入社申請載入失敗：{requestError}

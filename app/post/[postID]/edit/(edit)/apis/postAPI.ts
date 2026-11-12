@@ -4,7 +4,7 @@ import { apiRequest } from "@/modules/api/client";
 import { sigDefaultCover } from "@/modules/sigTheme";
 
 export function getPostAPI(postId: string, signal?: AbortSignal) {
-  return apiRequest<TThread>(`/post/${postId}`, { signal });
+  return apiRequest<TThread>(`/post/${postId}`, { signal, auth: true });
 }
 
 /** No cover picked: the SIG's default cover (contract v4 §3.7). */
