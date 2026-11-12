@@ -104,8 +104,8 @@ SIG 分類色沿用 `components/Threads/configs/sigDefaultColors.ts`。作為**�
 
 ### 3.4 大面板拆分
 
-- 首頁右欄：原本一整塊撐滿的面板 → 「Top 3 Posts」、「SIGs」兩張獨立玻璃卡。
-- 貼文頁右欄：原本一整塊（作者 + 留言 + 輸入框）→ 作者卡 + 留言卡；留言卡高度依內容，不再出現大面板中間一行巨大的「No comments」。
+- 首頁右欄：原本一整塊撐滿的面板 → 「熱門貼文」、「SIG」兩張獨立玻璃卡。
+- 貼文頁右欄：原本一整塊（作者 + 留言 + 輸入框）→ 作者卡 + 留言卡；留言卡高度依內容，不再出現大面板中間一行巨大的「No comments」（現為「尚無留言」）。
 
 ---
 
@@ -237,7 +237,7 @@ remark-parse → remark-gfm (singleTilde: false) → remark-math → remark-brea
 | 貼文內文 | `MarkdownView` ＋ `.markdown` 閱讀排版（與桌機相同；`paper` 底） |
 | SIG 標籤 | 淡染分類色底（12%）＋ 加深的分類色文字（`SigChip`），取代白字實心膠囊（粉色系白字不可讀） |
 | SIG 方塊（BottomSheet） | 白底、1.5px 分類色邊框，與桌機首頁一致 |
-| Latest / Top、SIGs 按鈕 | `rounded-control` 分段控制，選中為 `brand-700` |
+| 最新 / 熱門、SIG 按鈕 | `rounded-control` 分段控制，選中為 `brand-700`；高 44px |
 | Toast | 深色中性底 ＋ 彩色圖示（原本白字壓在飽和綠 / 紅 / 藍上未達 WCAG AA） |
 | 更新紀錄 | 與桌機相同的低飽和類型標籤 |
 | 輸入框 | 字級 16px（小於 16px 時 iOS Safari 聚焦會自動放大） |

@@ -6,7 +6,12 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
+  /* The fixed header and tab bar grow by the iPhone safe-area insets. */
+  padding:
+    calc(#{variables.$mobile-headerbar-height} + env(safe-area-inset-top))
+    variables.$mobile-border-margin
+    calc(#{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom))
+    variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -45,7 +50,7 @@
 .itemFlex {
   margin: auto;
 
-  h1 {
+  h2 {
     font-size: 1rem;
     font-weight: bold;
     color: var(--color-ink-900);
@@ -59,7 +64,7 @@
 }
 
 .sigChart {
-  height: calc(100dvh - 23.7rem);
+  height: calc(100dvh - 23.7rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   width: 100%;
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);

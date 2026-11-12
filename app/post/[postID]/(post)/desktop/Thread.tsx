@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
@@ -11,12 +12,41 @@ import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
+import { promptLogin } from "@/utils/loginPrompt";
+import useUser from "@/utils/useUser";
 import { useUserAccount } from "@/utils/useUserAccount";
 
+/** Author and date under an announcement's title (posts show them in the side card). */
+function AnnouncementMeta({ post }: { post: TThread }) {
+  const { data: user } = useUser(post.user);
+  const date = post.createdAt
+    ? new Date(post.createdAt).toLocaleDateString("zh-TW")
+    : "";
+  return (
+    <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-500">
+      <span className="rounded-chip bg-warm-600/10 px-1.5 py-0.5 font-semibold text-warm-600 text-xs">
+        公告
+      </span>
+      {user?.customId && (
+        <Link
+          href={`/@${user.customId}`}
+          className="font-semibold text-ink-700 hover:underline"
+        >
+          {user.name || `@${user.customId}`}
+        </Link>
+      )}
+      {date && <time dateTime={post.createdAt}>{date}</time>}
+    </p>
+  );
+}
+
 const Thread = ({ post }: { post: TThread }) => {
-  const { isLogin, isLoading, token, userData } = useUserAccount();
+  const { isLogin, isLoading, token, userData, login } = useUserAccount();
 
   const [like, setLike] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState(
+    post.likes ?? post.like?.length ?? 0,
+  );
   const [liking, setLiking] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   useDuplicateTitle(rootRef, post.title);
@@ -28,17 +58,13 @@ const Thread = ({ post }: { post: TThread }) => {
       return;
     }
     if (!isLogin) {
-      Swal.fire({
-        title: "Please login first",
-        text: "You must login to like someone's post",
-        icon: "warning",
-        confirmButtonText: "Confirm",
-      });
+      promptLogin(login, { text: "登入後即可按讚" });
       return;
     }
     // Show the change at once, and undo it if the server refuses.
     const willLike = !like;
     setLike(willLike);
+    setLikeCount((count) => count + (willLike ? 1 : -1));
     setLiking(true);
     const res = await apiRequest(`/post/${post._id}/like`, {
       method: willLike ? "POST" : "DELETE",
@@ -47,11 +73,12 @@ const Thread = ({ post }: { post: TThread }) => {
     setLiking(false);
     if (!res.ok) {
       setLike(!willLike);
+      setLikeCount((count) => count + (willLike ? -1 : 1));
       Swal.fire({
         title: willLike ? "按讚失敗" : "取消按讚失敗",
         text: res.message,
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: "好",
       });
     }
   }
@@ -62,11 +89,13 @@ const Thread = ({ post }: { post: TThread }) => {
 
   async function onDelete() {
     const confirm = await Swal.fire({
-      title: "Are you sure you want to delete this post",
-      icon: "question",
-      confirmButtonText: "Confirm",
+      title: "確定要刪除這篇貼文嗎？",
+      text: "刪除後就無法復原",
+      icon: "warning",
+      confirmButtonText: "刪除",
+      confirmButtonColor: "#b42318",
       showCancelButton: true,
-      cancelButtonText: "Cancel",
+      cancelButtonText: "取消",
       showLoaderOnConfirm: true,
       allowOutsideClick: () => !Swal.isLoading(),
       preConfirm: () =>
@@ -80,18 +109,18 @@ const Thread = ({ post }: { post: TThread }) => {
         title: "刪除失敗",
         text: confirm.value.message,
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: "好",
       });
       return;
     }
     const next = await Swal.fire({
-      title: "Successfully delete post",
+      title: "貼文已刪除",
       icon: "success",
-      confirmButtonText: "Back to home",
-      confirmButtonColor: "#6e7881",
+      confirmButtonText: "回到首頁",
+      confirmButtonColor: "#0b5a83",
       showDenyButton: true,
-      denyButtonText: "Create new post",
-      denyButtonColor: "#82D7FF",
+      denyButtonText: "發布新貼文",
+      denyButtonColor: "#586676",
     });
     if (next.isDenied) {
       route.push("/new");
@@ -121,6 +150,7 @@ const Thread = ({ post }: { post: TThread }) => {
           <h1 className="font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
             {post.title}
           </h1>
+          <AnnouncementMeta post={post} />
         </div>
         <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
           <SectionErrorBoundary label="文章內容">
@@ -165,9 +195,9 @@ const Thread = ({ post }: { post: TThread }) => {
         <button
           type="button"
           data-reader-hide
-          className={iconButton}
+          className="flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-control px-2 transition-colors hover:bg-field"
           onClick={onLike}
-          aria-label={like ? "取消喜歡" : "喜歡"}
+          aria-label={`${like ? "取消喜歡" : "喜歡"}（${likeCount} 個讚）`}
           aria-pressed={like}
         >
           <svg
@@ -183,6 +213,13 @@ const Thread = ({ post }: { post: TThread }) => {
               fill={like ? "#EE5757" : "#BDBDBD"}
             />
           </svg>
+          <span
+            className={`min-w-[1ch] font-semibold text-sm tabular-nums ${
+              like ? "text-[#c53d3d]" : "text-ink-700"
+            }`}
+          >
+            {likeCount}
+          </span>
         </button>
       </div>
       <ReaderByline post={post} />

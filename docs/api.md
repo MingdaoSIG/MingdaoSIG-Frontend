@@ -92,6 +92,12 @@ Defined in `modules/customStatusCode/index.ts`:
    sign out (without reloading the page).
 5. Components read the state with `useUserAccount()`
    (`{ isLogin, token, userData, isLoading, login, logout }`).
+6. When a logged-out visitor tries something that needs an account, say
+   why and offer to log in: `promptLogin(login, { text })` from
+   `utils/loginPrompt` (a dialog with 登入 / 取消), or on mobile a toast with
+   a 登入 action. Do not show a generic error. Text typed before logging in
+   should survive the Google redirect (comments keep it in sessionStorage
+   via `sessionGet` / `sessionSet` in `utils/safeStorage`).
 
 Email, student number and other private fields come only from `/user/me`
 (yourself) or `/user/:id/full` (yourself or an admin), never from the public

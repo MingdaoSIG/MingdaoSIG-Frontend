@@ -145,32 +145,26 @@ export default function Mobile() {
         </div>
         <div className={styles.content}>
           <div>
-            {data.map((item, index) => {
-              return (
-                <Fragment key={item.name}>
-                  <h1 className={index === 0 ? styles.links : styles.links2}>
-                    {item.name}
-                  </h1>
-                  {item.children.map((child, _childIndex) => {
-                    return (
-                      <Fragment key={child.name}>
-                        <Link
-                          href={child.url}
-                          target={
-                            child.url.includes("http") ? "_blank" : "_self"
-                          }
-                          key={child.name}
-                        >
-                          {child.name}
-                        </Link>
-                        <br />
-                      </Fragment>
-                    );
-                  })}
-                </Fragment>
-              );
-            })}
-            <h1 className={styles.links2}>運行狀態</h1>
+            {data.map((item, index) => (
+              <Fragment key={item.name}>
+                <h2 className={index === 0 ? styles.links : styles.links2}>
+                  {item.name}
+                </h2>
+                <ul className={styles.linkList}>
+                  {item.children.map((child) => (
+                    <li key={child.name}>
+                      <Link
+                        href={child.url}
+                        target={child.url.includes("http") ? "_blank" : "_self"}
+                      >
+                        {child.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            ))}
+            <h2 className={styles.links2}>運行狀態</h2>
             {loading ? (
               <p>載入中...</p>
             ) : (
@@ -195,11 +189,9 @@ export default function Mobile() {
             )}
             <br />
             <p>
-              訪問
               <Link href={"https://status.sig.school/"} target="_blank">
-                狀態頁面
+                前往狀態頁面查看詳細資訊
               </Link>
-              獲取更多詳細信息
             </p>
             <p className={styles.endText}>
               <Link href={"https://sig.mingdao.edu.tw/ping"} target="_blank">
@@ -208,7 +200,7 @@ export default function Mobile() {
             </p>
             <Image
               src="https://status.sig.school/api/badge/1/uptime?labelPrefix=前端+&style=for-the-badge"
-              alt="frontend-status"
+              alt="前端運行狀態"
               width={208}
               height={28}
               className={styles.statusImg}
@@ -224,7 +216,7 @@ export default function Mobile() {
             </p>
             <Image
               src="https://status.sig.school/api/badge/8/uptime?labelPrefix=後端+&style=for-the-badge"
-              alt="backend-status"
+              alt="後端運行狀態"
               width={208}
               height={28}
               className={styles.statusImg}
@@ -233,7 +225,7 @@ export default function Mobile() {
             <p className={styles.endText}>資料庫</p>
             <Image
               src="https://status.sig.school/api/badge/6/uptime?labelPrefix=資料庫+&style=for-the-badge"
-              alt="backend-status"
+              alt="資料庫運行狀態"
               width={208}
               height={28}
               className={styles.statusImg}

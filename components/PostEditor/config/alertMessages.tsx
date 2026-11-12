@@ -1,39 +1,40 @@
 import type { TAlertMessageConfigs } from "@/components/PostEditor/types/alertMessageConfigs";
 
+const BRAND = "#0b5a83";
+
 export const alertMessageConfigs: TAlertMessageConfigs = {
   titleError: {
-    title: "Error!",
-    text: "Please enter title!",
+    title: "還不能發布",
+    text: "請輸入標題",
     icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "好",
+    confirmButtonColor: BRAND,
   },
   sigError: {
-    title: "Error!",
-    text: "Please select SIG",
+    title: "還不能發布",
+    text: "請選擇 SIG",
     icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "好",
+    confirmButtonColor: BRAND,
   },
   Success: {
-    title: "Success!",
-    text: "Post created!",
+    title: "發布成功",
     icon: "success",
-    confirmButtonText: "View the post",
-    confirmButtonColor: "#0090BD",
+    confirmButtonText: "查看貼文",
+    confirmButtonColor: BRAND,
   },
   PermissionError: {
-    title: "Error!",
-    text: "You have no permission to post in this sig.",
+    title: "無法發布",
+    text: "你沒有在這個 SIG 發文的權限",
     icon: "error",
-    confirmButtonText: "Choose another sig",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "改選其他 SIG",
+    confirmButtonColor: BRAND,
   },
   OthersError: {
-    title: "Error!",
-    text: "Something went wrong. Please try again later.",
+    title: "發布失敗",
+    text: "發生錯誤，請稍後再試",
     icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "好",
+    confirmButtonColor: BRAND,
   },
 };

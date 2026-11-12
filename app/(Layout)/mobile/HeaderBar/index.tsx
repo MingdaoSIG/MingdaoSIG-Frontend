@@ -12,7 +12,7 @@ const HeaderBar = () => {
     <div className={styles.nav}>
       <Image
         src="/images/logo_mobile_v2.svg"
-        alt="Logo"
+        alt="MDSIG 首頁"
         width={64}
         height={32}
         unoptimized

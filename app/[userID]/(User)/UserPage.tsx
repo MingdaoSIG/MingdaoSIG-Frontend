@@ -73,7 +73,7 @@ export default function UserPage({ accountId }: { accountId: string }) {
     return (
       <NotFound
         content={{
-          message: "User or SIG Not Found",
+          message: "找不到這個使用者或 SIG",
         }}
         image={{
           show: false,

@@ -11,13 +11,17 @@ import PostEditorMobile from "@/components/PostEditor/mobile/PostEditor";
 // Modules
 import { imageUpload } from "@/modules/imageUploadAPI";
 import { isValidObjectId } from "@/modules/validation";
+import { promptLogin } from "@/utils/loginPrompt";
 import { storageGet, storageRemove, storageSet } from "@/utils/safeStorage";
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
 // Configs
 import { alertMessageConfigs } from "../../components/PostEditor/config/alertMessages";
-import { markdownGuide } from "../../components/PostEditor/config/markdownGuide";
+import {
+  isDefaultContent,
+  markdownGuide,
+} from "../../components/PostEditor/config/markdownGuide";
 // Types
 import type { TPostAPI } from "../../components/PostEditor/types/postAPI";
 // APIs Request Function
@@ -76,7 +80,7 @@ function validateStoredData(data: unknown): Partial<TPostAPI> {
 
 export default function NewPostPage() {
   const { status } = useSession();
-  const { token } = useUserAccount();
+  const { token, isLoading: authLoading, login } = useUserAccount();
   const route = useRouter();
   const isMobile = useIsMobile();
 
@@ -115,7 +119,7 @@ export default function NewPostPage() {
       data.title !== "" ||
       data.sig !== "" ||
       (data.hashtag && data.hashtag.length > 0) ||
-      (data.content !== markdownGuide && data.content !== "");
+      !isDefaultContent(data.content);
 
     if (hasContent) {
       storageSet("postData", JSON.stringify(data));
@@ -135,7 +139,7 @@ export default function NewPostPage() {
 
     let loadedData: Partial<TPostAPI> = {};
 
-    if (storedContent) {
+    if (storedContent && !isDefaultContent(storedContent)) {
       loadedData.content = storedContent;
     }
 
@@ -144,6 +148,10 @@ export default function NewPostPage() {
         const parsed = JSON.parse(storedData);
         // 驗證並清理資料
         const validatedData = validateStoredData(parsed);
+        if (isDefaultContent(validatedData.content)) {
+          // Drafts from older versions still hold the English sample.
+          validatedData.content = markdownGuide;
+        }
         loadedData = { ...loadedData, ...validatedData };
       } catch (error) {
         console.error("Failed to parse stored post data:", error);
@@ -165,11 +173,19 @@ export default function NewPostPage() {
   }, []); // 空依賴，只執行一次
 
   async function NewPostAPI() {
-    setPostButtonDisable(true);
-
-    if (!data) {
+    if (!data || authLoading) {
       return;
     }
+    // Logged out: say so (and offer to log in) instead of a generic error.
+    // The draft is already saved on this device.
+    if (!token) {
+      return promptLogin(login, {
+        title: "請先登入再發文",
+        text: "草稿已自動保存在這台裝置，登入後就能發布。",
+      });
+    }
+
+    setPostButtonDisable(true);
 
     if (data?.title === "") {
       return Swal.fire(alertMessageConfigs.titleError).then(() =>
@@ -182,11 +198,6 @@ export default function NewPostPage() {
       );
     }
 
-    if (!token) {
-      return Swal.fire(alertMessageConfigs.OthersError).then(() =>
-        setPostButtonDisable(false),
-      );
-    }
     const res = await postAPI(data, token);
 
     if (res.ok) {
@@ -252,20 +263,12 @@ export default function NewPostPage() {
 
     const file = e.target.files[0];
     if (!validImageTypes.includes(file.type)) {
-      Swal.fire(
-        "File type not supported",
-        "You can only upload png, jpg, webp, tiff",
-        "error",
-      );
+      Swal.fire("不支援的檔案格式", "只能上傳 JPG、PNG、WebP、TIFF", "error");
       return;
     }
 
     if (file.size > 5 * 1000 * 1000) {
-      Swal.fire(
-        "File too large",
-        "You can only upload files under 5MB",
-        "error",
-      );
+      Swal.fire("檔案太大", "圖片需小於 5MB", "error");
       return;
     }
 
@@ -284,11 +287,7 @@ export default function NewPostPage() {
       );
     } catch (error) {
       console.error("error: ", error);
-      Swal.fire(
-        "Error",
-        "Something went wrong. Please try again later",
-        "error",
-      );
+      Swal.fire("上傳失敗", "封面上傳失敗，請稍後再試", "error");
       return;
     }
   }

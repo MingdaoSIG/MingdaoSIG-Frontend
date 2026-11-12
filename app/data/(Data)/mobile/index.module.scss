@@ -6,7 +6,12 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
+  /* The fixed header and tab bar grow by the iPhone safe-area insets. */
+  padding:
+    calc(#{variables.$mobile-headerbar-height} + env(safe-area-inset-top))
+    variables.$mobile-border-margin
+    calc(#{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom))
+    variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -65,7 +70,7 @@
   overflow: hidden;
   text-align: center;
 
-  height: calc(100dvh - 12.5rem);
+  height: calc(100dvh - 12.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   width: 100%;
 
   &>div {
@@ -176,7 +181,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-line);
   box-shadow: var(--shadow-card);
-  height: calc(100dvh - 25rem);
+  height: calc(100dvh - 25rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   border-radius: var(--radius-card);
   padding: 0.625rem;
   overflow: hidden;
@@ -188,7 +193,7 @@
 
   &>div {
     overflow: auto;
-    height: calc(100dvh - 26rem);
+    height: calc(100dvh - 26rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     word-break: break-all;
   }
 

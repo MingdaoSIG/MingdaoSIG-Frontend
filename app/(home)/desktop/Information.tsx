@@ -89,7 +89,7 @@ function TopPostRow({ _id, title, likes }: MinimalThread) {
     <Link
       href={`/post/${_id}`}
       className="group flex items-center justify-between gap-4 rounded-chip px-2 py-1.5 ring-1 ring-transparent transition hover:bg-white/60 hover:ring-line"
-      aria-label={`Open post: ${title}`}
+      aria-label={`前往貼文：${title}`}
     >
       <h3 className="flex-1 truncate font-medium text-[0.95rem] text-ink-800">
         {title}
@@ -107,16 +107,18 @@ function SigCard({ sig }: { sig: Sig }) {
     <Link
       href={`/@${sig.customId}`}
       className="block size-20 shrink-0 rounded-control"
-      aria-label={`Open SIG: ${sig.name}`}
+      aria-label={`前往 SIG：${sig.name}`}
     >
+      {/* Words stay whole (maxMatch) but share lines: 機器人設計／與製造
+          instead of one word per line at 11px. */}
       <div
-        className="flex size-full flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[11px] text-ink-800 leading-tight transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
+        className="flex size-full flex-wrap content-center items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface px-1 text-center font-semibold text-[13px] text-ink-800 leading-snug transition duration-150 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
         style={{
           ["--sig-color" as string]: sigDefaultColors[sig._id] ?? "#0b5a83",
         }}
       >
         {maxMatch(sig.name).map((name) => (
-          <span key={name} className="break-words">
+          <span key={name} className="whitespace-nowrap">
             {name}
           </span>
         ))}
@@ -219,18 +221,16 @@ export default function Information() {
     <div className="flex h-full min-h-0 flex-col gap-4">
       {/* Top Posts */}
       <section className="glass shrink-0 rounded-card p-5">
-        <SectionHeader icon="heart" title="Top 3 Posts" />
+        <SectionHeader icon="heart" title="熱門貼文" />
         <div className="mt-2">
           {postsError && (
             <p className="text-danger-700 text-sm">
-              Failed to load posts. Please try again later.
+              熱門貼文載入失敗，請稍後再試
             </p>
           )}
 
           {!postsError && posts.length === 0 && (
-            <p className="text-ink-500 text-sm">
-              No posts yet. Check back soon!
-            </p>
+            <p className="text-ink-500 text-sm">還沒有貼文</p>
           )}
 
           {!postsError && posts.length > 0 && (
@@ -249,12 +249,12 @@ export default function Information() {
       <section className="glass flex min-h-0 flex-1 flex-col rounded-card p-5">
         <SectionHeader
           icon="users"
-          title="SIGs"
+          title="SIG"
           count={filteredSigs.length}
           action={
             <div className="min-w-0 flex-[0_1_10.5rem]">
               <label htmlFor="sig-search" className="sr-only">
-                Search SIGs
+                搜尋 SIG
               </label>
               {/* Explicit width: the default (size=20) is wider in Firefox
                   and Safari than in Chrome and overflowed the card. */}
@@ -262,7 +262,7 @@ export default function Information() {
                 id="sig-search"
                 value={sigQuery}
                 onChange={(e) => setSigQuery(e.target.value)}
-                placeholder="Search SIGs..."
+                placeholder="搜尋 SIG…"
                 className="w-full min-w-0 rounded-control bg-field px-3 py-1.5 text-ink-800 text-sm ring-1 ring-line placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-700/40"
               />
             </div>
@@ -286,7 +286,7 @@ export default function Information() {
               {filteredSigs.length === 0 && (
                 <li className="w-full">
                   <div className="rounded-control border border-line border-dashed p-6 text-center text-ink-500 text-sm">
-                    No SIGs match your search.
+                    找不到符合的 SIG
                   </div>
                 </li>
               )}

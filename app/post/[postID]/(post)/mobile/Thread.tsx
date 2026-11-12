@@ -22,6 +22,10 @@ type Props = {
 export default function Thread({ post, isAnnouncement }: Props) {
   const [comments, setComments] = useState<TComments[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
+  // The like bar and comments wait for the body: rendered first, they sat
+  // right under a three-line placeholder and jumped thousands of pixels
+  // down when the post appeared (CLS 0.56 on long posts).
+  const [bodyReady, setBodyReady] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const commentsAnchorRef = useRef<HTMLDivElement>(null);
 
@@ -64,12 +68,16 @@ export default function Thread({ post, isAnnouncement }: Props) {
     >
       <div className="flex min-w-0 flex-col gap-2 px-2 pt-2">
         <PostHeader post={post} isAnnouncement={isAnnouncement} />
-        <PostBody post={post} isAnnouncement={isAnnouncement} />
-        {!isAnnouncement && (
+        <PostBody
+          post={post}
+          isAnnouncement={isAnnouncement}
+          onReady={() => setBodyReady(true)}
+        />
+        {!isAnnouncement && bodyReady && (
           <PostActions post={post} commentCount={comments.length} />
         )}
       </div>
-      {!isAnnouncement && (
+      {!isAnnouncement && bodyReady && (
         <>
           <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
             <SectionErrorBoundary label="留言">

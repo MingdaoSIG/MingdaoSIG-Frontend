@@ -21,7 +21,7 @@ export default function Buttons({
         onClick={(e) => discardFunction(e)}
       >
         <Trash2 size={20} aria-hidden />
-        {isEdit ? "UNDO" : "DISCARD"}
+        {isEdit ? "還原" : "捨棄"}
       </button>
 
       <button
@@ -35,7 +35,7 @@ export default function Buttons({
         disabled={postButtonDisable}
       >
         <CloudUpload size={22} aria-hidden />
-        POST
+        {isEdit ? "更新" : "發布"}
       </button>
     </div>
   );

@@ -17,19 +17,18 @@ const SIG = (child: Pick<Sig, "_id" | "name" | "customId">) => {
   }
   return (
     <Link
-      className="relative flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface p-2 transition duration-150 active:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
+      className="relative flex h-20 w-20 flex-shrink-0 flex-wrap content-center items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-surface p-1 text-center font-semibold text-[13px] text-ink-800 leading-snug transition duration-150 active:bg-[color-mix(in_srgb,var(--sig-color)_8%,white)]"
       style={{
         ["--sig-color" as string]: sigDefaultColors[child._id] ?? "#0b5a83",
       }}
       href={`/@${child.customId}`}
     >
+      {/* Words stay whole but share lines (one word per line read as
+          機器人／設計／與／製造). */}
       {maxMatch(child.name ?? "").map((name) => (
-        <p
-          key={name}
-          className="text-center font-semibold text-ink-800 text-xs leading-4"
-        >
+        <span key={name} className="whitespace-nowrap">
           {name}
-        </p>
+        </span>
       ))}
     </Link>
   );
@@ -72,7 +71,7 @@ const SigList = ({ open, onClose }: SigListProps) => {
     <BottomSheet
       open={open}
       onClose={onClose}
-      title="探索 SIGs"
+      title="探索 SIG"
       snapPoints={["60%", "90%"]}
     >
       {isLoading ? (

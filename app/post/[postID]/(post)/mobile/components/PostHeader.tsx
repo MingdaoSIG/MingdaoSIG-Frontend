@@ -21,13 +21,15 @@ type Props = {
 export default function PostHeader({ post, isAnnouncement }: Props) {
   const router = useRouter();
   const { data: user } = useUser(post.user);
-  const { data: sig } = useSig(post.sig);
+  const { data: sig, isLoading: sigLoading } = useSig(post.sig);
 
   // No profile link until the author is known (never "/@anonymous").
   const customId = user?.customId;
   const avatar = user?.avatar || DEFAULT_AVATAR;
   const sigId = post.sig;
-  const sigName = isAnnouncement ? "公告" : (sig?.name ?? "SIG");
+  const sigName = isAnnouncement
+    ? "公告"
+    : (sig?.name ?? (sigLoading ? "…" : "未知的 SIG"));
 
   const handleShare = async () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -51,7 +53,7 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
     <div className="flex items-center gap-3 rounded-card border border-line bg-surface px-3 py-2.5 shadow-card">
       <TapScale
         onClick={() => router.back()}
-        className="flex h-8 w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-field text-ink-700"
+        className="flex size-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-field text-ink-700"
         whileTap={{ scale: 0.9 }}
         aria-label="返回"
       >
@@ -77,7 +79,7 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
         >
           <Image
             src={avatar}
-            alt={`${customId} avatar`}
+            alt=""
             width={40}
             height={40}
             className="h-10 w-10 rounded-full object-cover"
@@ -93,7 +95,14 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
       <div className="min-w-0 flex-1">
         <div className="truncate font-semibold text-ink-900 text-sm leading-tight">
           {customId ? (
-            `@${customId}`
+            <>
+              {user?.name || `@${customId}`}
+              {user?.name && (
+                <span className="ml-1.5 font-normal text-ink-500 text-xs">
+                  @{customId}
+                </span>
+              )}
+            </>
           ) : (
             <span className="inline-block h-3.5 w-24 animate-pulse rounded-chip bg-field align-middle" />
           )}
@@ -116,7 +125,7 @@ export default function PostHeader({ post, isAnnouncement }: Props) {
       </div>
       <TapScale
         onClick={handleShare}
-        className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-field text-ink-700"
+        className="flex size-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-control bg-field text-ink-700"
         whileTap={{ scale: 0.9 }}
         aria-label="分享貼文"
       >

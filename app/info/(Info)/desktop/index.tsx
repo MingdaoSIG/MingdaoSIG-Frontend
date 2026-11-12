@@ -224,7 +224,7 @@ export default function Desktop() {
                 </p>
                 <Image
                   src={badge.src}
-                  alt={`${badge.label}-status`}
+                  alt={`${badge.label}運行狀態`}
                   width={208}
                   height={28}
                   className="h-auto w-full max-w-[13rem]"
@@ -235,15 +235,13 @@ export default function Desktop() {
           </div>
 
           <p className="mt-5 text-ink-700 text-sm">
-            訪問
             <Link
               href={"https://status.sig.school/"}
               target="_blank"
-              className={`mx-1 ${docLink}`}
+              className={docLink}
             >
-              狀態頁面
+              前往狀態頁面查看詳細資訊
             </Link>
-            獲取更多詳細信息
           </p>
         </DocCard>
       </div>

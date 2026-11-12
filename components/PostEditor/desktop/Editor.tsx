@@ -145,11 +145,15 @@ export default function MdEditorSync({ data, setPostData, token }: Props) {
         <div ref={hostRef} className="min-h-0 overflow-hidden" />
         {showPreview && (
           <div className="custom-scrollbar min-h-0 overflow-y-auto border-line border-l bg-paper px-8 py-6">
-            <MarkdownView
-              ref={previewRef}
-              markdown={content}
-              debounceMs={150}
-            />
+            {content.trim() ? (
+              <MarkdownView
+                ref={previewRef}
+                markdown={content}
+                debounceMs={150}
+              />
+            ) : (
+              <p className="text-ink-400 text-sm">預覽內容將顯示在這裡…</p>
+            )}
           </div>
         )}
       </div>

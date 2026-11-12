@@ -4,6 +4,8 @@ export type TComments = {
   user: {
     customId?: string;
     avatar?: string;
+    /** Not sent by the comment list yet (it projects customId + avatar). */
+    name?: string;
   } | null;
   post: string;
   content: string;

@@ -6,19 +6,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { TapScaleLink } from "@/components/mobile/TapScale";
-import { isValidCustomId } from "@/modules/validation";
 import { useUserAccount } from "@/utils/useUserAccount";
+import { selectedTab } from "../../selectedTab";
 import styles from "./ToolBar.module.scss";
 
 const ToolBar = () => {
-  const { isLogin, userData, isLoading } = useUserAccount();
+  const { isLogin, userData, isLoading, login } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<number>(pathToSelected(path));
+  const ownCustomId = userData?.customId ?? null;
+  const [selected, setSelected] = useState<number>(() =>
+    selectedTab(path, ownCustomId),
+  );
 
   useEffect(() => {
-    setSelected(pathToSelected(path));
-  }, [path]);
+    setSelected(selectedTab(path, ownCustomId));
+  }, [path, ownCustomId]);
 
   const menu = [
     {
@@ -26,33 +29,34 @@ const ToolBar = () => {
       label: "Home",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      clickable: !isLoading,
+      clickable: true,
     },
     {
       name: "user",
       label: "You",
-      route: userData?.customId ? `/@${userData.customId}` : "/",
+      route: ownCustomId ? `/@${ownCustomId}` : "/",
       icon: "/icons/bx-user.svg",
-      clickable: !isLoading && isLogin,
+      // Logged out, tapping it starts the login.
+      clickable: !isLoading,
     },
     {
       name: "new",
       label: "Post",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: !isLoading,
+      clickable: true,
     },
     {
       name: "info",
       label: "Info",
       route: "/info",
       icon: "/icons/info.svg",
-      clickable: !isLoading,
+      clickable: true,
     },
   ];
 
   return (
-    <nav className={styles.toolBarWrapper} aria-label="Primary">
+    <nav className={styles.toolBarWrapper} aria-label="主要導覽">
       <ul className={styles.tabList}>
         {menu.map((item, index) => {
           const isActive = selected === index;
@@ -73,6 +77,11 @@ const ToolBar = () => {
                 onClick={(e) => {
                   if (!item.clickable) {
                     e.preventDefault();
+                    return;
+                  }
+                  if (item.name === "user" && !isLogin) {
+                    e.preventDefault();
+                    login();
                     return;
                   }
                   if (isActive) {
@@ -112,24 +121,3 @@ const ToolBar = () => {
 };
 
 export default ToolBar;
-
-function pathToSelected(path: string) {
-  const homeRegex = /^\/$/gm;
-  const newRegex = /^\/new$/gm;
-  const infoRegex = /^\/info$/gm;
-
-  if (homeRegex.test(path)) {
-    return 0;
-  }
-  if (isValidCustomId(path.slice(1))) {
-    return 1;
-  }
-  if (newRegex.test(path)) {
-    return 2;
-  }
-  if (infoRegex.test(path)) {
-    return 3;
-  }
-
-  return -1;
-}

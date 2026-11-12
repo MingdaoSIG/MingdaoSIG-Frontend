@@ -7,8 +7,13 @@
   width: 100dvw;
   height: 100dvh;
 
-  padding-top: variables.$mobile-headerbar-height;
-  padding-bottom: variables.$mobile-toolbar-height;
+  /* The fixed header and tab bar grow by the iPhone safe-area insets. */
+  padding-top: calc(
+    #{variables.$mobile-headerbar-height} + env(safe-area-inset-top)
+  );
+  padding-bottom: calc(
+    #{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom)
+  );
 
   position: relative;
   overflow-y: auto;

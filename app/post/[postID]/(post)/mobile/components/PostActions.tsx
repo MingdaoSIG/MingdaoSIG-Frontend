@@ -18,7 +18,7 @@ type Props = {
 
 export default function PostActions({ post, commentCount }: Props) {
   const router = useRouter();
-  const { isLogin, isLoading, token, userData } = useUserAccount();
+  const { isLogin, isLoading, token, userData, login } = useUserAccount();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [liking, setLiking] = useState(false);
@@ -34,7 +34,10 @@ export default function PostActions({ post, commentCount }: Props) {
       return;
     }
     if (!isLogin) {
-      toast.info("登入後即可按讚");
+      toast.info("登入後即可按讚", {
+        key: "login",
+        action: { label: "登入", onClick: () => login() },
+      });
       return;
     }
     if (liking) {
@@ -68,10 +71,10 @@ export default function PostActions({ post, commentCount }: Props) {
   const isOwner = isLogin && post.user === userData?._id;
 
   return (
-    <div className="flex items-center gap-4 rounded-card border border-line bg-surface px-3.5 py-2.5 shadow-card">
+    <div className="flex items-center gap-2 rounded-card border border-line bg-surface px-2 py-2.5 shadow-card">
       <TapScale
         onClick={onLike}
-        className="flex cursor-pointer items-center gap-1.5 p-1"
+        className="-my-1 flex min-h-11 min-w-11 cursor-pointer items-center gap-1.5 px-2"
         whileTap={{ scale: 0.85 }}
         aria-label="按讚"
         aria-pressed={liked}
@@ -98,7 +101,7 @@ export default function PostActions({ post, commentCount }: Props) {
       </TapScale>
       <TapScale
         onClick={onCommentTap}
-        className="flex cursor-pointer items-center gap-1.5 p-1 text-ink-700"
+        className="-my-1 flex min-h-11 min-w-11 cursor-pointer items-center gap-1.5 px-2 text-ink-700"
         whileTap={{ scale: 0.9 }}
         aria-label="跳至留言"
       >
@@ -121,11 +124,11 @@ export default function PostActions({ post, commentCount }: Props) {
       {isOwner && (
         <TapScale
           onClick={onEdit}
-          className="flex cursor-pointer items-center justify-center p-1"
+          className="-my-1 flex size-11 cursor-pointer items-center justify-center"
           whileTap={{ scale: 0.9 }}
           aria-label="編輯貼文"
         >
-          <Image src="/icons/edit.svg" width={24} height={24} alt="編輯" />
+          <Image src="/icons/edit.svg" width={24} height={24} alt="" />
         </TapScale>
       )}
     </div>
