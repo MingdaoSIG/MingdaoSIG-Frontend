@@ -10,9 +10,12 @@ import { SuspensionBanner } from "./SuspensionBanner";
 // suspension notice for a muted or banned user, then the site banner.
 // Self-contained so the coming layout redesign can move it as one piece.
 //
-// - desktop: part of the header row of the page grid (app/device.tsx);
-// - mobile: fixed under the fixed header. Its height is published as
-//   `--site-notices-h` on <html>, and the page area starts below it.
+// - desktop: part of the sticky header row of the page grid
+//   (app/device.tsx);
+// - mobile: fixed under the fixed header.
+// Its height is published as `--site-notices-h` on <html>: the mobile page
+// area starts below it, and on desktop the side rail and the sticky side
+// panels (`--shell-top`) clear it.
 
 export const NOTICES_HEIGHT_VAR = "--site-notices-h";
 
@@ -24,7 +27,7 @@ export function SiteNotices({ mobile = false }: { mobile?: boolean }) {
   useEffect(() => {
     const root = document.documentElement;
     const element = ref.current;
-    if (!mobile || !element) {
+    if (!element) {
       return;
     }
     const update = () => {
