@@ -123,6 +123,13 @@ export default function PostEditor({
     setSettingsOpen(savedSettings ? savedSettings === "open" : wide);
   }, []);
 
+  // Writing something clears 「請輸入內文」.
+  useEffect(() => {
+    if (errors.content && !isDefaultContent(data.content)) {
+      setErrors((current) => ({ ...current, content: undefined }));
+    }
+  }, [data.content]);
+
   function changeView(next: EditorView) {
     setView(next);
     storageSet(VIEW_KEY, next);
