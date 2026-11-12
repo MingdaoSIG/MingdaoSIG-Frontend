@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type { TThread } from "@/interfaces/Thread";
 import { ApiError, apiRequest } from "@/modules/api/client";
+import { bookmarkKeys } from "@/utils/useBookmarks";
 
 type PostQuery = {
   pageSize: number;
@@ -31,8 +32,9 @@ async function fetchPosts(
   path: string,
   query: Record<string, string | number | undefined>,
   signal: AbortSignal,
+  auth: boolean = false,
 ): Promise<{ posts: TThread[]; total: number | null }> {
-  const result = await apiRequest<TThread[]>(path, { query, signal });
+  const result = await apiRequest<TThread[]>(path, { query, signal, auth });
   if (!result.ok) {
     throw new ApiError(result);
   }
@@ -52,6 +54,7 @@ async function fetchPostPage(
   query: PostQuery & { days?: number },
   pageParam: unknown,
   signal: AbortSignal,
+  auth: boolean = false,
 ): Promise<TThread[]> {
   const page = Number(pageParam);
   const { posts } = await fetchPosts(
@@ -63,6 +66,7 @@ async function fetchPostPage(
       days: query.days,
     },
     signal,
+    auth,
   );
   return posts;
 }
@@ -74,6 +78,8 @@ function usePostList(
   enabled: boolean = true,
   /** Lists that take no `sort` (hashtag, liked) send none. */
   sortable: boolean = true,
+  /** The signed-in user's own lists (bookmarks) send the token. */
+  auth: boolean = false,
 ) {
   return useInfiniteQuery<TThread[], Error>({
     queryKey: [...key, query],
@@ -86,6 +92,7 @@ function usePostList(
         },
         pageParam,
         signal,
+        auth,
       ),
     enabled,
     staleTime: 1 * 60 * 1000,
@@ -119,6 +126,20 @@ export const useUserLikedPost = (
     query,
     Boolean(userId) && enabled,
     false,
+  );
+
+/**
+ * The signed-in user's bookmarks, newest bookmark first (contract v4
+ * §4.3). Keyed under `bookmarkKeys.list`, so a toggle refreshes it.
+ */
+export const useBookmarkedPost = (userId: string, query: PostQuery) =>
+  usePostList(
+    bookmarkKeys.list(userId),
+    "/user/me/bookmarks",
+    query,
+    Boolean(userId),
+    false,
+    true,
   );
 
 export const useSigPost = (sigId: string, query: PostQuery) =>
