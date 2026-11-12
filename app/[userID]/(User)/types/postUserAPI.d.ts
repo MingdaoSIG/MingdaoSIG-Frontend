@@ -1,10 +1,10 @@
 /**
- * type for Post API Body Needs.
+ * Body of `POST /user` (your own profile).
  *
- * @interface TPostUserAPI
- * @property {string} customId - User's custom ID.
- * @property {string} description - The signature included in the post.
+ * @property {string} description - The bio shown on the profile.
+ * @property {boolean} notifyComments - Email me when someone comments.
  */
 export type TPostUserAPI = {
   description?: string;
+  notifyComments?: boolean;
 };
