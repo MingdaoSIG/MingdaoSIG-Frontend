@@ -17,10 +17,11 @@ type Props = {
 export default function CommentItem({ comment }: Props) {
   // A deleted author comes back without a user: show no profile link.
   const customId = comment.user?.customId;
+  const name = comment.user?.name;
   const avatar = (
     <Image
       src={comment.user?.avatar || DEFAULT_AVATAR}
-      alt={customId ? `${customId} avatar` : ""}
+      alt=""
       width={36}
       height={36}
       className="h-9 w-9 rounded-full object-cover"
@@ -45,21 +46,24 @@ export default function CommentItem({ comment }: Props) {
         <div className="flex-shrink-0">{avatar}</div>
       )}
       <div className="min-w-0 flex-1">
-        <div className="flex items-baseline gap-1.5">
+        <div className="flex min-w-0 items-baseline gap-1.5">
           {customId ? (
             <TapScaleLink
               href={`/@${customId}`}
-              className="font-semibold text-ink-900 text-sm"
+              className="shrink-0 font-semibold text-ink-900 text-sm"
               whileTap={{ scale: 0.96 }}
             >
-              @{customId}
+              {name || `@${customId}`}
             </TapScaleLink>
           ) : (
             <span className="font-semibold text-ink-500 text-sm">
               已刪除的使用者
             </span>
           )}
-          <span className="text-ink-500 text-xs">
+          {customId && name && (
+            <span className="truncate text-ink-500 text-xs">@{customId}</span>
+          )}
+          <span className="shrink-0 text-ink-500 text-xs">
             {relativeTime(comment.createdAt ?? "")}
           </span>
         </div>

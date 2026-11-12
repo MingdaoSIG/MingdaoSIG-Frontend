@@ -6,7 +6,12 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
+  /* The fixed header and tab bar grow by the iPhone safe-area insets. */
+  padding:
+    calc(#{variables.$mobile-headerbar-height} + env(safe-area-inset-top))
+    variables.$mobile-border-margin
+    calc(#{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom))
+    variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }
@@ -64,7 +69,7 @@
   align-items: stretch;
   overflow: hidden;
 
-  height: calc(100dvh - 12.5rem);
+  height: calc(100dvh - 12.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   width: 100%;
 
   &>div {
@@ -82,7 +87,7 @@
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
 
-    h1 {
+    h2 {
       width: 100%;
       color: var(--color-ink-900);
       font-size: 1.25rem;
@@ -103,9 +108,18 @@
       margin-bottom: 0.25rem;
     }
 
+    /* Links are 44px tap targets (they were 20px lines stacked tight) */
+    .linkList {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
     a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
       color: var(--color-brand-700);
-      margin-top: 1rem;
       font-size: 1rem;
     }
   }

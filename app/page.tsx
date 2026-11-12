@@ -33,10 +33,10 @@ function HomeContent() {
   useEffect(() => {
     if (error === "not_md") {
       Swal.fire({
-        title: "Login Fail",
-        text: "You should use your Mingdao email to login!",
+        title: "登入失敗",
+        text: "請使用明道學校信箱（@ms.mingdao.edu.tw）登入",
         icon: "error",
-        confirmButtonText: "Sure",
+        confirmButtonText: "確定",
         allowEscapeKey: false,
         allowOutsideClick: false,
         customClass: { container: "select-none" },

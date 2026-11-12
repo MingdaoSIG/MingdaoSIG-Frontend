@@ -113,13 +113,13 @@ const Thread = ({
         )}
 
         {/* Title */}
-        <h2 className="mb-1.5 flex min-w-0 items-center gap-2 font-semibold text-[1.125rem] text-ink-900 leading-snug">
+        <h2 className="mb-1.5 flex min-w-0 items-start gap-2 font-semibold text-[1.125rem] text-ink-900 leading-snug">
           {isAnnouncement && (
-            <span className="shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
+            <span className="mt-0.5 shrink-0 rounded-chip bg-warm-600/10 px-2 py-0.5 font-semibold text-warm-600 text-xs">
               公告
             </span>
           )}
-          <span className="line-clamp-1">{threadData.title}</span>
+          <span className="line-clamp-2">{threadData.title}</span>
         </h2>
 
         {/* Content Preview - Dynamic lines based on hashtags */}
@@ -156,11 +156,11 @@ const Thread = ({
         {!isAnnouncement && (
           <div className="mt-1 flex items-center gap-4 pt-1 text-ink-500">
             <span className="flex items-center gap-1.5 text-sm">
-              <Heart size={16} aria-label="likes" />
+              <Heart size={16} aria-label="按讚數" />
               {threadData.likes}
             </span>
             <span className="flex items-center gap-1.5 text-sm">
-              <MessageCircle size={16} aria-label="comments" />
+              <MessageCircle size={16} aria-label="留言數" />
               {threadData.comments}
             </span>
           </div>
@@ -381,7 +381,7 @@ export const InfinityThreadsList = ({
     </div>
   ) : (
     <div className="flex h-full w-full items-center justify-center">
-      <h1 className="text-ink-500 text-lg">No Post Yet</h1>
+      <h1 className="text-ink-500 text-lg">還沒有貼文</h1>
     </div>
   );
 };

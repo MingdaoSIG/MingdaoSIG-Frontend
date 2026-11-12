@@ -11,7 +11,7 @@ const useAlert = () => {
   const showLoading = () => {
     setIsLoading(true);
     return Swal.fire({
-      title: "Loading...",
+      title: "處理中…",
       allowOutsideClick: false,
     });
   };

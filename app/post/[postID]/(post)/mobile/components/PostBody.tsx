@@ -9,9 +9,11 @@ import type { TThread } from "@/interfaces/Thread";
 type Props = {
   post: TThread;
   isAnnouncement?: boolean;
+  /** Called once the body is rendered. */
+  onReady?: () => void;
 };
 
-export default function PostBody({ post, isAnnouncement }: Props) {
+export default function PostBody({ post, isAnnouncement, onReady }: Props) {
   const hashtags = Array.isArray(post.hashtag) ? post.hashtag : [];
   const showHashtags = !isAnnouncement && hashtags.length > 0;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -39,7 +41,7 @@ export default function PostBody({ post, isAnnouncement }: Props) {
       )}
       <div className="my-1 h-px w-full bg-line" />
       <SectionErrorBoundary label="文章內容">
-        <MarkdownView markdown={post.content ?? ""} />
+        <MarkdownView markdown={post.content ?? ""} onReady={onReady} />
       </SectionErrorBoundary>
     </article>
   );

@@ -2,31 +2,23 @@ import type { TAlertMessageConfigs } from "../types/alertMessageConfigs";
 
 export const alertMessageConfigs: TAlertMessageConfigs = {
   noComment: {
-    title: "Error!",
-    text: "Please enter comment!",
+    title: "還不能送出",
+    text: "請輸入留言內容",
     icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
-  },
-  noLogin: {
-    title: "Error!",
-    text: "Please login to comment!",
-    icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "好",
+    confirmButtonColor: "#0b5a83",
   },
   commentSuccess: {
-    title: "Success!",
-    text: "Comment success!",
+    title: "留言成功",
     icon: "success",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#0090BD",
+    confirmButtonText: "好",
+    confirmButtonColor: "#0b5a83",
   },
   otherError: {
-    title: "Error!",
-    text: "Something went wrong. Please try again later.",
+    title: "留言失敗",
+    text: "發生錯誤，請稍後再試",
     icon: "error",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#ff0000",
+    confirmButtonText: "好",
+    confirmButtonColor: "#0b5a83",
   },
 };

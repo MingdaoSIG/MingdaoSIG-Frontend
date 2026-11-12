@@ -10,33 +10,43 @@ export default function UserLogin() {
     return (
       <div className={`${styles.loginUserPanelWrapper} ${styles.secondary}`}>
         <div className={styles.loginUserPanel}>
-          <p>Loading</p>
+          <span>載入中…</span>
         </div>
       </div>
     );
   }
   if (!isLogin) {
     return (
-      <div className={styles.loginUserPanelWrapper} onClick={() => login()}>
-        <div className={styles.loginUserPanel}>
-          <p>Login</p>
-        </div>
-      </div>
+      <button
+        type="button"
+        className={styles.loginUserPanelWrapper}
+        onClick={() => login()}
+      >
+        <span className={styles.loginUserPanel}>
+          <span>登入</span>
+        </span>
+      </button>
     );
   }
   return (
     <div className="flex items-center justify-center">
       {userData && userData.permission === 2 && (
-        <div
+        <button
+          type="button"
           className={`${styles.loginUserPanelWrapper} ${styles.secondary} mr-2`}
           onClick={() => window.open("/admin", "_self")}
         >
-          <div className={styles.loginUserPanel}>
-            <p>管理平台</p>
-          </div>
-        </div>
+          <span className={styles.loginUserPanel}>
+            <span>管理平台</span>
+          </span>
+        </button>
       )}
-      <div className={styles.userPanel} onClick={() => confirmLogout(logout)}>
+      <button
+        type="button"
+        className={styles.userPanel}
+        onClick={() => confirmLogout(logout)}
+        aria-label="登出"
+      >
         <Image
           src={
             userData?.avatar ||
@@ -44,22 +54,22 @@ export default function UserLogin() {
           }
           width={50}
           height={50}
-          alt="Avatar"
+          alt=""
           className={styles.avatar}
         />
-      </div>
+      </button>
     </div>
   );
 }
 
 function confirmLogout(logout: () => void) {
   Swal.fire({
-    text: "Are you sure you want to logout?",
+    text: "確定要登出嗎？",
     icon: "question",
     showCancelButton: true,
-    cancelButtonText: "Cancel",
-    confirmButtonText: "Logout me out now",
-    confirmButtonColor: "#DC0032",
+    cancelButtonText: "取消",
+    confirmButtonText: "登出",
+    confirmButtonColor: "#b42318",
   }).then((result) => {
     if (result.isConfirmed) {
       logout();

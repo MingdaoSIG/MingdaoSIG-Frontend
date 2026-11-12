@@ -48,7 +48,7 @@ export default function Mobile() {
     <div className={styles.mobileView}>
       <div className={styles.wrapper}>
         <PageTitle title="更新紀錄" />
-        <div className="scrollbar-hide mt-2 h-[calc(83dvh-3.5rem)] w-full space-y-3 overflow-auto">
+        <div className="scrollbar-hide mt-2 h-[calc(100dvh-12.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full space-y-3 overflow-auto">
           {typedChangelog.map((entry) => (
             <article
               key={entry.version}

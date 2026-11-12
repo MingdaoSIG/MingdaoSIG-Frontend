@@ -6,7 +6,12 @@
   justify-content: start;
   width: 100dvw;
   height: 100dvh;
-  padding: calc(variables.$mobile-headerbar-height) variables.$mobile-border-margin calc(variables.$mobile-toolbar-height) variables.$mobile-border-margin;
+  /* The fixed header and tab bar grow by the iPhone safe-area insets. */
+  padding:
+    calc(#{variables.$mobile-headerbar-height} + env(safe-area-inset-top))
+    variables.$mobile-border-margin
+    calc(#{variables.$mobile-toolbar-height} + env(safe-area-inset-bottom))
+    variables.$mobile-border-margin;
   position: relative;
   overflow-y: auto;
 }

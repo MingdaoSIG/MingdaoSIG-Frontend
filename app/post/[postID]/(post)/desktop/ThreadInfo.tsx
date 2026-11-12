@@ -9,6 +9,7 @@ import { sigDefaultColors } from "@/components/Threads/configs/sigDefaultColors"
 import type { TComments } from "@/interfaces/comments";
 import type { TThread } from "@/interfaces/Thread";
 import { isSubmitEnter } from "@/utils/keyboard";
+import { promptLogin } from "@/utils/loginPrompt";
 // Custom Hooks
 import useAlert from "@/utils/useAlert";
 import useSig from "@/utils/useSig";
@@ -25,19 +26,21 @@ import {
 } from "../apis/CommentAPI";
 // Components
 import Reply from "../components/Reply";
+import { useCommentDraft } from "../components/useCommentDraft";
 
 // Configs
 import { alertMessageConfigs } from "../configs/alertMessages";
 
 export default function ThreadInfo({ post }: { post: TThread }) {
-  const [typeComments, setTypeComments] = useState<string>("");
+  const [typeComments, setTypeComments] = useCommentDraft(post._id);
   const [comments, setComments] = useState<TComments[]>([]);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const { token, isLogin } = useUserAccount();
+  const [loginHint, setLoginHint] = useState(false);
+  const { token, isLogin, isLoading: authLoading, login } = useUserAccount();
   const { showAlert } = useAlert();
-  const { data: user } = useUser(post.user);
-  const { data: sig } = useSig(post.sig);
+  const { data: user, isLoading: userLoading } = useUser(post.user);
+  const { data: sig, isLoading: sigLoading } = useSig(post.sig);
   const composing = useRef(false);
 
   const route = useRouter();
@@ -74,7 +77,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
       return;
     }
     if (!isLogin) {
-      return showAlert(alertMessageConfigs.noLogin);
+      return promptLogin(login, {
+        text: "登入後即可留言，輸入的內容會保留。",
+      });
     }
     if (trimmed.length === 0) {
       return showAlert(alertMessageConfigs.noComment);
@@ -120,7 +125,9 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               disabled={!user?.customId}
               onClick={() => user?.customId && route.push(`/@${user.customId}`)}
             >
-              {user?.name || "Loading..."}
+              {user?.name ||
+                (user?.customId ? `@${user.customId}` : null) ||
+                (userLoading ? "載入中…" : "未知的使用者")}
             </button>
             <span aria-hidden className="text-ink-400">
               •
@@ -134,15 +141,25 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               disabled={!sig?.customId}
               onClick={() => sig?.customId && route.push(`/@${sig.customId}`)}
             >
-              {sig?.name || "Loading..."}
+              {sig?.name || (sigLoading ? "載入中…" : "未知的 SIG")}
             </button>
           </div>
-          <div className="text-[13px] text-ink-500">
-            {
-              new Date(post?.createdAt ?? "")
-                .toLocaleString("zh-TW")
-                .split(" ")[0]
-            }
+          <div className="flex min-w-0 items-center gap-1.5 text-[13px] text-ink-500">
+            {user?.name && user.customId && (
+              <>
+                <span className="truncate">@{user.customId}</span>
+                <span aria-hidden className="text-ink-400">
+                  ·
+                </span>
+              </>
+            )}
+            <span className="shrink-0">
+              {
+                new Date(post?.createdAt ?? "")
+                  .toLocaleString("zh-TW")
+                  .split(" ")[0]
+              }
+            </span>
           </div>
         </div>
       </div>
@@ -171,6 +188,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
                   key={comment._id}
                   overflow={false}
                   customId={comment.user?.customId}
+                  name={comment.user?.name}
                   avatar={comment.user?.avatar}
                   content={comment.content}
                   createdAt={
@@ -182,7 +200,7 @@ export default function ThreadInfo({ post }: { post: TThread }) {
               );
             })
           ) : (
-            <p className="py-4 text-center text-ink-500 text-sm">No comments</p>
+            <p className="py-4 text-center text-ink-500 text-sm">尚無留言</p>
           )}
         </div>
         <form
@@ -191,8 +209,13 @@ export default function ThreadInfo({ post }: { post: TThread }) {
         >
           <input
             className="h-full w-full flex-1 bg-transparent px-3 text-ink-800 text-sm placeholder:text-ink-400 focus-visible:outline-none disabled:cursor-not-allowed"
-            placeholder="Reply..."
+            placeholder={isLogin ? "寫下你的想法…" : "登入後即可留言"}
             aria-label="留言內容"
+            onFocus={() => {
+              if (!isLogin && !authLoading) {
+                setLoginHint(true);
+              }
+            }}
             onChange={(e) => setTypeComments(e.target.value)}
             onCompositionStart={() => {
               composing.current = true;
@@ -237,6 +260,18 @@ export default function ThreadInfo({ post }: { post: TThread }) {
             />
           </button>
         </form>
+        {loginHint && !isLogin && (
+          <div className="mt-2 flex items-center justify-between gap-3 text-ink-700 text-sm">
+            <span>登入後即可留言，輸入的內容會保留。</span>
+            <button
+              type="button"
+              className="h-9 shrink-0 cursor-pointer rounded-control bg-brand-700 px-4 font-semibold text-white transition-colors hover:bg-brand-800"
+              onClick={() => login()}
+            >
+              登入
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

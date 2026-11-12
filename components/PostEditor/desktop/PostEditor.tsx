@@ -11,6 +11,7 @@ import {
 
 // Types
 import { EditorErrorBoundary } from "../shared/EditorErrorBoundary";
+import { LoginBanner } from "../shared/LoginBanner";
 import type { TPostAPI } from "../types/postAPI";
 import MetaDataForm from "./MetaDataForm";
 import TitleSigForm from "./TitleSigForm";
@@ -27,6 +28,8 @@ interface Props {
   postButtonDisable: boolean;
   handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEdit?: boolean;
+  /** Edit mode: the SIG the post is already in. */
+  originalSig?: string;
 }
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
@@ -41,6 +44,7 @@ export default function NewPost({
   postButtonDisable,
   handleFileChange,
   isEdit,
+  originalSig,
 }: Props) {
   const [_hashtag, setHashtag] = useState<string[]>([]);
 
@@ -53,29 +57,33 @@ export default function NewPost({
 
   // App-mode workspace: fills the shell row between header and dock
   return (
-    <div className="mx-auto grid h-full min-h-0 w-[min(80rem,100%-4rem)] grid-cols-[minmax(0,1fr)_20rem] gap-6">
-      <div className="flex min-h-0 flex-col">
-        <Suspense fallback={null}>
-          <TitleSigForm
-            data={data}
-            handleFormEventFunction={handleFormEventFunction}
-          />
-          <div className="min-h-0 flex-1">
-            <EditorErrorBoundary data={data} setPostData={setPostData}>
-              <Editor setPostData={setPostData} data={data} token={token} />
-            </EditorErrorBoundary>
-          </div>
-        </Suspense>
+    <div className="mx-auto flex h-full min-h-0 w-[min(80rem,100%-4rem)] flex-col gap-3">
+      {!isEdit && <LoginBanner className="shrink-0" />}
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_20rem] gap-6">
+        <div className="flex min-h-0 flex-col">
+          <Suspense fallback={null}>
+            <TitleSigForm
+              data={data}
+              handleFormEventFunction={handleFormEventFunction}
+              originalSig={originalSig}
+            />
+            <div className="min-h-0 flex-1">
+              <EditorErrorBoundary data={data} setPostData={setPostData}>
+                <Editor setPostData={setPostData} data={data} token={token} />
+              </EditorErrorBoundary>
+            </div>
+          </Suspense>
+        </div>
+        <MetaDataForm
+          discardFunction={discardFunction}
+          postFunction={postFunction}
+          data={data}
+          handleFormEventFunction={handleFormEventFunction}
+          postButtonDisable={postButtonDisable}
+          handleFileChange={handleFileChange}
+          isEdit={isEdit}
+        />
       </div>
-      <MetaDataForm
-        discardFunction={discardFunction}
-        postFunction={postFunction}
-        data={data}
-        handleFormEventFunction={handleFormEventFunction}
-        postButtonDisable={postButtonDisable}
-        handleFileChange={handleFileChange}
-        isEdit={isEdit}
-      />
     </div>
   );
 }

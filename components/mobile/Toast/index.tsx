@@ -15,14 +15,19 @@ type ToastInternal = {
   type: ToastType;
   message: string;
   action?: ToastAction;
+  key?: string;
 };
 
 type ToastOptions = {
   action?: ToastAction;
+  /** A new toast replaces a visible one with the same key. */
+  key?: string;
 };
 
 const MAX_TOASTS = 3;
 const AUTO_DISMISS_MS = 3000;
+/** Toasts with an action stay longer, so there is time to tap it. */
+const ACTION_DISMISS_MS = 6000;
 
 let toasts: ToastInternal[] = [];
 let nextId = 1;
@@ -36,15 +41,23 @@ function notify() {
 
 function add(type: ToastType, message: string, options?: ToastOptions) {
   const id = nextId++;
-  const next: ToastInternal = { id, type, message, action: options?.action };
-  toasts = [...toasts, next];
+  const key = options?.key;
+  const next: ToastInternal = {
+    id,
+    type,
+    message,
+    action: options?.action,
+    key,
+  };
+  toasts = [...toasts.filter((t) => !key || t.key !== key), next];
   if (toasts.length > MAX_TOASTS) {
     toasts = toasts.slice(toasts.length - MAX_TOASTS);
   }
   notify();
-  if (!options?.action) {
-    setTimeout(() => remove(id), AUTO_DISMISS_MS);
-  }
+  setTimeout(
+    () => remove(id),
+    options?.action ? ACTION_DISMISS_MS : AUTO_DISMISS_MS,
+  );
 }
 
 function remove(id: number) {
@@ -140,9 +153,10 @@ function ToastItem({ toast: t }: { toast: ToastInternal }) {
             backgroundColor: "rgba(255, 255, 255, 0.16)",
             border: "none",
             color: "white",
-            padding: "4px 10px",
+            minHeight: 32,
+            padding: "6px 12px",
             borderRadius: 6,
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: 600,
             cursor: "pointer",
           }}
