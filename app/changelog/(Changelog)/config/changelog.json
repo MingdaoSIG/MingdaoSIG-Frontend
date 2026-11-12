@@ -1,5 +1,118 @@
 [
   {
+    "version": "2.27.0",
+    "date": "2026-11-13",
+    "type": "feature",
+    "title": "全新介面、通知與學習歷程",
+    "summary": "全站重新設計：新的導覽、首頁、探索與編輯器，加上站內通知與推播、活動報名、學習歷程、老師回饋、問題回報，以及更完整的 SIG 管理",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "全新介面：手機版下方改成 首頁／探索／發文／通知／我的；電腦版左側有窄導覽列，列出你的 SIG，有新貼文會亮點"
+      },
+      {
+        "type": "feature",
+        "description": "左側導覽列的「我的 SIG」會顯示 SIG 頭貼，可以像 Discord 一樣拖曳調整順序，換裝置也會記得"
+      },
+      {
+        "type": "feature",
+        "description": "電腦版改成整頁捲動，並用上整個螢幕寬度：寬螢幕兩側會顯示近期活動、熱門標籤、熱門貼文與正在招生的 SIG"
+      },
+      {
+        "type": "feature",
+        "description": "首頁分成「我的 SIG／最新／熱門」，貼文卡片改成精簡版，一次看到更多篇"
+      },
+      {
+        "type": "feature",
+        "description": "新增「探索」頁：正在招生的 SIG、近期活動、熱門標籤與全部 SIG 都在這裡，也可以追蹤有興趣的 SIG"
+      },
+      {
+        "type": "feature",
+        "description": "搜尋結果分成 全部／貼文／SIG／標籤／使用者，並標示符合的文字"
+      },
+      {
+        "type": "feature",
+        "description": "站內通知：留言、回覆、按讚、入社申請與結果、活動、老師回饋、檢舉結果都會通知你；幹部可以直接在通知裡同意或拒絕入社申請"
+      },
+      {
+        "type": "feature",
+        "description": "可以開啟手機與瀏覽器推播，也可以加到主畫面當 App 使用；每週摘要信可在通知設定自行開啟（預設關閉）"
+      },
+      {
+        "type": "feature",
+        "description": "全新編輯器：寫作、預覽與發布設定在同一個畫面；選 SIG、換封面、加標籤（會建議常用標籤）、加入系列都更直覺，草稿會自動存到雲端"
+      },
+      {
+        "type": "feature",
+        "description": "文章頁加上目錄、作者資訊、系列與同 SIG 的其他文章；手機版下方有讚、留言、收藏、分享"
+      },
+      {
+        "type": "feature",
+        "description": "可以收藏貼文、把文章整理成系列，並看到每篇的瀏覽次數與自己的數據"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 頁與個人頁改成右側固定資訊（保留平台 Banner）、左側貼文一直往下滑；SIG 頁有 貼文／活動／成果／成員／關於，也可以追蹤 SIG；個人頁顯示貼文數與獲得的讚"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 活動：幹部可以建立社課與活動，大家可以報名、加到 Google 日曆或下載 .ics；新增全站「活動」頁，寬螢幕會同時顯示月曆"
+      },
+      {
+        "type": "feature",
+        "description": "學習歷程：挑選要收錄的貼文、SIG 與幹部經歷、老師回饋，右邊即時預覽 A4 版面，可直接存成 PDF"
+      },
+      {
+        "type": "feature",
+        "description": "指導老師可以在貼文寫回饋，只有作者、老師與管理員看得到"
+      },
+      {
+        "type": "feature",
+        "description": "SIG 可以設定招生期間與自訂入社問題，並在 SIG 頁顯示精選成果"
+      },
+      {
+        "type": "feature",
+        "description": "第一次登入會有簡單的導覽，幫你追蹤有興趣的 SIG、開啟通知"
+      },
+      {
+        "type": "feature",
+        "description": "新增「個人專區」：整合我的 SIG、活動報名、草稿、收藏、按讚、學習歷程、數據、我的回報與通知設定"
+      },
+      {
+        "type": "feature",
+        "description": "平台資訊、Dashboard、更新紀錄與運行狀態合併成「關於 MDSIG」一頁，舊網址會自動轉過去"
+      },
+      {
+        "type": "feature",
+        "description": "檢舉貼文或留言，管理員處理後會通知你結果"
+      },
+      {
+        "type": "feature",
+        "description": "新增「回報問題」：登入後可以直接在平台上回報錯誤或提出建議，可附截圖，並在「個人專區 → 我的回報」看到處理進度與管理員回覆"
+      },
+      {
+        "type": "feature",
+        "description": "管理平台新增：SIG 設定（網址、代表色、預設封面、封存與合併）、學年交接、搬移貼文、徽章、停權與禁言、內容管理員、登入紀錄、公告橫幅、廣播通知、網站流量與關鍵字過濾"
+      },
+      {
+        "type": "improvement",
+        "description": "SIG 或使用者改了網址後，舊連結會自動轉到新網址"
+      },
+      {
+        "type": "improvement",
+        "description": "scrollbar 改成較細、平常較淡的樣式，不再緊貼貼文；捲到頁面最上方或最下方時不會再露出白色區塊"
+      },
+      {
+        "type": "fix",
+        "description": "修正編輯器空白時，游標變成兩行高的直線並貼在邊框上的問題"
+      },
+      {
+        "type": "security",
+        "description": "被停權或禁言的帳號會看到原因與解除時間；網站流量統計改用唯讀帳號讀取"
+      }
+    ]
+  },
+  {
     "version": "2.26.1",
     "date": "2026-11-12",
     "type": "fix",
