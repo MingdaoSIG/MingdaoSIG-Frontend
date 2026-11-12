@@ -16,6 +16,8 @@ import {
 } from "../../(admin)/components/ui";
 import { canManageSig, useAdmin } from "../../(admin)/context";
 import { formatCount } from "../../(admin)/format";
+import { AnalyticsTab } from "../../(admin)/sig/AnalyticsTab";
+import { EventsTab } from "../../(admin)/sig/EventsTab";
 import { InfoTab } from "../../(admin)/sig/InfoTab";
 import { MembersTab } from "../../(admin)/sig/MembersTab";
 import { StaffTab } from "../../(admin)/sig/StaffTab";
@@ -23,9 +25,16 @@ import { useSigDetail } from "../../(admin)/sig/useSigDetail";
 import { oneOf, useQueryState } from "../../(admin)/useQueryState";
 
 // One SIG, everything in one place (?tab=): 基本資料, 幹部與老師, 成員,
-// 入社申請. Leaders and 指導老師 reach only their own SIGs.
+// 入社申請, 活動, 數據. Leaders and 指導老師 reach only their own SIGs.
 
-const TABS = ["info", "staff", "members", "requests"] as const;
+const TABS = [
+  "info",
+  "staff",
+  "members",
+  "requests",
+  "events",
+  "analytics",
+] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminSigPage() {
@@ -110,6 +119,8 @@ export default function AdminSigPage() {
       count: pending,
       warn: (pending ?? 0) > 0,
     },
+    { id: "events", label: "活動" },
+    { id: "analytics", label: "數據" },
   ];
 
   return (
@@ -187,6 +198,8 @@ export default function AdminSigPage() {
       {tab === "staff" && <StaffTab sig={sig} />}
       {tab === "members" && <MembersTab sig={sig} />}
       {tab === "requests" && <JoinRequestList fixedSig={sig._id} />}
+      {tab === "events" && <EventsTab sig={sig} />}
+      {tab === "analytics" && <AnalyticsTab sig={sig} />}
     </>
   );
 }
