@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import NotFoundPage from "@/app/not-found";
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
+import { apiRequest } from "@/modules/api/client";
 import sigAPI from "@/modules/sigAPI";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -25,7 +26,11 @@ export default function ManageSIGLeader({
   const [leaders, setLeaders] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const token = userAccount.token;
   const fetchLeaders = useCallback(async () => {
+    if (!token) {
+      return;
+    }
     try {
       setLoading(true);
       const response = await sigAPI.getSigData(sigID);
@@ -40,7 +45,8 @@ export default function ManageSIGLeader({
             continue;
           }
           try {
-            const res = await sigAPI.getUserData(leaderId);
+            // Email and student number come only from the full profile.
+            const res = await sigAPI.getFullUserData(leaderId, token);
             if (res) {
               addedLeaderIds.add(leaderId);
               leadersData.push(res);
@@ -59,7 +65,7 @@ export default function ManageSIGLeader({
     } finally {
       setLoading(false);
     }
-  }, [sigID]);
+  }, [sigID, token]);
 
   function addLeader() {
     Swal.fire({
@@ -83,19 +89,12 @@ export default function ManageSIGLeader({
     }).then(async (result) => {
       if (result.isConfirmed) {
         const code = result.value;
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/leader`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${userAccount.token}`,
-            },
-            body: JSON.stringify({ code }),
-          },
-        );
-        const data = await res.json();
-        if (res.status === 200) {
+        const res = await apiRequest(`/sig/${sigID}/leader`, {
+          method: "POST",
+          token: userAccount.token,
+          body: { code },
+        });
+        if (res.ok) {
           Swal.fire({
             title: "新增成功!",
             text: "成功新增 Leader!",
@@ -103,13 +102,13 @@ export default function ManageSIGLeader({
             confirmButtonColor: "#5fcdf5",
           });
           fetchLeaders();
-        } else if (data.status === 4032) {
+        } else if (res.status === 4032) {
           Swal.fire({
             title: "新增失敗!",
             text: "該學號已經是 Leader!",
             icon: "error",
           });
-        } else if (data.status === 4017) {
+        } else if (res.status === 4017) {
           Swal.fire({
             title: "新增失敗!",
             text: "該學號尚未註冊 SIG 帳號!",
@@ -118,7 +117,7 @@ export default function ManageSIGLeader({
         } else {
           Swal.fire({
             title: "新增失敗!",
-            text: "請聯絡開發者！",
+            text: res.kind === "error" ? "請聯絡開發者！" : res.message,
             icon: "error",
           });
         }
@@ -138,18 +137,12 @@ export default function ManageSIGLeader({
       cancelButtonText: "取消",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/leader`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${userAccount.token}`,
-            },
-            body: JSON.stringify({ leaderId }),
-          },
-        );
-        if (res.status === 200) {
+        const res = await apiRequest(`/sig/${sigID}/leader`, {
+          method: "DELETE",
+          token: userAccount.token,
+          body: { leaderId },
+        });
+        if (res.ok) {
           Swal.fire({
             title: "刪除成功!",
             text: "成功刪除 Leader!",
@@ -160,7 +153,7 @@ export default function ManageSIGLeader({
         } else {
           Swal.fire({
             title: "刪除失敗!",
-            text: "請聯絡開發者！",
+            text: res.kind === "error" ? "請聯絡開發者！" : res.message,
             icon: "error",
           });
         }
@@ -290,9 +283,11 @@ export default function ManageSIGLeader({
                       <p className="font-semibold text-gray-800">
                         {leader.name}
                       </p>
-                      <p className="text-gray-500 text-xs">{leader.code}</p>
+                      <p className="text-gray-500 text-xs">
+                        {leader.code || "—"}
+                      </p>
                       <p className="max-w-[150px] truncate text-gray-400 text-xs">
-                        {leader.email}
+                        {leader.email || "—"}
                       </p>
                     </div>
                   </div>
@@ -360,9 +355,13 @@ export default function ManageSIGLeader({
               <tbody className="divide-y divide-gray-200">
                 {leaders.map((leader) => (
                   <tr key={leader._id} className="bg-white">
-                    <td className="px-6 py-4 text-center">{leader.code}</td>
+                    <td className="px-6 py-4 text-center">
+                      {leader.code || "—"}
+                    </td>
                     <td className="px-6 py-4 text-center">{leader.name}</td>
-                    <td className="px-6 py-4 text-center">{leader.email}</td>
+                    <td className="px-6 py-4 text-center">
+                      {leader.email || "—"}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       <button
                         type="button"

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import NotFoundPage from "@/app/not-found";
 import type { Sig } from "@/interfaces/Sig";
 import type { User } from "@/interfaces/User";
+import { apiRequest } from "@/modules/api/client";
 import sigAPI from "@/modules/sigAPI";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
@@ -25,7 +26,11 @@ export default function ManageSIGAdvisor({
   const [advisors, setAdvisors] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const token = userAccount.token;
   const fetchAdvisors = useCallback(async () => {
+    if (!token) {
+      return;
+    }
     try {
       setLoading(true);
       const response = await sigAPI.getSigData(sigID);
@@ -40,7 +45,8 @@ export default function ManageSIGAdvisor({
             continue;
           }
           try {
-            const res = await sigAPI.getUserData(advisorId);
+            // Email and student number come only from the full profile.
+            const res = await sigAPI.getFullUserData(advisorId, token);
             if (res) {
               addedAdvisorIds.add(advisorId);
               advisorsData.push(res);
@@ -59,7 +65,7 @@ export default function ManageSIGAdvisor({
     } finally {
       setLoading(false);
     }
-  }, [sigID]);
+  }, [sigID, token]);
 
   function addAdvisor() {
     Swal.fire({
@@ -83,19 +89,12 @@ export default function ManageSIGAdvisor({
     }).then(async (result) => {
       if (result.isConfirmed) {
         const code = result.value;
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/moderator`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${userAccount.token}`,
-            },
-            body: JSON.stringify({ code }),
-          },
-        );
-        const data = await res.json();
-        if (res.status === 200) {
+        const res = await apiRequest(`/sig/${sigID}/moderator`, {
+          method: "POST",
+          token: userAccount.token,
+          body: { code },
+        });
+        if (res.ok) {
           Swal.fire({
             title: "新增成功!",
             text: "成功新增指導老師!",
@@ -103,13 +102,13 @@ export default function ManageSIGAdvisor({
             confirmButtonColor: "#5fcdf5",
           });
           fetchAdvisors();
-        } else if (data.status === 4033) {
+        } else if (res.status === 4033) {
           Swal.fire({
             title: "新增失敗!",
             text: "該電子郵件已經是指導老師!",
             icon: "error",
           });
-        } else if (data.status === 4017) {
+        } else if (res.status === 4017) {
           Swal.fire({
             title: "新增失敗!",
             text: "該電子郵件尚未註冊 SIG 帳號!",
@@ -118,7 +117,7 @@ export default function ManageSIGAdvisor({
         } else {
           Swal.fire({
             title: "新增失敗!",
-            text: "請聯絡開發者！",
+            text: res.kind === "error" ? "請聯絡開發者！" : res.message,
             icon: "error",
           });
         }
@@ -138,18 +137,12 @@ export default function ManageSIGAdvisor({
       cancelButtonText: "取消",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/sig/${sigID}/moderator`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${userAccount.token}`,
-            },
-            body: JSON.stringify({ moderatorId: advisorId }),
-          },
-        );
-        if (res.status === 200) {
+        const res = await apiRequest(`/sig/${sigID}/moderator`, {
+          method: "DELETE",
+          token: userAccount.token,
+          body: { moderatorId: advisorId },
+        });
+        if (res.ok) {
           Swal.fire({
             title: "刪除成功!",
             text: "成功刪除指導老師!",
@@ -160,7 +153,7 @@ export default function ManageSIGAdvisor({
         } else {
           Swal.fire({
             title: "刪除失敗!",
-            text: "請聯絡開發者！",
+            text: res.kind === "error" ? "請聯絡開發者！" : res.message,
             icon: "error",
           });
         }
@@ -291,7 +284,7 @@ export default function ManageSIGAdvisor({
                         {advisor.name}
                       </p>
                       <p className="max-w-[150px] truncate text-gray-400 text-xs">
-                        {advisor.email}
+                        {advisor.email || "—"}
                       </p>
                     </div>
                   </div>
@@ -359,7 +352,9 @@ export default function ManageSIGAdvisor({
                 {advisors.map((advisor) => (
                   <tr key={advisor._id} className="bg-white">
                     <td className="px-6 py-4 text-center">{advisor.name}</td>
-                    <td className="px-6 py-4 text-center">{advisor.email}</td>
+                    <td className="px-6 py-4 text-center">
+                      {advisor.email || "—"}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       <button
                         type="button"

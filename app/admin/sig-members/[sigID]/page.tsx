@@ -21,6 +21,40 @@ interface Member {
   avatar?: string;
 }
 
+/**
+ * Email and student number are private. If the member list ever comes back
+ * without them, fill them in from each member's full profile; a member whose
+ * profile cannot be read keeps the blanks instead of failing the list.
+ */
+async function withPrivateFields(members: Member[], token: string) {
+  const incomplete = members.filter((m) => m._id && !m.email);
+  if (incomplete.length === 0) {
+    return members;
+  }
+  const results = await Promise.allSettled(
+    incomplete.map((m) => sigAPI.getFullUserData(m._id, token)),
+  );
+  const full = new Map<string, Partial<Member>>();
+  for (let index = 0; index < results.length; index++) {
+    const result = results[index];
+    if (result.status === "fulfilled" && result.value) {
+      full.set(incomplete[index]._id, result.value as Partial<Member>);
+    }
+  }
+  return members.map((m) => {
+    const extra = full.get(m._id);
+    if (!extra) {
+      return m;
+    }
+    return {
+      ...m,
+      code: m.code || extra.code || "",
+      email: m.email || extra.email || "",
+      class: m.class || extra.class || "",
+    };
+  });
+}
+
 export default function ManageSIGMembers({
   params,
 }: {
@@ -48,17 +82,16 @@ export default function ManageSIGMembers({
         userAccount.token,
       );
       if (membersResponse && Array.isArray(membersResponse)) {
-        setMembers(
-          membersResponse.map((m: Member) => ({
-            _id: m._id,
-            code: m.code || "",
-            name: m.name || "",
-            email: m.email || "",
-            class: m.class || "",
-            sig: m.sig || [],
-            avatar: m.avatar || "",
-          })),
-        );
+        const list: Member[] = membersResponse.map((m: Member) => ({
+          _id: m._id,
+          code: m.code || "",
+          name: m.name || "",
+          email: m.email || "",
+          class: m.class || "",
+          sig: m.sig || [],
+          avatar: m.avatar || "",
+        }));
+        setMembers(await withPrivateFields(list, userAccount.token));
       }
     } catch (error) {
       console.error(error);
@@ -215,9 +248,11 @@ export default function ManageSIGMembers({
                     <p className="truncate font-semibold text-gray-800">
                       {member.name}
                     </p>
-                    <p className="text-gray-500 text-xs">{member.code}</p>
+                    <p className="text-gray-500 text-xs">
+                      {member.code || "—"}
+                    </p>
                     <p className="truncate text-gray-400 text-xs">
-                      {member.email}
+                      {member.email || "—"}
                     </p>
                   </div>
                   {member.class && (
@@ -294,11 +329,11 @@ export default function ManageSIGMembers({
                   >
                     <td className="px-2 py-3 text-center">
                       <span className="rounded-full bg-green-100 px-2 py-0.5 text-green-800 text-xs">
-                        {m.code}
+                        {m.code || "—"}
                       </span>
                     </td>
                     <td className="px-2 py-3 text-center">{m.name}</td>
-                    <td className="px-2 py-3 text-center">{m.email}</td>
+                    <td className="px-2 py-3 text-center">{m.email || "—"}</td>
                     <td className="px-2 py-3 text-center text-gray-500">
                       {m.class || "-"}
                     </td>

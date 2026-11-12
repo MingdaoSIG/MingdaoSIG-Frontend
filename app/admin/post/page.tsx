@@ -20,7 +20,7 @@ export default function ManagePost() {
     (async () => {
       try {
         const response = await sigAPI.getPostList();
-        setPostList(response.reverse());
+        setPostList(Array.isArray(response) ? response.reverse() : []);
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         console.error(message);
