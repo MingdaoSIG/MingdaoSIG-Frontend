@@ -5,45 +5,46 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { isValidCustomId } from "@/modules/validation";
 import { useUserAccount } from "@/utils/useUserAccount";
+import { selectedTab } from "../../selectedTab";
 
 const ToolBar = () => {
-  const { isLogin, userData, isLoading } = useUserAccount();
+  const { isLogin, userData, isLoading, login } = useUserAccount();
 
   const path = usePathname();
-  const [selected, setSelected] = useState<0 | 1 | 2 | 3 | -1 | number>(
-    pathToSelected(path),
+  const ownCustomId = userData?.customId ?? null;
+  const [selected, setSelected] = useState<number>(() =>
+    selectedTab(path, ownCustomId),
   );
 
   useEffect(() => {
-    setSelected(pathToSelected(path));
-  }, [path]);
+    setSelected(selectedTab(path, ownCustomId));
+  }, [path, ownCustomId]);
 
   const menu = [
     {
       name: "home",
+      label: "首頁",
       route: "/",
       icon: "/icons/bx-home-circle.svg",
-      clickable: !isLoading && true,
     },
     {
       name: "user",
-      route: userData?.customId ? `/@${userData.customId}` : "/",
+      label: "個人頁面",
+      route: ownCustomId ? `/@${ownCustomId}` : "/",
       icon: "/icons/bx-user.svg",
-      clickable: !isLoading && isLogin,
     },
     {
       name: "new",
+      label: "發文",
       route: "/new",
       icon: "/icons/plus-circle.svg",
-      clickable: !isLoading && true,
     },
     {
       name: "info",
+      label: "平台資訊",
       route: "/info",
       icon: "/icons/info.svg",
-      clickable: !isLoading && true,
     },
   ];
 
@@ -64,30 +65,36 @@ const ToolBar = () => {
     >
       <div className="relative flex h-12 w-[18.8rem]">
         {menu.map((item, index) => {
+          // Your profile needs the login state; until it is known the
+          // item waits, and logged out it starts the login.
+          const waiting = item.name === "user" && isLoading;
           return (
-            <div
+            <Link
               key={item.name}
-              className="relative z-10 flex flex-1 items-center justify-center rounded-xl"
+              href={item.route}
+              aria-label={item.label}
+              title={item.label}
+              aria-current={selected === index ? "page" : undefined}
+              aria-disabled={waiting || undefined}
+              style={{ opacity: waiting ? 0.5 : 1 }}
+              className={`relative z-10 flex flex-1 items-center justify-center rounded-xl transition-opacity duration-500 ${
+                waiting ? "cursor-wait" : "cursor-pointer"
+              }`}
+              onClick={(e) => {
+                if (waiting) {
+                  e.preventDefault();
+                  return;
+                }
+                if (item.name === "user" && !isLogin) {
+                  e.preventDefault();
+                  login();
+                  return;
+                }
+                setSelected(index);
+              }}
             >
-              <div
-                style={{
-                  cursor: item.clickable ? "pointer" : "not-allowed",
-                }}
-                className="absolute inset-0 rounded-xl"
-              />
-              <Link
-                href={item.route}
-                style={{
-                  opacity: item.clickable ? 1 : 0.5,
-                  pointerEvents: item.clickable ? "auto" : "none",
-                }}
-                className="relative flex cursor-pointer items-center justify-center rounded-xl transition-opacity duration-500"
-                onClick={() => setSelected(index)}
-                aria-label={item.name}
-              >
-                <Image src={item.icon} height={26} width={26} alt="" />
-              </Link>
-            </div>
+              <Image src={item.icon} height={26} width={26} alt="" />
+            </Link>
           );
         })}
         <div
@@ -103,24 +110,3 @@ const ToolBar = () => {
 };
 
 export default ToolBar;
-
-function pathToSelected(path: string) {
-  const homeRegex = /^\/$/gm;
-  const newRegex = /^\/new$/gm;
-  const infoRegex = /^\/info$/gm;
-
-  if (homeRegex.test(path)) {
-    return 0;
-  }
-  if (isValidCustomId(path.slice(1))) {
-    return 1;
-  }
-  if (newRegex.test(path)) {
-    return 2;
-  }
-  if (infoRegex.test(path)) {
-    return 3;
-  }
-
-  return -1;
-}
