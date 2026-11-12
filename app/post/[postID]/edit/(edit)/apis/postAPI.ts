@@ -27,7 +27,7 @@ const sigDefaultCover: { [key: string]: string } = {
 };
 
 export function getPostAPI(postId: string, signal?: AbortSignal) {
-  return apiRequest<TThread>(`/post/${postId}`, { signal });
+  return apiRequest<TThread>(`/post/${postId}`, { signal, auth: true });
 }
 
 export function editPostAPI(

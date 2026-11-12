@@ -16,8 +16,13 @@ import { ToastProvider } from "@/components/mobile/Toast";
 import { type AdminRole, useAdminAccess } from "@/utils/useAdminAccess";
 import useIsMobile from "@/utils/useIsMobile";
 import { useUserAccount } from "@/utils/useUserAccount";
-import { usePendingCount } from "../api";
-import { type AdminSection, sectionForPath, sectionsFor } from "../config";
+import { useOpenReportCount, usePendingCount } from "../api";
+import {
+  type AdminSection,
+  type AdminSectionId,
+  sectionForPath,
+  sectionsFor,
+} from "../config";
 import { AdminContext, type AdminContextValue } from "../context";
 import { ConfirmProvider } from "./Modal";
 import { ErrorState, Spinner } from "./ui";
@@ -126,6 +131,43 @@ const ROLE_LABEL: Record<AdminRole, string> = {
   manager: "SIG 幹部／指導老師",
 };
 
+type NavBadge = { count: number; tone: "warn" | "danger"; label: string };
+
+const BADGE_TONE: Record<NavBadge["tone"], string> = {
+  warn: "bg-warm-50 text-warm-600",
+  danger: "bg-danger-50 text-danger-700",
+};
+
+/**
+ * Counts waiting in the sidebar: join requests for everyone who sees the
+ * section, open reports for admins only (the route is admin-only).
+ */
+function useNavCounts(role: AdminRole) {
+  const pending = usePendingCount();
+  const reports = useOpenReportCount(role === "admin");
+  return {
+    pending: pending.data ?? 0,
+    reports: role === "admin" ? (reports.data ?? 0) : 0,
+  };
+}
+
+function navBadge(
+  id: AdminSectionId,
+  counts: { pending: number; reports: number },
+): NavBadge | undefined {
+  if (id === "join-requests") {
+    return { count: counts.pending, tone: "warn", label: "待審" };
+  }
+  if (id === "reports") {
+    return { count: counts.reports, tone: "danger", label: "待處理" };
+  }
+  return undefined;
+}
+
+function badgeText(count: number) {
+  return count > 99 ? "99+" : String(count);
+}
+
 function Sidebar({
   role,
   current,
@@ -133,7 +175,7 @@ function Sidebar({
   role: AdminRole;
   current: AdminSection | null;
 }) {
-  const pending = usePendingCount();
+  const counts = useNavCounts(role);
   const groups = groupSections(role);
 
   return (
@@ -153,7 +195,7 @@ function Sidebar({
               key={section.id}
               section={section}
               active={current?.id === section.id}
-              badge={section.id === "join-requests" ? pending.data : undefined}
+              badge={navBadge(section.id, counts)}
             />
           ))}
         </div>
@@ -173,7 +215,7 @@ function NavItem({
 }: {
   section: AdminSection;
   active: boolean;
-  badge?: number;
+  badge?: NavBadge;
   onNavigate?: () => void;
 }) {
   const Icon = section.icon;
@@ -193,10 +235,12 @@ function NavItem({
         className={`size-4 shrink-0 ${active ? "text-brand-700" : "text-ink-400"}`}
       />
       <span className="min-w-0 flex-1 truncate">{section.label}</span>
-      {typeof badge === "number" && badge > 0 && (
-        <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
-          <span className="sr-only">待審 </span>
-          {badge > 99 ? "99+" : badge}
+      {badge && badge.count > 0 && (
+        <span
+          className={`rounded-chip px-1.5 font-semibold text-xs leading-5 ${BADGE_TONE[badge.tone]}`}
+        >
+          <span className="sr-only">{badge.label} </span>
+          {badgeText(badge.count)}
         </span>
       )}
     </Link>
@@ -212,7 +256,7 @@ function SectionSwitcher({
   current: AdminSection | null;
 }) {
   const [open, setOpen] = useState(false);
-  const pending = usePendingCount();
+  const counts = useNavCounts(role);
   const pathname = usePathname();
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -245,8 +289,6 @@ function SectionSwitcher({
     };
   }, [open]);
 
-  const total = pending.data ?? 0;
-
   return (
     <div ref={ref} className="relative">
       <button
@@ -262,9 +304,14 @@ function SectionSwitcher({
           <span className="sr-only">管理平台：</span>
           {current?.label ?? "管理平台"}
         </span>
-        {total > 0 && current?.id !== "join-requests" && (
+        {counts.pending > 0 && current?.id !== "join-requests" && (
           <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
-            {total > 99 ? "99+" : total} 待審
+            {badgeText(counts.pending)} 待審
+          </span>
+        )}
+        {counts.reports > 0 && current?.id !== "reports" && (
+          <span className="rounded-chip bg-danger-50 px-1.5 font-semibold text-danger-700 text-xs leading-5">
+            {badgeText(counts.reports)} 檢舉
           </span>
         )}
         <ChevronDown
@@ -290,7 +337,7 @@ function SectionSwitcher({
                   key={section.id}
                   section={section}
                   active={current?.id === section.id}
-                  badge={section.id === "join-requests" ? total : undefined}
+                  badge={navBadge(section.id, counts)}
                   onNavigate={() => setOpen(false)}
                 />
               ))}

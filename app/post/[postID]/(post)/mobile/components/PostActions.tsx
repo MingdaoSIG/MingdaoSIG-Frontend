@@ -1,11 +1,14 @@
 "use client";
 
+import { Flag, MoreHorizontal } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { TapScale } from "@/components/mobile/TapScale";
+import { BookmarkButton } from "@/components/Bookmark/BookmarkButton";
+import { BottomSheet } from "@/components/mobile/BottomSheet";
+import { TapScale, TapScaleButton } from "@/components/mobile/TapScale";
 import { toast } from "@/components/mobile/Toast";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
@@ -16,14 +19,22 @@ import { usePostPermissions } from "../../components/usePostPermissions";
 type Props = {
   post: TThread;
   commentCount: number;
+  /** 檢舉 this post (the sheet hides it on your own post). */
+  onReport?: () => void;
 };
 
-export default function PostActions({ post, commentCount }: Props) {
+export default function PostActions({ post, commentCount, onReport }: Props) {
   const router = useRouter();
   const { isLogin, isLoading, token, userData, login } = useUserAccount();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [liking, setLiking] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const authorId =
+    typeof post.user === "string"
+      ? post.user
+      : (post.user as { _id?: string } | null)?._id;
+  const isOwnPost = isLogin && Boolean(authorId) && authorId === userData?._id;
 
   useEffect(() => {
     if (isLogin && userData?._id) {
@@ -127,6 +138,7 @@ export default function PostActions({ post, commentCount }: Props) {
         <span className="font-semibold text-sm">{commentCount}</span>
       </TapScale>
       <div className="flex-1" />
+      <BookmarkButton postId={post._id} size="touch" className="-my-1" />
       {canEdit && (
         <TapScale
           onClick={onEdit}
@@ -147,6 +159,42 @@ export default function PostActions({ post, commentCount }: Props) {
           <Image src="/icons/delete.svg" width={24} height={24} alt="" />
         </TapScale>
       )}
+      <TapScaleButton
+        type="button"
+        onClick={() => setMoreOpen(true)}
+        className="-my-1 flex size-11 cursor-pointer items-center justify-center text-ink-700"
+        whileTap={{ scale: 0.9 }}
+        aria-label="更多動作"
+        aria-haspopup="dialog"
+      >
+        <MoreHorizontal aria-hidden className="size-[22px]" />
+      </TapScaleButton>
+      <BottomSheet
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        title="更多動作"
+        snapPoints={["auto"]}
+      >
+        <div className="flex flex-col gap-2 pb-2">
+          {isOwnPost || !onReport ? (
+            <p className="py-2 text-center text-ink-500 text-sm">
+              這是你的貼文，可以用編輯或刪除管理它。
+            </p>
+          ) : (
+            <button
+              type="button"
+              className="flex h-12 cursor-pointer items-center gap-3 rounded-control border border-line bg-surface px-3 font-semibold text-danger-700"
+              onClick={() => {
+                setMoreOpen(false);
+                onReport();
+              }}
+            >
+              <Flag aria-hidden className="size-5" />
+              檢舉這篇貼文
+            </button>
+          )}
+        </div>
+      </BottomSheet>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { isValidObjectId, sanitizeUrlParam } from "@/modules/validation";
 
 // Utils
 import useIsMobile from "@/utils/useIsMobile";
+import { useUserAccount } from "@/utils/useUserAccount";
 import { PostSkeleton } from "./(post)/components/PostSkeleton";
 import ThreadInfo from "./(post)/desktop/ThreadInfo";
 
@@ -27,6 +28,7 @@ const ThreadMobile = dynamic(() => import("./(post)/mobile/Thread"));
 // share preview metadata and renders this unchanged.
 const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   const isMobile = useIsMobile();
+  const { isLoading: authLoading } = useUserAccount();
 
   // Unwrap the params Promise using React.use()
   const unwrappedParams = use(params);
@@ -42,11 +44,16 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
 
-  // `attempt` re-runs the fetch when the user presses retry.
+  // `attempt` re-runs the fetch when the user presses retry. It waits for
+  // the login: the request carries the JWT so a signed-in reader's views
+  // count once per person (contract v4 §4.1).
   useEffect(() => {
     // 驗證 PostID 格式
     if (!isValidObjectId(PostID)) {
       setStatus("notfound");
+      return;
+    }
+    if (authLoading) {
       return;
     }
 
@@ -55,6 +62,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
       setStatus("loading");
       const result = await apiRequest<TThread>(`/post/${PostID}`, {
         signal: controller.signal,
+        auth: true,
       });
       if (controller.signal.aborted) {
         return;
@@ -73,7 +81,7 @@ const Post = ({ params }: { params: Promise<{ postID: string }> }) => {
     })();
 
     return () => controller.abort();
-  }, [PostID, attempt]);
+  }, [PostID, attempt, authLoading]);
 
   if (status === "loading") {
     return <PostSkeleton isMobile={isMobile} />;

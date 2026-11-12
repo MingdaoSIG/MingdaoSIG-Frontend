@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { BookmarkButton } from "@/components/Bookmark/BookmarkButton";
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary";
 import { MarkdownView } from "@/components/Markdown/MarkdownView";
 import ReaderMode from "@/components/ReaderMode";
 import ReaderByline from "@/components/ReaderMode/Byline";
 import useDuplicateTitle from "@/components/ReaderMode/useDuplicateTitle";
+import { useReport } from "@/components/Report/ReportDialog";
 import { HashtagLinks } from "@/components/Threads/desktop/ThreadsList";
 import type { TThread } from "@/interfaces/Thread";
 import { apiRequest } from "@/modules/api/client";
@@ -18,6 +20,7 @@ import { promptLogin } from "@/utils/loginPrompt";
 import useUser from "@/utils/useUser";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { confirmDeletePost } from "../components/confirmDeletePost";
+import { PostMoreMenu } from "../components/PostMoreMenu";
 import { usePostPermissions } from "../components/usePostPermissions";
 
 /** Author and date under an announcement's title (posts show them in the side card). */
@@ -56,6 +59,21 @@ const Thread = ({ post }: { post: TThread }) => {
   useDuplicateTitle(rootRef, post.title);
 
   const route = useRouter();
+  const report = useReport();
+  const authorId =
+    typeof post.user === "string"
+      ? post.user
+      : (post.user as { _id?: string } | null)?._id;
+  const isOwnPost = isLogin && Boolean(authorId) && authorId === userData?._id;
+  const moreMenu = (
+    <PostMoreMenu
+      onReport={
+        isOwnPost
+          ? undefined
+          : () => report.open({ kind: "post", id: post._id ?? "" }, post.title)
+      }
+    />
+  );
 
   async function onLike() {
     if (isLoading || liking) {
@@ -142,8 +160,10 @@ const Thread = ({ post }: { post: TThread }) => {
             <h1 className="min-w-0 flex-1 font-bold text-2xl text-ink-900 leading-[1.4] tracking-[0.01em]">
               {post.title}
             </h1>
+            <BookmarkButton postId={post._id} size="toolbar" />
             {editButton}
             {deleteButton}
+            {moreMenu}
           </div>
           <AnnouncementMeta post={post} />
         </div>
@@ -152,6 +172,7 @@ const Thread = ({ post }: { post: TThread }) => {
             <MarkdownView markdown={post.content ?? ""} />
           </SectionErrorBoundary>
         </div>
+        {report.dialog}
       </article>
     );
   }
@@ -206,6 +227,10 @@ const Thread = ({ post }: { post: TThread }) => {
             {likeCount}
           </span>
         </button>
+        <span data-reader-hide className="contents">
+          <BookmarkButton postId={post._id} size="toolbar" />
+        </span>
+        {moreMenu}
       </div>
       <ReaderByline post={post} />
       <div className="post-body custom-scrollbar min-h-0 flex-1 overflow-y-auto">
@@ -213,6 +238,7 @@ const Thread = ({ post }: { post: TThread }) => {
           <MarkdownView markdown={post.content ?? ""} />
         </SectionErrorBoundary>
       </div>
+      {report.dialog}
     </article>
   );
 };
