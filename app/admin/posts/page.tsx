@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ExternalLink,
+  FolderInput,
   MessageSquare,
   Pin,
   PinOff,
@@ -46,6 +47,10 @@ import {
   linkClass,
 } from "../(admin)/components/ui";
 import { formatCount, formatDate, formatDateTime } from "../(admin)/format";
+import {
+  MovePostsDialog,
+  type MoveSelection,
+} from "../(admin)/posts/MovePostsDialog";
 import type {
   AdminPost,
   ListPage,
@@ -107,6 +112,7 @@ export default function AdminPostsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState<AdminPost | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [moving, setMoving] = useState<MoveSelection | null>(null);
 
   const items = posts.data?.items ?? [];
   const total = posts.data?.total ?? 0;
@@ -399,6 +405,14 @@ export default function AdminPostsPage() {
                     </Button>
                     <Button
                       size="sm"
+                      onClick={() => setMoving({ ids: Array.from(selected) })}
+                      disabled={busy === "batch"}
+                    >
+                      <FolderInput aria-hidden className="size-3.5" />
+                      搬移到其他 SIG
+                    </Button>
+                    <Button
+                      size="sm"
                       variant="ghost"
                       onClick={() => setSelected(new Set())}
                     >
@@ -406,8 +420,25 @@ export default function AdminPostsPage() {
                     </Button>
                   </div>
                 ) : (
-                  <span className="hidden text-ink-500 text-xs sm:inline">
-                    勾選貼文可以一次置頂、下架或復原
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="hidden text-ink-500 text-xs sm:inline">
+                      勾選貼文可以一次置頂、下架、復原或搬移
+                    </span>
+                    {sig && total > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          setMoving({
+                            fromSig: sig,
+                            fromName: names.get(sig) ?? "這個 SIG",
+                          })
+                        }
+                      >
+                        <FolderInput aria-hidden className="size-3.5" />
+                        搬移 {names.get(sig) ?? "這個 SIG"} 的全部貼文
+                      </Button>
+                    )}
                   </span>
                 )}
                 <div className="sm:ml-auto">
@@ -463,6 +494,11 @@ export default function AdminPostsPage() {
           </ListCard>
         </div>
 
+        <MovePostsDialog
+          selection={moving}
+          onClose={() => setMoving(null)}
+          onMoved={() => setSelected(new Set())}
+        />
         <Drawer
           open={Boolean(current)}
           onClose={() => setOpen(null)}

@@ -1,6 +1,7 @@
 import {
   Download,
   FileText,
+  GraduationCap,
   History,
   Inbox,
   LayoutDashboard,
@@ -22,6 +23,7 @@ export type AdminSectionId =
   | "sigs"
   | "join-requests"
   | "users"
+  | "rollover"
   | "exports"
   | "audit";
 
@@ -81,6 +83,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: "/admin/users",
     group: "社群",
     icon: Users,
+    roles: ["admin"],
+  },
+  {
+    id: "rollover",
+    label: "學年交接",
+    href: "/admin/rollover",
+    group: "社群",
+    icon: GraduationCap,
     roles: ["admin"],
   },
   {
