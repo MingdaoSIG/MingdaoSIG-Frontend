@@ -134,7 +134,7 @@ export default function MdEditorSync({
                 type="button"
                 aria-pressed={view === value}
                 onClick={() => onViewChange(value)}
-                className={`h-7 cursor-pointer rounded-[6px] px-2.5 font-semibold text-xs ${
+                className={`h-7 cursor-pointer whitespace-nowrap rounded-[6px] px-2.5 font-semibold text-xs ${
                   view === value
                     ? "bg-surface text-ink-900 shadow-card"
                     : "text-ink-500 hover:text-ink-800"

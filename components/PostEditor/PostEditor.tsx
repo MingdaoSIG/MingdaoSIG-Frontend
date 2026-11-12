@@ -408,7 +408,7 @@ export default function PostEditor({
       </div>
       <div
         className={`grid items-start gap-4 ${
-          settingsOpen ? "grid-cols-[minmax(0,1fr)_22rem]" : "grid-cols-1"
+          settingsOpen ? "grid-cols-[minmax(0,1fr)_24rem]" : "grid-cols-1"
         }`}
       >
         <section
