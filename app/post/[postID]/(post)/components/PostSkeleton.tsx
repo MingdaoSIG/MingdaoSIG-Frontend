@@ -1,5 +1,3 @@
-import SplitBlock from "@/app/(Layout)/splitBlock";
-
 // Shown while the post loads (it used to be an empty page). Same boxes as
 // the loaded page, so nothing moves when the content arrives.
 
@@ -54,34 +52,35 @@ export function PostSkeleton({ isMobile }: { isMobile: boolean }) {
   }
 
   return (
-    <SplitBlock>
+    <div className="h-full min-h-0 overflow-hidden">
       <div
         aria-busy="true"
-        className="flex min-h-0 flex-1 animate-pulse flex-col gap-4"
+        className="mx-auto grid w-[min(74rem,100%-4rem)] animate-pulse grid-cols-[minmax(0,1fr)_17.5rem] items-start gap-8"
       >
         <span className="sr-only">載入中…</span>
-        <div className="rounded-card border border-line bg-paper py-5 pr-4 pl-6 shadow-card">
-          <div className="h-7 w-3/5 rounded-chip bg-ink-900/8" />
-        </div>
-        <div className="post-body min-h-0 flex-1 overflow-hidden">
-          <div className="markdown">
+        <div className="post-body">
+          <div className="mx-auto flex max-w-[42rem] flex-col gap-3">
+            <div className="h-8 w-3/5 rounded-chip bg-ink-900/8" />
+            <div className="h-3.5 w-40 rounded-chip bg-ink-900/8" />
+            <div className="h-11 border-line border-y" />
+          </div>
+          <div className="markdown mt-8">
             <Lines />
           </div>
         </div>
-      </div>
-      <div className="flex animate-pulse flex-col gap-4">
-        <div className="glass flex items-center gap-3 rounded-card px-5 py-4">
-          <div className="size-12 shrink-0 rounded-full bg-field" />
-          <div className="flex flex-1 flex-col gap-2">
-            <div className="h-4 w-32 rounded-chip bg-field" />
-            <div className="h-3 w-20 rounded-chip bg-field" />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-card">
+            <div className="flex items-center gap-3">
+              <div className="size-12 shrink-0 rounded-full bg-field" />
+              <div className="flex flex-1 flex-col gap-2">
+                <div className="h-4 w-28 rounded-chip bg-field" />
+                <div className="h-3 w-20 rounded-chip bg-field" />
+              </div>
+            </div>
+            <div className="h-9 rounded-control bg-field" />
           </div>
         </div>
-        <div className="glass rounded-card px-5 pt-4 pb-5">
-          <Lines count={3} />
-          <div className="mt-4 h-10 rounded-control bg-field" />
-        </div>
       </div>
-    </SplitBlock>
+    </div>
   );
 }

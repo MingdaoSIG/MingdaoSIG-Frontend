@@ -10,9 +10,9 @@ import { TeacherFeedback } from "@/components/TeacherFeedback/TeacherFeedback";
 import type { TThread } from "@/interfaces/Thread";
 
 import { type CommentNotify, useComments } from "../components/useComments";
+import BottomBar from "./components/BottomBar";
 import CommentComposer from "./components/CommentComposer";
 import CommentList from "./components/CommentList";
-import PostActions from "./components/PostActions";
 import PostBody from "./components/PostBody";
 import PostHeader from "./components/PostHeader";
 
@@ -21,13 +21,22 @@ type Props = {
   isAnnouncement?: boolean;
 };
 
+// Mobile post page (decision 6C): the post, 老師回饋, then the comments,
+// with one sticky place at the bottom shared by the action bar (讚 / 留言
+// / 收藏 / 分享) and the comment composer. The composer takes over when
+// 「留言」 is tapped, when replying, and while the comments are on screen;
+// 「收起」 or scrolling back up to the post brings the bar back.
+
 export default function Thread({ post, isAnnouncement }: Props) {
-  // The like bar and comments wait for the body: rendered first, they sat
-  // right under a three-line placeholder and jumped thousands of pixels
-  // down when the post appeared (CLS 0.56 on long posts).
+  // The comments wait for the body: rendered first, they sat right under
+  // a three-line placeholder and jumped thousands of pixels down when the
+  // post appeared (CLS 0.56 on long posts).
   const [bodyReady, setBodyReady] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [focusRequested, setFocusRequested] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const commentsAnchorRef = useRef<HTMLDivElement>(null);
+  const slotRef = useRef<HTMLDivElement>(null);
   const notify = useMemo<CommentNotify>(
     () => ({
       success: (message) => toast.success(message),
@@ -36,8 +45,9 @@ export default function Thread({ post, isAnnouncement }: Props) {
     [],
   );
   const controller = useComments(post, notify);
-  const { error } = controller;
+  const { error, replyTarget } = controller;
   const report = useReport();
+  const hasComments = !isAnnouncement;
 
   // Keep what is already shown; just say the refresh failed.
   useEffect(() => {
@@ -46,29 +56,74 @@ export default function Thread({ post, isAnnouncement }: Props) {
     }
   }, [error]);
 
+  // The comments coming on screen open the composer; leaving them hands
+  // the place back to the bar, unless the reader is typing.
   useEffect(() => {
-    const onScrollToComments = () => {
-      commentsAnchorRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    };
-    window.addEventListener("mobile:scroll-to-comments", onScrollToComments);
-    return () => {
-      window.removeEventListener(
-        "mobile:scroll-to-comments",
-        onScrollToComments,
-      );
-    };
-  }, []);
+    const anchor = commentsAnchorRef.current;
+    if (!hasComments || !bodyReady || !anchor) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setComposerOpen(true);
+          return;
+        }
+        const typing = slotRef.current?.contains(document.activeElement);
+        if (!typing) {
+          setComposerOpen(false);
+        }
+      },
+      { root: scrollRef.current, rootMargin: "0px 0px -35% 0px" },
+    );
+    observer.observe(anchor);
+    return () => observer.disconnect();
+  }, [hasComments, bodyReady]);
+
+  // A reply always needs the composer.
+  useEffect(() => {
+    if (replyTarget) {
+      setComposerOpen(true);
+    }
+  }, [replyTarget]);
+
+  // `/post/<id>#comments` (or #comments-section) opens at the comments.
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (
+      bodyReady &&
+      !controller.isLoading &&
+      (hash === "#comments" || hash === "#comments-section")
+    ) {
+      commentsAnchorRef.current?.scrollIntoView({ block: "start" });
+    }
+  }, [bodyReady, controller.isLoading]);
+
+  function openComments() {
+    commentsAnchorRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    setComposerOpen(true);
+    setFocusRequested(true);
+  }
+
+  const showComposer = hasComments && bodyReady && composerOpen;
 
   return (
     <div
       ref={scrollRef}
       className="scrollbar-hide absolute inset-0 flex flex-col overflow-y-auto overflow-x-hidden pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]"
+      data-post-scroll
     >
       <div className="flex min-w-0 flex-col gap-2 px-2 pt-2">
-        <PostHeader post={post} isAnnouncement={isAnnouncement} />
+        <PostHeader
+          post={post}
+          isAnnouncement={isAnnouncement}
+          onReport={() =>
+            report.open({ kind: "post", id: post._id ?? "" }, post.title)
+          }
+        />
         <PostBody
           post={post}
           isAnnouncement={isAnnouncement}
@@ -81,22 +136,16 @@ export default function Thread({ post, isAnnouncement }: Props) {
             variant="mobile"
           />
         )}
-        {!isAnnouncement && bodyReady && (
-          <PostActions
-            post={post}
-            commentCount={controller.count}
-            onReport={() =>
-              report.open({ kind: "post", id: post._id ?? "" }, post.title)
-            }
-          />
-        )}
       </div>
-      {!isAnnouncement && bodyReady && (
+      {hasComments && bodyReady && (
         <>
           <div className="min-w-0 px-2 pt-2 empty:hidden">
             <TeacherFeedback post={post} variant="mobile" />
           </div>
-          <div ref={commentsAnchorRef} className="mt-2 min-w-0 px-1">
+          <div
+            ref={commentsAnchorRef}
+            className="mt-2 min-w-0 scroll-mt-[calc(4.5rem+env(safe-area-inset-top))] px-1"
+          >
             <SectionErrorBoundary label="留言">
               <CommentList
                 controller={controller}
@@ -109,8 +158,32 @@ export default function Thread({ post, isAnnouncement }: Props) {
               />
             </SectionErrorBoundary>
           </div>
-          <CommentComposer postId={post._id ?? ""} controller={controller} />
         </>
+      )}
+      <div className="flex-1" />
+      {/* One place for the bar and the composer, so neither covers the other */}
+      {bodyReady && (
+        <div ref={slotRef} className="sticky right-0 bottom-0 left-0 z-10">
+          {showComposer ? (
+            <CommentComposer
+              postId={post._id ?? ""}
+              controller={controller}
+              focusRequested={focusRequested}
+              onFocused={() => setFocusRequested(false)}
+              onCollapse={() => {
+                controller.cancelReply();
+                setComposerOpen(false);
+              }}
+            />
+          ) : (
+            <BottomBar
+              post={post}
+              commentCount={controller.count}
+              onComment={openComments}
+              isAnnouncement={isAnnouncement}
+            />
+          )}
+        </div>
       )}
       {report.dialog}
     </div>

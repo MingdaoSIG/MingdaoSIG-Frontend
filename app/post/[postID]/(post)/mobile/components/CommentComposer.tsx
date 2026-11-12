@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import {
   type ChangeEvent,
@@ -30,9 +31,20 @@ const DEFAULT_AVATAR = "/images/default-avatar.png";
 type Props = {
   postId: string;
   controller: CommentsController;
+  /** Focus the text box once (「留言」 in the bottom bar), then `onFocused`. */
+  focusRequested?: boolean;
+  onFocused?: () => void;
+  /** 「收起」: hand the place back to the bottom bar. */
+  onCollapse?: () => void;
 };
 
-export default function CommentComposer({ postId, controller }: Props) {
+export default function CommentComposer({
+  postId,
+  controller,
+  focusRequested = false,
+  onFocused,
+  onCollapse,
+}: Props) {
   const { replyTarget } = controller;
   const { isLogin, isLoading, userData, token, login } = useUserAccount();
   const [text, setText] = useCommentDraft(postId);
@@ -43,12 +55,19 @@ export default function CommentComposer({ postId, controller }: Props) {
   const tooLong = text.length > COMMENT_MAX_LENGTH;
   const canSend = !submitting && text.trim().length > 0 && !tooLong;
 
-  // 「回覆」 on a comment moves the focus here.
+  // 「回覆」 on a comment, or 「留言」 in the bottom bar, moves the focus here.
   useEffect(() => {
     if (replyTarget) {
       textareaRef.current?.focus();
     }
   }, [replyTarget]);
+
+  useEffect(() => {
+    if (focusRequested) {
+      textareaRef.current?.focus({ preventScroll: true });
+      onFocused?.();
+    }
+  }, [focusRequested]);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -117,7 +136,7 @@ export default function CommentComposer({ postId, controller }: Props) {
   };
 
   return (
-    <div className="sticky right-0 bottom-0 left-0 z-10">
+    <div data-comment-composer>
       {replyTarget && (
         <div className="glass-bar border-line border-t">
           <ReplyBanner controller={controller} variant="mobile" />
@@ -127,6 +146,16 @@ export default function CommentComposer({ postId, controller }: Props) {
         onSubmit={handleSend}
         className="glass-bar flex items-center gap-2 border-line border-t px-3 py-2"
       >
+        {onCollapse && (
+          <button
+            type="button"
+            onClick={onCollapse}
+            aria-label="收起留言框"
+            className="-ml-1 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-control text-ink-500 active:bg-field"
+          >
+            <ChevronDown aria-hidden className="size-5" />
+          </button>
+        )}
         <Image
           src={avatar}
           alt=""

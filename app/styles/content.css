@@ -327,6 +327,11 @@
 }
 
 /* Keep these last in the section: see the note above the block rules. */
+/* Table-of-contents targets (post page) land a little below the top. */
+.post-body .markdown :is(h1, h2, h3) {
+  scroll-margin-top: 1.5rem;
+}
+
 .markdown > :first-child {
   margin-top: 0;
 }
@@ -459,6 +464,15 @@ html[data-reader] .post-body {
 
 html[data-reader] .post-body .markdown {
   max-width: none;
+}
+
+/* The post page's action row: only the reader bar inside it stays. */
+html[data-reader] [data-post-actions] {
+  display: contents;
+}
+
+html[data-reader] .post-body .markdown :is(h1, h2, h3) {
+  scroll-margin-top: 4.5rem;
 }
 
 /* The parent <article> has gap-4; tuck the byline under the title */
