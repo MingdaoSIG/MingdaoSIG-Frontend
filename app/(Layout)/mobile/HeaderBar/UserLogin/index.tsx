@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import { NotificationBellMobile } from "@/components/Notifications/NotificationBell";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 import styles from "./UserLogin.module.scss";
@@ -44,6 +45,7 @@ export default function UserLogin() {
           </span>
         </Link>
       )}
+      <NotificationBellMobile className="mr-2" />
       <button
         type="button"
         className={styles.userPanel}

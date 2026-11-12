@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import { NotificationBell } from "@/components/Notifications/NotificationBell";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useUserAccount } from "@/utils/useUserAccount";
 
@@ -43,6 +44,7 @@ export default function UserLogin() {
           </Link>
         )
       )}
+      <NotificationBell />
       <button
         type="button"
         className="flex h-10 cursor-pointer items-center gap-2 rounded-control border border-line bg-surface py-1 pr-3.5 pl-1 text-left transition-colors hover:bg-field"

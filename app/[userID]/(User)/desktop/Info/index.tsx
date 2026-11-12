@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { postUser } from "@/app/[userID]/(User)/apis/postUserAPI";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
+import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -15,7 +16,6 @@ import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { Description } from "../../components/Description";
 import { EditSigDialog } from "../../components/EditSigDialog";
-import { NotifyToggle } from "../../components/NotifyToggle";
 import { useJoinSig } from "../../useJoinSig";
 import { useLeaveSig } from "../../useLeaveSig";
 import { useSigManager } from "../../useSigManager";
@@ -209,7 +209,7 @@ export default function Info({
           {isOwnProfile && (
             <>
               <hr className={styles.contentHR} />
-              <NotifyToggle />
+              <NotificationSettingsEntry />
             </>
           )}
         </div>

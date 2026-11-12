@@ -4,7 +4,7 @@ import { apiRequest } from "@/modules/api/client";
 
 /** Updates your own profile; only the fields given are sent. */
 export function postUser(
-  { description, notifyComments }: TPostUserAPI,
+  { description, notifyComments, notificationSettings }: TPostUserAPI,
   token: string,
 ) {
   const body: Record<string, unknown> = {};
@@ -13,6 +13,9 @@ export function postUser(
   }
   if (notifyComments !== undefined) {
     body.notifyComments = notifyComments;
+  }
+  if (notificationSettings !== undefined) {
+    body.notificationSettings = notificationSettings;
   }
   return apiRequest("/user", {
     method: "POST",

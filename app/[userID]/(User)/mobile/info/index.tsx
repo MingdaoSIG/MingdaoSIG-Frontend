@@ -12,6 +12,7 @@ import { Tooltip } from "react-tooltip";
 // Config
 import { badgeList } from "@/app/[userID]/(User)/config/badge";
 import { toast } from "@/components/mobile/Toast";
+import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import type { Sig } from "@/interfaces/Sig";
 // Interfaces
 import type { User } from "@/interfaces/User";
@@ -20,7 +21,6 @@ import { useUserAccount } from "@/utils/useUserAccount";
 import { postUser } from "../../apis/postUserAPI";
 import { Description } from "../../components/Description";
 import { EditSigDialog } from "../../components/EditSigDialog";
-import { NotifyToggle } from "../../components/NotifyToggle";
 import { useJoinSig } from "../../useJoinSig";
 import { useLeaveSig } from "../../useLeaveSig";
 import { useSigManager } from "../../useSigManager";
@@ -152,7 +152,7 @@ export default function Info({
           {isOwnProfile && (
             <>
               <hr className={styles.contentHR} />
-              <NotifyToggle mobile />
+              <NotificationSettingsEntry mobile />
             </>
           )}
         </div>

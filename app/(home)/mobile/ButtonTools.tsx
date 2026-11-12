@@ -1,57 +1,68 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState } from "react";
 
 import { TapScaleButton } from "@/components/mobile/TapScale";
+import type { HomeFeed } from "../useHomeFeed";
 
 type Props = {
-  switchCallback: (value: number) => void;
+  value: HomeFeed;
+  onChange: (value: HomeFeed) => void;
+  /** 「我的 SIG」 is offered to logged-in users only. */
+  showMySig: boolean;
   sigListCallback: (value: boolean) => void;
 };
 
-const ButtonTools = ({ switchCallback, sigListCallback }: Props) => {
-  const [activeTab, setActiveTab] = useState<"latest" | "top">("latest");
+/** Width of one tab in px (4.875rem); the indicator slides by this. */
+const TAB_WIDTH = 78;
+
+const ButtonTools = ({
+  value,
+  onChange,
+  showMySig,
+  sigListCallback,
+}: Props) => {
+  const tabs: { value: HomeFeed; label: string }[] = [
+    { value: "latest", label: "最新" },
+    { value: "top", label: "熱門" },
+    ...(showMySig ? [{ value: "mysig" as const, label: "我的 SIG" }] : []),
+  ];
+  const activeIndex = Math.max(
+    0,
+    tabs.findIndex((tab) => tab.value === value),
+  );
 
   return (
     <div className="mb-2 flex h-16 flex-row items-center justify-between md:mb-4">
       {/* Toggle Button */}
-      <div className="relative flex w-40 select-none rounded-control border border-line bg-surface p-0.5 shadow-card">
+      <div
+        className={`relative flex select-none rounded-control border border-line bg-surface p-0.5 shadow-card ${
+          showMySig ? "w-[14.875rem]" : "w-40"
+        }`}
+      >
         <motion.div
           className="absolute h-11 w-[4.875rem] rounded-[6px] bg-brand-700"
-          animate={{ x: activeTab === "latest" ? 0 : 78 }}
+          animate={{ x: activeIndex * TAB_WIDTH }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
         />
-        <TapScaleButton
-          type="button"
-          className={`relative h-11 w-[4.875rem] text-center font-semibold text-sm md:text-base ${
-            activeTab === "latest" ? "text-white" : "text-ink-700"
-          }`}
-          whileTap={{ scale: 0.94 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          aria-pressed={activeTab === "latest"}
-          onClick={() => {
-            setActiveTab("latest");
-            switchCallback(1);
-          }}
-        >
-          最新
-        </TapScaleButton>
-        <TapScaleButton
-          type="button"
-          className={`relative h-11 w-[4.875rem] text-center font-semibold text-sm md:text-base ${
-            activeTab === "top" ? "text-white" : "text-ink-700"
-          }`}
-          whileTap={{ scale: 0.94 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          aria-pressed={activeTab === "top"}
-          onClick={() => {
-            setActiveTab("top");
-            switchCallback(0);
-          }}
-        >
-          熱門
-        </TapScaleButton>
+        {tabs.map((tab) => {
+          const active = tab.value === value;
+          return (
+            <TapScaleButton
+              key={tab.value}
+              type="button"
+              className={`relative h-11 w-[4.875rem] whitespace-nowrap text-center font-semibold text-sm md:text-base ${
+                active ? "text-white" : "text-ink-700"
+              }`}
+              whileTap={{ scale: 0.94 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              aria-pressed={active}
+              onClick={() => onChange(tab.value)}
+            >
+              {tab.label}
+            </TapScaleButton>
+          );
+        })}
       </div>
 
       {/* SIGs Button */}
