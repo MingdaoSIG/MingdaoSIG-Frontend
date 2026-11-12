@@ -53,7 +53,15 @@ const nextConfig = {
       ["/admin/sig-advisor/:sigId", "/admin/sigs/:sigId?tab=staff"],
       ["/admin/sig-members/:sigId", "/admin/sigs/:sigId?tab=members"],
     ];
-    return moved.map(([source, destination]) => ({
+    // The user-side redesign (2026): 資訊 / Dashboard / 更新紀錄 merged into
+    // 關於 MDSIG (one section each), and the /data SIG lookup into 探索.
+    const merged = [
+      ["/info", "/about#info"],
+      ["/dashboard", "/about#dashboard"],
+      ["/changelog", "/about#changelog"],
+      ["/data", "/explore"],
+    ];
+    return [...moved, ...merged].map(([source, destination]) => ({
       source,
       destination,
       permanent: false,

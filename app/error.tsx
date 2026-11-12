@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { issueReportHref } from "@/modules/issueReports";
 
 // Route-level error boundary: a crash inside one page shows this card
 // (inside the normal header and navigation) instead of a blank
@@ -17,6 +19,13 @@ export default function RouteError({
   reset: () => void;
 }) {
   const [hasDraft, setHasDraft] = useState(false);
+  const pathname = usePathname();
+  const [from, setFrom] = useState(pathname);
+
+  // The page that failed, with its query (read after mounting).
+  useEffect(() => {
+    setFrom(`${window.location.pathname}${window.location.search}`);
+  }, [pathname]);
 
   useEffect(() => {
     console.error("Page crashed:", error);
@@ -79,8 +88,20 @@ export default function RouteError({
             </button>
           </div>
         )}
+        <p className="mt-4 text-ink-500 text-sm">
+          <Link
+            href={issueReportHref({
+              category: "bug",
+              from,
+              digest: error.digest,
+            })}
+            className="font-medium text-brand-700 underline-offset-2 hover:underline"
+          >
+            回報這個問題
+          </Link>
+        </p>
         {error.digest && (
-          <p className="mt-4 text-ink-400 text-xs">錯誤代碼：{error.digest}</p>
+          <p className="mt-2 text-ink-400 text-xs">錯誤代碼：{error.digest}</p>
         )}
       </div>
     </div>

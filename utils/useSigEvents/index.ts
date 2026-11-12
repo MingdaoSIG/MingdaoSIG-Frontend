@@ -63,11 +63,54 @@ export function useSigEvents(
   });
 }
 
+/** Cross-SIG lists (utils/useSiteEvents): `{ items: { event, sig }[] }`. */
+const SITE_EVENTS_ROOT = ["siteEvents"] as const;
+
+type SiteEventItem = { event: TSigEvent; sig: unknown };
+type SiteEventsData =
+  | { items: SiteEventItem[] }
+  | InfiniteData<{ items: SiteEventItem[] }>;
+
+function patchSiteEvents(
+  data: SiteEventsData | undefined,
+  event: TSigEvent,
+): SiteEventsData | undefined {
+  const patchItems = (items: SiteEventItem[]) =>
+    items.map((item) =>
+      item.event._id === event._id
+        ? {
+            ...item,
+            event: {
+              ...event,
+              rsvpedByMe: event.rsvpedByMe ?? item.event.rsvpedByMe,
+            },
+          }
+        : item,
+    );
+  if (!data) {
+    return data;
+  }
+  if ("pages" in data) {
+    return {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        items: patchItems(page.items),
+      })),
+    };
+  }
+  return { ...data, items: patchItems(data.items) };
+}
+
 /** Writes the server's copy of an event into every cached list. */
 export function usePatchEvent() {
   const queryClient = useQueryClient();
   return useCallback(
     (event: TSigEvent) => {
+      queryClient.setQueriesData<SiteEventsData>(
+        { queryKey: SITE_EVENTS_ROOT },
+        (old) => patchSiteEvents(old, event),
+      );
       queryClient.setQueriesData<InfiniteData<EventPage>>(
         { queryKey: sigEventsKey(event.sig) },
         (old) =>
@@ -100,7 +143,10 @@ export function useInvalidateEvents() {
   const queryClient = useQueryClient();
   return useCallback(
     (sigId: string) =>
-      queryClient.invalidateQueries({ queryKey: sigEventsKey(sigId) }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: sigEventsKey(sigId) }),
+        queryClient.invalidateQueries({ queryKey: SITE_EVENTS_ROOT }),
+      ]),
     [queryClient],
   );
 }

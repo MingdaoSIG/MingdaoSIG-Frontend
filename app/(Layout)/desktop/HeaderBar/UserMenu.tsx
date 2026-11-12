@@ -1,25 +1,30 @@
 "use client";
 
-import { ChevronDown, LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  MessageSquareWarning,
+  UserRound,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
-import { useAdminChrome } from "@/utils/useAdminAccess";
+import { issueReportHref } from "@/modules/issueReports";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { confirmLogout } from "../../confirmLogout";
 import { hubGroups } from "../../nav";
 
 // The avatar menu on desktop: the 我的 hub (decision 7B) as a dropdown,
-// with the same entries as the /me page.
+// with the same entries as the /me page. 管理平台 is the header button
+// only (one entry, owner 2026-11-13).
 
 const itemClass =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-control px-2.5 text-left text-ink-800 text-sm transition-colors hover:bg-field focus-visible:bg-field";
 
 export default function UserMenu() {
   const { userData, logout } = useUserAccount();
-  const { canOpenAdmin } = useAdminChrome();
   const [open, setOpen] = useState(false);
   // Opened from the keyboard: focus the first entry (with its ring). With
   // the mouse: focus the menu itself, so no ring shows until a key is used.
@@ -29,6 +34,11 @@ export default function UserMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
   const pathname = usePathname();
+  // The menu only renders on the client, once opened.
+  const reportFrom =
+    typeof window === "undefined"
+      ? pathname
+      : `${pathname}${window.location.search}`;
   const customId = userData?.customId ?? null;
   const avatar = imageUrl(userData?.avatar) ?? DEFAULT_AVATAR_URL;
 
@@ -101,7 +111,7 @@ export default function UserMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        aria-label={`我的：${userData?.name ?? ""}`}
+        aria-label={`個人專區：${userData?.name ?? ""}`}
         data-user-menu
         onClick={(event) => {
           // A click from Enter / Space has detail 0.
@@ -115,7 +125,7 @@ export default function UserMenu() {
             setOpen(true);
           }
         }}
-        className={`flex h-10 cursor-pointer items-center gap-1 rounded-control border border-line py-1 pr-1.5 pl-1 transition-colors hover:bg-field ${
+        className={`flex h-10 min-w-0 cursor-pointer items-center gap-2 rounded-control border border-line py-1 pr-1.5 pl-1 text-left transition-colors hover:bg-field ${
           open ? "bg-field" : "bg-surface"
         }`}
       >
@@ -124,16 +134,35 @@ export default function UserMenu() {
           width={32}
           height={32}
           alt=""
-          className="size-8 rounded-full object-cover"
+          className="size-8 shrink-0 rounded-full object-cover"
         />
-        <ChevronDown size={16} aria-hidden className="text-ink-500" />
+        {/* Name and email as before the redesign; the avatar alone on
+            narrow desktop windows. */}
+        <span
+          data-user-menu-name
+          className="hidden min-w-0 max-w-[11rem] flex-col min-[1100px]:flex"
+        >
+          <span
+            title={userData?.name}
+            className="truncate font-semibold text-ink-900 text-sm leading-4"
+          >
+            {userData?.name}
+          </span>
+          <span
+            title={userData?.email}
+            className="truncate text-[11px] text-ink-500 leading-4"
+          >
+            {userData?.email}
+          </span>
+        </span>
+        <ChevronDown size={16} aria-hidden className="shrink-0 text-ink-500" />
       </button>
       {open && (
         <div
           ref={menuRef}
           id={menuId}
           role="menu"
-          aria-label="我的"
+          aria-label="個人專區"
           tabIndex={-1}
           onKeyDown={onMenuKey}
           className="custom-scrollbar absolute top-12 right-0 z-50 flex max-h-[calc(100dvh-5.5rem)] w-72 flex-col overflow-y-auto rounded-card border border-line bg-surface p-1.5 shadow-card-hover"
@@ -141,25 +170,24 @@ export default function UserMenu() {
           <Link
             role="menuitem"
             href={customId ? `/@${customId}` : "/me"}
-            className="flex items-center gap-3 rounded-control p-2.5 transition-colors hover:bg-field focus-visible:bg-field"
+            className="flex items-center gap-2.5 rounded-control px-2.5 py-2 transition-colors hover:bg-field focus-visible:bg-field"
           >
             <Image
               src={avatar}
-              width={40}
-              height={40}
+              width={28}
+              height={28}
               alt=""
-              className="size-10 shrink-0 rounded-full object-cover"
+              className="size-7 shrink-0 rounded-full object-cover"
             />
             <span className="flex min-w-0 flex-col">
-              <span className="truncate font-semibold text-ink-900 text-sm">
-                {userData?.name}
-              </span>
-              <span className="truncate text-ink-500 text-xs">
-                {customId ? `@${customId}` : userData?.email}
-              </span>
-              <span className="mt-0.5 font-semibold text-brand-700 text-xs">
+              <span className="font-semibold text-brand-700 text-sm leading-5">
                 查看個人頁面
               </span>
+              {customId && (
+                <span className="truncate text-ink-500 text-xs leading-4">
+                  @{customId}
+                </span>
+              )}
             </span>
           </Link>
           {hubGroups(customId).map((group) => (
@@ -187,18 +215,20 @@ export default function UserMenu() {
           <div className="mt-1 flex flex-col border-line border-t pt-1">
             <Link role="menuitem" href="/me" className={itemClass}>
               <UserRound size={16} aria-hidden className="text-ink-500" />
-              前往我的
+              個人專區
             </Link>
-            {canOpenAdmin && (
-              <Link role="menuitem" href="/admin" className={itemClass}>
-                <LayoutDashboard
-                  size={16}
-                  aria-hidden
-                  className="text-ink-500"
-                />
-                管理平台
-              </Link>
-            )}
+            <Link
+              role="menuitem"
+              href={issueReportHref({ from: reportFrom })}
+              className={itemClass}
+            >
+              <MessageSquareWarning
+                size={16}
+                aria-hidden
+                className="text-ink-500"
+              />
+              回報問題
+            </Link>
             <button
               type="button"
               role="menuitem"

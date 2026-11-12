@@ -3,17 +3,28 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type FocusEvent, type MouseEvent, useEffect, useState } from "react";
+import {
+  type FocusEvent,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { useAppBadge } from "@/components/Notifications/NotificationBell";
+import {
+  NOTIFICATION_PANEL_ID,
+  NotificationPanel,
+} from "@/components/Notifications/NotificationPanel";
 import { formatUnread } from "@/modules/notifications/describe";
-import { hasNewPosts, useSigSeen } from "@/modules/sigSeen";
-import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
+import { useSigSeen } from "@/modules/sigSeen";
 import { useAdminChrome } from "@/utils/useAdminAccess";
-import { type MySig, useMySigs } from "@/utils/useMySigs";
+import { useMySigs } from "@/utils/useMySigs";
 import { useUnreadCount } from "@/utils/useNotifications";
 import { useUserAccount } from "@/utils/useUserAccount";
 import { NAV_ITEMS, type NavItem, navSection } from "../../nav";
+import { RailSigs } from "./RailSigs";
 
 // The desktop side rail (decision 2 = v2 1B): 58px wide, under the header
 // (first column of the shell grid, see `.wrap[data-rail]` in globals.css).
@@ -44,22 +55,35 @@ function RailLink({
   item,
   active,
   badge = 0,
+  linkRef,
+  onClick,
+  expanded,
 }: {
   item: NavItem;
   active: boolean;
   badge?: number;
+  linkRef?: React.Ref<HTMLAnchorElement>;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  /** 通知 with its side panel open. */
+  expanded?: boolean;
 }) {
   const Icon = item.icon;
   return (
     <Link
+      ref={linkRef}
       href={item.href}
+      onClick={onClick}
+      aria-expanded={expanded}
+      aria-controls={expanded ? NOTIFICATION_PANEL_ID : undefined}
       aria-current={active ? "page" : undefined}
       aria-label={
-        badge > 0 ? `${item.label}，${formatUnread(badge)} 則未讀` : undefined
+        badge > 0
+          ? `${item.label}，${formatUnread(badge)} 則未讀`
+          : item.ariaLabel
       }
       data-rail-item={item.section}
       className={`relative flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
-        active
+        active || expanded
           ? "bg-brand-700/10 text-brand-700"
           : "text-ink-500 hover:bg-field hover:text-ink-800"
       }`}
@@ -81,56 +105,6 @@ function RailLink({
   );
 }
 
-function firstLetter(name: string) {
-  const [first = "?"] = Array.from(name.trim());
-  return first.toUpperCase();
-}
-
-function SigSquare({
-  sig,
-  active,
-  isNew,
-  onShow,
-  onHide,
-}: {
-  sig: MySig;
-  active: boolean;
-  isNew: boolean;
-  onShow: (label: string) => (event: MouseEvent | FocusEvent) => void;
-  onHide: () => void;
-}) {
-  const label = isNew ? `${sig.name}（有新貼文）` : sig.name;
-  return (
-    <Link
-      href={`/@${sig.customId}`}
-      aria-label={label}
-      aria-current={active ? "page" : undefined}
-      data-rail-sig={sig._id}
-      data-new={isNew || undefined}
-      onMouseEnter={onShow(sig.name)}
-      onMouseLeave={onHide}
-      onFocus={onShow(sig.name)}
-      onBlur={onHide}
-      className={`sig-text relative flex size-10 shrink-0 items-center justify-center rounded-control border-[1.5px] border-[var(--sig-color)] bg-[color-mix(in_srgb,var(--sig-color)_18%,white)] font-bold text-[15px] transition-transform hover:-translate-y-px ${
-        active
-          ? "shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--sig-color)]"
-          : ""
-      }`}
-      style={{
-        ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,
-      }}
-    >
-      <span aria-hidden>{firstLetter(sig.name)}</span>
-      {isNew && (
-        <span
-          aria-hidden
-          className="absolute -top-1 -right-1 size-2.5 rounded-full bg-danger-700 ring-2 ring-surface"
-        />
-      )}
-    </Link>
-  );
-}
-
 export default function SideRail() {
   const path = usePathname();
   const { isLogin, userData } = useUserAccount();
@@ -142,6 +116,9 @@ export default function SideRail() {
   const { seen, baseline } = useSigSeen(userData?._id ?? "");
   const { tip, show, hide } = useTip();
   const section = navSection(path, userData?.customId);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const notificationsRef = useRef<HTMLAnchorElement>(null);
+  const closePanel = useCallback(() => setPanelOpen(false), []);
 
   let decodedPath = path;
   try {
@@ -177,11 +154,28 @@ export default function SideRail() {
       <ul className="flex flex-col items-center gap-1">
         {(["home", "explore", "notifications", "me"] as const).map((key) => (
           <li key={key}>
-            <RailLink
-              item={NAV_ITEMS[key]}
-              active={section === key}
-              badge={key === "notifications" ? unread : 0}
-            />
+            {key === "notifications" ? (
+              <RailLink
+                item={NAV_ITEMS[key]}
+                active={section === key}
+                badge={unread}
+                linkRef={notificationsRef}
+                expanded={section !== key ? panelOpen : undefined}
+                onClick={(event) => {
+                  // The page itself needs no panel on top of it.
+                  if (section === key) {
+                    return;
+                  }
+                  event.preventDefault();
+                  setPanelOpen((value) => !value);
+                }}
+              />
+            ) : (
+              <RailLink
+                item={NAV_ITEMS[key]}
+                active={section === key && !panelOpen}
+              />
+            )}
           </li>
         ))}
       </ul>
@@ -191,7 +185,7 @@ export default function SideRail() {
           <div aria-hidden className="my-3 h-px w-8 shrink-0 bg-line" />
           <div
             data-rail-sigs
-            className="scrollbar-hide flex min-h-0 w-full flex-1 flex-col items-center overflow-y-auto px-1 py-1"
+            className="scrollbar-hide flex min-h-0 w-full flex-1 flex-col items-center overflow-y-auto py-1.5"
           >
             {isLoading ? (
               <div aria-hidden className="flex flex-col items-center gap-2.5">
@@ -199,19 +193,13 @@ export default function SideRail() {
                 <span className="size-10 animate-pulse rounded-control bg-field" />
               </div>
             ) : sigs.length > 0 ? (
-              <ul aria-label="我的 SIG" className="flex flex-col gap-2.5">
-                {sigs.map((sig) => (
-                  <li key={sig._id}>
-                    <SigSquare
-                      sig={sig}
-                      active={decodedPath === `/@${sig.customId}`}
-                      isNew={hasNewPosts(seen, sig)}
-                      onShow={show}
-                      onHide={hide}
-                    />
-                  </li>
-                ))}
-              </ul>
+              <RailSigs
+                sigs={sigs}
+                seen={seen}
+                currentPath={decodedPath}
+                onShow={show}
+                onHide={hide}
+              />
             ) : (
               <Link
                 href="/explore"
@@ -242,6 +230,12 @@ export default function SideRail() {
       >
         <Plus size={22} aria-hidden strokeWidth={2.4} />
       </Link>
+
+      <NotificationPanel
+        open={panelOpen}
+        onClose={closePanel}
+        trigger={notificationsRef}
+      />
 
       {/* In <body>: the rail's backdrop-filter would make it the
           containing block of a fixed tooltip and shift it down. */}

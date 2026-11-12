@@ -1,13 +1,16 @@
 import {
   Bell,
   Bookmark,
+  CalendarCheck,
   ChartNoAxesColumn,
   Compass,
+  FileText,
   GraduationCap,
   Heart,
   House,
   Info,
   Library,
+  LifeBuoy,
   type LucideIcon,
   Settings,
   UserRound,
@@ -23,7 +26,10 @@ export type NavSection = "home" | "explore" | "new" | "notifications" | "me";
 
 export type NavItem = {
   section: NavSection;
+  /** Under the icon (short). */
   label: string;
+  /** The accessible name, when the short label is not the full one. */
+  ariaLabel?: string;
   href: string;
   icon: LucideIcon;
 };
@@ -42,11 +48,18 @@ export const NAV_ITEMS: Record<Exclude<NavSection, "new">, NavItem> = {
     href: "/notifications",
     icon: Bell,
   },
-  me: { section: "me", label: "我的", href: "/me", icon: UserRound },
+  // The hub is 「個人專區」; 「我的」 fits under the icon (owner 2026-11-13).
+  me: {
+    section: "me",
+    label: "我的",
+    ariaLabel: "個人專區",
+    href: "/me",
+    icon: UserRound,
+  },
 };
 
-const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/data", "/events"];
-const ME_PATHS = ["/me", "/portfolio", "/info", "/changelog", "/dashboard"];
+const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/events"];
+const ME_PATHS = ["/me", "/portfolio", "/about"];
 
 function under(path: string, base: string) {
   return path === base || path.startsWith(`${base}/`);
@@ -109,6 +122,13 @@ export function hubGroups(customId: string | null | undefined): HubGroup[] {
       items: [
         { key: "sigs", label: "我的 SIG", href: "/me#my-sigs", icon: Users },
         {
+          key: "events",
+          label: "活動報名",
+          href: "/events?scope=rsvped",
+          icon: CalendarCheck,
+        },
+        { key: "drafts", label: "草稿", href: "/me/drafts", icon: FileText },
+        {
           key: "bookmarks",
           label: "收藏",
           href: tab("bookmarks"),
@@ -144,7 +164,13 @@ export function hubGroups(customId: string | null | undefined): HubGroup[] {
           href: "/notifications?settings=1",
           icon: Settings,
         },
-        { key: "about", label: "平台資訊", href: "/info", icon: Info },
+        {
+          key: "reports",
+          label: "我的回報",
+          href: "/me/reports",
+          icon: LifeBuoy,
+        },
+        { key: "about", label: "平台資訊", href: "/about", icon: Info },
       ],
     },
   ];

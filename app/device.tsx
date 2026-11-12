@@ -7,6 +7,7 @@ import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 import ToolBarMobile from "@/app/(Layout)/mobile/ToolBar";
 import { PageTransition } from "@/components/mobile/PageTransition";
 import { ToastProvider } from "@/components/mobile/Toast";
+import { OnboardingGate } from "@/components/Onboarding/OnboardingGate";
 import { SiteNotices } from "@/components/SiteBanner/SiteNotices";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import { useHydrated } from "@/utils/useHydrated";
@@ -41,6 +42,7 @@ export function Device({ children }: { children: ReactNode }) {
       </div>
       <ToolBarMobile />
       <ToastProvider />
+      <OnboardingGate />
     </div>
   ) : (
     <div className="wrap" data-rail={hideDock ? undefined : ""}>
@@ -50,6 +52,7 @@ export function Device({ children }: { children: ReactNode }) {
       </div>
       <SideRail />
       {children}
+      <OnboardingGate />
     </div>
   );
 }

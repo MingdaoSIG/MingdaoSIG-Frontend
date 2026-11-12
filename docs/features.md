@@ -24,20 +24,53 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   the last visit (`modules/sigSeen`, localStorage
   `mdsig-sig-seen:<userId>`; a SIG seen for the first time starts as
   seen; `useTrackSigVisits` in `app/device.tsx` records visits to
-  `/@<sig>`). The header has the logo, the search box and the avatar menu
-  (the 我的 hub, `UserMenu.tsx`); 管理平台 stays for admins and managers.
+  `/@<sig>`). The SIG squares show the SIG avatar (the coloured initial
+  when there is none or it fails), a pill in the SIG colour on the left
+  edge for the current SIG and on hover, and the user's own order
+  (`RailSigs.tsx`): drag with the mouse, or Space / ↑ ↓ / Space (Esc
+  cancels) with an aria-live announcement. The order is saved with
+  `POST /user { sigOrder }` 500 ms after a drop and mirrored in
+  localStorage `mdsig:sigOrder:<userId>` (`useSaveSigOrder`,
+  `savedSigOrder`: the server's order first); SIGs not in it go last. The
+  個人專區 list uses the same order. The header has the logo, the search
+  box and the avatar button (name and email from 1100px) that opens the
+  個人專區 menu (`UserMenu.tsx`); 管理平台 is only the header button.
   The admin panel has no rail.
 - Which entry is current: `navSection()` in `app/(Layout)/nav.ts`. The 我的
   hub entries (`hubGroups()`) are shared by the avatar menu and `/me`.
-- `/me` (我的): profile link, 我的 SIG, 收藏 / 按讚 / 系列 (own profile
-  `?tab=`), 學習歷程, 數據, 通知設定, 平台資訊, 管理平台, 登出. Logged out it
-  offers 登入 and 平台資訊.
-- `/explore` (探索): search, 熱門標籤 and every SIG.
+- `/me` (個人專區, decision 7B; the tab bar says 我的): profile link, 我的 SIG (managed / member /
+  followed), 活動報名 (`/events?scope=rsvped`, with the count), 草稿
+  (`/me/drafts`, with the count; the editor's draft list), 收藏 / 按讚 / 系列
+  (own profile `?tab=`), 學習歷程, 數據, 通知設定, 平台資訊 (`/about`), 管理平台,
+  登出. Logged out it offers 登入 and 平台資訊.
 - The site banner and the suspension notice (`SiteNotices`) sit under the
   header on both shells.
 
+## Desktop widths (owner pick 1B, 2026-11-13)
+
+- The frame is full width; reading columns keep a measure (52rem) and
+  extra width becomes side columns: `app/(Layout)/pageColumns.tsx`
+  (`wideLeft` / `wideRight` from 1600px, `oneSide` at 1280–1600px, main
+  only below; `utils/useMinWidth`). Side columns are sticky at
+  `--shell-top` and render only where they show. Tailwind has `3xl`
+  (1600px) for this.
+- Home (2A): left 近期活動 + 熱門標籤, right 熱門貼文 + 正在招生; one right
+  column (近期活動, 熱門貼文, 正在招生, 熱門標籤) at 1280–1600.
+- 活動 (5B): from 1280px the list (grouped by day) and the month
+  (`EventCalendar variant="side"`, days tinted in SIG colours) sit side by
+  side; choosing a day scrolls the list there and highlights it.
+- 探索 grids and search results use `repeat(auto-fill, minmax(…))`; search
+  puts SIG and tag matches in a right column from 1600px (全部 tab).
+- 關於 MDSIG: sticky table of contents, text sections at 52rem, 平台數據 and
+  運行狀態 across the width.
+
 ## Post cards and infinite lists
 
+- Every compact card has the same height (owner 2026-11-13): title 1 line
+  on desktop (full title in `title`) and 2 reserved lines on phones, the
+  excerpt always reserves 2 lines, the top row is at least the thumbnail's
+  height, the meta and counts rows have fixed heights and hidden tag
+  overflow. Featured cards add a fixed-height image, so they match too.
 - `components/PostCard/PostCard.tsx` (decision 4B): text first (title,
   two-line excerpt, SIG colour dot + SIG name, author, time, likes /
   comments / views, up to four tags, bookmark) with a small thumbnail on
@@ -92,17 +125,18 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 - TanStack Query hooks (`usePost`, `useAllPost`, etc.) for data fetching with built-in caching
 - `useAlert` hook wraps SweetAlert2 for consistent dialogs
 
-## Changelog Page
+## 關於 MDSIG (`/about`, v3 8A)
 
-- Route: `app/changelog/`
-- Displays version history from a static JSON config (`config/changelog.json`)
-- Desktop and mobile layouts
-
-## Dashboard
-
-- Route: `app/dashboard/`
-- Shows SIG statistics with colour-coded cards (colours from `config/sigDefaultColors.ts`)
-- Desktop and mobile layouts with chart visualisations
+- One page with a table of contents (anchors, sticky on desktop, chips on
+  phones): 資訊 (`#info`, links from `app/about/config/links.json`), 平台數據
+  (`#dashboard`, `app/about/dashboard/`, chart.js loaded when the section
+  comes near the screen), 更新紀錄 (`#changelog`, still read from
+  `app/changelog/(Changelog)/config/changelog.json`, which the release
+  owner edits), 運行狀態 (`#status`: versions, uptime and the
+  status.sig.school badges 1 / 8 / 6) and 聯絡 (`#contact`).
+- `/info`, `/dashboard` and `/changelog` redirect to the matching anchor
+  (`next.config.js`); the page scrolls the section into view once it has
+  rendered and keeps it there while 平台數據 loads.
 
 ## Admin Panel
 
@@ -125,7 +159,7 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   `/admin/join-requests`, `/admin/users`, `/admin/rollover`,
   `/admin/badges`, `/admin/exports`, `/admin/audit`, `/admin/reports`
   (檢舉), `/admin/keyword-filter`, `/admin/banners`, `/admin/broadcast`,
-  `/admin/logins` (see below).
+  `/admin/logins`, `/admin/issue-reports` (問題回報, see below).
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -227,37 +261,74 @@ Contract: `design/api-contract-v4.md` §3.7, §5.6–§5.9.
 - `app/sitemap.ts` (per request, from `GET /post/sitemap`, static pages only
   when that fails) and `app/robots.ts`
 
-## Hashtags and search
+## Search and tags (v3 2B)
 
 - Hashtags on cards and post pages link to `/tag/<tag>` (`modules/hashtag`
-  strips a stored leading `#`)
-- `/search?q=` searches titles, hashtags and content; the header has a
-  search box (desktop) or icon (mobile). With no query, and with no
-  results, it shows the top hashtags (`components/Tags/TopTags.tsx`)
+  strips a stored leading `#`). Tag pages show the post count and 相關標籤
+  (tags on the loaded posts), with InfiniteThreadList.
+- `/search?q=&type=all|posts|sigs|tags|users`: tabs 全部 / 貼文 / SIG / 標籤 /
+  使用者, matches marked (`components/Search/Highlight.tsx`, PostCard
+  `highlight`). 全部 is `GET /search` (5 each); 貼文 pages through
+  `/post/search`, 使用者 through `/search/users`; SIG and 標籤 show up to 20
+  (`utils/useSearch`). Without a query it shows the top hashtags. The
+  desktop header search box and the phone search icon open it.
 
-## Home
+## 探索 (`/explore`, v3 1B)
 
-- Tabs 最新 / 熱門 / 我的 SIG on desktop and mobile (`app/(home)/useHomeFeed.ts`,
-  remembered per browser tab in sessionStorage). 我的 SIG needs a login
-  (`useMySigPost`, `GET /post/list/mysig`); with no SIG it shows an empty
-  state that leads to the SIGs.
-- Pinned posts (`/post/list/pinned`) open the 最新 and 熱門 feeds with 「置頂」
-- 熱門貼文 (desktop card, 熱門 tab): most liked of the last 30 days;
-  fewer than 3 liked posts widens to 180 days, then all time (`useTopPost`,
-  `useHotPostList`)
+- Search box, 正在招生 (open recruiting, colour top border, deadline), 近期活動
+  (→ `/events`), 熱門標籤, and every SIG as a colour card with the member
+  and follower counts and 追蹤 / 已追蹤 (`utils/useFollowSig`: `POST` /
+  `DELETE /sig/:id/follow`, updates `followedSigs` and `followerCount`);
+  members and managers see 已加入 / 管理中. `/data` redirects here.
+
+## 活動 (`/events`, v3 5C)
+
+- Events of every SIG (`GET /event/list`, `utils/useSiteEvents`): a list by
+  default and a 月曆 view (`components/Events/EventCalendar.tsx`, loaded on
+  demand, one month per request); 我的 SIG / 全部 / 已報名 (`?scope=`), 月曆
+  (`?view=calendar`). Each event is the SIG page's `SigEventCard` (RSVP,
+  加到 Google 日曆, .ics) under its SIG; an RSVP patches the cross-SIG lists
+  too (`usePatchEvent`). Entry points: 探索, the home right column, 我的 →
+  活動報名.
+
+## Home (decision 3A)
+
+- Tabs 我的 SIG / 最新 / 熱門 (`app/(home)/useHomeFeed.ts`, remembered per
+  browser tab). A signed-in user with SIGs (managed, member or followed)
+  starts on 我的 SIG (`GET /post/list/mysig`); everyone else on 最新.
+- SIG chips: your SIGs on 我的 SIG, every SIG on 最新
+  (`/post/list/sig/:id`). 熱門 has none (a SIG list has no most-liked order).
+- Pinned posts (`/post/list/pinned`) on top as big-image cards; the newest
+  announcement (10 days) on 最新 / 熱門. The list is InfiniteThreadList.
+- Desktop right column (`HomeRail`): 近期活動 (your SIGs', or every SIG's),
+  熱門標籤, 熱門貼文 (most liked of the last 30 days, widening to 180 days,
+  then all time). The SIG tiles moved to 探索.
+
+## First-login onboarding (v3 9B)
+
+- `components/Onboarding/OnboardingGate.tsx` (in `app/device.tsx`) shows
+  the three steps once when `GET /user/me` says `onboardedAt: null`: pick
+  SIGs to follow, turn on notifications (`PushControl`), start. Skippable
+  (略過, ✕, Escape); finishing or skipping sends `POST /user
+  { onboarded: true }`. The steps load on demand.
 
 ## Notifications, web push and PWA
 
 Contract: `design/api-contract-v4.md` §2.
 
-- Bell next to the user menu (`components/Notifications/NotificationBell.tsx`):
-  unread count from `GET /notification/unread-count`, every 60 s while the
-  tab is visible, when it becomes visible and on window focus
-  (`utils/useNotifications`). Desktop opens a dropdown with the newest 8;
-  phones go to `/notifications`.
-- `/notifications`: 全部 / 未讀, opening one marks it read, 全部標為已讀,
-  and 「通知設定」. Sentences are built from type, actor and target in
+- The unread count (`GET /notification/unread-count`, every 60 s while the
+  tab is visible, when it becomes visible and on window focus,
+  `utils/useNotifications`) is on the tab bar's 通知 and the side rail's
+  通知, and on the installed app's icon (`useAppBadge`).
+- The list (`components/Notifications/NotificationCenter.tsx`, v3 4B):
+  grouped 今天 / 本週 / 更早, chips 全部 / 未讀 (server) / 互動 / SIG (types),
+  an unread colour bar, opening one marks it read, 全部標為已讀, and on a
+  single join request 同意 / 拒絕 (`POST /admin/join-requests/:id/decision`,
+  `meta.request`); collapsed requests link to the request list.
+  Sentences are built from type, actor and target in
   `modules/notifications/describe.ts`; only same-site `link`s are followed.
+- `/notifications` shows it with 「通知設定」; on desktop the rail's 通知
+  opens it in a right-side panel (`NotificationPanel.tsx`) instead.
 - Settings (`NotificationSettings.tsx`): a 「通知設定」 row on your own
   profile opens a dialog (also `#notification-settings` on the profile and
   `/notifications?settings=1`). Push per type, the comment email
@@ -426,11 +497,43 @@ props, so the user-side redesign can move it without rewriting it.
   at most 200, repeats ignoring case dropped); reports it files show
   「系統（關鍵字）」 as the reporter.
 
-## Data & Info Pages
+## Issue reports (問題回報, contract v4 §7)
 
-- `app/data/` — SIG lookup by id (`@mdcsl`), desktop and mobile
-  (`useSigLookup.ts`)
-- `app/info/` — platform information and status links
+Replaces the old Google Form behind 「回報問題」. Signing in is required.
+
+- **`/report`** (`app/report/`): logged out, a card with 登入 and nothing
+  else. Logged in: 類型 chips (錯誤／建議／帳號問題／其他, default 錯誤 or
+  `?category=`), 標題 (1–80), 說明 (1–2000, counter), up to 3 screenshots
+  (picker, paste anywhere on the page, or drop on the form; uploaded at
+  once through `modules/imageUploadAPI`, same formats and 5 MB cap), and
+  the read-only box 「會一起送出的資訊」 = `context`: 目前頁面 (`?from=`,
+  else a same-origin `document.referrer`), 版本 (`package.json`), 瀏覽器,
+  螢幕大小, 錯誤代碼 (`?digest=`). Errors show on 送出回報 under the
+  field and clear when it changes. 429/4290 says 一小時內最多回報 5 次; a
+  4041 shows the suspension notice text. Success: 查看我的回報 /
+  回到上一頁.
+- **`/me/reports`** 我的回報: `GET /issue-report/mine`, 20 per page with
+  載入更多; status chip (待處理 warm, 處理中 brand, 已解決 green, 不處理
+  grey), category, date, title; expanding shows the description,
+  screenshots and the admin's reply with its date. `?id=` (the
+  notification link) pages until it finds the report, opens it and
+  scrolls to it.
+- **`/admin/issue-reports`** (admins, under 其他, badge = `openCount`):
+  filters status (default `active` = 待處理＋處理中), category and search;
+  the drawer shows the text, screenshots (click to enlarge), the context,
+  the reporter (link to `/admin/users?…&id=`, which opens that user's
+  drawer), and status + reply (≤1000) with 儲存. A new reply, or moving
+  to 已解決／不處理, notifies the reporter; the toast says so. `?id=`
+  opens the drawer, fetching the report when it is not on the page.
+- Entry points: 個人專區 → 我的回報 and 「回報問題」 in the avatar menu
+  (`?from=` the current page), 關於 MDSIG → 回報錯誤 (`/report?from=/about`),
+  「回報這個問題」 on `app/error.tsx` and
+  `app/global-error.tsx` (`?category=bug&from=&digest=`), 「回報問題」 on
+  the 404 page (`components/NotFound`, `?from=`). Build links with
+  `issueReportHref()` from `modules/issueReports`.
+- Shared: `modules/issueReports` (labels, limits, context, link helper),
+  `components/IssueReport/` (`IssueStatusChip`, `IssueCategoryChip`,
+  `IssueImages` with `ImageLightbox`).
 
 ## Validation Module
 

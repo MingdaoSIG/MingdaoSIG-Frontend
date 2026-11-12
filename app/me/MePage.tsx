@@ -14,15 +14,17 @@ import { confirmLogout } from "@/app/(Layout)/confirmLogout";
 import { hubGroups } from "@/app/(Layout)/nav";
 import { DocPage } from "@/components/desktop/DocPage";
 import { PageTitle } from "@/components/mobile/PageTitle";
+import { useDraftList } from "@/components/PostEditor/shared/DraftBar";
 import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 import { BRAND_COLOR, resolveSigColor } from "@/modules/sigTheme";
 import { useAdminChrome } from "@/utils/useAdminAccess";
 import useIsMobile from "@/utils/useIsMobile";
 import { type MySig, useMySigs } from "@/utils/useMySigs";
+import { useUpcomingEvents } from "@/utils/useSiteEvents";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-// 我的 (decision 7B): the hub of everything personal. On phones it is the
-// 我的 tab; on desktop the avatar menu lists the same entries
+// 個人專區 (decision 7B): the hub of everything personal. On phones it is
+// the 我的 tab; on desktop the avatar menu lists the same entries
 // (app/(Layout)/nav.ts `hubGroups`). Logged out it offers 登入 and keeps
 // 平台資訊 reachable.
 
@@ -150,10 +152,32 @@ function MySigList() {
   );
 }
 
+function Count({ value }: { value: number | undefined }) {
+  if (typeof value !== "number" || value <= 0) {
+    return null;
+  }
+  return (
+    <span className="shrink-0 rounded-full bg-field px-2 py-0.5 font-semibold text-ink-700 text-xs tabular-nums">
+      {value}
+    </span>
+  );
+}
+
+/** The numbers beside 活動報名 and 草稿. */
+function useHubCounts(userId: string) {
+  const rsvped = useUpcomingEvents("rsvped", 1, Boolean(userId));
+  const drafts = useDraftList(userId, Boolean(userId));
+  return {
+    events: rsvped.data?.total,
+    drafts: drafts.data?.length,
+  } as Record<string, number | undefined>;
+}
+
 function Content() {
   const { isLogin, isLoading, userData, login, logout } = useUserAccount();
   const { canOpenAdmin } = useAdminChrome();
   const customId = userData?.customId ?? null;
+  const counts = useHubCounts(isLogin ? (userData?._id ?? "") : "");
 
   if (isLoading) {
     return (
@@ -197,6 +221,7 @@ function Content() {
                     key={item.key}
                     href={item.href}
                     icon={<Icon size={18} />}
+                    trailing={<Count value={counts[item.key]} />}
                   >
                     {item.label}
                   </Row>
@@ -253,6 +278,7 @@ function Content() {
                     key={item.key}
                     href={item.href}
                     icon={<Icon size={18} />}
+                    trailing={<Count value={counts[item.key]} />}
                   >
                     {item.label}
                   </Row>
@@ -289,7 +315,7 @@ export default function MePage() {
   if (isMobile) {
     return (
       <div className="flex h-full flex-col gap-2 px-2 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))]">
-        <PageTitle title="我的" />
+        <PageTitle title="個人專區" />
         <div
           data-me-hub
           className="scrollbar-hide flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-4"
@@ -301,7 +327,7 @@ export default function MePage() {
   }
 
   return (
-    <DocPage title="我的" width="narrow">
+    <DocPage title="個人專區" width="narrow">
       <div data-me-hub className="flex flex-col gap-4 pb-2">
         <Content />
       </div>

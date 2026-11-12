@@ -65,6 +65,11 @@ export type User = {
    * on `GET /user/me` and `POST /user`). Null: show the onboarding.
    */
   onboardedAt?: string | null;
+  /**
+   * The user's own order of their SIGs in the side rail and the 我的 hub
+   * (`POST /user { sigOrder }`, `GET /user/me`); ids not in it go last.
+   */
+  sigOrder?: string[];
   createAt?: string; // 建立時間
   updateAt?: string; // 更新時間
   __v?: number; // 版本

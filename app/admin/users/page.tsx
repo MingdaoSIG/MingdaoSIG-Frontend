@@ -7,6 +7,7 @@ import { useBadges } from "@/modules/badges";
 import {
   adminKeys,
   errorText,
+  isObjectId,
   PAGE_SIZE,
   useInvalidate,
   usePatchList,
@@ -91,6 +92,23 @@ export default function AdminUsersPage() {
     () => (open ? (items.find((u) => u._id === open._id) ?? open) : null),
     [open, items],
   );
+
+  // `?id=` opens that user's drawer (links from other admin pages, such
+  // as 問題回報); closing the drawer drops it.
+  const idParam = get("id");
+  useEffect(() => {
+    if (isObjectId(idParam) && open?._id !== idParam) {
+      setOpen(
+        items.find((u) => u._id === idParam) ?? ({ _id: idParam } as AdminUser),
+      );
+    }
+  }, [idParam]);
+  const closeDrawer = () => {
+    setOpen(null);
+    if (idParam) {
+      set({ id: null }, { keepPage: true, replace: true });
+    }
+  };
 
   const sigOptions = useMemo(
     () => [
@@ -268,7 +286,7 @@ export default function AdminUsersPage() {
             />
           </ListCard>
         </div>
-        {current && <UserDrawer user={current} onClose={() => setOpen(null)} />}
+        {current && <UserDrawer user={current} onClose={closeDrawer} />}
       </div>
     </>
   );

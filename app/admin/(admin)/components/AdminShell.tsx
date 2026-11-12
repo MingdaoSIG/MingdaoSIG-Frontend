@@ -29,6 +29,7 @@ import {
   sectionsFor,
 } from "../config";
 import { AdminContext, type AdminContextValue } from "../context";
+import { useOpenIssueCount } from "../issueReportsApi";
 import { ConfirmProvider } from "./Modal";
 import { ErrorState, Spinner } from "./ui";
 
@@ -154,28 +155,33 @@ const BADGE_TONE: Record<NavBadge["tone"], string> = {
 /**
  * Counts waiting in the sidebar, each only for those who may read it:
  * join requests for admins and managers, open reports for admins and
- * content moderators.
+ * content moderators, open 問題回報 for admins.
  */
 function useNavCounts(roles: AdminRole[]) {
   const canDecide = roles.includes("admin") || roles.includes("manager");
   const canModerate = roles.includes("admin") || roles.includes("moderator");
+  const isAdmin = roles.includes("admin");
   const pending = usePendingCount(canDecide);
   const reports = useOpenReportCount(canModerate);
+  const issues = useOpenIssueCount(isAdmin);
   return {
     pending: canDecide ? (pending.data ?? 0) : 0,
     reports: canModerate ? (reports.data ?? 0) : 0,
+    issues: isAdmin ? (issues.data ?? 0) : 0,
   };
 }
 
-function navBadge(
-  id: AdminSectionId,
-  counts: { pending: number; reports: number },
-): NavBadge | undefined {
+type NavCounts = ReturnType<typeof useNavCounts>;
+
+function navBadge(id: AdminSectionId, counts: NavCounts): NavBadge | undefined {
   if (id === "join-requests") {
     return { count: counts.pending, tone: "warn", label: "待審" };
   }
   if (id === "reports") {
     return { count: counts.reports, tone: "danger", label: "待處理" };
+  }
+  if (id === "issue-reports") {
+    return { count: counts.issues, tone: "warn", label: "待處理" };
   }
   return undefined;
 }
@@ -328,6 +334,11 @@ function SectionSwitcher({
         {counts.reports > 0 && current?.id !== "reports" && (
           <span className="rounded-chip bg-danger-50 px-1.5 font-semibold text-danger-700 text-xs leading-5">
             {badgeText(counts.reports)} 檢舉
+          </span>
+        )}
+        {counts.issues > 0 && current?.id !== "issue-reports" && (
+          <span className="rounded-chip bg-warm-50 px-1.5 font-semibold text-warm-600 text-xs leading-5">
+            {badgeText(counts.issues)} 回報
           </span>
         )}
         <ChevronDown

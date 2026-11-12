@@ -74,7 +74,7 @@ const ToolBar = () => {
                 aria-label={
                   badge > 0
                     ? `${item.label}，${formatUnread(badge)} 則未讀`
-                    : undefined
+                    : item.ariaLabel
                 }
                 data-tab={section}
                 whileTap={{ scale: 0.94 }}

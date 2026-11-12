@@ -20,10 +20,9 @@ type SitemapFeed = {
 
 const STATIC_PAGES: MetadataRoute.Sitemap = [
   { url: `${SITE_URL}/`, changeFrequency: "hourly", priority: 1 },
-  { url: `${SITE_URL}/info`, changeFrequency: "monthly", priority: 0.3 },
-  { url: `${SITE_URL}/data`, changeFrequency: "monthly", priority: 0.3 },
-  { url: `${SITE_URL}/dashboard`, changeFrequency: "daily", priority: 0.3 },
-  { url: `${SITE_URL}/changelog`, changeFrequency: "weekly", priority: 0.2 },
+  { url: `${SITE_URL}/explore`, changeFrequency: "daily", priority: 0.5 },
+  { url: `${SITE_URL}/events`, changeFrequency: "daily", priority: 0.4 },
+  { url: `${SITE_URL}/about`, changeFrequency: "weekly", priority: 0.3 },
 ];
 
 function lastModified(value: unknown) {
