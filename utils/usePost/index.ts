@@ -162,84 +162,46 @@ export const useHashtagPost = (tag: string, query: PostQuery) =>
   );
 
 // ---------------------------------------------------------------------
-// Hot posts (contract v3 §4.5): the most liked posts of the last 30 days.
-// When fewer than 3 of those have a like, widen to 180 days, then to all
-// time. The first page picks the window; later pages keep it.
+// Two different lists (owner, 2026-11-15):
+// - the 熱門貼文 card: the all-time most liked posts (sort=mostLikes);
+// - the home 熱門 tab: the backend's hot order (sort=hot), engagement that
+//   decays with age (@module/HotPosts in the backend).
 // ---------------------------------------------------------------------
 
-const HOT_WINDOWS: (number | undefined)[] = [30, 180, undefined];
-const HOT_MIN_LIKED = 3;
+/** The 熱門貼文 card: the site's all-time most liked posts. */
+export const useTopPost = (query: PostQuery) =>
+  useInfiniteQuery<TThread[], Error>({
+    queryKey: ["topPost", query.pageSize],
+    queryFn: ({ signal }) =>
+      fetchPostPage(
+        "/post/list",
+        { pageSize: query.pageSize, sort: "mostLikes" },
+        0,
+        signal,
+      ),
+    staleTime: 5 * 60 * 1000,
+    getNextPageParam: () => undefined,
+    initialPageParam: 0,
+  });
 
-function likedCount(posts: TThread[]) {
-  return posts.filter((post) => (post.likes ?? 0) > 0).length;
-}
-
-type HotPage = { posts: TThread[]; days: number | undefined };
-
-async function fetchHotPage(
-  pageSize: number,
-  pageParam: unknown,
-  signal: AbortSignal,
-): Promise<HotPage> {
-  const param = pageParam as { page: number; days?: number } | null;
-  if (param) {
-    const posts = await fetchPostPage(
-      "/post/list",
-      { pageSize, sort: "mostLikes", days: param.days },
-      param.page,
-      signal,
-    );
-    return { posts, days: param.days };
-  }
-  let last: HotPage = { posts: [], days: undefined };
-  for (const days of HOT_WINDOWS) {
-    const posts = await fetchPostPage(
-      "/post/list",
-      // The window is decided on at least 3 posts, whatever the page size.
-      { pageSize: Math.max(pageSize, HOT_MIN_LIKED), sort: "mostLikes", days },
-      0,
-      signal,
-    );
-    last = { posts: posts.slice(0, pageSize), days };
-    if (likedCount(posts) >= HOT_MIN_LIKED) {
-      break;
-    }
-  }
-  return last;
-}
-
-/** Hot posts as plain post pages, the shape the post lists take. */
-function useHotPosts(pageSize: number, paginate: boolean, enabled: boolean) {
-  const result = useInfiniteQuery<HotPage, Error>({
-    queryKey: ["hotPost", pageSize, paginate],
+/** The home 熱門 tab: the hot order, paginated. */
+export const useHotPostList = (query: PostQuery, enabled: boolean = true) =>
+  useInfiniteQuery<TThread[], Error>({
+    queryKey: ["hotPost", query.pageSize],
     queryFn: ({ pageParam, signal }) =>
-      fetchHotPage(pageSize, pageParam, signal),
+      fetchPostPage(
+        "/post/list",
+        { pageSize: query.pageSize, sort: "hot" },
+        Number(pageParam),
+        signal,
+      ),
     enabled,
     staleTime: 1 * 60 * 1000,
     getNextPageParam: (lastPage, allPages) =>
-      paginate && lastPage.posts.length > 0
-        ? { page: allPages.length + 1, days: allPages[0]?.days }
-        : undefined,
-    initialPageParam: null,
+      // fetchPostPage skips (page - 1) pages for page ≥ 1, as elsewhere here.
+      lastPage.length < query.pageSize ? undefined : allPages.length + 1,
+    initialPageParam: 0,
   });
-  return {
-    ...result,
-    data: result.data
-      ? {
-          pages: result.data.pages.map((page) => page.posts),
-          pageParams: result.data.pageParams,
-        }
-      : undefined,
-  };
-}
-
-/** The 熱門貼文 card: one page of hot posts. */
-export const useTopPost = (query: PostQuery) =>
-  useHotPosts(query.pageSize, false, true);
-
-/** The mobile home 熱門 tab: hot posts, paginated. */
-export const useHotPostList = (query: PostQuery, enabled: boolean = true) =>
-  useHotPosts(query.pageSize, true, enabled);
 
 /**
  * The home 「我的 SIG」 tab (contract v4 §2.5): newest posts of the SIGs
