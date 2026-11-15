@@ -7,7 +7,8 @@ import { DEFAULT_AVATAR_URL, imageUrl } from "@/modules/imageUrl";
 
 // The platform's banner header (owner: 「那是我們平台的精髓」), the same on
 // SIG pages and profiles: the 16:9 artwork, the round avatar with a white
-// border over its bottom-left edge, badges at its bottom right and, for a
+// border over its bottom-left edge, badges just below it on the right (owner:
+// 「badge 要移動到 banner 下方」) and, for a
 // SIG's managers, 編輯 SIG at its top right. Its height is its own aspect
 // ratio, never the column's. `strip` is the short version (phones, once
 // the card has collapsed).
@@ -57,8 +58,8 @@ export function PanelBanner({
       {!strip && (
         <ProfileBadges
           keys={badges}
-          className="absolute right-3 bottom-3 flex gap-1 rounded-chip bg-white/85 p-1"
-          badgeClassName="size-5 cursor-pointer"
+          className="absolute top-full right-3 mt-2 flex gap-1.5"
+          badgeClassName="size-6 cursor-pointer"
         />
       )}
       {onEditSig && !strip && (
