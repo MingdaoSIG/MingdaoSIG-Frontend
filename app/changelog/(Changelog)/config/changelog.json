@@ -1,5 +1,22 @@
 [
   {
+    "version": "2.27.3",
+    "date": "2026-11-15",
+    "type": "improvement",
+    "title": "全新的熱門排序",
+    "summary": "首頁「熱門」改用新的熱門演算法，旁邊的熱門貼文恢復顯示全站最多讚",
+    "changes": [
+      {
+        "type": "feature",
+        "description": "首頁「熱門」改用新的熱門排序：綜合按讚、留言與瀏覽，並隨發文時間慢慢降溫，最近有討論的貼文會排在前面"
+      },
+      {
+        "type": "improvement",
+        "description": "右側「熱門貼文」恢復顯示全站最多讚的貼文"
+      }
+    ]
+  },
+  {
     "version": "2.27.2",
     "date": "2026-11-15",
     "type": "improvement",
