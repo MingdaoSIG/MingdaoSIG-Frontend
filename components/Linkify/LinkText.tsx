@@ -19,7 +19,9 @@ export function LinkText({ text }: { text: string }) {
           rel="noopener noreferrer nofollow ugc"
           className="break-all text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
           onClick={(event) => {
-            if (event.button !== 0 || event.metaKey || event.ctrlKey) return;
+            if (event.button !== 0 || event.metaKey || event.ctrlKey) {
+              return;
+            }
             event.preventDefault();
             jumpOut(href);
           }}
