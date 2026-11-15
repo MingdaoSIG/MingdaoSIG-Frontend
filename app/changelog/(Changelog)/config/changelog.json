@@ -1,5 +1,22 @@
 [
   {
+    "version": "2.27.2",
+    "date": "2026-11-15",
+    "type": "improvement",
+    "title": "首頁分頁調整與簡介連結",
+    "summary": "首頁預設顯示最新貼文，個人與 SIG 簡介裡的網址可以直接點",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "首頁分頁順序改為「最新／熱門／我的 SIG」，打開時預設顯示最新貼文"
+      },
+      {
+        "type": "improvement",
+        "description": "個人簡介與 SIG 簡介裡的網址會自動變成連結"
+      }
+    ]
+  },
+  {
     "version": "2.27.1",
     "date": "2026-11-15",
     "type": "fix",

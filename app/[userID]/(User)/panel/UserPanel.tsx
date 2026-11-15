@@ -4,6 +4,7 @@ import { Pencil, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
 import Swal from "sweetalert2";
+import { LinkText } from "@/components/Linkify/LinkText";
 import { NotificationSettingsEntry } from "@/components/Notifications/NotificationSettings";
 import { PortfolioEntry } from "@/components/Portfolio/PortfolioEntry";
 import type { Sig } from "@/interfaces/Sig";
@@ -180,7 +181,7 @@ export function UserPanel({
         ) : (
           user.description && (
             <p className="whitespace-pre-line break-words text-ink-700 text-sm leading-6">
-              {user.description}
+              <LinkText text={user.description} />
             </p>
           )
         )}

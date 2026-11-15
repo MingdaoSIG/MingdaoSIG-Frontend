@@ -2,10 +2,9 @@
 
 import { useCallback, useState } from "react";
 import { sessionGet, sessionSet } from "@/utils/safeStorage";
-import { useMySigs } from "@/utils/useMySigs";
 import { useUserAccount } from "@/utils/useUserAccount";
 
-/** The home tabs (decision 3A): 我的 SIG / 最新 / 熱門. */
+/** The home tabs (decision 3A): 最新 / 熱門 / 我的 SIG. */
 export type HomeFeed = "mysig" | "latest" | "top";
 
 const FEED_KEY = "mdsig-home-feed";
@@ -20,13 +19,12 @@ function savedFeed(): HomeFeed | null {
 
 /**
  * The selected home tab and SIG chip. A choice survives opening a post
- * and coming back (this browser tab only). Without one, a signed-in user
- * with SIGs (managed, member or followed) starts on 「我的 SIG」, everyone
- * else on 最新. 「我的 SIG」 falls back to 最新 when logged out.
+ * and coming back (this browser tab only). Without one, everyone starts on
+ * 最新 (owner, 2026-11-15: starting on 「我的 SIG」 showed the same posts on
+ * every visit). 「我的 SIG」 falls back to 最新 when logged out.
  */
 export function useHomeFeed() {
   const { isLogin, isLoading } = useUserAccount();
-  const mySigs = useMySigs();
   const [chosen, setChosen] = useState<HomeFeed | null>(savedFeed);
   const [sigId, setSigState] = useState<string>(
     () => sessionGet(SIG_KEY) ?? "",
@@ -46,8 +44,9 @@ export function useHomeFeed() {
   }, []);
 
   /** The login or the SIG list is not known yet: no default to pick. */
-  const deciding = !chosen && (isLoading || mySigs.isLoading);
-  let feed: HomeFeed = chosen ?? (mySigs.sigs.length > 0 ? "mysig" : "latest");
+  // Kept for callers: the default no longer waits for the SIG list.
+  const deciding = false;
+  let feed: HomeFeed = chosen ?? "latest";
   if (feed === "mysig" && !isLogin && !isLoading) {
     feed = "latest";
   }
