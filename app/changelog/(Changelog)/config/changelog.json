@@ -1,5 +1,18 @@
 [
   {
+    "version": "2.27.1",
+    "date": "2026-11-15",
+    "type": "fix",
+    "title": "個人頁徽章位置調整",
+    "summary": "把個人頁的徽章移到 Banner 下方",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "個人頁與 SIG 頁右側資訊的徽章移到 Banner 下方，不再蓋住平台 Banner 圖片"
+      }
+    ]
+  },
+  {
     "version": "2.27.0",
     "date": "2026-11-13",
     "type": "feature",
