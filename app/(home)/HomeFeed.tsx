@@ -24,16 +24,16 @@ import { useUserAccount } from "@/utils/useUserAccount";
 import { MySigEmpty } from "./MySigEmpty";
 import { type HomeFeed as FeedTab, useHomeFeed } from "./useHomeFeed";
 
-// The home feed (decision 3A): tabs 我的 SIG / 最新 / 熱門, SIG filter
+// The home feed (decision 3A): tabs 最新 / 熱門 / 我的 SIG, SIG filter
 // chips, pinned posts on top, compact cards in an infinite list. Desktop
 // and phones share it; the desktop right column is HomeRail.
 
 const PAGE_SIZE = 10;
 
 const TABS: { value: FeedTab; label: string }[] = [
-  { value: "mysig", label: "我的 SIG" },
   { value: "latest", label: "最新" },
   { value: "top", label: "熱門" },
+  { value: "mysig", label: "我的 SIG" },
 ];
 
 const notAnnouncement = (post: TThread) => !isAnnouncementPost(post);
