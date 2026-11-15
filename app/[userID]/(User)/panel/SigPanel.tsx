@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { LinkText } from "@/components/Linkify/LinkText";
 import { JoinSigDialog } from "@/components/Sig/JoinSigDialog";
 import { RecruitingStatus } from "@/components/Sig/RecruitingStatus";
 import { SigEventCard } from "@/components/SigEvents/SigEventCard";
@@ -398,7 +399,7 @@ export function SigPanel({
         </div>
         {!compact && sig.description && (
           <p className="line-clamp-2 whitespace-pre-line break-words text-ink-700 text-sm leading-6">
-            {sig.description}
+            <LinkText text={sig.description} />
           </p>
         )}
         {!isAnnouncement && (
