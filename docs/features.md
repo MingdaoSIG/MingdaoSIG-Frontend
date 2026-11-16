@@ -127,18 +127,56 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
 - TanStack Query hooks (`usePost`, `useAllPost`, etc.) for data fetching with built-in caching
 - `useAlert` hook wraps SweetAlert2 for consistent dialogs
 
-## 關於 MDSIG (`/about`, v3 8A)
+## 說明中心 (`/about`, help centre, decision 1B / 2C / 3A)
 
-- One page with a table of contents (anchors, sticky on desktop, chips on
-  phones): 資訊 (`#info`, links from `app/about/config/links.json`), 平台數據
-  (`#dashboard`, `app/about/dashboard/`, chart.js loaded when the section
-  comes near the screen), 更新紀錄 (`#changelog`, still read from
-  `app/changelog/(Changelog)/config/changelog.json`, which the release
-  owner edits), 運行狀態 (`#status`: versions, uptime and the
-  status.sig.school badges 1 / 8 / 6) and 聯絡 (`#contact`).
-- `/info`, `/dashboard` and `/changelog` redirect to the matching anchor
-  (`next.config.js`); the page scrolls the section into view once it has
-  rendered and keeps it there while 平台數據 loads.
+Design: `design/user-redesign-decisions.md` (platform info, tutorials,
+admin help) and `design/platform-info-help-2026-v5.html`.
+
+- `app/about/layout.tsx` wraps every page in `HelpShell`: desktop has a
+  sticky table of contents (search, the sections, and 「找不到答案？回報問題」
+  `components/Help/ReportStrip` at its bottom) and the page on the right,
+  the window scrolls; phones have a 「說明中心 · <section>」 menu at the top
+  (search + sections) and the strip at the end of every page.
+- Routes (`modules/help/sections.ts`): `/about` 開始使用 (hero search,
+  常用教學, FAQ highlights, the strip, more links), `/about/guide` and
+  `/about/guide/[topic]` 使用教學 (static params, unknown topics 404),
+  `/about/faq` (grouped accordion, filter, `#q-<id>` opens and scrolls),
+  `/about/report` (3A: 回報錯誤 / 提出建議 / 帳號問題 → `issueReportHref`,
+  the latest 3 of `GET /issue-report/mine` with `IssueStatusChip`, 「登入後
+  才能回報」 logged out), `/about/rules` (links to the 平台規範, 關於 MDSIG
+  and Markdown posts), `/about/changelog` (still `changelog.json`),
+  `/about/stats` (`dashboard/`, chart.js on that page only),
+  `/about/status` (versions, uptime, status.sig.school badges) and
+  `/about/contact`.
+- Old URLs: `/info` → `/about/rules`, `/dashboard` → `/about/stats`,
+  `/changelog` → `/about/changelog` (`next.config.js`), and the old anchors
+  `/about#info|dashboard|changelog|status|contact…` are replaced client-side
+  (`OLD_ABOUT_ANCHORS`). The rail's 平台資訊 is active on every `/about/*`.
+- Search (`modules/help/search.ts`, client-side): tutorial titles, steps
+  and tips, FAQ questions and answers, section names; every word must
+  match, title matches first. ↓ / ↑ move through the results, Enter opens
+  the first, Esc clears.
+- Content is typed data, written once, in `modules/help/`: `guide.ts`
+  (12 topics; images via `helpImage()`), `faq.ts`, `shared.ts` (steps shown
+  both in the user guide and the admin help: 審核入社, 活動, 老師回饋,
+  管理 SIG), `adminGuide.ts`, `adminFaq.ts`. Text marks: `**bold**` and
+  `[label](href)` (`components/Help/HelpText`). Button names are quoted
+  exactly as the UI shows them; update the text when a label changes.
+- Screenshots: `public/help/*.webp` (≤960 px wide, about 0.4 MB in all),
+  lazy-loaded, sizes in `modules/help/images.ts`. They are taken from the
+  stubbed test build with highlight boxes; regenerate them rather than
+  editing by hand.
+- Guided tours («在網站上帶我走一遍», `modules/help/tours.ts`): 發文, 加入
+  SIG, 報名活動. `components/HelpTour/TourHost` (in `app/device.tsx`)
+  loads `TourOverlay` only while a tour runs. The step lives in
+  sessionStorage (`mdsig-tour`), so a tour carries on across routes; each
+  step spotlights the first visible `data-tour="…"` element (`new-post`,
+  `editor-title`, `editor-body`, `editor-sig`, `editor-settings-toggle`,
+  `editor-publish`, `explore-recruiting`, `explore-sig`, `sig-join`,
+  `sig-follow`, `events-scope`, `event-rsvp`, `event-calendar`). Keep those
+  attributes when moving the elements. A missing target ends with a
+  message; leaving the tour's page pauses it (「回到導覽」). Esc ends it,
+  Tab stays in the bubble, a modal of the page hides it.
 
 ## Admin Panel
 
@@ -161,7 +199,8 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   `/admin/join-requests`, `/admin/users`, `/admin/rollover`,
   `/admin/badges`, `/admin/exports`, `/admin/audit`, `/admin/reports`
   (檢舉), `/admin/keyword-filter`, `/admin/banners`, `/admin/broadcast`,
-  `/admin/logins`, `/admin/issue-reports` (問題回報, see below).
+  `/admin/logins`, `/admin/issue-reports` (問題回報, see below),
+  `/admin/help` (說明與教學, below).
   The old pages (`post`, `post-query`, `sig-leader`, `sig-advisor`,
   `sig-members`) redirect to these (`next.config.js`).
 - Shared code lives in `app/admin/(admin)/`: `api.ts` (react-query reads,
@@ -169,6 +208,14 @@ Design: `design/user-redesign-decisions.md` (decisions 1B, 2, 4B, 7B).
   desktop, cards on phones; Drawer: side panel / full-screen sheet; Modal
   and `useConfirm` on `<dialog>`), `useQueryState.ts` (filters, sort and
   page in the URL query).
+- 說明與教學 (`/admin/help`, decision 4C, all three roles, last under
+  其他): a guide per feature (`modules/help/adminGuide.ts`, steps can be
+  limited to roles) and the FAQ (`adminFaq.ts`, `#faq-<id>`), filtered by
+  全部 / 管理員 / 內容管理員 / SIG 幹部與老師; it opens on the viewer's
+  roles. Every `PageHeader` (and the SIG detail header) has 「說明」
+  (`(admin)/help/AdminHelpButton`): a right-side drawer with this page's
+  short guide for the viewer's role (`guidesForPath`, SIG detail tabs
+  included), its questions and 「完整說明」 → `/admin/help#<id>`.
 - Excel exports (`xlsx`, loaded on demand): member lists per SIG and the
   date-range post export (`GET /post/list/range`).
 
