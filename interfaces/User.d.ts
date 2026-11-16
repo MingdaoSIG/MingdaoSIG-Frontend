@@ -61,6 +61,11 @@ export type User = {
   /** SIGs the user follows (contract v4 §6.1; only on `GET /user/me`). */
   followedSigs?: string[];
   /**
+   * SIGs whose admin panel the user may open: led or advised, not archived,
+   * the announcement SIG included (only on `GET /user/me` and `POST /user`).
+   */
+  managedSigIds?: string[];
+  /**
    * When the first-login onboarding was finished or skipped (§6.2; only
    * on `GET /user/me` and `POST /user`). Null: show the onboarding.
    */
