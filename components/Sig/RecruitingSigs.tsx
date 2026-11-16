@@ -78,15 +78,18 @@ export function RecruitingSigRow({ sig }: { sig: Sig }) {
       href={`/@${sig.customId}`}
       title={sig.name}
       data-recruiting-sig={sig._id}
-      className="flex min-w-0 items-center gap-2.5 rounded-control p-1.5 transition-colors hover:bg-field"
-      style={{ ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR }}
+      className="rail-row flex min-w-0 items-center gap-2.5 p-1.5"
+      style={{
+        ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,
+        ["--row-accent" as string]: "var(--sig-color)",
+      }}
     >
       <span
         aria-hidden
         className="h-9 w-1 shrink-0 rounded-full bg-[var(--sig-color)]"
       />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="sig-text truncate font-semibold text-[0.9rem]">
+        <span className="sig-text rail-row-title truncate font-semibold text-[0.9rem]">
           {sig.name}
         </span>
         <span className="truncate text-warm-600 text-xs">

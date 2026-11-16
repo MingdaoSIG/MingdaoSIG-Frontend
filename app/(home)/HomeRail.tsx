@@ -106,17 +106,13 @@ export function HotPostsCard() {
               <Link
                 href={`/post/${post._id}`}
                 title={post.title}
-                className="group flex items-center gap-2.5 rounded-chip px-2 py-1.5 ring-1 ring-transparent transition-colors hover:bg-brand-50 hover:ring-brand-700/25 focus-visible:bg-brand-50 focus-visible:ring-brand-700/40"
+                className="rail-row group flex items-center gap-2.5 px-2 py-1.5"
               >
                 <span className="w-4 shrink-0 font-bold text-brand-700 text-sm tabular-nums">
                   {index + 1}
                 </span>
-                <span className="relative min-w-0 flex-1 truncate pb-0.5 font-medium text-[0.9rem] text-ink-800 transition-colors group-hover:text-brand-800 group-focus-visible:text-brand-800">
+                <span className="rail-row-title min-w-0 flex-1 truncate font-medium text-[0.9rem] text-ink-800 transition-colors group-hover:text-brand-800 group-focus-visible:text-brand-800">
                   {post.title}
-                  <span
-                    aria-hidden
-                    className="absolute bottom-0 left-0 h-0.5 w-0 rounded-full bg-brand-700 transition-[width] duration-200 ease-out group-hover:w-full group-focus-visible:w-full motion-reduce:transition-none"
-                  />
                 </span>
                 <span className="flex shrink-0 items-center gap-1 text-ink-500 text-xs">
                   <Heart size={12} aria-hidden />
