@@ -15,11 +15,9 @@ import { HelpCard, HelpPage } from "../../HelpPage";
 // the related questions, 「在網站上帶我走一遍」 for the three toured
 // flows, and the previous / next topic.
 
-export function generateStaticParams() {
-  return GUIDE_TOPICS.map((topic) => ({ topic: topic.id }));
-}
-
-export const dynamicParams = false;
+// Rendered on request (not prerendered): twelve static copies cost about
+// 2 MB of build output against the bundle-size limit, for pages that
+// render in a few milliseconds. Unknown topics get the 404 page.
 
 type Props = { params: Promise<{ topic: string }> };
 

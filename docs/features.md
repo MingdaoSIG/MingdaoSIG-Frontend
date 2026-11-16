@@ -139,7 +139,8 @@ admin help) and `design/platform-info-help-2026-v5.html`.
   (search + sections) and the strip at the end of every page.
 - Routes (`modules/help/sections.ts`): `/about` 開始使用 (hero search,
   常用教學, FAQ highlights, the strip, more links), `/about/guide` and
-  `/about/guide/[topic]` 使用教學 (static params, unknown topics 404),
+  `/about/guide/[topic]` 使用教學 (rendered on request to save build
+  output, unknown topics 404),
   `/about/faq` (grouped accordion, filter, `#q-<id>` opens and scrolls),
   `/about/report` (3A: 回報錯誤 / 提出建議 / 帳號問題 → `issueReportHref`,
   the latest 3 of `GET /issue-report/mine` with `IssueStatusChip`, 「登入後
