@@ -59,6 +59,7 @@ function Segmented<T extends string>({
     <div
       role="tablist"
       aria-label={label}
+      data-tour={label === "顯示哪些活動" ? "events-scope" : undefined}
       className="flex w-fit shrink-0 select-none gap-0.5 rounded-control border border-line bg-surface p-0.5 shadow-card"
     >
       {options.map((option) => {

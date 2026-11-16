@@ -18,6 +18,7 @@ import {
 } from "../../(admin)/components/ui";
 import { canManageSig, useAdmin } from "../../(admin)/context";
 import { formatCount } from "../../(admin)/format";
+import { AdminHelpButton } from "../../(admin)/help/AdminHelpButton";
 import { AnalyticsTab } from "../../(admin)/sig/AnalyticsTab";
 import { DiscordSetting } from "../../(admin)/sig/DiscordSetting";
 import { EventsTab } from "../../(admin)/sig/EventsTab";
@@ -166,6 +167,7 @@ export default function AdminSigPage() {
               在網站上查看
             </Link>
           )}
+          <AdminHelpButton />
         </div>
       </header>
 

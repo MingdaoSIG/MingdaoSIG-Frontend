@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { SITE_TITLE_SUFFIX } from "@/modules/site";
-import AboutPage from "./AboutPage";
+import { StartPage } from "./StartPage";
 
 export const metadata: Metadata = {
-  title: `關於 MDSIG${SITE_TITLE_SUFFIX}`,
+  title: `說明中心${SITE_TITLE_SUFFIX}`,
   description:
-    "MDSIG 平台資訊：常用連結、平台數據、更新紀錄、運行狀態與聯絡方式。",
+    "MDSIG 說明中心：使用教學、常見問題、回報問題、平台規範、更新紀錄、平台數據與運行狀態。",
 };
 
 export default function Page() {
-  return <AboutPage />;
+  return <StartPage />;
 }

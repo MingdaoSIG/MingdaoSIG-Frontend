@@ -29,6 +29,7 @@ import {
   sectionsFor,
 } from "../config";
 import { AdminContext, type AdminContextValue } from "../context";
+import { AdminHelpButton } from "../help/AdminHelpButton";
 import { useOpenIssueCount } from "../issueReportsApi";
 import { ConfirmProvider } from "./Modal";
 import { ErrorState, Spinner } from "./ui";
@@ -385,7 +386,7 @@ function SectionSwitcher({
   );
 }
 
-/** Title row of an admin page. */
+/** Title row of an admin page, with 「？說明」 at its right. */
 export function PageHeader({
   title,
   description,
@@ -403,7 +404,10 @@ export function PageHeader({
           <p className="mt-0.5 text-ink-500 text-sm">{description}</p>
         )}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      <div className="flex flex-wrap items-center gap-2">
+        {actions}
+        <AdminHelpButton />
+      </div>
     </header>
   );
 }

@@ -102,6 +102,7 @@ function RsvpButton({ event, mobile }: { event: TSigEvent; mobile: boolean }) {
         className={`${primaryClass} ${height}`}
         disabled={busy}
         onClick={() => void send(true)}
+        data-tour="event-rsvp"
       >
         {busy ? "報名中…" : "報名"}
       </button>
@@ -272,6 +273,7 @@ export function SigEventCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`${secondaryClass} ${height}`}
+                data-tour="event-calendar"
               >
                 <CalendarPlus size={16} aria-hidden />
                 加到 Google 日曆

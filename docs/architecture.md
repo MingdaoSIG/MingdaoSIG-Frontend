@@ -38,7 +38,8 @@ app/                      # Next.js App Router
 ├── api/                 # Next.js API Routes
 │   ├── auth/            # NextAuth routes
 │   └── version/         # Version check endpoint
-├── about/               # 關於 MDSIG (info, dashboard, changelog, status)
+├── about/               # 說明中心: HelpShell layout, one route per section
+│   ├── guide/[topic]/   # 使用教學 (content in modules/help)
 ├── changelog/           # changelog.json only (shown on /about)
 ├── confirm/             # Email confirmation page
 ├── events/              # 活動 (site-wide events)
@@ -61,6 +62,8 @@ app/                      # Next.js App Router
 └── not-found.tsx        # 404 page
 
 components/              # Reusable components
+├── Help/                # Help centre parts (search, FAQ, steps, strip)
+├── HelpTour/            # Guided tour (overlay loaded on demand)
 ├── Information/
 ├── NotFound/
 ├── PostCard/            # Compact post card, InfiniteThreadList
@@ -71,6 +74,7 @@ modules/                 # Business logic modules
 ├── api/
 │   └── getBranchVersion/
 ├── customStatusCode/
+├── help/                # Help content (guides, FAQ, admin help, tours)
 ├── imageUploadAPI/
 ├── markdownToPlainText/
 ├── maxMatch/

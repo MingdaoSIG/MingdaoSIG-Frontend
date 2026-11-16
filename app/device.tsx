@@ -5,6 +5,7 @@ import HeaderBarDesktop from "@/app/(Layout)/desktop/HeaderBar";
 import SideRail from "@/app/(Layout)/desktop/SideRail";
 import HeaderBarMobile from "@/app/(Layout)/mobile/HeaderBar";
 import ToolBarMobile from "@/app/(Layout)/mobile/ToolBar";
+import { TourHost } from "@/components/HelpTour/TourHost";
 import { PageTransition } from "@/components/mobile/PageTransition";
 import { ToastProvider } from "@/components/mobile/Toast";
 import { OnboardingGate } from "@/components/Onboarding/OnboardingGate";
@@ -43,6 +44,7 @@ export function Device({ children }: { children: ReactNode }) {
       <ToolBarMobile />
       <ToastProvider />
       <OnboardingGate />
+      <TourHost />
     </div>
   ) : (
     <div className="wrap" data-rail={hideDock ? undefined : ""}>
@@ -53,6 +55,7 @@ export function Device({ children }: { children: ReactNode }) {
       <SideRail />
       {children}
       <OnboardingGate />
+      <TourHost />
     </div>
   );
 }

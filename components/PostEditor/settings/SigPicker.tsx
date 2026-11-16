@@ -79,7 +79,11 @@ export function SigPicker({
   const chipHeight = mobile ? "min-h-11" : "min-h-9";
 
   return (
-    <div className="flex min-w-0 flex-col gap-2" data-sig-picker>
+    <div
+      className="flex min-w-0 flex-col gap-2"
+      data-sig-picker
+      data-tour="editor-sig"
+    >
       <span id={labelId} className="font-semibold text-ink-900 text-sm">
         發布到
       </span>
