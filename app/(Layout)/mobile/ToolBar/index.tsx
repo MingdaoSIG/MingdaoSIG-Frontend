@@ -52,6 +52,7 @@ const ToolBar = () => {
                   aria-label="發文"
                   aria-current={isActive ? "page" : undefined}
                   data-tab="new"
+                  data-tour="new-post"
                   className={styles.tab}
                   whileTap={{ scale: 0.92 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
