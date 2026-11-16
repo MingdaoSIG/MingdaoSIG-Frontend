@@ -18,5 +18,6 @@ export function stepLabel(roles: AdminRole[] | undefined) {
   if (!roles || roles.length === HELP_ROLES.length) {
     return null;
   }
-  return `僅${roleList(roles)}`;
+  const list = roleList(roles);
+  return `僅${/^[A-Za-z]/.test(list) ? " " : ""}${list}`;
 }
