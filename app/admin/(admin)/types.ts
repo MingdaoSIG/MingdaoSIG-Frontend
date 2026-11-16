@@ -166,7 +166,11 @@ export type AuditAction =
   | "user.unsuspend"
   | "banner.update"
   | "broadcast.send"
-  | "keyword.update";
+  | "keyword.update"
+  | "series.remove"
+  | "report.resolve"
+  | "report.dismiss"
+  | "issue.update";
 
 export type AuditTargetKind =
   | "post"
@@ -178,7 +182,10 @@ export type AuditTargetKind =
   | "site"
   | "banner"
   | "broadcast"
-  | "setting";
+  | "setting"
+  | "series"
+  | "report"
+  | "issue";
 
 export type AuditEntry = {
   _id: string;
