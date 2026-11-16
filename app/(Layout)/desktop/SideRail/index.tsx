@@ -152,32 +152,34 @@ export default function SideRail() {
       className="glass-bar relative z-30 flex min-h-0 w-[58px] select-none flex-col items-center border-line border-r pt-3 pb-4"
     >
       <ul className="flex flex-col items-center gap-1">
-        {(["home", "explore", "notifications", "me"] as const).map((key) => (
-          <li key={key}>
-            {key === "notifications" ? (
-              <RailLink
-                item={NAV_ITEMS[key]}
-                active={section === key}
-                badge={unread}
-                linkRef={notificationsRef}
-                expanded={section !== key ? panelOpen : undefined}
-                onClick={(event) => {
-                  // The page itself needs no panel on top of it.
-                  if (section === key) {
-                    return;
-                  }
-                  event.preventDefault();
-                  setPanelOpen((value) => !value);
-                }}
-              />
-            ) : (
-              <RailLink
-                item={NAV_ITEMS[key]}
-                active={section === key && !panelOpen}
-              />
-            )}
-          </li>
-        ))}
+        {(["home", "explore", "notifications", "me", "about"] as const).map(
+          (key) => (
+            <li key={key}>
+              {key === "notifications" ? (
+                <RailLink
+                  item={NAV_ITEMS[key]}
+                  active={section === key}
+                  badge={unread}
+                  linkRef={notificationsRef}
+                  expanded={section !== key ? panelOpen : undefined}
+                  onClick={(event) => {
+                    // The page itself needs no panel on top of it.
+                    if (section === key) {
+                      return;
+                    }
+                    event.preventDefault();
+                    setPanelOpen((value) => !value);
+                  }}
+                />
+              ) : (
+                <RailLink
+                  item={NAV_ITEMS[key]}
+                  active={section === key && !panelOpen}
+                />
+              )}
+            </li>
+          ),
+        )}
       </ul>
 
       {isLogin && (

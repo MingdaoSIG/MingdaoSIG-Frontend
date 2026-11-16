@@ -339,6 +339,52 @@ html[data-reader] .wrap:has(.layout-split) {
   }
 }
 
+/* Side-column list rows (熱門貼文, 正在招生, 近期活動; owner 2026-11-16): a
+   hover you can see on the pale cards, and the underline that slides in
+   under the title, as the site had before the redesign. `--row-accent`
+   colours both (the SIG colour on SIG rows, the brand colour otherwise). */
+.rail-row {
+  border-radius: var(--radius-control);
+  box-shadow: inset 0 0 0 1px transparent;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.rail-row:hover,
+.rail-row:focus-visible {
+  background-color: color-mix(
+    in srgb,
+    var(--row-accent, var(--color-brand-700)) 10%,
+    white
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--row-accent, var(--color-brand-700)) 30%, transparent);
+}
+.rail-row-title {
+  position: relative;
+  padding-bottom: 2px;
+}
+.rail-row-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  border-radius: 9999px;
+  background: var(--row-accent, var(--color-brand-700));
+  transition: width 0.2s ease-out;
+}
+.rail-row:hover .rail-row-title::after,
+.rail-row:focus-visible .rail-row-title::after {
+  width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rail-row-title::after {
+    transition: none;
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   0% {

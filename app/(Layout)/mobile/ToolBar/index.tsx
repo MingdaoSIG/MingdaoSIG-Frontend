@@ -25,7 +25,9 @@ const ToolBar = () => {
   const { unread } = useUnreadCount();
   // The installed app's icon shows the same count.
   useAppBadge(unread);
-  const selected = navSection(path, userData?.customId);
+  const section = navSection(path, userData?.customId);
+  // Phones have no 平台資訊 tab: it lives under 我的.
+  const selected = section === "about" ? "me" : section;
 
   // The admin panel has its own section switcher and 「回到網站」.
   if (hideDock) {
