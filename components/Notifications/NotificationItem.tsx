@@ -147,6 +147,15 @@ export function NotificationItem({
               <span className="font-semibold text-ink-900">{text.actor}</span>
             )}
             {text.action}
+            {text.body && (
+              <span
+                className={`mt-0.5 block whitespace-pre-line break-words text-[13px] text-ink-700 leading-5 ${
+                  compact ? "line-clamp-2" : ""
+                }`}
+              >
+                {text.body}
+              </span>
+            )}
           </span>
         )}
         {text.detail && (
