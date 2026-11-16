@@ -35,6 +35,10 @@ export const AUDIT_ACTIONS: {
   { id: "banner.update", label: "編輯公告橫幅", tone: "info" },
   { id: "broadcast.send", label: "廣播通知", tone: "info" },
   { id: "keyword.update", label: "更新關鍵字過濾", tone: "info" },
+  { id: "series.remove", label: "刪除系列", tone: "danger" },
+  { id: "report.resolve", label: "處理檢舉（移除內容）", tone: "danger" },
+  { id: "report.dismiss", label: "檢舉不處理", tone: "mute" },
+  { id: "issue.update", label: "處理問題回報", tone: "info" },
 ];
 
 const BY_ID = new Map(AUDIT_ACTIONS.map((action) => [action.id, action]));
@@ -50,6 +54,9 @@ export const TARGET_KINDS: { id: AuditTargetKind; label: string }[] = [
   { id: "banner", label: "公告橫幅" },
   { id: "broadcast", label: "廣播" },
   { id: "setting", label: "設定" },
+  { id: "series", label: "系列" },
+  { id: "report", label: "檢舉" },
+  { id: "issue", label: "問題回報" },
 ];
 
 const FIELD_LABEL: Record<string, string> = {
@@ -254,6 +261,10 @@ export function targetHref(entry: AuditEntry) {
       return "/admin/broadcast";
     case "setting":
       return entry.action === "keyword.update" ? "/admin/keyword-filter" : null;
+    case "report":
+      return "/admin/reports?status=all";
+    case "issue":
+      return `/admin/issue-reports?id=${encodeURIComponent(id)}`;
     default:
       return null;
   }
