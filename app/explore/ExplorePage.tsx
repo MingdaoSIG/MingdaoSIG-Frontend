@@ -104,7 +104,11 @@ function Recruiting({ mobile }: { mobile: boolean }) {
         }
       >
         {sigs.map((sig) => (
-          <li key={sig._id} className={mobile ? "w-60 shrink-0" : "min-w-0"}>
+          <li
+            key={sig._id}
+            className={mobile ? "w-60 shrink-0" : "min-w-0"}
+            data-tour="explore-recruiting"
+          >
             <RecruitingSigCard sig={sig} />
           </li>
         ))}
@@ -245,6 +249,7 @@ function SigGrid({ mobile }: { mobile: boolean }) {
         <li key={sig._id} className="min-w-0">
           <div
             data-explore-sig={sig._id}
+            data-tour="explore-sig"
             className="relative flex h-full min-h-24 flex-col gap-1.5 rounded-control border border-line border-t-[3px] border-t-[var(--sig-color)] bg-surface px-3.5 py-3 transition-colors hover:bg-[color-mix(in_srgb,var(--sig-color)_5%,white)]"
             style={{
               ["--sig-color" as string]: resolveSigColor(sig) ?? BRAND_COLOR,

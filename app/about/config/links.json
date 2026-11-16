@@ -26,10 +26,6 @@
       {
         "name": "Instagram",
         "url": "https://www.instagram.com/mdsig.dev/"
-      },
-      {
-        "name": "加入開發團隊",
-        "url": "https://forms.gle/ADMk67dcTURxjn979"
       }
     ]
   },
@@ -38,7 +34,7 @@
     "children": [
       {
         "name": "回報問題",
-        "url": "/report?from=/about"
+        "url": "/report?from=/about/report"
       }
     ]
   },
@@ -47,11 +43,11 @@
     "children": [
       {
         "name": "平台數據",
-        "url": "/about#dashboard"
+        "url": "/about/stats"
       },
       {
         "name": "更新紀錄",
-        "url": "/about#changelog"
+        "url": "/about/changelog"
       }
     ]
   },

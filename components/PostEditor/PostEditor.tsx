@@ -227,6 +227,7 @@ export default function PostEditor({
         onChange={(event) => onFieldChange(event)}
         placeholder="標題"
         aria-label="標題"
+        data-tour="editor-title"
         aria-invalid={Boolean(errors.title) || undefined}
         aria-describedby={errors.title ? `${titleId}-error` : undefined}
         className={`w-full rounded-control border bg-surface px-4 font-bold text-ink-900 placeholder:font-semibold placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-700/30 ${
@@ -312,7 +313,9 @@ export default function PostEditor({
         )}
         {statusBar && <div className="shrink-0">{statusBar}</div>}
         {titleField}
-        <div className="flex min-h-0 flex-1 flex-col">{editor}</div>
+        <div className="flex min-h-0 flex-1 flex-col" data-tour="editor-body">
+          {editor}
+        </div>
         <div className="flex shrink-0 items-center gap-2">
           <fieldset
             aria-label="檢視"
@@ -348,6 +351,7 @@ export default function PostEditor({
             className={primary}
             onClick={() => setSheetOpen(true)}
             aria-haspopup="dialog"
+            data-tour="editor-publish"
           >
             <CloudUpload aria-hidden className="size-[18px]" />
             {label}
@@ -388,6 +392,7 @@ export default function PostEditor({
           onClick={toggleSettings}
           aria-expanded={settingsOpen}
           aria-controls="post-editor-settings"
+          data-tour="editor-settings-toggle"
         >
           {settingsOpen ? (
             <PanelRightClose aria-hidden className="size-4" />
@@ -401,6 +406,7 @@ export default function PostEditor({
           className={`${primary} px-5`}
           onClick={publish}
           disabled={postButtonDisable}
+          data-tour="editor-publish"
         >
           <CloudUpload aria-hidden className="size-[18px]" />
           {label}
@@ -417,7 +423,9 @@ export default function PostEditor({
           data-editor-writing
         >
           {titleField}
-          <div className="min-h-0 flex-1">{editor}</div>
+          <div className="min-h-0 flex-1" data-tour="editor-body">
+            {editor}
+          </div>
         </section>
         {settingsOpen && (
           <aside

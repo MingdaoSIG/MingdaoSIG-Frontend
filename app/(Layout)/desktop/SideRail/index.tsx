@@ -223,6 +223,7 @@ export default function SideRail() {
       <Link
         href="/new"
         aria-label="發文"
+        data-tour="new-post"
         aria-current={section === "new" ? "page" : undefined}
         onMouseEnter={show("發文")}
         onMouseLeave={hide}

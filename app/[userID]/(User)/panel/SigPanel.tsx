@@ -285,6 +285,7 @@ function FollowButton({
       type="button"
       aria-pressed={following}
       disabled={busy || isLoading}
+      data-tour="sig-follow"
       onClick={async () => {
         if (!isLogin) {
           promptLogin(login, {
@@ -360,6 +361,7 @@ export function SigPanel({
       }}
       onClick={joinSig.join}
       disabled={joinSig.disabled}
+      data-tour="sig-join"
     >
       {joinSig.label}
     </button>

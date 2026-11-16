@@ -54,11 +54,12 @@ const nextConfig = {
       ["/admin/sig-members/:sigId", "/admin/sigs/:sigId?tab=members"],
     ];
     // The user-side redesign (2026): 資訊 / Dashboard / 更新紀錄 merged into
-    // 關於 MDSIG (one section each), and the /data SIG lookup into 探索.
+    // 關於 MDSIG, now the help centre with one route per section (2026-11-16),
+    // and the /data SIG lookup into 探索.
     const merged = [
-      ["/info", "/about#info"],
-      ["/dashboard", "/about#dashboard"],
-      ["/changelog", "/about#changelog"],
+      ["/info", "/about/rules"],
+      ["/dashboard", "/about/stats"],
+      ["/changelog", "/about/changelog"],
       ["/data", "/explore"],
     ];
     return [...moved, ...merged].map(([source, destination]) => ({
