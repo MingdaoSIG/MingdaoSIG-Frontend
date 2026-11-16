@@ -21,7 +21,7 @@ export function HelpPage({
       className={`flex w-full min-w-0 flex-col gap-4 ${wide ? "" : "lg:max-w-[52rem]"}`}
     >
       <header className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-card border border-line bg-surface px-4 py-4 shadow-card lg:px-6 lg:py-5">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-[min(16rem,100%)] flex-1">
           <h1 className="font-bold text-ink-900 text-xl leading-[1.4] lg:text-2xl">
             {title}
           </h1>

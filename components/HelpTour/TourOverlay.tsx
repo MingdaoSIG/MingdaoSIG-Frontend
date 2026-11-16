@@ -37,6 +37,27 @@ function targetNames(step: TourStep, mobile: boolean) {
   );
 }
 
+/**
+ * Visible and usable: not inside something faded out or click-through
+ * (the SIG page's phone strip is both until the card scrolls away).
+ */
+function isShown(element: HTMLElement) {
+  if (getComputedStyle(element).pointerEvents === "none") {
+    return false;
+  }
+  for (
+    let node: HTMLElement | null = element;
+    node;
+    node = node.parentElement
+  ) {
+    const style = getComputedStyle(node);
+    if (style.visibility === "hidden" || style.opacity === "0") {
+      return false;
+    }
+  }
+  return true;
+}
+
 /** The first element of the names (in order) that is on screen. */
 function findTarget(names: string): HTMLElement | null {
   for (const name of names.split("|")) {
@@ -45,11 +66,7 @@ function findTarget(names: string): HTMLElement | null {
     );
     for (const element of Array.from(list)) {
       const box = element.getBoundingClientRect();
-      if (
-        box.width > 0 &&
-        box.height > 0 &&
-        getComputedStyle(element).visibility !== "hidden"
-      ) {
+      if (box.width > 0 && box.height > 0 && isShown(element)) {
         return element;
       }
     }
@@ -348,7 +365,8 @@ export default function TourOverlay({ state }: { state: TourState }) {
     } else if (spot.top >= BUBBLE_SPACE) {
       position.bottom = height - spot.top + GAP;
     } else {
-      position.bottom = 16;
+      // Phones: above the tab bar.
+      position.bottom = isMobile ? 88 : 16;
     }
   } else {
     position.left = (width - bubbleWidth) / 2;
@@ -377,7 +395,7 @@ export default function TourOverlay({ state }: { state: TourState }) {
         <div
           aria-hidden
           data-tour-spotlight
-          className="pointer-events-none fixed z-[9990] rounded-[12px] transition-[top,left,width,height] duration-200"
+          className="pointer-events-none fixed z-[10010] rounded-[12px] transition-[top,left,width,height] duration-200"
           style={{
             ...hole,
             boxShadow:
@@ -387,7 +405,7 @@ export default function TourOverlay({ state }: { state: TourState }) {
       ) : (
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 z-[9990] bg-ink-900/40"
+          className="pointer-events-none fixed inset-0 z-[10010] bg-ink-900/40"
         />
       )}
       <div
@@ -398,7 +416,7 @@ export default function TourOverlay({ state }: { state: TourState }) {
         aria-describedby={bodyId}
         data-tour-bubble
         onKeyDown={trap}
-        className="fixed z-[9991] rounded-card border border-line bg-surface p-4 shadow-card"
+        className="fixed z-[10011] rounded-card border border-line bg-surface p-4 shadow-card"
         style={position}
       >
         <div className="flex items-start gap-2">

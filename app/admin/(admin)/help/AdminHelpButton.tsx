@@ -130,7 +130,7 @@ function HelpDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div className="fixed inset-0 z-[10001] flex justify-end">
       <button
         type="button"
         aria-label="關閉說明"
