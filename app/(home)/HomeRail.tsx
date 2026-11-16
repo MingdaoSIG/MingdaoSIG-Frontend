@@ -106,7 +106,7 @@ export function HotPostsCard() {
               <Link
                 href={`/post/${post._id}`}
                 title={post.title}
-                className="group flex items-center gap-2.5 rounded-chip px-2 py-1.5 transition-colors ring-1 ring-transparent hover:bg-brand-50 hover:ring-brand-700/25 focus-visible:bg-brand-50 focus-visible:ring-brand-700/40"
+                className="group flex items-center gap-2.5 rounded-chip px-2 py-1.5 ring-1 ring-transparent transition-colors hover:bg-brand-50 hover:ring-brand-700/25 focus-visible:bg-brand-50 focus-visible:ring-brand-700/40"
               >
                 <span className="w-4 shrink-0 font-bold text-brand-700 text-sm tabular-nums">
                   {index + 1}
