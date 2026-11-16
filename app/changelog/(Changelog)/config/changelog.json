@@ -1,5 +1,22 @@
 [
   {
+    "version": "2.27.5",
+    "date": "2026-11-16",
+    "type": "improvement",
+    "title": "側欄滑鼠效果與平台資訊入口",
+    "summary": "右側列表的滑鼠效果更明顯，左側導覽多了平台資訊",
+    "changes": [
+      {
+        "type": "improvement",
+        "description": "「正在招生」與「近期活動」也加上滑鼠移上去時的底色、外框與滑出的底線，顏色跟著各 SIG 的代表色"
+      },
+      {
+        "type": "feature",
+        "description": "電腦版左側導覽列新增「平台資訊」"
+      }
+    ]
+  },
+  {
     "version": "2.27.4",
     "date": "2026-11-16",
     "type": "fix",

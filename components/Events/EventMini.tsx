@@ -18,8 +18,11 @@ export function EventMini({ item }: { item: SiteEvent }) {
     <Link
       href={href}
       data-event-mini={event._id}
-      className="flex min-w-0 items-center gap-3 rounded-control p-1.5 transition-colors hover:bg-field"
-      style={{ ["--sig-color" as string]: color }}
+      className="rail-row flex min-w-0 items-center gap-3 p-1.5"
+      style={{
+        ["--sig-color" as string]: color,
+        ["--row-accent" as string]: "var(--sig-color)",
+      }}
     >
       <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-control bg-[color-mix(in_srgb,var(--sig-color)_14%,white)] leading-none">
         <span className="sig-text font-semibold text-[10px]">{date.month}</span>
@@ -28,7 +31,7 @@ export function EventMini({ item }: { item: SiteEvent }) {
         </span>
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-semibold text-[0.9rem] text-ink-900">
+        <span className="rail-row-title truncate font-semibold text-[0.9rem] text-ink-900">
           {event.title}
         </span>
         <span className="truncate text-ink-500 text-xs">

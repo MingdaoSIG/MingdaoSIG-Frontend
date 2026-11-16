@@ -22,7 +22,13 @@ import {
 // rail with the same entries, plus the 我的 hub (decision 7B), which is
 // the 我的 page on phones and the avatar menu on desktop.
 
-export type NavSection = "home" | "explore" | "new" | "notifications" | "me";
+export type NavSection =
+  | "home"
+  | "explore"
+  | "new"
+  | "notifications"
+  | "me"
+  | "about";
 
 export type NavItem = {
   section: NavSection;
@@ -56,10 +62,17 @@ export const NAV_ITEMS: Record<Exclude<NavSection, "new">, NavItem> = {
     href: "/me",
     icon: UserRound,
   },
+  // Desktop rail only (owner 2026-11-16); on phones it stays under 我的.
+  about: {
+    section: "about",
+    label: "平台資訊",
+    href: "/about",
+    icon: Info,
+  },
 };
 
 const EXPLORE_PATHS = ["/explore", "/search", "/tag", "/events"];
-const ME_PATHS = ["/me", "/portfolio", "/about"];
+const ME_PATHS = ["/me", "/portfolio"];
 
 function under(path: string, base: string) {
   return path === base || path.startsWith(`${base}/`);
@@ -87,6 +100,9 @@ export function navSection(
   }
   if (under(decoded, "/notifications")) {
     return "notifications";
+  }
+  if (under(decoded, "/about")) {
+    return "about";
   }
   if (EXPLORE_PATHS.some((base) => under(decoded, base))) {
     return "explore";
