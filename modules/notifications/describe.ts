@@ -113,7 +113,13 @@ export function describeNotification(
         detail: label,
       };
     case "report_result":
-      return { actor: "", action: "你的檢舉已處理", detail: label };
+      // The admin's 處理說明, when there is one (backend #132).
+      return {
+        actor: "",
+        action: "你的檢舉已處理",
+        detail: label,
+        body: text(notification.meta?.resolution) || undefined,
+      };
     case "system": {
       const title = text(notification.meta?.title) || label || "平台通知";
       return {

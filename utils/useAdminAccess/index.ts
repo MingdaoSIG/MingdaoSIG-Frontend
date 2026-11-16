@@ -98,8 +98,12 @@ export function useAdminAccess(): AdminAccess {
   const isAdmin = isLogin && userData?.permission === ADMIN_PERMISSION;
   const isModerator =
     isLogin && userData?.permission === CONTENT_MODERATOR_PERMISSION;
+  // The backend's own list (backend #132): led or advised, not archived,
+  // the announcement SIG included. Older responses fall back to /sig/list.
+  const fromServer = userData?.managedSigIds;
+  const hasServerList = Array.isArray(fromServer);
   const directory = useSigDirectory(
-    isLogin && !isLoading && !isAdmin && Boolean(userId),
+    isLogin && !isLoading && !isAdmin && Boolean(userId) && !hasServerList,
   );
 
   if (isLoading) {
@@ -110,6 +114,15 @@ export function useAdminAccess(): AdminAccess {
   }
   if (isAdmin) {
     return { status: "admin", userId, managedSigIds: [] };
+  }
+  if (hasServerList) {
+    const managedSigIds = fromServer.map(String);
+    if (isModerator) {
+      return { status: "moderator", userId, managedSigIds };
+    }
+    return managedSigIds.length === 0
+      ? { status: "none" }
+      : { status: "manager", userId, managedSigIds };
   }
   if (directory.isPending) {
     return { status: "loading" };
