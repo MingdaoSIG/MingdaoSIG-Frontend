@@ -166,9 +166,7 @@ export function HelpSearch({
       {hasQuery && (
         <div
           className={
-            hero
-              ? "mt-2 rounded-control border border-line bg-surface"
-              : "mt-2"
+            hero ? "mt-2 rounded-control border border-line bg-surface" : "mt-2"
           }
         >
           <p aria-live="polite" className="px-3 pt-2 text-ink-500 text-xs">

@@ -6,14 +6,12 @@ import { useEffect, useRef, useState } from "react";
 import changelog from "@/app/changelog/(Changelog)/config/changelog.json";
 import links from "./config/links.json";
 
-// The parts of 關於 MDSIG that used to be pages of their own: 資訊 (the
-// links), 更新紀錄, 運行狀態 and 聯絡. 平台數據 is ./dashboard (chart.js,
-// loaded on demand).
+// Parts of the help centre's pages: the link groups (平台規範, 聯絡與加入
+// 我們), 更新紀錄 and 運行狀態. 平台數據 is ./dashboard (chart.js, loaded
+// on demand).
 
 export const docLink =
   "text-brand-700 underline decoration-brand-700/30 underline-offset-[0.2em] transition-colors hover:text-brand-800 hover:decoration-current";
-
-const CONTACT_GROUP = "聯絡我們";
 
 function LinkList({ items }: { items: { name: string; url: string }[] }) {
   return (
@@ -41,27 +39,9 @@ function LinkList({ items }: { items: { name: string; url: string }[] }) {
   );
 }
 
-/** 常用連結, 回報錯誤, 常用資料, 小小彩蛋. */
-export function InfoLinks() {
-  return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-      {links
-        .filter((group) => group.name !== CONTACT_GROUP)
-        .map((group) => (
-          <div key={group.name}>
-            <h3 className="mb-2 font-bold text-base text-ink-900">
-              {group.name}
-            </h3>
-            <LinkList items={group.children} />
-          </div>
-        ))}
-    </div>
-  );
-}
-
-/** 聯絡我們. */
-export function ContactLinks() {
-  const group = links.find((item) => item.name === CONTACT_GROUP);
+/** One group of config/links.json (常用連結, 聯絡我們, 小小彩蛋…). */
+export function LinkGroup({ name }: { name: string }) {
+  const group = links.find((item) => item.name === name);
   return group ? <LinkList items={group.children} /> : null;
 }
 

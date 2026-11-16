@@ -131,8 +131,7 @@ export const TOURS: Record<TourId, Tour> = {
         target: ["event-rsvp"],
         title: "按「報名」",
         body: "按「報名」就完成了。有名額的活動會顯示「已報名 12 / 30 人」，報名後也可以「取消報名」。",
-        missing:
-          "這裡目前沒有可以報名的活動。換到「全部」看看，或之後再來。",
+        missing: "這裡目前沒有可以報名的活動。換到「全部」看看，或之後再來。",
       },
       {
         at: "/events",

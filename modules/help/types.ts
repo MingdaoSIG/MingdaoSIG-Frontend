@@ -57,6 +57,8 @@ export type FaqGroup = { id: string; title: string; items: FaqItem[] };
 export type AdminGuide = {
   id: string;
   title: string;
+  /** The admin sidebar group it belongs to. */
+  group: "開始" | "內容" | "社群" | "溝通" | "其他";
   /** Who can use the feature. */
   roles: AdminRole[];
   summary: string;

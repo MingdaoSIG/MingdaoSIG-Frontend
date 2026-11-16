@@ -10,8 +10,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { stepAt, TOURS, type TourStep } from "@/modules/help/tours";
 import { endTour, type TourState, writeTour } from "@/modules/help/tourState";
+import { stepAt, TOURS, type TourStep } from "@/modules/help/tours";
 import useIsMobile from "@/utils/useIsMobile";
 
 // The guided tour («在網站上帶我走一遍», decision 2C): a spotlight on one
@@ -221,7 +221,10 @@ export default function TourOverlay({ state }: { state: TourState }) {
       const link = event.target.closest("a");
       if (link && element.contains(link)) {
         go(index + 1);
-      } else if (link === null && element.closest("a")?.contains(event.target)) {
+      } else if (
+        link === null &&
+        element.closest("a")?.contains(event.target)
+      ) {
         go(index + 1);
       }
     };
@@ -297,10 +300,16 @@ export default function TourOverlay({ state }: { state: TourState }) {
     const first = items[0];
     const end = items[items.length - 1];
     const active = document.activeElement;
-    if (event.shiftKey && (active === first || !items.includes(active as HTMLElement))) {
+    if (
+      event.shiftKey &&
+      (active === first || !items.includes(active as HTMLElement))
+    ) {
       event.preventDefault();
       end.focus();
-    } else if (!event.shiftKey && (active === end || !items.includes(active as HTMLElement))) {
+    } else if (
+      !event.shiftKey &&
+      (active === end || !items.includes(active as HTMLElement))
+    ) {
       event.preventDefault();
       first.focus();
     }
