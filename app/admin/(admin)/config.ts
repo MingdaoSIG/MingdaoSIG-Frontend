@@ -1,5 +1,6 @@
 import {
   Award,
+  CircleHelp,
   Download,
   FileText,
   Flag,
@@ -40,7 +41,8 @@ export type AdminSectionId =
   | "exports"
   | "audit"
   | "logins"
-  | "issue-reports";
+  | "issue-reports"
+  | "help";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -182,6 +184,15 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     group: "其他",
     icon: LifeBuoy,
     roles: ["admin"],
+  },
+  {
+    // 說明與教學 (decision 4C): guides and FAQ, filtered by role.
+    id: "help",
+    label: "說明與教學",
+    href: "/admin/help",
+    group: "其他",
+    icon: CircleHelp,
+    roles: ["admin", "moderator", "manager"],
   },
 ];
 

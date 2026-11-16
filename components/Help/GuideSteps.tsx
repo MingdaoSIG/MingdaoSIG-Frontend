@@ -8,11 +8,14 @@ export function GuideSteps({
   steps,
   idPrefix,
   compact = false,
+  labelFor,
 }: {
   steps: HelpStep[];
   idPrefix?: string;
   /** Drawers: smaller numbers, no pictures. */
   compact?: boolean;
+  /** A small label before a step (who it is for). */
+  labelFor?: (step: HelpStep) => string | null;
 }) {
   return (
     <ol className={`flex flex-col ${compact ? "gap-2.5" : "gap-5"}`}>
@@ -39,6 +42,11 @@ export function GuideSteps({
               }`}
             >
               <span className="sr-only">第 {index + 1} 步：</span>
+              {labelFor?.(step) && (
+                <span className="mr-1.5 inline-flex rounded-chip bg-field px-1.5 align-[1px] font-semibold text-[11px] text-ink-500 leading-5">
+                  {labelFor(step)}
+                </span>
+              )}
               <HelpText text={step.text} />
             </p>
             {step.image && !compact && (
